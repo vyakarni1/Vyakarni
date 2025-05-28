@@ -9,6 +9,53 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Simple PDF text extraction function
+const extractTextFromPDF = (pdfBase64: string): string => {
+  try {
+    // Convert base64 to binary
+    const binaryString = atob(pdfBase64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    // Simple text extraction - look for text between BT and ET operators
+    const pdfText = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    
+    // Extract text using basic PDF text patterns
+    const textMatches = pdfText.match(/\(([^)]+)\)/g);
+    let extractedText = '';
+    
+    if (textMatches) {
+      extractedText = textMatches
+        .map(match => match.slice(1, -1)) // Remove parentheses
+        .filter(text => text.length > 0)
+        .join(' ')
+        .replace(/\\([nrt])/g, ' ') // Replace escape sequences
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+    }
+    
+    // If no text found with parentheses method, try alternative extraction
+    if (!extractedText || extractedText.length < 10) {
+      // Look for readable text patterns in the PDF
+      const readableText = pdfText.match(/[\u0900-\u097F\u0020-\u007E]{3,}/g);
+      if (readableText) {
+        extractedText = readableText
+          .filter(text => text.trim().length > 2)
+          .join(' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+    }
+    
+    return extractedText || 'PDF से टेक्स्ट निकालने में समस्या हुई';
+  } catch (error) {
+    console.error('Error extracting text from PDF:', error);
+    return 'PDF टेक्स्ट एक्सट्रैक्शन में त्रुटि';
+  }
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -31,17 +78,19 @@ serve(async (req) => {
     console.log('Processing PDF file:', filename);
     console.log('PDF base64 length:', pdfBase64.length);
 
-    // For this simplified approach, we'll extract basic text content
-    // and then correct it with AI
-    
-    // Simple text extraction from PDF (basic approach)
-    // In a real implementation, you might want to use a server-side PDF library
-    const extractedText = `यह एक नमूना टेक्स्ट है जो PDF से निकाला गया है। 
-इस टेक्स्ट में व्याकरण की त्रुटियाँ हो सकती हैं जिन्हें सुधारना होगा।
-PDF फ़ाइल: ${filename}
-यह सिस्टम अब सरल विधि का उपयोग कर रहा है।`;
-
+    // Extract text from PDF
+    const extractedText = extractTextFromPDF(pdfBase64);
     console.log('Extracted text:', extractedText);
+
+    if (!extractedText || extractedText.length < 5) {
+      return new Response(
+        JSON.stringify({ error: 'PDF से पर्याप्त टेक्स्ट नहीं मिला। कृपया सुनिश्चित करें कि PDF में हिंदी टेक्स्ट है।' }), 
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
 
     // Now correct the grammar using OpenAI
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
