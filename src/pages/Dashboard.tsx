@@ -1,56 +1,29 @@
 
-import { useAuth } from "@/components/AuthProvider";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, FileText, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
-import UsageStatsCards from "@/components/UsageStatsCards";
 
 const Dashboard = () => {
-  const { user, loading } = useAuth();
+  const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    if (!loading && !user) {
+    const currentUser = localStorage.getItem("currentUser");
+    if (!currentUser) {
       navigate("/login");
       return;
     }
+    setUser(JSON.parse(currentUser));
+  }, [navigate]);
 
-    if (user) {
-      // Fetch user profile
-      const fetchProfile = async () => {
-        const { data } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        setProfile(data);
-      };
-      fetchProfile();
-    }
-  }, [user, loading, navigate]);
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.success("सफलतापूर्वक लॉग आउट हो गए!");
-      navigate("/");
-    } catch (error) {
-      toast.error("लॉग आउट में त्रुटि");
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    toast.success("सफलतापूर्वक लॉग आउट हो गए!");
+    navigate("/");
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
 
   if (!user) return null;
 
@@ -64,7 +37,7 @@ const Dashboard = () => {
               व्याकरणी
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-600">नमस्ते, {profile?.name || user.email}</span>
+              <span className="text-gray-600">नमस्ते, {user.name}</span>
               <Button variant="outline" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 लॉग आउट
@@ -80,12 +53,6 @@ const Dashboard = () => {
           <p className="text-gray-600">आपके खाते का अवलोकन</p>
         </div>
 
-        {/* Usage Statistics */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">उपयोग आंकड़े</h2>
-          <UsageStatsCards />
-        </div>
-
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -93,8 +60,30 @@ const Dashboard = () => {
               <User className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{profile?.name || "User"}</div>
+              <div className="text-2xl font-bold">{user.name}</div>
               <p className="text-xs text-muted-foreground">{user.email}</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">सुधारे गए टेक्स्ट</CardTitle>
+              <FileText className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">0</div>
+              <p className="text-xs text-muted-foreground">कुल सुधार</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">उपयोग</CardTitle>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">100%</div>
+              <p className="text-xs text-muted-foreground">उपलब्ध</p>
             </CardContent>
           </Card>
         </div>
@@ -122,8 +111,17 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 mb-4">
-                व्याकरण सुधारक का उपयोग करके अपनी हिंदी लेखन कौशल में सुधार करें।
+                आपने अभी तक कोई टेक्स्ट सुधारा नहीं है। शुरुआत करने के लिए व्याकरण सुधारक का उपयोग करें।
               </p>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>इस महीने</span>
+                  <span>0 सुधार</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: "0%" }}></div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
