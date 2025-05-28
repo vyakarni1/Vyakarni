@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Index from "./pages/Index";
 import TextEditorPage from "./pages/TextEditor";
+import PDFGrammarChecker from "./pages/PDFGrammarChecker";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -46,6 +46,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Index />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/pdf-grammar-checker" 
+              element={
+                <ProtectedRoute>
+                  <PDFGrammarChecker />
                 </ProtectedRoute>
               } 
             />
