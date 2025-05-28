@@ -4,7 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { LogOut, Home } from "lucide-react";
 import { toast } from "sonner";
-import TextEditor from "@/components/TextEditor";
 
 const TextEditorPage = () => {
   const navigate = useNavigate();
@@ -40,7 +39,13 @@ const TextEditorPage = () => {
         </div>
       </nav>
 
-      <TextEditor />
+      {/* Page Content */}
+      <div className="container mx-auto px-6 py-12">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">टेक्स्ट एडिटर</h1>
+          <p className="text-gray-600">टेक्स्ट एडिटर यहाँ होगा</p>
+        </div>
+      </div>
     </div>
   );
 };
