@@ -1,11 +1,11 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen } from "lucide-react";
+import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 interface Correction {
@@ -248,11 +248,11 @@ const GrammarChecker = () => {
 
   const getCorrectionTypeColor = (type: string) => {
     switch (type) {
-      case 'grammar': return 'bg-red-100 text-red-800 border-red-200';
-      case 'spelling': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'punctuation': return 'bg-green-100 text-green-800 border-green-200';
-      case 'syntax': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'grammar': return 'bg-red-100 text-red-700 border-red-300';
+      case 'spelling': return 'bg-blue-100 text-blue-700 border-blue-300';
+      case 'punctuation': return 'bg-green-100 text-green-700 border-green-300';
+      case 'syntax': return 'bg-purple-100 text-purple-700 border-purple-300';
+      default: return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
@@ -382,82 +382,77 @@ const GrammarChecker = () => {
           </Card>
         </div>
 
-        {/* Corrections Analysis - Accordion Style */}
+        {/* Compact Corrections Summary */}
         {corrections.length > 0 && (
           <div className="mt-12">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
-                <BookOpen className="h-8 w-8 mr-3 text-blue-600" />
-                मुख्य सुधार विश्लेषण
-              </h2>
-              <p className="text-gray-600">आपकी गलतियों से सीखें और बेहतर बनें</p>
-            </div>
-            
-            <div className="max-w-4xl mx-auto">
-              <Accordion type="single" collapsible className="space-y-4">
-                {corrections.map((correction, index) => (
-                  <AccordionItem
-                    key={index}
-                    value={`correction-${index}`}
-                    className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden"
-                  >
-                    <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:no-underline">
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center space-x-4">
-                          <div className="bg-white/20 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+            <Card className="shadow-lg border-2 border-blue-200 rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <AlertCircle className="h-6 w-6" />
+                    <CardTitle className="text-xl font-bold">मुख्य सुधार ({corrections.length})</CardTitle>
+                  </div>
+                  <Badge className="bg-white/20 text-white border-0">
+                    <BookOpen className="h-4 w-4 mr-1" />
+                    विश्लेषण
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid gap-4">
+                  {corrections.map((correction, index) => (
+                    <div key={index} className="border border-gray-200 rounded-xl p-4 bg-white hover:shadow-md transition-shadow">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
                             {index + 1}
                           </div>
-                          <span className="text-lg font-semibold">सुधार #{index + 1}</span>
+                          <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs`}>
+                            {getCorrectionTypeLabel(correction.type)}
+                          </Badge>
                         </div>
-                        <Badge className={`${getCorrectionTypeColor(correction.type)} border`}>
-                          {getCorrectionTypeLabel(correction.type)}
-                        </Badge>
                       </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-6 py-6">
-                      <div className="space-y-6">
-                        {/* Incorrect Text */}
-                        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <X className="h-5 w-5 text-red-500" />
-                            <span className="text-sm font-semibold text-red-700">गलत</span>
+                      
+                      <div className="grid md:grid-cols-3 gap-4 items-center">
+                        {/* Incorrect */}
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <X className="h-4 w-4 text-red-500" />
+                            <span className="text-xs font-medium text-red-700">गलत</span>
                           </div>
-                          <p className="text-xl text-red-800 font-bold line-through">
+                          <p className="text-red-800 font-semibold line-through text-sm">
                             "{correction.incorrect}"
                           </p>
                         </div>
                         
                         {/* Arrow */}
                         <div className="flex justify-center">
-                          <div className="bg-blue-100 p-3 rounded-full">
-                            <ArrowRight className="h-6 w-6 text-blue-600" />
-                          </div>
+                          <ArrowRight className="h-5 w-5 text-blue-600" />
                         </div>
                         
-                        {/* Correct Text */}
-                        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <CheckCircle className="h-5 w-5 text-green-500" />
-                            <span className="text-sm font-semibold text-green-700">सही</span>
+                        {/* Correct */}
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <span className="text-xs font-medium text-green-700">सही</span>
                           </div>
-                          <p className="text-xl text-green-800 font-bold">
+                          <p className="text-green-800 font-semibold text-sm">
                             "{correction.correct}"
                           </p>
                         </div>
-                        
-                        {/* Reason */}
-                        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-                          <h4 className="text-sm font-semibold text-blue-700 mb-2">क्यों सुधार की आवश्यकता:</h4>
-                          <p className="text-blue-800 leading-relaxed">
-                            {correction.reason}
-                          </p>
-                        </div>
                       </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
+                      
+                      {/* Reason */}
+                      <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <p className="text-blue-800 text-sm leading-relaxed">
+                          <span className="font-medium">कारण:</span> {correction.reason}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
