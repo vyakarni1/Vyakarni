@@ -24,7 +24,7 @@ const GrammarChecker = () => {
   const [corrections, setCorrections] = useState<Correction[]>([]);
   const { trackUsage } = useUsageStats();
   
-  const OPENAI_API_KEY = "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";
+  const OPENAI_API_KEY = "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";
 
   // Comprehensive word replacement instruction set
   const wordReplacements = [{
