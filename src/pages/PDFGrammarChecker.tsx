@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { useNavigate, Link } from 'react-router-dom';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { LogOut, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { usePDFProcessor } from '@/hooks/usePDFProcessor';
+import { useSimplePDFProcessor } from '@/hooks/useSimplePDFProcessor';
 import PDFUploader from '@/components/PDF/PDFUploader';
 import PDFProcessor from '@/components/PDF/PDFProcessor';
 import CorrectedPDFViewer from '@/components/PDF/CorrectedPDFViewer';
@@ -25,7 +24,7 @@ const PDFGrammarChecker = () => {
     processPDF,
     reset,
     downloadCorrectedPDF
-  } = usePDFProcessor();
+  } = useSimplePDFProcessor();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -77,7 +76,7 @@ const PDFGrammarChecker = () => {
                 वापस
               </Link>
               <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                PDF व्याकरण सुधारक
+                PDF व्याकरण सुधारक (सरल विधि)
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -90,7 +89,15 @@ const PDFGrammarChecker = () => {
               {user && (
                 <>
                   <span className="text-gray-600">नमस्ते, {profile?.name || user.email}</span>
-                  <Button variant="outline" onClick={handleLogout}>
+                  <Button variant="outline" onClick={async () => {
+                    try {
+                      await supabase.auth.signOut();
+                      toast.success('सफलतापूर्वक लॉग आउट हो गए!');
+                      navigate('/');
+                    } catch (error) {
+                      toast.error('लॉग आउट में त्रुटि');
+                    }
+                  }}>
                     <LogOut className="h-4 w-4 mr-2" />
                     लॉग आउट
                   </Button>
@@ -105,11 +112,11 @@ const PDFGrammarChecker = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            PDF व्याकरण सुधारक
+            PDF व्याकरण सुधारक (सरल विधि)
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             अपनी हिंदी PDF फ़ाइलों में व्याकरण, वर्तनी और विराम चिह्न की त्रुटियों को आसानी से सुधारें। 
-            उन्नत AI तकनीक का उपयोग करके अपने दस्तावेज़ों को बेहतर बनाएं।
+            यह सरल विधि का उपयोग करता है जो तेज़ और विश्वसनीय है।
           </p>
         </div>
 
@@ -155,6 +162,15 @@ const PDFGrammarChecker = () => {
             </div>
           )}
 
+          {/* Notice Section */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-yellow-800 mb-2">ध्यान दें:</h3>
+            <p className="text-yellow-700">
+              यह सरल विधि है जो PDF फ़ाइलों को प्रोसेस करने के लिए एक बेसिक approach का उपयोग करती है। 
+              अधिक जटिल PDF फ़ाइलों के लिए, कृपया अपने टेक्स्ट को कॉपी करके टेक्स्ट सुधारक का उपयोग करें।
+            </p>
+          </div>
+
           {/* Features Section */}
           <div className="bg-white rounded-lg shadow-sm border p-6 mt-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">सुविधाएं:</h3>
@@ -162,29 +178,29 @@ const PDFGrammarChecker = () => {
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">व्याकरण सुधार</h4>
-                  <p className="text-sm text-gray-600">हिंदी व्याकरण की त्रुटियों को स्वचालित रूप से सुधारता है</p>
+                  <h4 className="font-medium text-gray-800">सरल प्रोसेसिंग</h4>
+                  <p className="text-sm text-gray-600">तेज़ और विश्वसनीय PDF प्रोसेसिंग</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">वर्तनी सुधार</h4>
-                  <p className="text-sm text-gray-600">गलत वर्तनी को सही करता है</p>
+                  <h4 className="font-medium text-gray-800">व्याकरण सुधार</h4>
+                  <p className="text-sm text-gray-600">AI द्वारा संचालित व्याकरण सुधार</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">विराम चिह्न</h4>
-                  <p className="text-sm text-gray-600">उचित विराम चिह्न जोड़ता और सुधारता है</p>
+                  <h4 className="font-medium text-gray-800">वर्तनी सुधार</h4>
+                  <p className="text-sm text-gray-600">स्वचालित वर्तनी जांच और सुधार</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">फॉर्मेटिंग संरक्षण</h4>
-                  <p className="text-sm text-gray-600">मूल दस्तावेज़ की फॉर्मेटिंग बनाए रखता है</p>
+                  <h4 className="font-medium text-gray-800">तुरंत डाउनलोड</h4>
+                  <p className="text-sm text-gray-600">सुधारी गई PDF तुरंत डाउनलोड करें</p>
                 </div>
               </div>
             </div>
