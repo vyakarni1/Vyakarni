@@ -1,29 +1,55 @@
 
-import { useEffect, useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogOut, User, FileText, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
-  const [user, setUser] = useState<any>(null);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    const currentUser = localStorage.getItem("currentUser");
-    if (!currentUser) {
+    if (!loading && !user) {
       navigate("/login");
       return;
     }
-    setUser(JSON.parse(currentUser));
-  }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    toast.success("सफलतापूर्वक लॉग आउट हो गए!");
-    navigate("/");
+    if (user) {
+      // Fetch user profile
+      const fetchProfile = async () => {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setProfile(data);
+      };
+      fetchProfile();
+    }
+  }, [user, loading, navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("सफलतापूर्वक लॉग आउट हो गए!");
+      navigate("/");
+    } catch (error) {
+      toast.error("लॉग आउट में त्रुटि");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
@@ -37,7 +63,7 @@ const Dashboard = () => {
               व्याकरणी
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-600">नमस्ते, {user.name}</span>
+              <span className="text-gray-600">नमस्ते, {profile?.name || user.email}</span>
               <Button variant="outline" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 लॉग आउट
@@ -60,7 +86,7 @@ const Dashboard = () => {
               <User className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{user.name}</div>
+              <div className="text-2xl font-bold">{profile?.name || "User"}</div>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </CardContent>
           </Card>

@@ -1,27 +1,23 @@
 
-import { useEffect, useState } from "react";
+import { useAuth } from "./AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const currentUser = localStorage.getItem("currentUser");
-    if (!currentUser) {
+    if (!loading && !user) {
       navigate("/login");
-    } else {
-      setIsAuthenticated(true);
     }
-    setIsLoading(false);
-  }, [navigate]);
+  }, [user, loading, navigate]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -29,7 +25,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  return isAuthenticated ? <>{children}</> : null;
+  return user ? <>{children}</> : null;
 };
 
 export default ProtectedRoute;
