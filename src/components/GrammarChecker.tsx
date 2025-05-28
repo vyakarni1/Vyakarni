@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown } from "lucide-react";
+import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown, Sparkles, Target, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 
@@ -24,7 +24,7 @@ const GrammarChecker = () => {
   const [corrections, setCorrections] = useState<Correction[]>([]);
   const { trackUsage } = useUsageStats();
   
-  const OPENAI_API_KEY = "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";
+  const OPENAI_API_KEY = "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";
 
   // Comprehensive word replacement instruction set
   const wordReplacements = [{
@@ -293,10 +293,9 @@ const GrammarChecker = () => {
     }, 200);
     try {
       // Create instruction set for AI based on word replacements
-      const wordReplacementInstructions = wordReplacements.map(({
-        original,
-        replacement
-      }) => `"${original}" को "${replacement}" से बदलें`).join(', ');
+      const wordReplacementInstructions = wordReplacements
+        .map(({ original, replacement }) => `"${original}" को "${replacement}" से बदलें`)
+        .join(', ');
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -305,13 +304,16 @@ const GrammarChecker = () => {
         },
         body: JSON.stringify({
           model: 'gpt-4.5-preview-2025-02-27',
-          messages: [{
-            role: 'system',
-            content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors, punctuation mistakes, sentence structure issues, and word choice problems in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
-          }, {
-            role: 'user',
-            content: `कृपया इस हिंदी टेक्स्ट में सभी व्याकरण की त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं और वाक्य संरचना की त्रुटियों को सुधारें। दिए गए शब्द प्रतिस्थापन नियमों का पूर्ण पालन करें: "${inputText}"`
-          }],
+          messages: [
+            {
+              role: 'system',
+              content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors, punctuation mistakes, sentence structure issues, and word choice problems in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
+            },
+            {
+              role: 'user',
+              content: `कृपया इस हिंदी टेक्स्ट में सभी व्याकरण की त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं और वाक्य संरचना की त्रुटियों को सुधारें। दिए गए शब्द प्रतिस्थापन नियमों का पूर्ण पालन करें: "${inputText}"`
+            }
+          ],
           max_tokens: 1000,
           temperature: 0.3
         })
@@ -359,15 +361,15 @@ const GrammarChecker = () => {
   const getCorrectionTypeColor = (type: string) => {
     switch (type) {
       case 'grammar':
-        return 'bg-red-100 text-red-700 border-red-300';
+        return 'bg-red-50 text-red-700 border-red-200';
       case 'spelling':
-        return 'bg-blue-100 text-blue-700 border-blue-300';
+        return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'punctuation':
-        return 'bg-green-100 text-green-700 border-green-300';
+        return 'bg-green-50 text-green-700 border-green-200';
       case 'syntax':
-        return 'bg-purple-100 text-purple-700 border-purple-300';
+        return 'bg-purple-50 text-purple-700 border-purple-200';
       default:
-        return 'bg-gray-100 text-gray-700 border-gray-300';
+        return 'bg-gray-50 text-gray-700 border-gray-200';
     }
   };
   const getCorrectionTypeLabel = (type: string) => {
@@ -384,41 +386,78 @@ const GrammarChecker = () => {
         return 'सुधार';
     }
   };
-  return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Header */}
-      <div className="text-center py-16 px-6">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-          हिंदी व्याकरण सुधारक
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          AI की शक्ति से अपने हिंदी टेक्स्ट को बेहतर बनाएं
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+      {/* Modern Header */}
+      <div className="text-center py-20 px-6">
+        <div className="inline-flex items-center gap-3 mb-6">
+          <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
+            <Sparkles className="h-8 w-8 text-white" />
+          </div>
+          <h1 className="text-6xl font-bold bg-gradient-to-r from-slate-900 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            व्याकरणी
+          </h1>
+        </div>
+        <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          AI की शक्ति से अपने हिंदी टेक्स्ट को पूर्ण और शुद्ध बनाएं
         </p>
+        <div className="flex items-center justify-center gap-6 mt-8">
+          <div className="flex items-center gap-2 text-slate-500">
+            <Target className="h-5 w-5" />
+            <span className="text-sm font-medium">99% सटीकता</span>
+          </div>
+          <div className="flex items-center gap-2 text-slate-500">
+            <Zap className="h-5 w-5" />
+            <span className="text-sm font-medium">तत्काल परिणाम</span>
+          </div>
+          <div className="flex items-center gap-2 text-slate-500">
+            <Shield className="h-5 w-5" />
+            <span className="text-sm font-medium">सुरक्षित</span>
+          </div>
+        </div>
       </div>
 
       {/* Main Editor Section */}
-      <div className="max-w-7xl mx-auto px-6 pb-16">
+      <div className="max-w-7xl mx-auto px-6 pb-20">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Original Text Panel */}
-          <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-slate-600 to-slate-700 text-white">
+          <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-8">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold">मूल टेक्स्ट</CardTitle>
-                <Badge variant="secondary" className="bg-white/20 text-white border-0">
-                  <FileText className="h-4 w-4 mr-1" />
+                <CardTitle className="text-2xl font-bold flex items-center gap-3">
+                  <FileText className="h-6 w-6" />
+                  मूल टेक्स्ट
+                </CardTitle>
+                <Badge variant="secondary" className="bg-white/20 text-white border-0 px-4 py-2">
                   {wordCount} शब्द
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
-              <Textarea value={inputText} onChange={e => setInputText(e.target.value)} placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..." className="min-h-[400px] text-lg border-0 resize-none focus-visible:ring-0 p-4 bg-gray-50 rounded-2xl" disabled={isLoading} />
-              <div className="flex justify-between items-center mt-6">
-                <span className="text-sm text-gray-500">{charCount} अक्षर</span>
-                <div className="flex space-x-3">
-                  <Button onClick={resetText} variant="outline" disabled={isLoading} className="rounded-xl">
+            <CardContent className="p-8">
+              <Textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
+                className="min-h-[400px] text-lg border-0 resize-none focus-visible:ring-0 p-6 bg-slate-50 rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
+                disabled={isLoading}
+              />
+              <div className="flex justify-between items-center mt-8">
+                <span className="text-sm text-slate-500 font-medium">{charCount} अक्षर</span>
+                <div className="flex space-x-4">
+                  <Button
+                    onClick={resetText}
+                    variant="outline"
+                    disabled={isLoading}
+                    className="rounded-xl border-slate-200 hover:bg-slate-50 transition-all duration-200"
+                  >
                     <RotateCcw className="h-4 w-4 mr-2" />
                     रीसेट
                   </Button>
-                  <Button onClick={correctGrammar} disabled={isLoading || !inputText.trim()} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl">
+                  <Button
+                    onClick={correctGrammar}
+                    disabled={isLoading || !inputText.trim()}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
                     <Zap className="h-4 w-4 mr-2" />
                     {isLoading ? 'सुधार रहे हैं...' : 'व्याकरण सुधारें'}
                   </Button>
@@ -428,120 +467,160 @@ const GrammarChecker = () => {
           </Card>
 
           {/* Corrected Text Panel */}
-          <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+          <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-8">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold">सुधारा गया टेक्स्ट</CardTitle>
+                <CardTitle className="text-2xl font-bold flex items-center gap-3">
+                  <CheckCircle className="h-6 w-6" />
+                  सुधारा गया टेक्स्ट
+                </CardTitle>
                 <div className="flex items-center space-x-3">
-                  {correctedText && <Badge variant="secondary" className="bg-white/20 text-white border-0">
-                      <FileText className="h-4 w-4 mr-1" />
+                  {correctedText && (
+                    <Badge variant="secondary" className="bg-white/20 text-white border-0 px-4 py-2">
                       {correctedText.trim().split(/\s+/).length} शब्द
-                    </Badge>}
-                  {corrections.length > 0 && <DropdownMenu>
+                    </Badge>
+                  )}
+                  {corrections.length > 0 && (
+                    <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="sm" className="bg-white/20 text-white border-0 hover:bg-white/30">
+                        <Button 
+                          variant="secondary" 
+                          size="sm" 
+                          className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-xl px-4 py-2"
+                        >
                           <AlertCircle className="h-4 w-4 mr-2" />
                           {corrections.length} सुधार
                           <ChevronDown className="h-4 w-4 ml-2" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-80 max-h-96 overflow-y-auto bg-white border border-gray-200 shadow-lg">
-                        <DropdownMenuLabel className="text-sm font-semibold text-gray-700 px-3 py-2">
+                      <DropdownMenuContent className="w-96 max-h-96 overflow-y-auto bg-white border-0 shadow-2xl rounded-2xl p-2">
+                        <DropdownMenuLabel className="text-base font-semibold text-slate-700 px-4 py-3">
                           सभी सुधार ({corrections.length})
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {corrections.map((correction, index) => <DropdownMenuItem key={index} className="p-0 focus:bg-gray-50">
-                            <div className="w-full p-3 border-b border-gray-100 last:border-b-0">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center space-x-2">
-                                  <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                        {corrections.map((correction, index) => (
+                          <DropdownMenuItem key={index} className="p-0 focus:bg-slate-50 rounded-xl">
+                            <div className="w-full p-4 border-b border-slate-100 last:border-b-0">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center space-x-3">
+                                  <span className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
                                     {index + 1}
                                   </span>
-                                  <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs`}>
+                                  <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs font-medium`}>
                                     {getCorrectionTypeLabel(correction.type)}
                                   </Badge>
                                 </div>
                               </div>
                               
-                              <div className="space-y-2">
-                                <div className="flex items-center space-x-2">
-                                  <X className="h-3 w-3 text-red-500" />
-                                  <span className="text-red-600 text-sm line-through">"{correction.incorrect}"</span>
+                              <div className="space-y-3">
+                                <div className="flex items-center space-x-3">
+                                  <X className="h-4 w-4 text-red-500" />
+                                  <span className="text-red-600 text-sm line-through font-medium">"{correction.incorrect}"</span>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                  <CheckCircle className="h-3 w-3 text-green-500" />
-                                  <span className="text-green-600 text-sm font-medium">"{correction.correct}"</span>
+                                <div className="flex items-center space-x-3">
+                                  <CheckCircle className="h-4 w-4 text-emerald-500" />
+                                  <span className="text-emerald-600 text-sm font-semibold">"{correction.correct}"</span>
                                 </div>
-                                <p className="text-xs text-gray-600 mt-1 ml-5">
+                                <p className="text-xs text-slate-600 mt-2 ml-7 leading-relaxed">
                                   {correction.reason}
                                 </p>
                               </div>
                             </div>
-                          </DropdownMenuItem>)}
+                          </DropdownMenuItem>
+                        ))}
                       </DropdownMenuContent>
-                    </DropdownMenu>}
+                    </DropdownMenu>
+                  )}
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="min-h-[400px] p-4 bg-gray-50 rounded-2xl">
-                {correctedText ? <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-wrap">
+            <CardContent className="p-8">
+              <div className="min-h-[400px] p-6 bg-slate-50 rounded-2xl">
+                {correctedText ? (
+                  <p className="text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
                     {correctedText}
-                  </p> : <div className="flex items-center justify-center h-full">
-                    <p className="text-gray-400 text-lg text-center">
-                      सुधारा गया टेक्स्ट यहाँ दिखेगा...
-                      <br />
-                      <span className="text-sm">पहले मूल टेक्स्ट में कुछ लिखें</span>
-                    </p>
-                  </div>}
+                  </p>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <ArrowRight className="h-8 w-8 text-slate-400" />
+                      </div>
+                      <p className="text-slate-400 text-lg font-medium">
+                        सुधारा गया टेक्स्ट यहाँ दिखेगा...
+                      </p>
+                      <p className="text-sm text-slate-300 mt-2">
+                        पहले मूल टेक्स्ट में कुछ लिखें
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
               
               {/* Progress Bar */}
-              {isLoading && <div className="mt-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">प्रगति</span>
-                    <span className="text-sm text-gray-500">{progress}%</span>
+              {isLoading && (
+                <div className="mt-8">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-slate-700">प्रगति</span>
+                    <span className="text-sm text-slate-500 font-medium">{progress}%</span>
                   </div>
-                  <Progress value={progress} className="h-2" />
-                </div>}
+                  <Progress value={progress} className="h-3 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-300 ease-out" />
+                  </Progress>
+                </div>
+              )}
 
-              {correctedText && !isLoading && <div className="flex space-x-3 mt-6">
-                  <Button onClick={copyToClipboard} variant="outline" className="flex-1 rounded-xl">
+              {correctedText && !isLoading && (
+                <div className="flex space-x-4 mt-8">
+                  <Button
+                    onClick={copyToClipboard}
+                    variant="outline"
+                    className="flex-1 rounded-xl border-slate-200 hover:bg-slate-50 transition-all duration-200"
+                  >
                     <Copy className="h-4 w-4 mr-2" />
                     कॉपी करें
                   </Button>
-                </div>}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Features Section */}
-        <div className="grid md:grid-cols-3 gap-6 mt-16">
-          <Card className="bg-blue-50 border-blue-200 border-2 text-center p-8 rounded-3xl hover:shadow-lg transition-shadow">
-            <div className="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Zap className="h-8 w-8 text-white" />
+        {/* Enhanced Features Section */}
+        <div className="grid md:grid-cols-3 gap-8 mt-20">
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 border-2 text-center p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Zap className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3">तत्काल सुधार</h3>
-            <p className="text-gray-600">एक क्लिक में व्याकरण सुधारें</p>
+            <h3 className="text-2xl font-bold text-slate-800 mb-4">तत्काल सुधार</h3>
+            <p className="text-slate-600 text-lg leading-relaxed">
+              एक क्लिक में व्याकरण सुधारें और परिणाम तुरंत देखें
+            </p>
           </Card>
 
-          <Card className="bg-purple-50 border-purple-200 border-2 text-center p-8 rounded-3xl hover:shadow-lg transition-shadow">
-            <div className="bg-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Crown className="h-8 w-8 text-white" />
+          <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-100 border-2 text-center p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-gradient-to-br from-purple-500 to-violet-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Crown className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3">AI संचालित</h3>
-            <p className="text-gray-600">व्याकरणी की शक्ति से संचालित</p>
+            <h3 className="text-2xl font-bold text-slate-800 mb-4">AI संचालित</h3>
+            <p className="text-slate-600 text-lg leading-relaxed">
+              उन्नत कृत्रिम बुद्धिमत्ता से सटीक व्याकरण सुधार
+            </p>
           </Card>
 
-          <Card className="bg-green-50 border-green-200 border-2 text-center p-8 rounded-3xl hover:shadow-lg transition-shadow">
-            <div className="bg-green-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="h-8 w-8 text-white" />
+          <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100 border-2 text-center p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <BookOpen className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3">पूर्ण विश्लेषण</h3>
-            <p className="text-gray-600">सभी सुधारों की विस्तृत सूची</p>
+            <h3 className="text-2xl font-bold text-slate-800 mb-4">विस्तृत विश्लेषण</h3>
+            <p className="text-slate-600 text-lg leading-relaxed">
+              प्रत्येक सुधार की पूर्ण व्याख्या और कारण देखें
+            </p>
           </Card>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default GrammarChecker;
