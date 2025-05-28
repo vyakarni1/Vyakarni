@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -5,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen } from "lucide-react";
+import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, Settings, Wand2, Type } from "lucide-react";
 import { toast } from "sonner";
 
 interface Correction {
@@ -15,14 +16,57 @@ interface Correction {
   type: 'grammar' | 'spelling' | 'punctuation' | 'syntax';
 }
 
+type CorrectionMode = 'general' | 'syntax' | 'word-selection' | 'punctuation';
+
 const GrammarChecker = () => {
   const [inputText, setInputText] = useState('');
   const [correctedText, setCorrectedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
+  const [correctionMode, setCorrectionMode] = useState<CorrectionMode>('general');
 
   const OPENAI_API_KEY = "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";
+
+  const getCorrectionModePrompt = (mode: CorrectionMode, text: string) => {
+    const baseRules = `
+    Important rules to follow strictly:
+    - Do not change any word that is corrected or replaced by dictionary
+    - Do not change meaning, tone and level of politeness, respectfulness or formality
+    - Do not rewrite and beautify the sentence unnecessarily
+    - Avoid word order change unnecessarily
+    - Do not convert 'तुम' to 'आप' or 'हम' to 'मैं', and vice versa
+    - Keep the style natural, elegant and fluent
+    - Only return the corrected text, no explanations
+    `;
+
+    switch (mode) {
+      case 'syntax':
+        return `You are a Hindi syntax correction expert. Focus ONLY on syntax improvements in the given Hindi text. ${baseRules} 
+        Text to correct: "${text}"`;
+      
+      case 'word-selection':
+        return `You are a Hindi word selection enhancement expert. Focus ONLY on word selection enhancement in the given Hindi text while maintaining the original meaning and tone. ${baseRules}
+        Text to correct: "${text}"`;
+      
+      case 'punctuation':
+        return `You are a Hindi punctuation correction expert. Focus ONLY on punctuation correction in the given Hindi text. ${baseRules}
+        Text to correct: "${text}"`;
+      
+      default:
+        return `You are a Hindi grammar correction expert. Improve the sentence by correcting grammar, spelling and punctuation. Also enhance the style, sentence structure and word selection for better flow and clarity. ${baseRules}
+        Text to correct: "${text}"`;
+    }
+  };
+
+  const getCorrectionModeLabel = (mode: CorrectionMode) => {
+    switch (mode) {
+      case 'syntax': return 'वाक्य संरचना सुधार';
+      case 'word-selection': return 'शब्द चयन सुधार';
+      case 'punctuation': return 'विराम चिह्न सुधार';
+      default: return 'सामान्य व्याकरण सुधार';
+    }
+  };
 
   const findCorrections = (original: string, corrected: string): Correction[] => {
     // Simple correction detection - in a real app, this would be more sophisticated
@@ -159,6 +203,8 @@ const GrammarChecker = () => {
     }, 200);
 
     try {
+      const prompt = getCorrectionModePrompt(correctionMode, inputText);
+      
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -170,11 +216,11 @@ const GrammarChecker = () => {
           messages: [
             {
               role: 'system',
-              content: 'You are a Hindi grammar correction expert. Correct the grammatical errors in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.'
+              content: prompt
             },
             {
               role: 'user',
-              content: `कृपया इस हिंदी टेक्स्ट में व्याकरण की त्रुटियों को सुधारें: "${inputText}"`
+              content: `कृपया इस हिंदी टेक्स्ट को सुधारें: "${inputText}"`
             }
           ],
           max_tokens: 1000,
@@ -198,7 +244,7 @@ const GrammarChecker = () => {
       
       setIsLoading(false);
       clearInterval(progressInterval);
-      toast.success("व्याकरण सुधार पूरा हो गया!");
+      toast.success(`${getCorrectionModeLabel(correctionMode)} पूरा हो गया!`);
 
     } catch (error) {
       console.error('Error correcting grammar:', error);
@@ -258,6 +304,53 @@ const GrammarChecker = () => {
         </p>
       </div>
 
+      {/* Correction Mode Selection */}
+      <div className="max-w-7xl mx-auto px-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <Settings className="h-5 w-5 mr-2" />
+            सुधार मोड चुनें
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Button
+              onClick={() => setCorrectionMode('general')}
+              variant={correctionMode === 'general' ? 'default' : 'outline'}
+              className="flex items-center space-x-2 p-4 h-auto rounded-xl"
+            >
+              <Zap className="h-5 w-5" />
+              <span>सामान्य सुधार</span>
+            </Button>
+            <Button
+              onClick={() => setCorrectionMode('syntax')}
+              variant={correctionMode === 'syntax' ? 'default' : 'outline'}
+              className="flex items-center space-x-2 p-4 h-auto rounded-xl"
+            >
+              <Wand2 className="h-5 w-5" />
+              <span>वाक्य संरचना</span>
+            </Button>
+            <Button
+              onClick={() => setCorrectionMode('word-selection')}
+              variant={correctionMode === 'word-selection' ? 'default' : 'outline'}
+              className="flex items-center space-x-2 p-4 h-auto rounded-xl"
+            >
+              <Type className="h-5 w-5" />
+              <span>शब्द चयन</span>
+            </Button>
+            <Button
+              onClick={() => setCorrectionMode('punctuation')}
+              variant={correctionMode === 'punctuation' ? 'default' : 'outline'}
+              className="flex items-center space-x-2 p-4 h-auto rounded-xl"
+            >
+              <BookOpen className="h-5 w-5" />
+              <span>विराम चिह्न</span>
+            </Button>
+          </div>
+          <p className="text-sm text-gray-500 mt-3">
+            वर्तमान मोड: <span className="font-medium text-blue-600">{getCorrectionModeLabel(correctionMode)}</span>
+          </p>
+        </div>
+      </div>
+
       {/* Main Editor Section */}
       <div className="max-w-7xl mx-auto px-6 pb-16">
         <div className="grid lg:grid-cols-2 gap-8">
@@ -298,7 +391,7 @@ const GrammarChecker = () => {
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl"
                   >
                     <Zap className="h-4 w-4 mr-2" />
-                    {isLoading ? 'सुधार रहे हैं...' : 'व्याकरण सुधारें'}
+                    {isLoading ? 'सुधार रहे हैं...' : getCorrectionModeLabel(correctionMode)}
                   </Button>
                 </div>
               </div>
