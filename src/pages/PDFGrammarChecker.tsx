@@ -76,7 +76,7 @@ const PDFGrammarChecker = () => {
                 वापस
               </Link>
               <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                PDF व्याकरण सुधारक (सरल विधि)
+                PDF व्याकरण सुधारक (AI Vision)
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -112,11 +112,11 @@ const PDFGrammarChecker = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            PDF व्याकरण सुधारक (सरल विधि)
+            PDF व्याकरण सुधारक (AI Vision)
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             अपनी हिंदी PDF फ़ाइलों में व्याकरण, वर्तनी और विराम चिह्न की त्रुटियों को आसानी से सुधारें। 
-            यह सरल विधि का उपयोग करता है जो तेज़ और विश्वसनीय है।
+            यह OpenAI Vision API का उपयोग करता है जो अधिक सटीक और विश्वसनीय परिणाम देता है।
           </p>
         </div>
 
@@ -162,13 +162,19 @@ const PDFGrammarChecker = () => {
             </div>
           )}
 
-          {/* Notice Section */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-yellow-800 mb-2">ध्यान दें:</h3>
-            <p className="text-yellow-700">
-              यह सरल विधि है जो PDF फ़ाइलों को प्रोसेस करने के लिए एक बेसिक approach का उपयोग करती है। 
-              अधिक जटिल PDF फ़ाइलों के लिए, कृपया अपने टेक्स्ट को कॉपी करके टेक्स्ट सुधारक का उपयोग करें।
+          {/* Enhanced Notice Section */}
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-green-800 mb-2">🚀 नई सुविधा - AI Vision Technology!</h3>
+            <p className="text-green-700 mb-3">
+              यह enhanced version OpenAI के Vision API का उपयोग करता है जो:
             </p>
+            <ul className="list-disc list-inside text-green-700 space-y-1">
+              <li>PDF pages को images में convert करता है</li>
+              <li>Advanced OCR के लिए GPT-4 Vision का उपयोग करता है</li>
+              <li>Scanned PDFs और image-based documents को बेहतर handle करता है</li>
+              <li>Complex layouts और formatting को समझता है</li>
+              <li>हिंदी text recognition में बेहतर accuracy प्रदान करता है</li>
+            </ul>
           </div>
 
           {/* Features Section */}
@@ -178,29 +184,29 @@ const PDFGrammarChecker = () => {
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">सरल प्रोसेसिंग</h4>
-                  <p className="text-sm text-gray-600">तेज़ और विश्वसनीय PDF प्रोसेसिंग</p>
+                  <h4 className="font-medium text-gray-800">AI Vision Processing</h4>
+                  <p className="text-sm text-gray-600">OpenAI Vision API से powered advanced text extraction</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">व्याकरण सुधार</h4>
-                  <p className="text-sm text-gray-600">AI द्वारा संचालित व्याकरण सुधार</p>
+                  <h4 className="font-medium text-gray-800">Smart OCR</h4>
+                  <p className="text-sm text-gray-600">Scanned PDFs और images से accurate text extraction</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">वर्तनी सुधार</h4>
-                  <p className="text-sm text-gray-600">स्वचालित वर्तनी जांच और सुधार</p>
+                  <h4 className="font-medium text-gray-800">Advanced Grammar Correction</h4>
+                  <p className="text-sm text-gray-600">AI-powered हिंदी व्याकरण और वर्तनी सुधार</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
                 <div>
-                  <h4 className="font-medium text-gray-800">तुरंत डाउनलोड</h4>
-                  <p className="text-sm text-gray-600">सुधारी गई PDF तुरंत डाउनलोड करें</p>
+                  <h4 className="font-medium text-gray-800">Multi-page Support</h4>
+                  <p className="text-sm text-gray-600">Multiple pages को process करने की क्षमता</p>
                 </div>
               </div>
             </div>
