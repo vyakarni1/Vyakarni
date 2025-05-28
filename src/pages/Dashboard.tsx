@@ -3,15 +3,18 @@ import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, User, FileText, BarChart3 } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+import { useUsageStats } from "@/hooks/useUsageStats";
+import UsageStatsCards from "@/components/UsageStatsCards";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
+  const { stats, loading: statsLoading } = useUsageStats();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -76,7 +79,13 @@ const Dashboard = () => {
       <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">डैशबोर्ड</h1>
-          <p className="text-gray-600">आपके खाते का अवलोकन</p>
+          <p className="text-gray-600">आपके खाते का अवलोकन और उपयोग की जानकारी</p>
+        </div>
+
+        {/* Usage Statistics */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">उपयोग के आंकड़े</h2>
+          <UsageStatsCards stats={stats} loading={statsLoading} />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -88,28 +97,6 @@ const Dashboard = () => {
             <CardContent>
               <div className="text-2xl font-bold">{profile?.name || "User"}</div>
               <p className="text-xs text-muted-foreground">{user.email}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">सुधारे गए टेक्स्ट</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">कुल सुधार</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">उपयोग</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">100%</div>
-              <p className="text-xs text-muted-foreground">उपलब्ध</p>
             </CardContent>
           </Card>
         </div>
@@ -137,15 +124,21 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 mb-4">
-                आपने अभी तक कोई टेक्स्ट सुधारा नहीं है। शुरुआत करने के लिए व्याकरण सुधारक का उपयोग करें।
+                {stats.total_corrections === 0 
+                  ? "आपने अभी तक कोई टेक्स्ट सुधारा नहीं है। शुरुआत करने के लिए व्याकरण सुधारक का उपयोग करें।"
+                  : `बधाई हो! आपने अब तक ${stats.total_corrections} सुधार किए हैं।`
+                }
               </p>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>इस महीने</span>
-                  <span>0 सुधार</span>
+                  <span>{stats.corrections_this_month} सुधार</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: "0%" }}></div>
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-500" 
+                    style={{ width: `${Math.min((stats.corrections_this_month / 100) * 100, 100)}%` }}
+                  ></div>
                 </div>
               </div>
             </CardContent>
