@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 
@@ -93,7 +93,7 @@ const GrammarChecker = () => {
       {
         incorrect: 'था',
         correct: 'हैं',
-        reason: 'वर्तमान काल की सुसंगता बनाए रखें',
+        reason: 'वर्तमान काल की सुसंगति बनाए रखें',
         type: 'grammar' as const
       },
       {
@@ -362,7 +362,7 @@ const GrammarChecker = () => {
           </Card>
         </div>
 
-        {/* Corrections Analysis */}
+        {/* Corrections Analysis - Accordion Style */}
         {corrections.length > 0 && (
           <div className="mt-12">
             <div className="text-center mb-8">
@@ -373,64 +373,70 @@ const GrammarChecker = () => {
               <p className="text-gray-600">आपकी गलतियों से सीखें और बेहतर बनें</p>
             </div>
             
-            <div className="grid lg:grid-cols-2 gap-6">
-              {corrections.map((correction, index) => (
-                <Card key={index} className="shadow-lg border-2 border-gray-200 rounded-3xl overflow-hidden animate-fade-in hover:shadow-xl transition-shadow">
-                  <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg font-bold flex items-center">
-                        <span className="bg-white/20 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold">
-                          {index + 1}
-                        </span>
-                        सुधार #{index + 1}
-                      </CardTitle>
-                      <Badge className={`${getCorrectionTypeColor(correction.type)} border`}>
-                        {getCorrectionTypeLabel(correction.type)}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      {/* Incorrect Text */}
-                      <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <X className="h-4 w-4 text-red-500" />
-                          <span className="text-sm font-medium text-red-700">गलत</span>
+            <div className="max-w-4xl mx-auto">
+              <Accordion type="single" collapsible className="space-y-4">
+                {corrections.map((correction, index) => (
+                  <AccordionItem
+                    key={index}
+                    value={`correction-${index}`}
+                    className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden"
+                  >
+                    <AccordionTrigger className="px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:no-underline">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center space-x-4">
+                          <div className="bg-white/20 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+                            {index + 1}
+                          </div>
+                          <span className="text-lg font-semibold">सुधार #{index + 1}</span>
                         </div>
-                        <p className="text-lg text-red-800 font-semibold line-through">
-                          "{correction.incorrect}"
-                        </p>
+                        <Badge className={`${getCorrectionTypeColor(correction.type)} border`}>
+                          {getCorrectionTypeLabel(correction.type)}
+                        </Badge>
                       </div>
-                      
-                      {/* Arrow */}
-                      <div className="flex justify-center">
-                        <div className="bg-blue-100 p-2 rounded-full">
-                          <ArrowRight className="h-5 w-5 text-blue-600" />
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 py-6">
+                      <div className="space-y-6">
+                        {/* Incorrect Text */}
+                        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <X className="h-5 w-5 text-red-500" />
+                            <span className="text-sm font-semibold text-red-700">गलत</span>
+                          </div>
+                          <p className="text-xl text-red-800 font-bold line-through">
+                            "{correction.incorrect}"
+                          </p>
+                        </div>
+                        
+                        {/* Arrow */}
+                        <div className="flex justify-center">
+                          <div className="bg-blue-100 p-3 rounded-full">
+                            <ArrowRight className="h-6 w-6 text-blue-600" />
+                          </div>
+                        </div>
+                        
+                        {/* Correct Text */}
+                        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                            <span className="text-sm font-semibold text-green-700">सही</span>
+                          </div>
+                          <p className="text-xl text-green-800 font-bold">
+                            "{correction.correct}"
+                          </p>
+                        </div>
+                        
+                        {/* Reason */}
+                        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                          <h4 className="text-sm font-semibold text-blue-700 mb-2">क्यों सुधार की आवश्यकता:</h4>
+                          <p className="text-blue-800 leading-relaxed">
+                            {correction.reason}
+                          </p>
                         </div>
                       </div>
-                      
-                      {/* Correct Text */}
-                      <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-sm font-medium text-green-700">सही</span>
-                        </div>
-                        <p className="text-lg text-green-800 font-semibold">
-                          "{correction.correct}"
-                        </p>
-                      </div>
-                      
-                      {/* Reason */}
-                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                        <h4 className="text-sm font-medium text-blue-700 mb-2">क्यों सुधार की आवश्यकता:</h4>
-                        <p className="text-blue-800 text-sm leading-relaxed">
-                          {correction.reason}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </div>
         )}
