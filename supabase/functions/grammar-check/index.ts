@@ -28,10 +28,17 @@ serve(async (req) => {
       );
     }
 
-    // Create instruction set for AI based on word replacements
-    const wordReplacementInstructions = wordReplacements
-      .map(({ original, replacement }) => `"${original}" को "${replacement}" से बदलें`)
-      .join(', ');
+    // Apply word replacements first
+    let preprocessedText = inputText;
+    if (wordReplacements && Array.isArray(wordReplacements)) {
+      wordReplacements.forEach(({ original, replacement }) => {
+        const regex = new RegExp(original, 'g');
+        preprocessedText = preprocessedText.replace(regex, replacement);
+      });
+    }
+
+    console.log('Original text:', inputText);
+    console.log('After word replacements:', preprocessedText);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -44,25 +51,44 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors, punctuation mistakes, sentence structure issues, and word choice problems in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
+            content: `आप एक हिंदी व्याकरण सुधार विशेषज्ञ हैं। निम्नलिखित कार्य करें:
+
+1. दिए गए हिंदी टेक्स्ट में व्याकरण की त्रुटियों को सुधारें
+2. वर्तनी की गलतियों को ठीक करें
+3. विराम चिह्न की समस्याओं को हल करें
+4. वाक्य संरचना को बेहतर बनाएं
+5. शब्द चयन में सुधार करें
+
+महत्वपूर्ण नियम:
+- केवल सुधारा गया टेक्स्ट वापस करें, कोई अतिरिक्त स्पष्टीकरण नहीं
+- मूल अर्थ और शैली को बनाए रखें
+- टेक्स्ट की संरचना और पैराग्राफ को बनाए रखें
+- जरूरत के अनुसार उचित विराम चिह्न जोड़ें`
           },
           {
             role: 'user',
-            content: `कृपया इस हिंदी टेक्स्ट में सभी व्याकरण की त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं और वाक्य संरचना की त्रुटियों को सुधारें। दिए गए शब्द प्रतिस्थापन नियमों का पूर्ण पालन करें: "${inputText}"`
+            content: `इस हिंदी टेक्स्ट को सुधारें:\n\n${preprocessedText}`
           }
         ],
-        max_tokens: 1000,
-        temperature: 0.3
+        max_tokens: 2000,
+        temperature: 0.1,
+        top_p: 0.9
       })
     });
 
     if (!response.ok) {
-      console.error('OpenAI API error:', await response.text());
-      throw new Error('OpenAI API request failed');
+      const errorText = await response.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API request failed: ${response.status}`);
     }
 
     const data = await response.json();
-    const correctedText = data.choices[0].message.content.trim();
+    let correctedText = data.choices[0].message.content.trim();
+
+    // Remove any quotation marks that might have been added by the AI
+    correctedText = correctedText.replace(/^["']|["']$/g, '');
+
+    console.log('AI corrected text:', correctedText);
 
     return new Response(
       JSON.stringify({ correctedText }), 
@@ -74,7 +100,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in grammar-check function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }), 
+      JSON.stringify({ error: `Grammar correction failed: ${error.message}` }), 
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

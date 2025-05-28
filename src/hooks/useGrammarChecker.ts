@@ -21,53 +21,69 @@ export const useGrammarChecker = () => {
     const { appliedCorrections } = applyWordReplacements(original);
     foundCorrections.push(...appliedCorrections);
 
-    // Split texts into words for comparison
-    const originalWords = original.toLowerCase().split(/\s+/);
-    const correctedWords = corrected.toLowerCase().split(/\s+/);
+    // Split texts into sentences for better comparison
+    const originalSentences = original.split(/[।\.\!\?]+/).filter(s => s.trim());
+    const correctedSentences = corrected.split(/[।\.\!\?]+/).filter(s => s.trim());
 
-    // Find differences between original and corrected text
-    const minLength = Math.min(originalWords.length, correctedWords.length);
-    for (let i = 0; i < minLength; i++) {
-      if (originalWords[i] !== correctedWords[i]) {
+    // Compare words across the entire text
+    const originalWords = original.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+    const correctedWords = corrected.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+
+    let originalIndex = 0;
+    let correctedIndex = 0;
+
+    while (originalIndex < originalWords.length && correctedIndex < correctedWords.length) {
+      const originalWord = originalWords[originalIndex].replace(/[।\.\!\?,;:]/g, '');
+      const correctedWord = correctedWords[correctedIndex].replace(/[।\.\!\?,;:]/g, '');
+
+      if (originalWord !== correctedWord) {
         // Skip if already covered by word replacements
         const alreadyCovered = foundCorrections.some(c => 
-          originalWords[i].includes(c.incorrect.toLowerCase()) || 
-          correctedWords[i].includes(c.correct.toLowerCase())
+          originalWord.includes(c.incorrect.toLowerCase()) || 
+          correctedWord.includes(c.correct.toLowerCase())
         );
-        if (!alreadyCovered) {
+        
+        if (!alreadyCovered && originalWord.length > 0 && correctedWord.length > 0) {
           foundCorrections.push({
-            incorrect: originalWords[i],
-            correct: correctedWords[i],
-            reason: `व्याकरण सुधार: "${originalWords[i]}" को "${correctedWords[i]}" से बदला गया`,
+            incorrect: originalWord,
+            correct: correctedWord,
+            reason: `व्याकरण सुधार: "${originalWord}" को "${correctedWord}" से बदला गया`,
             type: 'grammar'
           });
         }
       }
+      originalIndex++;
+      correctedIndex++;
     }
 
     // Check for additional words in corrected text
-    if (correctedWords.length > originalWords.length) {
-      for (let i = minLength; i < correctedWords.length; i++) {
+    while (correctedIndex < correctedWords.length) {
+      const correctedWord = correctedWords[correctedIndex].replace(/[।\.\!\?,;:]/g, '');
+      if (correctedWord.length > 0) {
         foundCorrections.push({
           incorrect: '[अनुपस्थित]',
-          correct: correctedWords[i],
+          correct: correctedWord,
           reason: 'वाक्य पूर्णता के लिए शब्द जोड़ा गया',
           type: 'syntax'
         });
       }
+      correctedIndex++;
     }
 
     // Check for removed words
-    if (originalWords.length > correctedWords.length) {
-      for (let i = minLength; i < originalWords.length; i++) {
+    while (originalIndex < originalWords.length) {
+      const originalWord = originalWords[originalIndex].replace(/[।\.\!\?,;:]/g, '');
+      if (originalWord.length > 0) {
         foundCorrections.push({
-          incorrect: originalWords[i],
+          incorrect: originalWord,
           correct: '[हटाया गया]',
           reason: 'अनावश्यक शब्द हटाया गया',
           type: 'syntax'
         });
       }
+      originalIndex++;
     }
+
     return foundCorrections;
   };
 
@@ -79,8 +95,9 @@ export const useGrammarChecker = () => {
     const appliedCorrections: Correction[] = [];
     
     wordReplacements.forEach(({ original, replacement }) => {
-      if (correctedText.includes(original)) {
-        correctedText = correctedText.replace(new RegExp(original, 'g'), replacement);
+      const regex = new RegExp(original, 'g');
+      if (regex.test(correctedText)) {
+        correctedText = correctedText.replace(regex, replacement);
         appliedCorrections.push({
           incorrect: original,
           correct: replacement,
@@ -101,6 +118,8 @@ export const useGrammarChecker = () => {
 
     setIsLoading(true);
     setProgress(0);
+    setCorrectedText('');
+    setCorrections([]);
 
     // Simulate progress
     const progressInterval = setInterval(() => {
@@ -114,6 +133,8 @@ export const useGrammarChecker = () => {
     }, 200);
 
     try {
+      console.log('Sending text for correction:', inputText);
+      
       const { data, error } = await supabase.functions.invoke('grammar-check', {
         body: {
           inputText,
@@ -123,18 +144,25 @@ export const useGrammarChecker = () => {
 
       if (error) {
         console.error('Edge function error:', error);
-        throw new Error('Grammar correction failed');
+        throw new Error(`Grammar correction failed: ${error.message}`);
+      }
+
+      if (!data || !data.correctedText) {
+        throw new Error('No corrected text received from the API');
       }
 
       const aiCorrected = data.correctedText;
+      console.log('Received corrected text:', aiCorrected);
+      
       setProgress(100);
       setCorrectedText(aiCorrected);
 
       // Extract all corrections from the comparison
       const allCorrections = extractCorrectionsFromResponse(inputText, aiCorrected);
       setCorrections(allCorrections);
-      setIsLoading(false);
+      
       clearInterval(progressInterval);
+      setIsLoading(false);
       
       // Track usage after successful correction
       await trackUsage('grammar_check');
@@ -145,7 +173,7 @@ export const useGrammarChecker = () => {
       setIsLoading(false);
       setProgress(0);
       clearInterval(progressInterval);
-      toast.error("कुछ गलत हुआ है। कृपया फिर से कोशिश करें।");
+      toast.error(`त्रुटि: ${error.message || "कुछ गलत हुआ है। कृपया फिर से कोशिश करें।"}`);
     }
   };
 
