@@ -7,12 +7,17 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.j
 
 export const extractTextFromPDF = async (file: File): Promise<string> => {
   try {
+    console.log('Starting PDF text extraction for file:', file.name);
     const arrayBuffer = await file.arrayBuffer();
+    console.log('File converted to array buffer, size:', arrayBuffer.byteLength);
+    
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    console.log('PDF loaded, number of pages:', pdf.numPages);
     
     let fullText = '';
     
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      console.log(`Processing page ${pageNum}/${pdf.numPages}`);
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
       
@@ -21,13 +26,15 @@ export const extractTextFromPDF = async (file: File): Promise<string> => {
         .map((item: any) => item.str)
         .join(' ');
       
+      console.log(`Page ${pageNum} text length:`, pageText.length);
       fullText += pageText + '\n\n';
     }
     
+    console.log('Total extracted text length:', fullText.length);
     return fullText.trim();
   } catch (error) {
     console.error('Error extracting text from PDF:', error);
-    throw new Error('Failed to extract text from PDF. Please ensure the PDF contains readable text.');
+    throw new Error('PDF से टेक्स्ट निकालने में त्रुटि हुई। कृपया सुनिश्चित करें कि PDF में पठनीय टेक्स्ट है।');
   }
 };
 
@@ -37,6 +44,7 @@ export const generateCorrectedPDF = async (
   filename: string
 ): Promise<Blob> => {
   try {
+    console.log('Generating corrected PDF...');
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -54,6 +62,7 @@ export const generateCorrectedPDF = async (
     
     // Split text into lines that fit the page width
     const lines = doc.splitTextToSize(correctedText, maxWidth);
+    console.log('Text split into', lines.length, 'lines');
     
     let yPosition = margin;
     const lineHeight = 7;
@@ -76,10 +85,11 @@ export const generateCorrectedPDF = async (
       yPosition += lineHeight;
     }
     
+    console.log('PDF generation completed');
     return doc.output('blob');
   } catch (error) {
     console.error('Error generating PDF:', error);
-    throw new Error('Failed to generate corrected PDF');
+    throw new Error('सुधारी गई PDF बनाने में त्रुटि हुई');
   }
 };
 

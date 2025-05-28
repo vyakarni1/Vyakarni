@@ -57,7 +57,9 @@ export const usePDFProcessor = () => {
         message: 'PDF से टेक्स्ट निकाला जा रहा है...'
       });
 
+      console.log('Starting PDF text extraction...');
       const extractedText = await extractTextFromPDF(pdfFile.file);
+      console.log('Extracted text:', extractedText.substring(0, 200) + '...');
       
       if (!extractedText.trim()) {
         throw new Error('PDF में कोई पठनीय टेक्स्ट नहीं मिला। कृपया सुनिश्चित करें कि PDF में टेक्स्ट है, न कि केवल इमेज।');
@@ -70,6 +72,7 @@ export const usePDFProcessor = () => {
         message: 'व्याकरण सुधार हो रहा है...'
       });
 
+      console.log('Sending text to grammar correction API...');
       const { data, error } = await supabase.functions.invoke('pdf-grammar-check', {
         body: {
           textContent: extractedText,
@@ -83,8 +86,11 @@ export const usePDFProcessor = () => {
       }
 
       if (!data || !data.correctedText) {
+        console.error('No corrected text received:', data);
         throw new Error('सुधारा गया टेक्स्ट प्राप्त नहीं हुआ');
       }
+
+      console.log('Received corrected text:', data.correctedText.substring(0, 200) + '...');
 
       // Step 3: Generate new PDF
       setProcessingStatus({
