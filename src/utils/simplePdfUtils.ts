@@ -23,8 +23,7 @@ export const extractTextFromPDFSimple = async (file: File): Promise<string> => {
           
           console.log('PDF converted to base64, length:', base64.length);
           
-          // For now, we'll send the base64 to our edge function to handle extraction
-          // This is a simpler approach that doesn't require client-side PDF parsing
+          // Return the base64 string - the edge function will handle text extraction
           resolve(base64);
         } catch (error) {
           console.error('Error processing PDF:', error);

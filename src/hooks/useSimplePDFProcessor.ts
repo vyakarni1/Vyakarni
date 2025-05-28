@@ -34,9 +34,9 @@ export const useSimplePDFProcessor = () => {
     });
 
     setProcessingStatus({
-      status: 'uploading',
-      progress: 100,
-      message: 'PDF अपलोड हो गई'
+      status: 'idle',
+      progress: 0,
+      message: 'PDF अपलोड हो गई - प्रक्रिया शुरू करने के लिए तैयार'
     });
 
     toast.success('PDF सफलतापूर्वक अपलोड हुई!');
@@ -63,7 +63,7 @@ export const useSimplePDFProcessor = () => {
       setProcessingStatus({
         status: 'correcting',
         progress: 50,
-        message: 'PDF से टेक्स्ट निकालकर व्याकरण सुधार हो रहा है...'
+        message: 'व्याकरण सुधार हो रहा है...'
       });
 
       console.log('Sending PDF to processing API...');
