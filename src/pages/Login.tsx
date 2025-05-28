@@ -43,7 +43,10 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-6">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            व्याकरणी
+          </div>
+          <CardTitle className="text-xl">
             लॉगिन करें
           </CardTitle>
           <p className="text-gray-600">अपने खाते में प्रवेश करें</p>

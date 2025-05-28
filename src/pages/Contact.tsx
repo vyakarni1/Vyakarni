@@ -42,7 +42,7 @@ const Contact = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              हिंदी व्याकरण सुधारक
+              व्याकरणी
             </Link>
             <div className="space-x-4">
               <Link to="/login">
@@ -154,7 +154,7 @@ const Contact = () => {
       <footer className="bg-gray-900 text-white py-12 mt-16">
         <div className="container mx-auto px-6 text-center">
           <div className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            हिंदी व्याकरण सुधारक
+            व्याकरणी
           </div>
           <p className="text-gray-400 mb-4">AI की शक्ति से हिंदी भाषा को बेहतर बनाएं</p>
           <div className="space-x-6">
