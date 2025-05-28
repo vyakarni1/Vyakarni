@@ -4,7 +4,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle } from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 interface Correction {
@@ -338,12 +346,61 @@ const GrammarChecker = () => {
             <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-2xl font-bold">सुधारा गया टेक्स्ट</CardTitle>
-                {correctedText && (
-                  <Badge variant="secondary" className="bg-white/20 text-white border-0">
-                    <FileText className="h-4 w-4 mr-1" />
-                    {correctedText.trim().split(/\s+/).length} शब्द
-                  </Badge>
-                )}
+                <div className="flex items-center space-x-3">
+                  {correctedText && (
+                    <Badge variant="secondary" className="bg-white/20 text-white border-0">
+                      <FileText className="h-4 w-4 mr-1" />
+                      {correctedText.trim().split(/\s+/).length} शब्द
+                    </Badge>
+                  )}
+                  {corrections.length > 0 && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="secondary" size="sm" className="bg-white/20 text-white border-0 hover:bg-white/30">
+                          <AlertCircle className="h-4 w-4 mr-2" />
+                          {corrections.length} सुधार
+                          <ChevronDown className="h-4 w-4 ml-2" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-80 max-h-96 overflow-y-auto bg-white border border-gray-200 shadow-lg">
+                        <DropdownMenuLabel className="text-sm font-semibold text-gray-700 px-3 py-2">
+                          सभी सुधार ({corrections.length})
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {corrections.map((correction, index) => (
+                          <DropdownMenuItem key={index} className="p-0 focus:bg-gray-50">
+                            <div className="w-full p-3 border-b border-gray-100 last:border-b-0">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                                    {index + 1}
+                                  </span>
+                                  <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs`}>
+                                    {getCorrectionTypeLabel(correction.type)}
+                                  </Badge>
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <div className="flex items-center space-x-2">
+                                  <X className="h-3 w-3 text-red-500" />
+                                  <span className="text-red-600 text-sm line-through">"{correction.incorrect}"</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                  <span className="text-green-600 text-sm font-medium">"{correction.correct}"</span>
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1 ml-5">
+                                  {correction.reason}
+                                </p>
+                              </div>
+                            </div>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent className="p-6">
@@ -389,80 +446,6 @@ const GrammarChecker = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Complete Corrections List */}
-        {corrections.length > 0 && (
-          <div className="mt-12">
-            <Card className="shadow-lg border-2 border-blue-200 rounded-2xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <AlertCircle className="h-6 w-6" />
-                    <CardTitle className="text-xl font-bold">पूर्ण सुधार सूची ({corrections.length})</CardTitle>
-                  </div>
-                  <Badge className="bg-white/20 text-white border-0">
-                    <BookOpen className="h-4 w-4 mr-1" />
-                    सभी सुधार
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid gap-4">
-                  {corrections.map((correction, index) => (
-                    <div key={index} className="border border-gray-200 rounded-xl p-4 bg-white hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
-                            {index + 1}
-                          </div>
-                          <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs`}>
-                            {getCorrectionTypeLabel(correction.type)}
-                          </Badge>
-                        </div>
-                      </div>
-                      
-                      <div className="grid md:grid-cols-3 gap-4 items-center">
-                        {/* Incorrect */}
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <X className="h-4 w-4 text-red-500" />
-                            <span className="text-xs font-medium text-red-700">गलत</span>
-                          </div>
-                          <p className="text-red-800 font-semibold line-through text-sm">
-                            "{correction.incorrect}"
-                          </p>
-                        </div>
-                        
-                        {/* Arrow */}
-                        <div className="flex justify-center">
-                          <ArrowRight className="h-5 w-5 text-blue-600" />
-                        </div>
-                        
-                        {/* Correct */}
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                            <span className="text-xs font-medium text-green-700">सही</span>
-                          </div>
-                          <p className="text-green-800 font-semibold text-sm">
-                            "{correction.correct}"
-                          </p>
-                        </div>
-                      </div>
-                      
-                      {/* Reason */}
-                      <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                        <p className="text-blue-800 text-sm leading-relaxed">
-                          <span className="font-medium">कारण:</span> {correction.reason}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
         {/* Features Section */}
         <div className="grid md:grid-cols-3 gap-6 mt-16">
