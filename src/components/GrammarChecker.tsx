@@ -7,18 +7,23 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
+import { useUsageStats } from "@/hooks/useUsageStats";
+
 interface Correction {
   incorrect: string;
   correct: string;
   reason: string;
   type: 'grammar' | 'spelling' | 'punctuation' | 'syntax';
 }
+
 const GrammarChecker = () => {
   const [inputText, setInputText] = useState('');
   const [correctedText, setCorrectedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
+  const { trackUsage } = useUsageStats();
+  
   const OPENAI_API_KEY = "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";
 
   // Comprehensive word replacement instruction set
@@ -324,6 +329,10 @@ const GrammarChecker = () => {
       setCorrections(allCorrections);
       setIsLoading(false);
       clearInterval(progressInterval);
+      
+      // Track usage after successful correction
+      await trackUsage('grammar_check');
+      
       toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error correcting grammar:', error);
