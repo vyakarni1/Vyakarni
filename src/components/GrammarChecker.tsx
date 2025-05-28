@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -5,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown, Sparkles, Target, Shield } from "lucide-react";
+import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown, Sparkles, Target, Shield, Key } from "lucide-react";
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 
@@ -23,8 +24,6 @@ const GrammarChecker = () => {
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
   const { trackUsage } = useUsageStats();
-  
-  const OPENAI_API_KEY = "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";
 
   // Comprehensive word replacement instruction set
   const wordReplacements = [{
@@ -193,6 +192,7 @@ const GrammarChecker = () => {
     original: 'करवाएगा',
     replacement: 'करवायेगा'
   }];
+
   const extractCorrectionsFromResponse = (original: string, corrected: string): Correction[] => {
     const foundCorrections: Correction[] = [];
 
@@ -248,6 +248,7 @@ const GrammarChecker = () => {
     }
     return foundCorrections;
   };
+
   const applyWordReplacements = (text: string): {
     correctedText: string;
     appliedCorrections: Correction[];
@@ -273,11 +274,16 @@ const GrammarChecker = () => {
       appliedCorrections
     };
   };
+
   const correctGrammar = async () => {
     if (!inputText.trim()) {
       toast.error("कृपया पहले कुछ टेक्स्ट लिखें");
       return;
     }
+
+    // For now, let's use only the word replacement functionality until API key is configured
+    console.log("Starting grammar correction with word replacements only");
+    
     setIsLoading(true);
     setProgress(0);
 
@@ -291,73 +297,51 @@ const GrammarChecker = () => {
         return prev + 10;
       });
     }, 200);
-    try {
-      // Create instruction set for AI based on word replacements
-      const wordReplacementInstructions = wordReplacements
-        .map(({ original, replacement }) => `"${original}" को "${replacement}" से बदलें`)
-        .join(', ');
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4.5-preview-2025-02-27',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors, punctuation mistakes, sentence structure issues, and word choice problems in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
-            },
-            {
-              role: 'user',
-              content: `कृपया इस हिंदी टेक्स्ट में सभी व्याकरण की त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं और वाक्य संरचना की त्रुटियों को सुधारें। दिए गए शब्द प्रतिस्थापन नियमों का पूर्ण पालन करें: "${inputText}"`
-            }
-          ],
-          max_tokens: 1000,
-          temperature: 0.3
-        })
-      });
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-      const data = await response.json();
-      const aiCorrected = data.choices[0].message.content.trim();
-      setProgress(100);
-      setCorrectedText(aiCorrected);
 
-      // Extract all corrections from the comparison
-      const allCorrections = extractCorrectionsFromResponse(inputText, aiCorrected);
-      setCorrections(allCorrections);
+    try {
+      // Apply word replacements
+      const { correctedText: wordCorrectedText, appliedCorrections } = applyWordReplacements(inputText);
+      
+      setProgress(100);
+      setCorrectedText(wordCorrectedText);
+      setCorrections(appliedCorrections);
       setIsLoading(false);
       clearInterval(progressInterval);
       
       // Track usage after successful correction
       await trackUsage('grammar_check');
       
-      toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
+      if (appliedCorrections.length > 0) {
+        toast.success(`व्याकरण सुधार पूरा हो गया! ${appliedCorrections.length} सुधार मिले।`);
+      } else {
+        toast.success("आपका टेक्स्ट पहले से ही सही है!");
+      }
     } catch (error) {
-      console.error('Error correcting grammar:', error);
+      console.error('Error in word replacement:', error);
       setIsLoading(false);
       setProgress(0);
       clearInterval(progressInterval);
       toast.error("कुछ गलत हुआ है। कृपया फिर से कोशिश करें।");
     }
   };
+
   const resetText = () => {
     setInputText('');
     setCorrectedText('');
     setProgress(0);
     setCorrections([]);
   };
+
   const copyToClipboard = async () => {
     if (correctedText) {
       await navigator.clipboard.writeText(correctedText);
       toast.success("टेक्स्ट कॉपी किया गया!");
     }
   };
+
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
   const charCount = inputText.length;
+
   const getCorrectionTypeColor = (type: string) => {
     switch (type) {
       case 'grammar':
@@ -372,6 +356,7 @@ const GrammarChecker = () => {
         return 'bg-gray-50 text-gray-700 border-gray-200';
     }
   };
+
   const getCorrectionTypeLabel = (type: string) => {
     switch (type) {
       case 'grammar':
@@ -386,8 +371,20 @@ const GrammarChecker = () => {
         return 'सुधार';
     }
   };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+      {/* API Key Warning */}
+      <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
+        <div className="flex items-center">
+          <Key className="h-5 w-5 text-amber-400 mr-3" />
+          <div>
+            <p className="text-amber-800 font-medium">सूचना: वर्तमान में केवल बुनियादी शब्द सुधार उपलब्ध है</p>
+            <p className="text-amber-700 text-sm mt-1">पूर्ण व्याकरण सुधार के लिए API कॉन्फ़िगरेशन की आवश्यकता है</p>
+          </div>
+        </div>
+      </div>
+
       {/* Modern Header */}
       <div className="text-center py-20 px-6">
         <div className="inline-flex items-center gap-3 mb-6">
