@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown, Sparkles, Target, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Correction {
   incorrect: string;
@@ -27,172 +28,175 @@ const GrammarChecker = () => {
   const OPENAI_API_KEY = "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";
 
   // Comprehensive word replacement instruction set
-  const wordReplacements = [{
-    original: 'गए',
-    replacement: 'गये'
-  }, {
-    original: 'आए',
-    replacement: 'आये'
-  }, {
-    original: 'हुए',
-    replacement: 'हुये'
-  }, {
-    original: 'शभकामनाएं',
-    replacement: 'शभकामनायें'
-  }, {
-    original: 'शभकामनाएं',
-    replacement: 'शभकामनायें'
-  }, {
-    original: 'कामनाएं',
-    replacement: 'कामनायें'
-  }, {
-    original: 'कामनाएं',
-    replacement: 'कामनायें'
-  }, {
-    original: 'भाए',
-    replacement: 'भाये'
-  }, {
-    original: 'चलाए',
-    replacement: 'चलाये'
-  }, {
-    original: 'समझाए',
-    replacement: 'समझाये'
-  }, {
-    original: 'समझाएं',
-    replacement: 'समझायें'
-  }, {
-    original: 'समझाएं',
-    replacement: 'समझायें'
-  }, {
-    original: 'समझाए',
-    replacement: 'समझाये'
-  }, {
-    original: 'किए',
-    replacement: 'किये'
-  }, {
-    original: 'लिए',
-    replacement: 'लिये'
-  }, {
-    original: 'सराए',
-    replacement: 'सराये'
-  }, {
-    original: 'खाए',
-    replacement: 'खाये'
-  }, {
-    original: 'निभाए',
-    replacement: 'निभाये'
-  }, {
-    original: 'कसमसाए',
-    replacement: 'कसमसाये'
-  }, {
-    original: 'झरझराए',
-    replacement: 'झरझराये'
-  }, {
-    original: 'बरसाए',
-    replacement: 'बरसाये'
-  }, {
-    original: 'पहुंचाए',
-    replacement: 'पहुंचाये'
-  }, {
-    original: 'पहुंचाए',
-    replacement: 'पहुंचाये'
-  }, {
-    original: 'दिलाए',
-    replacement: 'दिलाये'
-  }, {
-    original: 'भिजवाए',
-    replacement: 'भिजवाये'
-  }, {
-    original: 'गड़बड़ाए',
-    replacement: 'गड़बड़ाये'
-  }, {
-    original: 'पहुंचवाए',
-    replacement: 'पहुंचवाये'
-  }, {
-    original: 'कहिए',
-    replacement: 'कहिये'
-  }, {
-    original: 'गई',
-    replacement: 'गयी'
-  }, {
-    original: 'आई',
-    replacement: 'आयी'
-  }, {
-    original: 'नई',
-    replacement: 'नयी'
-  }, {
-    original: 'पहुंचाई',
-    replacement: 'पहुंचायी'
-  }, {
-    original: 'पहुंचाई',
-    replacement: 'पहुंचायी'
-  }, {
-    original: 'पहुंचवाई',
-    replacement: 'पहुंचवायी'
-  }, {
-    original: 'पहुंचवाई',
-    replacement: 'पहुंचवायी'
-  }, {
-    original: 'छटपटाए',
-    replacement: 'छटपटाये'
-  }, {
-    original: 'पटपटाए',
-    replacement: 'पटपटाये'
-  }, {
-    original: 'पटपटाई',
-    replacement: 'पटपटायी'
-  }, {
-    original: 'उलझाए',
-    replacement: 'उलझाये'
-  }, {
-    original: 'कराए',
-    replacement: 'कराये'
-  }, {
-    original: 'करवाए',
-    replacement: 'करवाये'
-  }, {
-    original: 'दिखाए',
-    replacement: 'दिखाये'
-  }, {
-    original: 'दिखलाए',
-    replacement: 'दिखलाये'
-  }, {
-    original: 'बड़बड़ाए',
-    replacement: 'बड़बड़ाये'
-  }, {
-    original: 'पलटाए',
-    replacement: 'पलटाये'
-  }, {
-    original: 'परम्पराएं',
-    replacement: 'परम्परायें'
-  }, {
-    original: 'परम्पराएं',
-    replacement: 'परम्परायें'
-  }, {
-    original: 'परंपराएं',
-    replacement: 'परंपरायें'
-  }, {
-    original: 'परंपराएं',
-    replacement: 'परंपरायें'
-  }, {
-    original: 'समझिए',
-    replacement: 'समझिये'
-  }, {
-    original: 'समझाइए',
-    replacement: 'समझाइये'
-  }, {
-    original: 'बरबतापूर्ण',
-    replacement: 'बरबरतापूर्ण'
-  }, {
-    original: 'बर्बतापूर्ण',
-    replacement: 'बर्बतापूर्ण'
-  }, {
-    original: 'बरबरतापूर्ण',
-    replacement: 'बरबरतापूर्ण'
-  }, {
-    original: 'करवाएगा',
-    replacement: 'करवायेगा'
-  }];
+  const wordReplacements = [
+    {
+      original: 'गए',
+      replacement: 'गये'
+    }, {
+      original: 'आए',
+      replacement: 'आये'
+    }, {
+      original: 'हुए',
+      replacement: 'हुये'
+    }, {
+      original: 'शभकामनाएं',
+      replacement: 'शभकामनायें'
+    }, {
+      original: 'शभकामनाएं',
+      replacement: 'शभकामनायें'
+    }, {
+      original: 'कामनाएं',
+      replacement: 'कामनायें'
+    }, {
+      original: 'कामनाएं',
+      replacement: 'कामनायें'
+    }, {
+      original: 'भाए',
+      replacement: 'भाये'
+    }, {
+      original: 'चलाए',
+      replacement: 'चलाये'
+    }, {
+      original: 'समझाए',
+      replacement: 'समझाये'
+    }, {
+      original: 'समझाएं',
+      replacement: 'समझायें'
+    }, {
+      original: 'समझाएं',
+      replacement: 'समझायें'
+    }, {
+      original: 'समझाए',
+      replacement: 'समझाये'
+    }, {
+      original: 'किए',
+      replacement: 'किये'
+    }, {
+      original: 'लिए',
+      replacement: 'लिये'
+    }, {
+      original: 'सराए',
+      replacement: 'सराये'
+    }, {
+      original: 'खाए',
+      replacement: 'खाये'
+    }, {
+      original: 'निभाए',
+      replacement: 'निभाये'
+    }, {
+      original: 'कसमसाए',
+      replacement: 'कसमसाये'
+    }, {
+      original: 'झरझराए',
+      replacement: 'झरझराये'
+    }, {
+      original: 'बरसाए',
+      replacement: 'बरसाये'
+    }, {
+      original: 'पहुंचाए',
+      replacement: 'पहुंचाये'
+    }, {
+      original: 'पहुंचाए',
+      replacement: 'पहुंचाये'
+    }, {
+      original: 'दिलाए',
+      replacement: 'दिलाये'
+    }, {
+      original: 'भिजवाए',
+      replacement: 'भिजवाये'
+    }, {
+      original: 'गड़बड़ाए',
+      replacement: 'गड़बड़ाये'
+    }, {
+      original: 'पहुंचवाए',
+      replacement: 'पहुंचवाये'
+    }, {
+      original: 'कहिए',
+      replacement: 'कहिये'
+    }, {
+      original: 'गई',
+      replacement: 'गयी'
+    }, {
+      original: 'आई',
+      replacement: 'आयी'
+    }, {
+      original: 'नई',
+      replacement: 'नयी'
+    }, {
+      original: 'पहुंचाई',
+      replacement: 'पहुंचायी'
+    }, {
+      original: 'पहुंचाई',
+      replacement: 'पहुंचायी'
+    }, {
+      original: 'पहुंचवाई',
+      replacement: 'पहुंचवायी'
+    }, {
+      original: 'पहुंचवाई',
+      replacement: 'पहुंचवायी'
+    }, {
+      original: 'छटपटाए',
+      replacement: 'छटपटाये'
+    }, {
+      original: 'पटपटाए',
+      replacement: 'पटपटाये'
+    }, {
+      original: 'पटपटाई',
+      replacement: 'पटपटायी'
+    }, {
+      original: 'उलझाए',
+      replacement: 'उलझाये'
+    }, {
+      original: 'कराए',
+      replacement: 'कराये'
+    }, {
+      original: 'करवाए',
+      replacement: 'करवाये'
+    }, {
+      original: 'दिखाए',
+      replacement: 'दिखाये'
+    }, {
+      original: 'दिखलाए',
+      replacement: 'दिखलाये'
+    }, {
+      original: 'बड़बड़ाए',
+      replacement: 'बड़बड़ाये'
+    }, {
+      original: 'पलटाए',
+      replacement: 'पलटाये'
+    }, {
+      original: 'परम्पराएं',
+      replacement: 'परम्परायें'
+    }, {
+      original: 'परम्पराएं',
+      replacement: 'परम्परायें'
+    }, {
+      original: 'परंपराएं',
+      replacement: 'परंपरायें'
+    }, {
+      original: 'परंपराएं',
+      replacement: 'परंपरायें'
+    }, {
+      original: 'समझिए',
+      replacement: 'समझिये'
+    }, {
+      original: 'समझाइए',
+      replacement: 'समझाइये'
+    }, {
+      original: 'बरबतापूर्ण',
+      replacement: 'बरबरतापूर्ण'
+    }, {
+      original: 'बर्बतापूर्ण',
+      replacement: 'बर्बतापूर्ण'
+    }, {
+      original: 'बरबरतापूर्ण',
+      replacement: 'बरबरतापूर्ण'
+    }, {
+      original: 'करवाएगा',
+      replacement: 'करवायेगा'
+    }
+  ];
+
   const extractCorrectionsFromResponse = (original: string, corrected: string): Correction[] => {
     const foundCorrections: Correction[] = [];
 
@@ -292,37 +296,19 @@ const GrammarChecker = () => {
       });
     }, 200);
     try {
-      // Create instruction set for AI based on word replacements
-      const wordReplacementInstructions = wordReplacements
-        .map(({ original, replacement }) => `"${original}" को "${replacement}" से बदलें`)
-        .join(', ');
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4.5-preview-2025-02-27',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors, punctuation mistakes, sentence structure issues, and word choice problems in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
-            },
-            {
-              role: 'user',
-              content: `कृपया इस हिंदी टेक्स्ट में सभी व्याकरण की त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं और वाक्य संरचना की त्रुटियों को सुधारें। दिए गए शब्द प्रतिस्थापन नियमों का पूर्ण पालन करें: "${inputText}"`
-            }
-          ],
-          max_tokens: 1000,
-          temperature: 0.3
-        })
+      const { data, error } = await supabase.functions.invoke('grammar-check', {
+        body: {
+          inputText,
+          wordReplacements
+        }
       });
-      if (!response.ok) {
-        throw new Error('API request failed');
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error('Grammar correction failed');
       }
-      const data = await response.json();
-      const aiCorrected = data.choices[0].message.content.trim();
+
+      const aiCorrected = data.correctedText;
       setProgress(100);
       setCorrectedText(aiCorrected);
 
