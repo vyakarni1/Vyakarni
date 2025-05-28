@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle, X, ExternalLink, Eye, FileText, Star, AlertCircle, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { useUsageStats } from "@/hooks/useUsageStats";
 
 interface Suggestion {
   id: string;
@@ -81,7 +81,6 @@ const TextEditor = () => {
   const [overallScore, setOverallScore] = useState(72);
   const [processedSuggestions, setProcessedSuggestions] = useState(0);
   const editorRef = useRef<HTMLDivElement>(null);
-  const { trackUsage } = useUsageStats();
 
   const totalSuggestions = suggestions.length + processedSuggestions;
   const progressPercentage = totalSuggestions > 0 ? (processedSuggestions / totalSuggestions) * 100 : 0;
@@ -96,7 +95,7 @@ const TextEditor = () => {
     }
   };
 
-  const acceptSuggestion = async (suggestionId: string) => {
+  const acceptSuggestion = (suggestionId: string) => {
     const suggestion = suggestions.find(s => s.id === suggestionId);
     if (suggestion) {
       const newContent = content.substring(0, suggestion.position.start) + 
@@ -107,10 +106,6 @@ const TextEditor = () => {
       setSuggestions(prev => prev.filter(s => s.id !== suggestionId));
       setProcessedSuggestions(prev => prev + 1);
       setOverallScore(prev => Math.min(prev + 3, 100));
-      
-      // Track usage when a suggestion is accepted
-      await trackUsage('text_correction');
-      
       toast.success("सुझाव स्वीकार किया गया!");
     }
   };
