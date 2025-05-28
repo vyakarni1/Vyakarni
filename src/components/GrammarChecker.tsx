@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -83,6 +82,66 @@ const GrammarChecker = () => {
     { original: 'करवाएगा', replacement: 'करवायेगा' },
   ];
 
+  const extractCorrectionsFromResponse = (original: string, corrected: string): Correction[] => {
+    const foundCorrections: Correction[] = [];
+    
+    // First, add word replacement corrections
+    const { appliedCorrections } = applyWordReplacements(original);
+    foundCorrections.push(...appliedCorrections);
+
+    // Split texts into words for comparison
+    const originalWords = original.toLowerCase().split(/\s+/);
+    const correctedWords = corrected.toLowerCase().split(/\s+/);
+    
+    // Find differences between original and corrected text
+    const minLength = Math.min(originalWords.length, correctedWords.length);
+    
+    for (let i = 0; i < minLength; i++) {
+      if (originalWords[i] !== correctedWords[i]) {
+        // Skip if already covered by word replacements
+        const alreadyCovered = foundCorrections.some(c => 
+          originalWords[i].includes(c.incorrect.toLowerCase()) || 
+          correctedWords[i].includes(c.correct.toLowerCase())
+        );
+        
+        if (!alreadyCovered) {
+          foundCorrections.push({
+            incorrect: originalWords[i],
+            correct: correctedWords[i],
+            reason: `व्याकरण सुधार: "${originalWords[i]}" को "${correctedWords[i]}" से बदला गया`,
+            type: 'grammar'
+          });
+        }
+      }
+    }
+
+    // Check for additional words in corrected text
+    if (correctedWords.length > originalWords.length) {
+      for (let i = minLength; i < correctedWords.length; i++) {
+        foundCorrections.push({
+          incorrect: '[अनुपस्थित]',
+          correct: correctedWords[i],
+          reason: 'वाक्य पूर्णता के लिए शब्द जोड़ा गया',
+          type: 'syntax'
+        });
+      }
+    }
+
+    // Check for removed words
+    if (originalWords.length > correctedWords.length) {
+      for (let i = minLength; i < originalWords.length; i++) {
+        foundCorrections.push({
+          incorrect: originalWords[i],
+          correct: '[हटाया गया]',
+          reason: 'अनावश्यक शब्द हटाया गया',
+          type: 'syntax'
+        });
+      }
+    }
+
+    return foundCorrections;
+  };
+
   const applyWordReplacements = (text: string): { correctedText: string; appliedCorrections: Correction[] } => {
     let correctedText = text;
     const appliedCorrections: Correction[] = [];
@@ -102,54 +161,6 @@ const GrammarChecker = () => {
     return { correctedText, appliedCorrections };
   };
 
-  const findCorrections = (original: string, corrected: string): Correction[] => {
-    // Apply word replacements first
-    const { appliedCorrections } = applyWordReplacements(original);
-    
-    // Additional common Hindi grammar corrections
-    const additionalCorrections = [
-      {
-        incorrect: 'है',
-        correct: 'हैं',
-        reason: 'बहुवचन के लिए "हैं" का प्रयोग करें',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'गलतियाँ',
-        correct: 'गलतियों',
-        reason: 'संज्ञा का सही रूप उपयोग करें',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'बनाती',
-        correct: 'बनाती हैं',
-        reason: 'वाक्य पूर्ण करने के लिए सहायक क्रिया जोड़ें',
-        type: 'syntax' as const
-      },
-      {
-        incorrect: 'जाता',
-        correct: 'जाते हैं',
-        reason: 'बहुवचन और सम्मानसूचक रूप का प्रयोग',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'घर पे',
-        correct: 'घर पर',
-        reason: 'सही संबंधबोधक का प्रयोग',
-        type: 'grammar' as const
-      }
-    ];
-
-    // Check for additional corrections in both texts
-    additionalCorrections.forEach(correction => {
-      if (original.includes(correction.incorrect) && corrected.includes(correction.correct)) {
-        appliedCorrections.push(correction);
-      }
-    });
-
-    return appliedCorrections.slice(0, 8); // Limit to 8 major corrections
-  };
-
   const correctGrammar = async () => {
     if (!inputText.trim()) {
       toast.error("कृपया पहले कुछ टेक्स्ट लिखें");
@@ -158,9 +169,6 @@ const GrammarChecker = () => {
 
     setIsLoading(true);
     setProgress(0);
-    
-    // First apply word replacements
-    const { correctedText: replacementCorrected, appliedCorrections } = applyWordReplacements(inputText);
     
     // Simulate progress
     const progressInterval = setInterval(() => {
@@ -186,15 +194,15 @@ const GrammarChecker = () => {
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: 'gpt-4.5-preview',
+          model: 'gpt-4.5-preview-2025-02-27',
           messages: [
             {
               role: 'system',
-              content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
+              content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors, punctuation mistakes, sentence structure issues, and word choice problems in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
             },
             {
               role: 'user',
-              content: `कृपया इस हिंदी टेक्स्ट में व्याकरण की त्रुटियों को सुधारें और दिए गए शब्द प्रतिस्थापन नियमों का पालन करें: "${inputText}"`
+              content: `कृपया इस हिंदी टेक्स्ट में सभी व्याकरण की त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं और वाक्य संरचना की त्रुटियों को सुधारें। दिए गए शब्द प्रतिस्थापन नियमों का पूर्ण पालन करें: "${inputText}"`
             }
           ],
           max_tokens: 1000,
@@ -212,13 +220,13 @@ const GrammarChecker = () => {
       setProgress(100);
       setCorrectedText(aiCorrected);
       
-      // Find and set corrections (including word replacements and AI corrections)
-      const foundCorrections = findCorrections(inputText, aiCorrected);
-      setCorrections(foundCorrections);
+      // Extract all corrections from the comparison
+      const allCorrections = extractCorrectionsFromResponse(inputText, aiCorrected);
+      setCorrections(allCorrections);
       
       setIsLoading(false);
       clearInterval(progressInterval);
-      toast.success("व्याकरण सुधार पूरा हो गया!");
+      toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
 
     } catch (error) {
       console.error('Error correcting grammar:', error);
@@ -382,7 +390,7 @@ const GrammarChecker = () => {
           </Card>
         </div>
 
-        {/* Compact Corrections Summary */}
+        {/* Complete Corrections List */}
         {corrections.length > 0 && (
           <div className="mt-12">
             <Card className="shadow-lg border-2 border-blue-200 rounded-2xl overflow-hidden">
@@ -390,11 +398,11 @@ const GrammarChecker = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <AlertCircle className="h-6 w-6" />
-                    <CardTitle className="text-xl font-bold">मुख्य सुधार ({corrections.length})</CardTitle>
+                    <CardTitle className="text-xl font-bold">पूर्ण सुधार सूची ({corrections.length})</CardTitle>
                   </div>
                   <Badge className="bg-white/20 text-white border-0">
                     <BookOpen className="h-4 w-4 mr-1" />
-                    विश्लेषण
+                    सभी सुधार
                   </Badge>
                 </div>
               </CardHeader>
@@ -478,8 +486,8 @@ const GrammarChecker = () => {
             <div className="bg-green-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <BookOpen className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3">शिक्षाप्रद विश्लेषण</h3>
-            <p className="text-gray-600">अपनी गलतियों से सीखें</p>
+            <h3 className="text-xl font-bold text-gray-800 mb-3">पूर्ण विश्लेषण</h3>
+            <p className="text-gray-600">सभी सुधारों की विस्तृत सूची</p>
           </Card>
         </div>
       </div>
