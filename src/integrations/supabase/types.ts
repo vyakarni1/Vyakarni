@@ -30,12 +30,41 @@ export type Database = {
         }
         Relationships: []
       }
+      user_usage: {
+        Row: {
+          action_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_stats: {
+        Args: { user_uuid: string }
+        Returns: {
+          total_corrections: number
+          corrections_today: number
+          corrections_this_week: number
+          corrections_this_month: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

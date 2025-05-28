@@ -1,538 +1,253 @@
-import React, { useState } from 'react';
+
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight, BookOpen, AlertCircle, ChevronDown } from "lucide-react";
+import { CheckCircle, X, AlertCircle, FileText, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
-interface Correction {
+import { useUsageStats } from "@/hooks/useUsageStats";
+
+interface Suggestion {
+  id: string;
+  type: 'correctness' | 'clarity' | 'engagement' | 'delivery';
+  category: string;
   incorrect: string;
   correct: string;
-  reason: string;
-  type: 'grammar' | 'spelling' | 'punctuation' | 'syntax';
+  position: { start: number; end: number };
+  description: string;
+  confidence: number;
 }
+
 const GrammarChecker = () => {
-  const [inputText, setInputText] = useState('');
-  const [correctedText, setCorrectedText] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [corrections, setCorrections] = useState<Correction[]>([]);
-  const OPENAI_API_KEY = "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";
+  const { incrementStats } = useUsageStats();
+  const [content, setContent] = useState(`व्याकरण की गलतियाँ और वर्तनी की त्रुटियाँ आपकी विश्वसनीयता को प्रभावित कर सकती हैं। यही बात गलत अल्पविराम और अन्य प्रकार के विराम चिह्नों के लिए भी जाती है। न केवल व्याकरण इन मुद्दों को लाल रंग में रेखांकित करेगा, बल्कि यह आपको वाक्य को सही तरीके से लिखने का तरीका भी दिखाएगा।
 
-  // Comprehensive word replacement instruction set
-  const wordReplacements = [{
-    original: 'गए',
-    replacement: 'गये'
-  }, {
-    original: 'आए',
-    replacement: 'आये'
-  }, {
-    original: 'हुए',
-    replacement: 'हुये'
-  }, {
-    original: 'शभकामनाएं',
-    replacement: 'शभकामनायें'
-  }, {
-    original: 'शभकामनाएं',
-    replacement: 'शभकामनायें'
-  }, {
-    original: 'कामनाएं',
-    replacement: 'कामनायें'
-  }, {
-    original: 'कामनाएं',
-    replacement: 'कामनायें'
-  }, {
-    original: 'भाए',
-    replacement: 'भाये'
-  }, {
-    original: 'चलाए',
-    replacement: 'चलाये'
-  }, {
-    original: 'समझाए',
-    replacement: 'समझाये'
-  }, {
-    original: 'समझाएं',
-    replacement: 'समझायें'
-  }, {
-    original: 'समझाएं',
-    replacement: 'समझायें'
-  }, {
-    original: 'समझाए',
-    replacement: 'समझाये'
-  }, {
-    original: 'किए',
-    replacement: 'किये'
-  }, {
-    original: 'लिए',
-    replacement: 'लिये'
-  }, {
-    original: 'सराए',
-    replacement: 'सराये'
-  }, {
-    original: 'खाए',
-    replacement: 'खाये'
-  }, {
-    original: 'निभाए',
-    replacement: 'निभाये'
-  }, {
-    original: 'कसमसाए',
-    replacement: 'कसमसाये'
-  }, {
-    original: 'झरझराए',
-    replacement: 'झरझराये'
-  }, {
-    original: 'बरसाए',
-    replacement: 'बरसाये'
-  }, {
-    original: 'पहुंचाए',
-    replacement: 'पहुंचाये'
-  }, {
-    original: 'पहुंचाए',
-    replacement: 'पहुंचाये'
-  }, {
-    original: 'दिलाए',
-    replacement: 'दिलाये'
-  }, {
-    original: 'भिजवाए',
-    replacement: 'भिजवाये'
-  }, {
-    original: 'गड़बड़ाए',
-    replacement: 'गड़बड़ाये'
-  }, {
-    original: 'पहुंचवाए',
-    replacement: 'पहुंचवाये'
-  }, {
-    original: 'कहिए',
-    replacement: 'कहिये'
-  }, {
-    original: 'गई',
-    replacement: 'गयी'
-  }, {
-    original: 'आई',
-    replacement: 'आयी'
-  }, {
-    original: 'नई',
-    replacement: 'नयी'
-  }, {
-    original: 'पहुंचाई',
-    replacement: 'पहुंचायी'
-  }, {
-    original: 'पहुंचाई',
-    replacement: 'पहुंचायी'
-  }, {
-    original: 'पहुंचवाई',
-    replacement: 'पहुंचवायी'
-  }, {
-    original: 'पहुंचवाई',
-    replacement: 'पहुंचवायी'
-  }, {
-    original: 'छटपटाए',
-    replacement: 'छटपटाये'
-  }, {
-    original: 'पटपटाए',
-    replacement: 'पटपटाये'
-  }, {
-    original: 'पटपटाई',
-    replacement: 'पटपटायी'
-  }, {
-    original: 'उलझाए',
-    replacement: 'उलझाये'
-  }, {
-    original: 'कराए',
-    replacement: 'कराये'
-  }, {
-    original: 'करवाए',
-    replacement: 'करवाये'
-  }, {
-    original: 'दिखाए',
-    replacement: 'दिखाये'
-  }, {
-    original: 'दिखलाए',
-    replacement: 'दिखलाये'
-  }, {
-    original: 'बड़बड़ाए',
-    replacement: 'बड़बड़ाये'
-  }, {
-    original: 'पलटाए',
-    replacement: 'पलटाये'
-  }, {
-    original: 'परम्पराएं',
-    replacement: 'परम्परायें'
-  }, {
-    original: 'परम्पराएं',
-    replacement: 'परम्परायें'
-  }, {
-    original: 'परंपराएं',
-    replacement: 'परंपरायें'
-  }, {
-    original: 'परंपराएं',
-    replacement: 'परंपरायें'
-  }, {
-    original: 'समझिए',
-    replacement: 'समझिये'
-  }, {
-    original: 'समझाइए',
-    replacement: 'समझाइये'
-  }, {
-    original: 'बरबतापूर्ण',
-    replacement: 'बरबरतापूर्ण'
-  }, {
-    original: 'बर्बतापूर्ण',
-    replacement: 'बर्बतापूर्ण'
-  }, {
-    original: 'बरबरतापूर्ण',
-    replacement: 'बरबरतापूर्ण'
-  }, {
-    original: 'करवाएगा',
-    replacement: 'करवायेगा'
-  }];
-  const extractCorrectionsFromResponse = (original: string, corrected: string): Correction[] => {
-    const foundCorrections: Correction[] = [];
-
-    // First, add word replacement corrections
-    const {
-      appliedCorrections
-    } = applyWordReplacements(original);
-    foundCorrections.push(...appliedCorrections);
-
-    // Split texts into words for comparison
-    const originalWords = original.toLowerCase().split(/\s+/);
-    const correctedWords = corrected.toLowerCase().split(/\s+/);
-
-    // Find differences between original and corrected text
-    const minLength = Math.min(originalWords.length, correctedWords.length);
-    for (let i = 0; i < minLength; i++) {
-      if (originalWords[i] !== correctedWords[i]) {
-        // Skip if already covered by word replacements
-        const alreadyCovered = foundCorrections.some(c => originalWords[i].includes(c.incorrect.toLowerCase()) || correctedWords[i].includes(c.correct.toLowerCase()));
-        if (!alreadyCovered) {
-          foundCorrections.push({
-            incorrect: originalWords[i],
-            correct: correctedWords[i],
-            reason: `व्याकरण सुधार: "${originalWords[i]}" को "${correctedWords[i]}" से बदला गया`,
-            type: 'grammar'
-          });
-        }
-      }
+नीली रेखाएं दिखाती हैं कि व्याकरण ने एक वाक्य देखा है जो अनावश्यक रूप से शब्दों से भरा है। आपको सुझाव मिलेंगे जो संभावित रूप से आपको एक शब्दी वाक्य को सहज तरीके से संशोधित करने में मदद कर सकते हैं।`);
+  
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([
+    {
+      id: '1',
+      type: 'correctness',
+      category: 'वर्तनी सुधार',
+      incorrect: 'गलतियाँ',
+      correct: 'गलतियों',
+      position: { start: 12, end: 20 },
+      description: 'संज्ञा का सही रूप उपयोग करें',
+      confidence: 95
+    },
+    {
+      id: '2',
+      type: 'correctness', 
+      category: 'विराम चिह्न',
+      incorrect: 'अल्पविराम,',
+      correct: 'अल्पविराम',
+      position: { start: 145, end: 154 },
+      description: 'अनावश्यक अल्पविराम हटाएं',
+      confidence: 88
+    },
+    {
+      id: '3',
+      type: 'clarity',
+      category: 'वाक्य संरचना',
+      incorrect: 'गलत अल्पविराम और अन्य प्रकार के',
+      correct: 'गलत अल्पविराम तथा विराम चिह्नों',
+      position: { start: 130, end: 180 },
+      description: 'वाक्य को अधिक स्पष्ट बनाएं',
+      confidence: 75
     }
+  ]);
 
-    // Check for additional words in corrected text
-    if (correctedWords.length > originalWords.length) {
-      for (let i = minLength; i < correctedWords.length; i++) {
-        foundCorrections.push({
-          incorrect: '[अनुपस्थित]',
-          correct: correctedWords[i],
-          reason: 'वाक्य पूर्णता के लिए शब्द जोड़ा गया',
-          type: 'syntax'
-        });
-      }
-    }
+  const [overallScore, setOverallScore] = useState(72);
 
-    // Check for removed words
-    if (originalWords.length > correctedWords.length) {
-      for (let i = minLength; i < originalWords.length; i++) {
-        foundCorrections.push({
-          incorrect: originalWords[i],
-          correct: '[हटाया गया]',
-          reason: 'अनावश्यक शब्द हटाया गया',
-          type: 'syntax'
-        });
-      }
-    }
-    return foundCorrections;
-  };
-  const applyWordReplacements = (text: string): {
-    correctedText: string;
-    appliedCorrections: Correction[];
-  } => {
-    let correctedText = text;
-    const appliedCorrections: Correction[] = [];
-    wordReplacements.forEach(({
-      original,
-      replacement
-    }) => {
-      if (correctedText.includes(original)) {
-        correctedText = correctedText.replace(new RegExp(original, 'g'), replacement);
-        appliedCorrections.push({
-          incorrect: original,
-          correct: replacement,
-          reason: `सही वर्तनी के लिए "${original}" को "${replacement}" से बदला गया`,
-          type: 'spelling'
-        });
-      }
-    });
-    return {
-      correctedText,
-      appliedCorrections
-    };
-  };
-  const correctGrammar = async () => {
-    if (!inputText.trim()) {
-      toast.error("कृपया पहले कुछ टेक्स्ट लिखें");
-      return;
-    }
-    setIsLoading(true);
-    setProgress(0);
-
-    // Simulate progress
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 90) {
-          clearInterval(progressInterval);
-          return 90;
-        }
-        return prev + 10;
-      });
-    }, 200);
-    try {
-      // Create instruction set for AI based on word replacements
-      const wordReplacementInstructions = wordReplacements.map(({
-        original,
-        replacement
-      }) => `"${original}" को "${replacement}" से बदलें`).join(', ');
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4.5-preview-2025-02-27',
-          messages: [{
-            role: 'system',
-            content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors, punctuation mistakes, sentence structure issues, and word choice problems in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
-          }, {
-            role: 'user',
-            content: `कृपया इस हिंदी टेक्स्ट में सभी व्याकरण की त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं और वाक्य संरचना की त्रुटियों को सुधारें। दिए गए शब्द प्रतिस्थापन नियमों का पूर्ण पालन करें: "${inputText}"`
-          }],
-          max_tokens: 1000,
-          temperature: 0.3
-        })
-      });
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-      const data = await response.json();
-      const aiCorrected = data.choices[0].message.content.trim();
-      setProgress(100);
-      setCorrectedText(aiCorrected);
-
-      // Extract all corrections from the comparison
-      const allCorrections = extractCorrectionsFromResponse(inputText, aiCorrected);
-      setCorrections(allCorrections);
-      setIsLoading(false);
-      clearInterval(progressInterval);
-      toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
-    } catch (error) {
-      console.error('Error correcting grammar:', error);
-      setIsLoading(false);
-      setProgress(0);
-      clearInterval(progressInterval);
-      toast.error("कुछ गलत हुआ है। कृपया फिर से कोशिश करें।");
-    }
-  };
-  const resetText = () => {
-    setInputText('');
-    setCorrectedText('');
-    setProgress(0);
-    setCorrections([]);
-  };
-  const copyToClipboard = async () => {
-    if (correctedText) {
-      await navigator.clipboard.writeText(correctedText);
-      toast.success("टेक्स्ट कॉपी किया गया!");
-    }
-  };
-  const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
-  const charCount = inputText.length;
-  const getCorrectionTypeColor = (type: string) => {
+  const getSuggestionTypeColor = (type: string) => {
     switch (type) {
-      case 'grammar':
-        return 'bg-red-100 text-red-700 border-red-300';
-      case 'spelling':
-        return 'bg-blue-100 text-blue-700 border-blue-300';
-      case 'punctuation':
-        return 'bg-green-100 text-green-700 border-green-300';
-      case 'syntax':
-        return 'bg-purple-100 text-purple-700 border-purple-300';
-      default:
-        return 'bg-gray-100 text-gray-700 border-gray-300';
+      case 'correctness': return { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', icon: 'text-red-500' };
+      case 'clarity': return { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', icon: 'text-blue-500' };
+      case 'engagement': return { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', icon: 'text-green-500' };
+      case 'delivery': return { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', icon: 'text-purple-500' };
+      default: return { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700', icon: 'text-gray-500' };
     }
   };
-  const getCorrectionTypeLabel = (type: string) => {
-    switch (type) {
-      case 'grammar':
-        return 'व्याकरण';
-      case 'spelling':
-        return 'वर्तनी';
-      case 'punctuation':
-        return 'विराम चिह्न';
-      case 'syntax':
-        return 'वाक्य संरचना';
-      default:
-        return 'सुधार';
-    }
-  };
-  return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Header */}
-      <div className="text-center py-16 px-6">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-          हिंदी व्याकरण सुधारक
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          AI की शक्ति से अपने हिंदी टेक्स्ट को बेहतर बनाएं
-        </p>
-      </div>
 
-      {/* Main Editor Section */}
-      <div className="max-w-7xl mx-auto px-6 pb-16">
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Original Text Panel */}
-          <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-slate-600 to-slate-700 text-white">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold">मूल टेक्स्ट</CardTitle>
-                <Badge variant="secondary" className="bg-white/20 text-white border-0">
-                  <FileText className="h-4 w-4 mr-1" />
-                  {wordCount} शब्द
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              <Textarea value={inputText} onChange={e => setInputText(e.target.value)} placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..." className="min-h-[400px] text-lg border-0 resize-none focus-visible:ring-0 p-4 bg-gray-50 rounded-2xl" disabled={isLoading} />
-              <div className="flex justify-between items-center mt-6">
-                <span className="text-sm text-gray-500">{charCount} अक्षर</span>
-                <div className="flex space-x-3">
-                  <Button onClick={resetText} variant="outline" disabled={isLoading} className="rounded-xl">
-                    <RotateCcw className="h-4 w-4 mr-2" />
-                    रीसेट
-                  </Button>
-                  <Button onClick={correctGrammar} disabled={isLoading || !inputText.trim()} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl">
-                    <Zap className="h-4 w-4 mr-2" />
-                    {isLoading ? 'सुधार रहे हैं...' : 'व्याकरण सुधारें'}
-                  </Button>
+  const acceptSuggestion = async (suggestionId: string) => {
+    const suggestion = suggestions.find(s => s.id === suggestionId);
+    if (suggestion) {
+      const newContent = content.substring(0, suggestion.position.start) + 
+                        suggestion.correct + 
+                        content.substring(suggestion.position.end);
+      setContent(newContent);
+      
+      setSuggestions(prev => prev.filter(s => s.id !== suggestionId));
+      setOverallScore(prev => Math.min(prev + 3, 100));
+      
+      // Track usage when suggestion is accepted
+      await incrementStats();
+      
+      toast.success("सुझाव स्वीकार किया गया!");
+    }
+  };
+
+  const dismissSuggestion = (suggestionId: string) => {
+    setSuggestions(prev => prev.filter(s => s.id !== suggestionId));
+    toast.info("सुझाव को खारिज किया गया");
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const getScoreBackground = (score: number) => {
+    if (score >= 80) return 'bg-green-100';
+    if (score >= 60) return 'bg-yellow-100';
+    return 'bg-red-100';
+  };
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            हिंदी व्याकरण सुधारक
+          </h1>
+          <p className="text-lg text-gray-600">
+            AI की शक्ति से अपने हिंदी लेखन को बेहतर बनाएं
+          </p>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Editor Section */}
+          <div className="lg:col-span-2">
+            {/* Score Display */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">आपका टेक्स्ट</h2>
+                <div className={`px-4 py-2 rounded-xl ${getScoreBackground(overallScore)}`}>
+                  <span className={`text-lg font-bold ${getScoreColor(overallScore)}`}>
+                    {overallScore}
+                  </span>
+                  <span className="text-sm text-gray-600 ml-1">स्कोर</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Corrected Text Panel */}
-          <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl font-bold">सुधारा गया टेक्स्ट</CardTitle>
-                <div className="flex items-center space-x-3">
-                  {correctedText && <Badge variant="secondary" className="bg-white/20 text-white border-0">
-                      <FileText className="h-4 w-4 mr-1" />
-                      {correctedText.trim().split(/\s+/).length} शब्द
-                    </Badge>}
-                  {corrections.length > 0 && <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="sm" className="bg-white/20 text-white border-0 hover:bg-white/30">
-                          <AlertCircle className="h-4 w-4 mr-2" />
-                          {corrections.length} सुधार
-                          <ChevronDown className="h-4 w-4 ml-2" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-80 max-h-96 overflow-y-auto bg-white border border-gray-200 shadow-lg">
-                        <DropdownMenuLabel className="text-sm font-semibold text-gray-700 px-3 py-2">
-                          सभी सुधार ({corrections.length})
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {corrections.map((correction, index) => <DropdownMenuItem key={index} className="p-0 focus:bg-gray-50">
-                            <div className="w-full p-3 border-b border-gray-100 last:border-b-0">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center space-x-2">
-                                  <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                    {index + 1}
-                                  </span>
-                                  <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs`}>
-                                    {getCorrectionTypeLabel(correction.type)}
-                                  </Badge>
-                                </div>
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <div className="flex items-center space-x-2">
-                                  <X className="h-3 w-3 text-red-500" />
-                                  <span className="text-red-600 text-sm line-through">"{correction.incorrect}"</span>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <CheckCircle className="h-3 w-3 text-green-500" />
-                                  <span className="text-green-600 text-sm font-medium">"{correction.correct}"</span>
-                                </div>
-                                <p className="text-xs text-gray-600 mt-1 ml-5">
-                                  {correction.reason}
-                                </p>
-                              </div>
-                            </div>
-                          </DropdownMenuItem>)}
-                      </DropdownMenuContent>
-                    </DropdownMenu>}
+            {/* Text Editor */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  संपादक
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="min-h-[400px] text-lg leading-relaxed"
+                  placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
+                />
+                <div className="mt-4 text-sm text-gray-500">
+                  {content.split(' ').length} शब्द • {content.length} अक्षर
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="min-h-[400px] p-4 bg-gray-50 rounded-2xl">
-                {correctedText ? <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-wrap">
-                    {correctedText}
-                  </p> : <div className="flex items-center justify-center h-full">
-                    <p className="text-gray-400 text-lg text-center">
-                      सुधारा गया टेक्स्ट यहाँ दिखेगा...
-                      <br />
-                      <span className="text-sm">पहले मूल टेक्स्ट में कुछ लिखें</span>
-                    </p>
-                  </div>}
-              </div>
-              
-              {/* Progress Bar */}
-              {isLoading && <div className="mt-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">प्रगति</span>
-                    <span className="text-sm text-gray-500">{progress}%</span>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Suggestions Panel */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5" />
+                  सुझाव ({suggestions.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {suggestions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">बधाई हो!</h3>
+                    <p className="text-sm text-gray-600">कोई सुझाव नहीं मिला। आपका टेक्स्ट अच्छा लग रहा है!</p>
                   </div>
-                  <Progress value={progress} className="h-2" />
-                </div>}
-
-              {correctedText && !isLoading && <div className="flex space-x-3 mt-6">
-                  <Button onClick={copyToClipboard} variant="outline" className="flex-1 rounded-xl">
-                    <Copy className="h-4 w-4 mr-2" />
-                    कॉपी करें
-                  </Button>
-                </div>}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Features Section */}
-        <div className="grid md:grid-cols-3 gap-6 mt-16">
-          <Card className="bg-blue-50 border-blue-200 border-2 text-center p-8 rounded-3xl hover:shadow-lg transition-shadow">
-            <div className="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Zap className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3">तत्काल सुधार</h3>
-            <p className="text-gray-600">एक क्लिक में व्याकरण सुधारें</p>
-          </Card>
-
-          <Card className="bg-purple-50 border-purple-200 border-2 text-center p-8 rounded-3xl hover:shadow-lg transition-shadow">
-            <div className="bg-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Crown className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3">AI संचालित</h3>
-            <p className="text-gray-600">व्याकरणी की शक्ति से संचालित</p>
-          </Card>
-
-          <Card className="bg-green-50 border-green-200 border-2 text-center p-8 rounded-3xl hover:shadow-lg transition-shadow">
-            <div className="bg-green-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3">पूर्ण विश्लेषण</h3>
-            <p className="text-gray-600">सभी सुधारों की विस्तृत सूची</p>
-          </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {suggestions.map((suggestion) => {
+                      const colors = getSuggestionTypeColor(suggestion.type);
+                      
+                      return (
+                        <div key={suggestion.id} className={`${colors.bg} ${colors.border} border-2 rounded-lg p-4`}>
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center space-x-2">
+                              <AlertCircle className={`h-4 w-4 ${colors.icon}`} />
+                              <span className={`text-xs font-semibold ${colors.text} uppercase tracking-wide`}>
+                                {suggestion.category}
+                              </span>
+                            </div>
+                            <Badge variant="outline" className="text-xs">
+                              {suggestion.confidence}%
+                            </Badge>
+                          </div>
+                          
+                          <p className={`text-sm mb-4 ${colors.text}`}>{suggestion.description}</p>
+                          
+                          {/* Incorrect/Correct Comparison */}
+                          <div className="space-y-3 mb-4">
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <X className="h-3 w-3 text-red-500" />
+                                <span className="text-xs font-medium text-red-700">गलत</span>
+                              </div>
+                              <p className="text-sm text-red-800 font-medium line-through">
+                                {suggestion.incorrect}
+                              </p>
+                            </div>
+                            
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <CheckCircle className="h-3 w-3 text-green-500" />
+                                <span className="text-xs font-medium text-green-700">सही</span>
+                              </div>
+                              <p className="text-sm text-green-800 font-semibold">
+                                {suggestion.correct}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex space-x-2">
+                            <Button
+                              size="sm"
+                              className="flex-1 h-8 text-xs bg-green-600 hover:bg-green-700"
+                              onClick={() => acceptSuggestion(suggestion.id)}
+                            >
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              स्वीकार करें
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 text-xs"
+                              onClick={() => dismissSuggestion(suggestion.id)}
+                            >
+                              <X className="h-3 w-3 mr-1" />
+                              खारिज
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default GrammarChecker;
