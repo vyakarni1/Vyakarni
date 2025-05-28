@@ -2,33 +2,16 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Zap, Copy, RotateCcw } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Zap, Crown, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 const GrammarChecker = () => {
   const [inputText, setInputText] = useState('');
   const [correctedText, setCorrectedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [hasCorrection, setHasCorrection] = useState(false);
 
   const OPENAI_API_KEY = "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";
-
-  const simulateProgress = () => {
-    setProgress(0);
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 95) {
-          clearInterval(interval);
-          return 95;
-        }
-        return prev + Math.random() * 15;
-      });
-    }, 200);
-    return interval;
-  };
 
   const correctGrammar = async () => {
     if (!inputText.trim()) {
@@ -37,7 +20,6 @@ const GrammarChecker = () => {
     }
 
     setIsLoading(true);
-    const progressInterval = simulateProgress();
 
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -70,168 +52,131 @@ const GrammarChecker = () => {
       const data = await response.json();
       const corrected = data.choices[0].message.content.trim();
       
-      clearInterval(progressInterval);
-      setProgress(100);
-      
-      setTimeout(() => {
-        setCorrectedText(corrected);
-        setHasCorrection(true);
-        setIsLoading(false);
-        setProgress(0);
-        toast.success("व्याकरण सुधार पूरा हो गया!");
-      }, 500);
+      setCorrectedText(corrected);
+      setIsLoading(false);
+      toast.success("व्याकरण सुधार पूरा हो गया!");
 
     } catch (error) {
       console.error('Error correcting grammar:', error);
-      clearInterval(progressInterval);
       setIsLoading(false);
-      setProgress(0);
       toast.error("कुछ गलत हुआ है। कृपया फिर से कोशिश करें।");
     }
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(correctedText);
-    toast.success("टेक्स्ट कॉपी हो गया!");
   };
 
   const resetText = () => {
     setInputText('');
     setCorrectedText('');
-    setHasCorrection(false);
-  };
-
-  const acceptCorrection = () => {
-    setInputText(correctedText);
-    setCorrectedText('');
-    setHasCorrection(false);
-    toast.success("सुधार स्वीकार कर लिया गया!");
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-          हिंदी व्याकरण सुधारक
-        </h1>
-        <p className="text-gray-600 text-lg">
-          AI की शक्ति से अपने हिंदी टेक्स्ट को बेहतर बनाएं
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-blue-600 mb-4">
+            हिंदी व्याकरण सुधारक
+          </h1>
+          <p className="text-xl text-gray-600">
+            AI की शक्ति से अपने हिंदी टेक्स्ट को बेहतर बनाएं
+          </p>
+        </div>
 
-      {isLoading && (
-        <Card className="border-blue-200 bg-blue-50">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-4">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-blue-800 mb-2">
-                  आपका टेक्स्ट सुधारा जा रहा है...
-                </p>
-                <Progress value={progress} className="h-2" />
+        {/* Main Editor Section */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          {/* Original Text */}
+          <Card className="bg-white shadow-sm border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-800">मूल टेक्स्ट</h2>
+                <div className="flex items-center text-sm text-gray-500">
+                  <FileText className="h-4 w-4 mr-1" />
+                  {inputText.length} अक्षर
+                </div>
               </div>
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <span>मूल टेक्स्ट</span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetText}
-                className="ml-auto"
-              >
-                <RotateCcw className="h-4 w-4" />
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
-              className="min-h-[200px] text-lg resize-none border-2 focus:border-blue-500 transition-colors"
-              disabled={isLoading}
-            />
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-sm text-gray-500">
-                {inputText.length} अक्षर
-              </span>
-              <Button
-                onClick={correctGrammar}
-                disabled={isLoading || !inputText.trim()}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6"
-              >
-                <Zap className="h-4 w-4 mr-2" />
-                {isLoading ? 'सुधार रहे हैं...' : 'व्याकरण सुधारें'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className={`h-fit transition-all duration-300 ${hasCorrection ? 'border-green-200 bg-green-50' : ''}`}>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <span>सुधारा गया टेक्स्ट</span>
-              {hasCorrection && <CheckCircle className="h-5 w-5 text-green-600" />}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              value={correctedText}
-              readOnly
-              placeholder="सुधारा गया टेक्स्ट यहाँ दिखेगा..."
-              className="min-h-[200px] text-lg resize-none bg-gray-50 border-2"
-            />
-            {hasCorrection && (
-              <div className="flex space-x-2 mt-4">
+              <Textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
+                className="min-h-[300px] text-lg border-0 resize-none focus-visible:ring-0 p-0"
+                disabled={isLoading}
+              />
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-sm text-gray-400">0 अक्षर</span>
                 <Button
-                  onClick={acceptCorrection}
-                  className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                  onClick={correctGrammar}
+                  disabled={isLoading || !inputText.trim()}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg"
                 >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  स्वीकार करें
-                </Button>
-                <Button
-                  onClick={copyToClipboard}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  <Copy className="h-4 w-4 mr-2" />
-                  कॉपी करें
+                  <Zap className="h-4 w-4 mr-2" />
+                  {isLoading ? 'व्याकरण सुधारें...' : 'व्याकरण सुधारें'}
                 </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
 
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-        <CardContent className="p-6">
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-blue-600 mb-2">⚡</div>
-              <h3 className="font-semibold mb-1">तत्काल सुधार</h3>
-              <p className="text-sm text-gray-600">एक क्लिक में व्याकरण सुधारें</p>
+          {/* Corrected Text */}
+          <Card className="bg-white shadow-sm border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-800">सुधारा गया टेक्स्ट</h2>
+              </div>
+              <div className="min-h-[300px] p-4 bg-gray-50 rounded-lg">
+                {correctedText ? (
+                  <p className="text-lg text-gray-800 leading-relaxed">{correctedText}</p>
+                ) : (
+                  <p className="text-gray-400 text-lg">सुधारा गया टेक्स्ट यहाँ दिखेगा...</p>
+                )}
+              </div>
+              {correctedText && (
+                <div className="flex space-x-3 mt-4">
+                  <Button
+                    onClick={() => navigator.clipboard.writeText(correctedText)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    कॉपी करें
+                  </Button>
+                  <Button
+                    onClick={resetText}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    रीसेट करें
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Features Section */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card className="bg-blue-50 border-0 text-center p-6">
+            <div className="bg-blue-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Zap className="h-6 w-6 text-white" />
             </div>
-            <div>
-              <div className="text-2xl font-bold text-purple-600 mb-2">🤖</div>
-              <h3 className="font-semibold mb-1">AI संचालित</h3>
-              <p className="text-sm text-gray-600">OpenAI की शक्ति से संचालित</p>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">तत्काल सुधार</h3>
+            <p className="text-gray-600">एक क्लिक में व्याकरण सुधारें</p>
+          </Card>
+
+          <Card className="bg-purple-50 border-0 text-center p-6">
+            <div className="bg-purple-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Crown className="h-6 w-6 text-white" />
             </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600 mb-2">📝</div>
-              <h3 className="font-semibold mb-1">हिंदी विशेषज्ञता</h3>
-              <p className="text-sm text-gray-600">हिंदी व्याकरण में विशेषज्ञ</p>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">AI संचालित</h3>
+            <p className="text-gray-600">OpenAI की शक्ति से संचालित</p>
+          </Card>
+
+          <Card className="bg-green-50 border-0 text-center p-6">
+            <div className="bg-green-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <FileText className="h-6 w-6 text-white" />
             </div>
-          </div>
-        </CardContent>
-      </Card>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">हिंदी विशेषज्ञता</h3>
+            <p className="text-gray-600">हिंदी व्याकरण में विशेषज्ञ</p>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
