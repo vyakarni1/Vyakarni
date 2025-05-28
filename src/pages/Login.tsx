@@ -6,12 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,20 +33,30 @@ const Login = () => {
 
     setIsLoading(true);
     
-    // Simulate login process
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find((u: any) => u.email === email && u.password === password);
-      
-      if (user) {
-        localStorage.setItem("currentUser", JSON.stringify(user));
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        if (error.message === "Invalid login credentials") {
+          toast.error("गलत ईमेल या पासवर्ड");
+        } else {
+          toast.error("लॉगिन में त्रुटि: " + error.message);
+        }
+        return;
+      }
+
+      if (data.user) {
         toast.success("सफलतापूर्वक लॉगिन हो गए!");
         navigate("/dashboard");
-      } else {
-        toast.error("गलत ईमेल या पासवर्ड");
       }
+    } catch (error) {
+      toast.error("लॉगिन में त्रुटि हुई");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

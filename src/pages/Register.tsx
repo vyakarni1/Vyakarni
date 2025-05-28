@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import { useEffect } from "react";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -14,6 +17,13 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,26 +45,35 @@ const Register = () => {
 
     setIsLoading(true);
     
-    // Simulate registration process
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const existingUser = users.find((u: any) => u.email === email);
-      
-      if (existingUser) {
-        toast.error("यह ईमेल पहले से रजिस्टर है");
-        setIsLoading(false);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+          }
+        }
+      });
+
+      if (error) {
+        if (error.message === "User already registered") {
+          toast.error("यह ईमेल पहले से रजिस्टर है");
+        } else {
+          toast.error("रजिस्ट्रेशन में त्रुटि: " + error.message);
+        }
         return;
       }
 
-      const newUser = { name, email, password, id: Date.now() };
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem("currentUser", JSON.stringify(newUser));
-      
-      toast.success("सफलतापूर्वक रजिस्टर हो गए!");
-      navigate("/dashboard");
+      if (data.user) {
+        toast.success("सफलतापूर्वक रजिस्टर हो गए!");
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      toast.error("रजिस्ट्रेशन में त्रुटि हुई");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
