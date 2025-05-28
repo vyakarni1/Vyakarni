@@ -24,12 +24,90 @@ const GrammarChecker = () => {
 
   const OPENAI_API_KEY = "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";
 
+  // Comprehensive word replacement instruction set
+  const wordReplacements = [
+    { original: 'गए', replacement: 'गये' },
+    { original: 'आए', replacement: 'आये' },
+    { original: 'हुए', replacement: 'हुये' },
+    { original: 'शभकामनाएं', replacement: 'शभकामनायें' },
+    { original: 'शभकामनाएं', replacement: 'शभकामनायें' },
+    { original: 'कामनाएं', replacement: 'कामनायें' },
+    { original: 'कामनाएं', replacement: 'कामनायें' },
+    { original: 'भाए', replacement: 'भाये' },
+    { original: 'चलाए', replacement: 'चलाये' },
+    { original: 'समझाए', replacement: 'समझाये' },
+    { original: 'समझाएं', replacement: 'समझायें' },
+    { original: 'समझाएं', replacement: 'समझायें' },
+    { original: 'समझाए', replacement: 'समझाये' },
+    { original: 'किए', replacement: 'किये' },
+    { original: 'लिए', replacement: 'लिये' },
+    { original: 'सराए', replacement: 'सराये' },
+    { original: 'खाए', replacement: 'खाये' },
+    { original: 'निभाए', replacement: 'निभाये' },
+    { original: 'कसमसाए', replacement: 'कसमसाये' },
+    { original: 'झरझराए', replacement: 'झरझराये' },
+    { original: 'बरसाए', replacement: 'बरसाये' },
+    { original: 'पहुंचाए', replacement: 'पहुंचाये' },
+    { original: 'पहुंचाए', replacement: 'पहुंचाये' },
+    { original: 'दिलाए', replacement: 'दिलाये' },
+    { original: 'भिजवाए', replacement: 'भिजवाये' },
+    { original: 'गड़बड़ाए', replacement: 'गड़बड़ाये' },
+    { original: 'पहुंचवाए', replacement: 'पहुंचवाये' },
+    { original: 'कहिए', replacement: 'कहिये' },
+    { original: 'गई', replacement: 'गयी' },
+    { original: 'आई', replacement: 'आयी' },
+    { original: 'नई', replacement: 'नयी' },
+    { original: 'पहुंचाई', replacement: 'पहुंचायी' },
+    { original: 'पहुंचाई', replacement: 'पहुंचायी' },
+    { original: 'पहुंचवाई', replacement: 'पहुंचवायी' },
+    { original: 'पहुंचवाई', replacement: 'पहुंचवायी' },
+    { original: 'छटपटाए', replacement: 'छटपटाये' },
+    { original: 'पटपटाए', replacement: 'पटपटाये' },
+    { original: 'पटपटाई', replacement: 'पटपटायी' },
+    { original: 'उलझाए', replacement: 'उलझाये' },
+    { original: 'कराए', replacement: 'कराये' },
+    { original: 'करवाए', replacement: 'करवाये' },
+    { original: 'दिखाए', replacement: 'दिखाये' },
+    { original: 'दिखलाए', replacement: 'दिखलाये' },
+    { original: 'बड़बड़ाए', replacement: 'बड़बड़ाये' },
+    { original: 'पलटाए', replacement: 'पलटाये' },
+    { original: 'परम्पराएं', replacement: 'परम्परायें' },
+    { original: 'परम्पराएं', replacement: 'परम्परायें' },
+    { original: 'परंपराएं', replacement: 'परंपरायें' },
+    { original: 'परंपराएं', replacement: 'परंपरायें' },
+    { original: 'समझिए', replacement: 'समझिये' },
+    { original: 'समझाइए', replacement: 'समझाइये' },
+    { original: 'बरबतापूर्ण', replacement: 'बरबरतापूर्ण' },
+    { original: 'बर्बतापूर्ण', replacement: 'बर्बतापूर्ण' },
+    { original: 'बरबरतापूर्ण', replacement: 'बरबरतापूर्ण' },
+    { original: 'करवाएगा', replacement: 'करवायेगा' },
+  ];
+
+  const applyWordReplacements = (text: string): { correctedText: string; appliedCorrections: Correction[] } => {
+    let correctedText = text;
+    const appliedCorrections: Correction[] = [];
+
+    wordReplacements.forEach(({ original, replacement }) => {
+      if (correctedText.includes(original)) {
+        correctedText = correctedText.replace(new RegExp(original, 'g'), replacement);
+        appliedCorrections.push({
+          incorrect: original,
+          correct: replacement,
+          reason: `सही वर्तनी के लिए "${original}" को "${replacement}" से बदला गया`,
+          type: 'spelling'
+        });
+      }
+    });
+
+    return { correctedText, appliedCorrections };
+  };
+
   const findCorrections = (original: string, corrected: string): Correction[] => {
-    // Simple correction detection - in a real app, this would be more sophisticated
-    const corrections: Correction[] = [];
+    // Apply word replacements first
+    const { appliedCorrections } = applyWordReplacements(original);
     
-    // Common Hindi grammar corrections with explanations
-    const commonCorrections = [
+    // Additional common Hindi grammar corrections
+    const additionalCorrections = [
       {
         incorrect: 'है',
         correct: 'हैं',
@@ -55,87 +133,21 @@ const GrammarChecker = () => {
         type: 'grammar' as const
       },
       {
-        incorrect: 'खेलता',
-        correct: 'खेलती है',
-        reason: 'लिंग और वचन की सुसंगति बनाए रखें',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'पीती',
-        correct: 'पीता है',
-        reason: 'पुल्लिंग के लिए सही क्रिया रूप',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'रहता',
-        correct: 'रहते हैं',
-        reason: 'बहुवचन के लिए उचित क्रिया रूप',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'सोती',
-        correct: 'सोते हैं',
-        reason: 'वचन की सुसंगता के लिए',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'सोता',
-        correct: 'सोती है',
-        reason: 'स्त्रीलिंग के लिए सही क्रिया रूप',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'दुसरा',
-        correct: 'दूसरे',
-        reason: 'सही वर्तनी और विभक्ति का प्रयोग',
-        type: 'spelling' as const
-      },
-      {
-        incorrect: 'था',
-        correct: 'हैं',
-        reason: 'वर्तमान काल की सुसंगति बनाए रखें',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'खेलती',
-        correct: 'खेलते हैं',
-        reason: 'बहुवचन के लिए उचित क्रिया रूप',
-        type: 'grammar' as const
-      },
-      {
         incorrect: 'घर पे',
         correct: 'घर पर',
         reason: 'सही संबंधबोधक का प्रयोग',
         type: 'grammar' as const
-      },
-      {
-        incorrect: 'देखता',
-        correct: 'देखती हैं',
-        reason: 'स्त्रीलिंग और सम्मानसूचक रूप',
-        type: 'grammar' as const
-      },
-      {
-        incorrect: 'एक दुसरा',
-        correct: 'एक-दूसरे',
-        reason: 'सही वर्तनी और योजक चिह्न',
-        type: 'punctuation' as const
-      },
-      {
-        incorrect: 'करती',
-        correct: 'करते हैं',
-        reason: 'बहुवचन के लिए उचित क्रिया रूप',
-        type: 'grammar' as const
       }
     ];
 
-    // Find corrections that exist in both texts
-    commonCorrections.forEach(correction => {
+    // Check for additional corrections in both texts
+    additionalCorrections.forEach(correction => {
       if (original.includes(correction.incorrect) && corrected.includes(correction.correct)) {
-        corrections.push(correction);
+        appliedCorrections.push(correction);
       }
     });
 
-    return corrections.slice(0, 6); // Limit to 6 major corrections
+    return appliedCorrections.slice(0, 8); // Limit to 8 major corrections
   };
 
   const correctGrammar = async () => {
@@ -146,6 +158,9 @@ const GrammarChecker = () => {
 
     setIsLoading(true);
     setProgress(0);
+    
+    // First apply word replacements
+    const { correctedText: replacementCorrected, appliedCorrections } = applyWordReplacements(inputText);
     
     // Simulate progress
     const progressInterval = setInterval(() => {
@@ -159,6 +174,11 @@ const GrammarChecker = () => {
     }, 200);
 
     try {
+      // Create instruction set for AI based on word replacements
+      const wordReplacementInstructions = wordReplacements
+        .map(({ original, replacement }) => `"${original}" को "${replacement}" से बदलें`)
+        .join(', ');
+
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -170,11 +190,11 @@ const GrammarChecker = () => {
           messages: [
             {
               role: 'system',
-              content: 'You are a Hindi grammar correction expert. Correct the grammatical errors in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.'
+              content: `You are a Hindi grammar correction expert. Follow these specific word replacement rules: ${wordReplacementInstructions}. Additionally, correct any grammatical errors in the given Hindi text while maintaining the original meaning and style. Only return the corrected text, no explanations or additional text.`
             },
             {
               role: 'user',
-              content: `कृपया इस हिंदी टेक्स्ट में व्याकरण की त्रुटियों को सुधारें: "${inputText}"`
+              content: `कृपया इस हिंदी टेक्स्ट में व्याकरण की त्रुटियों को सुधारें और दिए गए शब्द प्रतिस्थापन नियमों का पालन करें: "${inputText}"`
             }
           ],
           max_tokens: 1000,
@@ -187,13 +207,13 @@ const GrammarChecker = () => {
       }
 
       const data = await response.json();
-      const corrected = data.choices[0].message.content.trim();
+      const aiCorrected = data.choices[0].message.content.trim();
       
       setProgress(100);
-      setCorrectedText(corrected);
+      setCorrectedText(aiCorrected);
       
-      // Find and set corrections
-      const foundCorrections = findCorrections(inputText, corrected);
+      // Find and set corrections (including word replacements and AI corrections)
+      const foundCorrections = findCorrections(inputText, aiCorrected);
       setCorrections(foundCorrections);
       
       setIsLoading(false);
