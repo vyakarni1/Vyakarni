@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Crown, FileText, Copy, RotateCcw } from "lucide-react";
+import { Zap, Crown, FileText, Copy, RotateCcw, CheckCircle, X, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 const GrammarChecker = () => {
@@ -13,6 +13,10 @@ const GrammarChecker = () => {
   const [correctedText, setCorrectedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [lastCorrection, setLastCorrection] = useState<{
+    incorrect: string;
+    correct: string;
+  } | null>(null);
 
   const OPENAI_API_KEY = "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";
 
@@ -69,6 +73,13 @@ const GrammarChecker = () => {
       
       setProgress(100);
       setCorrectedText(corrected);
+      
+      // Set the comparison data
+      setLastCorrection({
+        incorrect: inputText,
+        correct: corrected
+      });
+      
       setIsLoading(false);
       clearInterval(progressInterval);
       toast.success("व्याकरण सुधार पूरा हो गया!");
@@ -86,6 +97,7 @@ const GrammarChecker = () => {
     setInputText('');
     setCorrectedText('');
     setProgress(0);
+    setLastCorrection(null);
   };
 
   const copyToClipboard = async () => {
@@ -213,6 +225,69 @@ const GrammarChecker = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Comparison Boxes */}
+        {lastCorrection && (
+          <div className="mt-12">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">सुधार तुलना</h2>
+              <p className="text-gray-600">पहले और बाद के टेक्स्ट की तुलना देखें</p>
+            </div>
+            
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Incorrect Text Box */}
+              <Card className="shadow-lg border-2 border-red-200 rounded-3xl overflow-hidden animate-fade-in">
+                <CardHeader className="bg-gradient-to-r from-red-500 to-red-600 text-white">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-bold flex items-center">
+                      <X className="h-6 w-6 mr-2" />
+                      सुधार से पहले
+                    </CardTitle>
+                    <Badge variant="secondary" className="bg-white/20 text-white border-0">
+                      मूल
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6 min-h-[200px]">
+                    <p className="text-lg text-red-800 leading-relaxed whitespace-pre-wrap">
+                      {lastCorrection.incorrect}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Correct Text Box */}
+              <Card className="shadow-lg border-2 border-green-200 rounded-3xl overflow-hidden animate-fade-in">
+                <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-bold flex items-center">
+                      <CheckCircle className="h-6 w-6 mr-2" />
+                      सुधार के बाद
+                    </CardTitle>
+                    <Badge variant="secondary" className="bg-white/20 text-white border-0">
+                      सुधारा गया
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 min-h-[200px]">
+                    <p className="text-lg text-green-800 leading-relaxed whitespace-pre-wrap">
+                      {lastCorrection.correct}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Arrow indicator between boxes */}
+            <div className="flex justify-center mt-8 lg:hidden">
+              <div className="bg-blue-100 p-4 rounded-full">
+                <ArrowRight className="h-8 w-8 text-blue-600 rotate-90" />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Features Section */}
         <div className="grid md:grid-cols-3 gap-6 mt-16">
