@@ -12,6 +12,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Index from "./pages/Index";
+import TextEditorPage from "./pages/TextEditor";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -43,6 +44,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Index />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/text-editor" 
+            element={
+              <ProtectedRoute>
+                <TextEditorPage />
               </ProtectedRoute>
             } 
           />
