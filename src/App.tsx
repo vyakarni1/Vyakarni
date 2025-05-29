@@ -18,7 +18,6 @@ import RefundPolicy from "./pages/RefundPolicy";
 import DataProtection from "./pages/DataProtection";
 import OtherPolicies from "./pages/OtherPolicies";
 import Index from "./pages/Index";
-import TextEditorPage from "./pages/TextEditor";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -58,14 +57,6 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Index />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/text-editor" 
-              element={
-                <ProtectedRoute>
-                  <TextEditorPage />
                 </ProtectedRoute>
               } 
             />
