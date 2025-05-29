@@ -69,8 +69,6 @@ export const useWordCredits = () => {
       }
     } catch (error) {
       console.error('Error in fetchPlans:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -139,9 +137,17 @@ export const useWordCredits = () => {
   };
 
   useEffect(() => {
+    // Always fetch plans regardless of authentication status
+    const loadPlans = async () => {
+      await fetchPlans();
+      setLoading(false);
+    };
+
+    loadPlans();
+
+    // Fetch user-specific balance only if authenticated
     if (user) {
       fetchBalance();
-      fetchPlans();
     } else {
       setBalance({
         total_words_available: 0,
@@ -149,7 +155,6 @@ export const useWordCredits = () => {
         purchased_words: 0,
         next_expiry_date: null,
       });
-      setLoading(false);
     }
   }, [user]);
 
