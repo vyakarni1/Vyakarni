@@ -26,9 +26,16 @@ const Header = ({ variant = "default" }: HeaderProps) => {
           {/* Logo */}
           <Link 
             to="/" 
-            className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition-all duration-200 hover:scale-105"
+            className="flex items-center space-x-2 transition-all duration-200 hover:scale-105"
           >
-            व्याकरणी
+            <img 
+              src="/lovable-uploads/827c910f-4ee8-43bc-adf6-6f3a5552eb9b.png" 
+              alt="व्याकरणी Logo" 
+              className="h-8 w-8"
+            />
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              व्याकरणी
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

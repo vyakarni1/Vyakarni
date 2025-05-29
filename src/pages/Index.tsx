@@ -58,8 +58,15 @@ const Index = () => {
       <nav className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/dashboard" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
+            <Link to="/dashboard" className="flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/827c910f-4ee8-43bc-adf6-6f3a5552eb9b.png" 
+                alt="व्याकरणी Logo" 
+                className="h-8 w-8"
+              />
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                व्याकरणी
+              </span>
             </Link>
             <div className="flex items-center space-x-4">
               <Link to="/dashboard">

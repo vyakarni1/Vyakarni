@@ -8,9 +8,16 @@ const Navigation = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in">
-              व्याकरणी
-            </div>
+            <Link to="/" className="flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/827c910f-4ee8-43bc-adf6-6f3a5552eb9b.png" 
+                alt="व्याकरणी Logo" 
+                className="h-10 w-10 transition-transform duration-200 hover:scale-105"
+              />
+              <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in">
+                व्याकरणी
+              </div>
+            </Link>
             <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
           </div>
           <div className="space-x-4">
