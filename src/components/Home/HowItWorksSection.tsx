@@ -42,7 +42,7 @@ const HowItWorksSection = () => {
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce delay-150"></div>
             </div>
             <h3 className="text-2xl font-semibold mb-3 text-gray-800">सुधार पायें</h3>
-            <p className="text-gray-600 leading-relaxed">अत्यंत तीव्र गति से सुधारा गया पाठ प्राप्त करें। व्याकरण, शब्द चयन, विराम चिह्न एवं वाक्य सौष्ठव को उन्नत करें।</p>
+            <p className="text-gray-600 leading-relaxed">व्याकरण, शब्द-चयन, विराम चिह्न वाक्य-विन्यास एवं भाषा-सौष्ठव को उन्नत करें।</p>
           </div>
         </div>
         
