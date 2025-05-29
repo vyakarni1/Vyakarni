@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { CheckCircle, Copy, ArrowRight, Sparkles } from "lucide-react";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import CorrectionsDropdown from './CorrectionsDropdown';
@@ -39,8 +40,8 @@ const CorrectedTextPanel = ({
   const headerIcon = isGrammarMode ? CheckCircle : Sparkles;
 
   return (
-    <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm">
-      <CardHeader className={`${headerGradient} text-white p-4 sm:p-8`}>
+    <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col">
+      <CardHeader className={`${headerGradient} text-white p-4 sm:p-8 flex-shrink-0`}>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg sm:text-2xl font-bold flex items-center gap-2 sm:gap-3">
             {React.createElement(headerIcon, { className: "h-5 w-5 sm:h-6 sm:w-6" })}
@@ -57,14 +58,18 @@ const CorrectedTextPanel = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 sm:p-8">
-        <div className="min-h-[300px] sm:min-h-[400px] p-4 sm:p-6 bg-slate-50 rounded-2xl">
+      <CardContent className="p-4 sm:p-8 flex-1 flex flex-col">
+        <div className="flex-1 bg-slate-50 rounded-2xl overflow-hidden">
           {currentText ? (
-            <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
-              {currentText}
-            </p>
+            <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
+              <div className="p-4 sm:p-6">
+                <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
+                  {currentText}
+                </p>
+              </div>
+            </ScrollArea>
           ) : (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-[400px] sm:h-[500px] lg:h-[600px]">
               <div className="text-center">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
                   <ArrowRight className="h-6 w-6 sm:h-8 sm:w-8 text-slate-400" />
@@ -82,7 +87,7 @@ const CorrectedTextPanel = ({
         
         {/* Progress Bar */}
         {isLoading && (
-          <div className="mt-6 sm:mt-8">
+          <div className="mt-6 sm:mt-8 flex-shrink-0">
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm font-medium text-slate-700">प्रगति</span>
               <span className="text-sm text-slate-500 font-medium">{progress}%</span>
@@ -94,7 +99,7 @@ const CorrectedTextPanel = ({
         )}
 
         {currentText && !isLoading && (
-          <div className="flex space-x-4 mt-6 sm:mt-8">
+          <div className="flex space-x-4 mt-6 sm:mt-8 flex-shrink-0">
             <Button
               onClick={onCopyToClipboard}
               variant="outline"

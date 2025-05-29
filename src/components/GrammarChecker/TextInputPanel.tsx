@@ -28,8 +28,8 @@ const TextInputPanel = ({
   onResetText 
 }: TextInputPanelProps) => {
   return (
-    <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm">
-      <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-4 sm:p-8">
+    <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col">
+      <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-4 sm:p-8 flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg sm:text-2xl font-bold flex items-center gap-2 sm:gap-3">
             <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -40,15 +40,15 @@ const TextInputPanel = ({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-4 sm:p-8">
+      <CardContent className="p-4 sm:p-8 flex-1 flex flex-col">
         <Textarea
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
-          className="min-h-[300px] sm:min-h-[400px] text-base sm:text-lg border-0 resize-none focus-visible:ring-0 p-4 sm:p-6 bg-slate-50 rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
+          className="flex-1 h-[400px] sm:h-[500px] lg:h-[600px] text-base sm:text-lg border-0 resize-none focus-visible:ring-0 p-4 sm:p-6 bg-slate-50 rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
           disabled={isLoading}
         />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 sm:mt-8 gap-4 sm:gap-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 sm:mt-8 gap-4 sm:gap-0 flex-shrink-0">
           <span className="text-sm text-slate-500 font-medium">{charCount} अक्षर</span>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
             <Button
