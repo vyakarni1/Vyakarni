@@ -1,21 +1,13 @@
-
 import React from 'react';
 import { Target, Zap, Shield } from "lucide-react";
-
 const Header = () => {
-  return (
-    <div className="text-center py-6 sm:py-12 lg:py-20 px-3 sm:px-6 mt-4 sm:mt-0">
+  return <div className="text-center py-6 sm:py-12 lg:py-20 px-3 sm:px-6 mt-4 sm:mt-0">
       <div className="inline-flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-6">
         <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl sm:rounded-2xl shadow-lg">
-          <img 
-            src="/lovable-uploads/c81f0976-b2c6-455e-b2e4-f829a290148d.png" 
-            alt="व्याकरणी Logo" 
-            className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8"
-            onError={(e) => {
-              console.log('Logo failed to load in header');
-              e.currentTarget.style.display = 'none';
-            }}
-          />
+          <img alt="व्याकरणी Logo" className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8" onError={e => {
+          console.log('Logo failed to load in header');
+          e.currentTarget.style.display = 'none';
+        }} src="/lovable-uploads/8d095b4e-398d-4b46-b393-0f52f54b0181.png" />
         </div>
         <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold bg-gradient-to-r from-slate-900 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
           व्याकरणी
@@ -38,8 +30,6 @@ const Header = () => {
           <span className="text-xs sm:text-sm font-medium">सुरक्षित</span>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Header;
