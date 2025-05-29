@@ -2,7 +2,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Zap, Shield, Users, ArrowRight, Sparkles, Star } from "lucide-react";
+import { CheckCircle, Zap, Shield, Users, ArrowRight, Sparkles, Star, BookOpen, Target, Globe } from "lucide-react";
+import Footer from "@/components/Footer";
+import CounterSection from "@/components/CounterSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import PricingPreviewSection from "@/components/PricingPreviewSection";
+import FAQSection from "@/components/FAQSection";
+import USPSection from "@/components/USPSection";
+import CTABanner from "@/components/CTABanner";
 
 const Home = () => {
   return (
@@ -77,6 +84,17 @@ const Home = () => {
               <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
           </Link>
+          
+          {/* Hero Image */}
+          <div className="mt-16 relative">
+            <div className="bg-white rounded-lg shadow-2xl p-8 max-w-4xl mx-auto transform hover:scale-105 transition-transform duration-500">
+              <img 
+                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop" 
+                alt="व्याकरणी का उपयोग करती महिला"
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -89,7 +107,7 @@ const Home = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-blue-50 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-20 h-20 bg-blue-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
             <CardHeader className="relative">
@@ -102,10 +120,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">
                 एक क्लिक में व्याकरण की त्रुटियों को तुरंत ठीक करें। कोई प्रतीक्षा नहीं, तुरंत परिणाम।
               </p>
-              <div className="mt-4 flex items-center text-sm text-blue-600">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                <span>5 सेकेंड में परिणाम</span>
-              </div>
             </CardContent>
           </Card>
 
@@ -121,10 +135,6 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">
                 OpenAI की शक्तिशाली तकनीक से संचालित। अत्याधुनिक AI मॉडल का उपयोग।
               </p>
-              <div className="mt-4 flex items-center text-sm text-purple-600">
-                <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                <span>GPT-4 तकनीक</span>
-              </div>
             </CardContent>
           </Card>
 
@@ -132,7 +142,7 @@ const Home = () => {
             <div className="absolute top-0 right-0 w-20 h-20 bg-green-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
             <CardHeader className="relative">
               <div className="mb-4 p-3 bg-green-100 rounded-full w-fit group-hover:bg-green-200 transition-colors duration-300">
-                <CheckCircle className="h-8 w-8 text-green-600 group-hover:scale-110 transition-transform duration-300" />
+                <BookOpen className="h-8 w-8 text-green-600 group-hover:scale-110 transition-transform duration-300" />
               </div>
               <CardTitle className="text-xl text-gray-800">हिंदी विशेषज्ञता</CardTitle>
             </CardHeader>
@@ -140,16 +150,33 @@ const Home = () => {
               <p className="text-gray-600 leading-relaxed">
                 हिंदी व्याकरण में विशेष रूप से प्रशिक्षित। देवनागरी लिपि की पूर्ण समझ।
               </p>
-              <div className="mt-4 flex items-center text-sm text-green-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <span>100% हिंदी फोकस</span>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-pink-50 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-pink-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+            <CardHeader className="relative">
+              <div className="mb-4 p-3 bg-pink-100 rounded-full w-fit group-hover:bg-pink-200 transition-colors duration-300">
+                <Globe className="h-8 w-8 text-pink-600 group-hover:scale-110 transition-transform duration-300" />
               </div>
+              <CardTitle className="text-xl text-gray-800">सभी डिवाइस पर</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 leading-relaxed">
+                मोबाइल, टैबलेट या कंप्यूटर - कहीं भी, कभी भी उपयोग करें।
+              </p>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      {/* Enhanced How it Works Section */}
+      {/* USP Section */}
+      <USPSection />
+
+      {/* Counter Section */}
+      <CounterSection />
+
+      {/* How it Works Section */}
       <section className="bg-gradient-to-r from-gray-50 to-blue-50 py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -200,7 +227,6 @@ const Home = () => {
             </div>
           </div>
           
-          {/* CTA in How it Works */}
           <div className="text-center mt-12">
             <Link to="/register">
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 transform hover:scale-105 transition-all duration-300 shadow-lg">
@@ -212,43 +238,20 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Modern Footer */}
-      <footer className="bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 text-white py-16">
-        <div className="container mx-auto px-6">
-          <div className="text-center">
-            <div className="flex justify-center items-center space-x-3 mb-6">
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                व्याकरणी
-              </div>
-              <Sparkles className="h-6 w-6 text-purple-400 animate-pulse" />
-            </div>
-            
-            <p className="text-gray-300 mb-8 text-lg max-w-2xl mx-auto">
-              AI की शक्ति से हिंदी भाषा को बेहतर बनाएं। आपकी लेखन यात्रा में हमेशा साथ।
-            </p>
-            
-            <div className="flex justify-center space-x-8 mb-8">
-              <Link to="/about" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center space-x-1">
-                <Users className="h-4 w-4" />
-                <span>हमारे बारे में</span>
-              </Link>
-              <Link to="/contact" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center space-x-1">
-                <span>संपर्क</span>
-              </Link>
-              <Link to="/privacy" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center space-x-1">
-                <Shield className="h-4 w-4" />
-                <span>प्राइवेसी पॉलिसी</span>
-              </Link>
-            </div>
-            
-            <div className="border-t border-gray-700 pt-8">
-              <p className="text-gray-400 text-sm">
-                © 2024 व्याकरणी। सभी अधिकार सुरक्षित।
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Pricing Preview Section */}
+      <PricingPreviewSection />
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
+
+      {/* FAQ Section */}
+      <FAQSection />
+
+      {/* CTA Banner */}
+      <CTABanner />
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
