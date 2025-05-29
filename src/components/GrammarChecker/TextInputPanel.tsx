@@ -4,10 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, RotateCcw, Zap, Sparkles, AlertTriangle } from "lucide-react";
-import { Correction } from "@/types/grammarChecker";
-import OriginalHighlightedText from './OriginalHighlightedText';
 
 interface TextInputPanelProps {
   inputText: string;
@@ -15,12 +12,9 @@ interface TextInputPanelProps {
   isLoading: boolean;
   wordCount: number;
   charCount: number;
-  corrections: Correction[];
-  selectedCorrectionId: string | null;
   onCorrectGrammar: () => void;
   onEnhanceStyle: () => void;
   onResetText: () => void;
-  onClearSelection: () => void;
 }
 
 const MAX_WORD_LIMIT = 5000;
@@ -31,12 +25,9 @@ const TextInputPanel = ({
   isLoading, 
   wordCount, 
   charCount, 
-  corrections,
-  selectedCorrectionId,
   onCorrectGrammar,
   onEnhanceStyle,
-  onResetText,
-  onClearSelection
+  onResetText
 }: TextInputPanelProps) => {
   const getWordCountColor = () => {
     if (wordCount > MAX_WORD_LIMIT) return 'bg-red-500 text-white';
@@ -47,7 +38,6 @@ const TextInputPanel = ({
 
   const isOverLimit = wordCount > MAX_WORD_LIMIT;
   const shouldDisableButtons = isLoading || !inputText.trim() || isOverLimit;
-  const hasCorrections = corrections.length > 0;
 
   return (
     <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col">
@@ -66,28 +56,13 @@ const TextInputPanel = ({
         </div>
       </CardHeader>
       <CardContent className="p-4 sm:p-8 flex-1 flex flex-col">
-        {hasCorrections ? (
-          <div className="flex-1 bg-slate-50 rounded-2xl overflow-hidden">
-            <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
-              <div className="p-4 sm:p-6">
-                <OriginalHighlightedText
-                  text={inputText}
-                  corrections={corrections}
-                  selectedCorrectionId={selectedCorrectionId}
-                  onClick={onClearSelection}
-                />
-              </div>
-            </ScrollArea>
-          </div>
-        ) : (
-          <Textarea
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
-            className="flex-1 h-[400px] sm:h-[500px] lg:h-[600px] text-base sm:text-lg border-0 resize-none focus-visible:ring-0 p-4 sm:p-6 bg-slate-50 rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
-            disabled={isLoading}
-          />
-        )}
+        <Textarea
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
+          className="flex-1 h-[400px] sm:h-[500px] lg:h-[600px] text-base sm:text-lg border-0 resize-none focus-visible:ring-0 p-4 sm:p-6 bg-slate-50 rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
+          disabled={isLoading}
+        />
         
         {/* Word Limit Warning */}
         {isOverLimit && (

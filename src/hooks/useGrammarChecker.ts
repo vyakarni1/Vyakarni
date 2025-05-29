@@ -18,7 +18,6 @@ export const useGrammarChecker = () => {
   const [processingMode, setProcessingMode] = useState<ProcessingMode>('grammar');
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
-  const [selectedCorrectionId, setSelectedCorrectionId] = useState<string | null>(null);
   const { trackUsage } = useUsageStats();
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
 
@@ -44,12 +43,10 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check 5000 word limit first
     if (!checkWordLimit(inputText)) {
       return;
     }
 
-    // Check word limits before processing (existing word credit system)
     if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
@@ -59,7 +56,6 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setCorrectedText('');
     setCorrections([]);
-    setSelectedCorrectionId(null);
 
     const progressInterval = createProgressSimulator(setProgress);
 
@@ -74,7 +70,6 @@ export const useGrammarChecker = () => {
       
       setIsLoading(false);
       
-      // Track usage for both systems
       await trackUsage('grammar_check');
       await trackWordUsage(inputText, 'grammar_check');
       
@@ -93,12 +88,10 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check 5000 word limit first
     if (!checkWordLimit(inputText)) {
       return;
     }
 
-    // Check word limits before processing (existing word credit system)
     if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
@@ -108,7 +101,6 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setEnhancedText('');
     setCorrections([]);
-    setSelectedCorrectionId(null);
 
     const progressInterval = createProgressSimulator(setProgress);
 
@@ -123,7 +115,6 @@ export const useGrammarChecker = () => {
       
       setIsLoading(false);
       
-      // Track usage for both systems
       await trackUsage('style_enhance');
       await trackWordUsage(inputText, 'style_enhance');
       
@@ -143,7 +134,6 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setCorrections([]);
     setProcessingMode('grammar');
-    setSelectedCorrectionId(null);
   };
 
   const copyToClipboard = async () => {
@@ -158,10 +148,6 @@ export const useGrammarChecker = () => {
     return processingMode === 'style' ? enhancedText : correctedText;
   };
 
-  const selectCorrection = (correctionId: string | null) => {
-    setSelectedCorrectionId(correctionId);
-  };
-
   return {
     inputText,
     setInputText,
@@ -171,12 +157,10 @@ export const useGrammarChecker = () => {
     processingMode,
     progress,
     corrections,
-    selectedCorrectionId,
     correctGrammar,
     enhanceStyle,
     resetText,
     copyToClipboard,
-    getCurrentProcessedText,
-    selectCorrection
+    getCurrentProcessedText
   };
 };
