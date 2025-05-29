@@ -11,6 +11,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -88,7 +89,20 @@ const Login = () => {
             <p className="text-gray-600 animate-fade-in">अपने खाते में प्रवेश करें</p>
           </CardHeader>
           
-          <CardContent>
+          <CardContent className="space-y-6">
+            <div className="animate-fade-in">
+              <GoogleAuthButton mode="login" />
+            </div>
+
+            <div className="relative animate-fade-in">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-gray-500">या</span>
+              </div>
+            </div>
+
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2 animate-fade-in">
                 <Label htmlFor="email">ईमेल</Label>
