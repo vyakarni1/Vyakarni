@@ -28,6 +28,10 @@ serve(async (req) => {
       );
     }
 
+    // Estimate input word count for logging
+    const inputWordCount = inputText.trim().split(/\s+/).length;
+    console.log(`Processing text with ${inputWordCount} words`);
+
     // Apply word replacements first
     let preprocessedText = inputText;
     if (wordReplacements && Array.isArray(wordReplacements)) {
@@ -70,7 +74,7 @@ serve(async (req) => {
             content: `इस हिंदी टेक्स्ट को सुधारें:\n\n${preprocessedText}`
           }
         ],
-        max_tokens: 2000,
+        max_tokens: 16000,
         temperature: 0.1,
         top_p: 0.9
       })
@@ -89,6 +93,10 @@ serve(async (req) => {
     correctedText = correctedText.replace(/^["']|["']$/g, '');
 
     console.log('AI corrected text:', correctedText);
+
+    // Log output word count for monitoring
+    const outputWordCount = correctedText.trim().split(/\s+/).length;
+    console.log(`Output text has ${outputWordCount} words (${inputWordCount} input → ${outputWordCount} output)`);
 
     return new Response(
       JSON.stringify({ correctedText }), 
