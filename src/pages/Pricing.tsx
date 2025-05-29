@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useSubscription } from "@/hooks/useSubscription";
+import type { Json } from '@/integrations/supabase/types';
 
 interface Plan {
   id: string;
@@ -22,6 +23,14 @@ interface Plan {
   features: string[];
   is_active: boolean;
 }
+
+// Helper function to convert Json to string array
+const parseFeatures = (features: Json): string[] => {
+  if (Array.isArray(features)) {
+    return features as string[];
+  }
+  return [];
+};
 
 const Pricing = () => {
   const { user, loading: authLoading } = useAuth();
@@ -46,7 +55,13 @@ const Pricing = () => {
           return;
         }
 
-        setPlans(data || []);
+        if (data) {
+          const parsedPlans: Plan[] = data.map(plan => ({
+            ...plan,
+            features: parseFeatures(plan.features)
+          }));
+          setPlans(parsedPlans);
+        }
       } catch (error) {
         console.error('Error in fetchPlans:', error);
         toast.error('प्लान लोड करने में त्रुटि');

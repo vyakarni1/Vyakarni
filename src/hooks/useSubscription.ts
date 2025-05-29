@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
+import type { Json } from '@/integrations/supabase/types';
 
 interface SubscriptionData {
   subscription_id: string;
@@ -21,6 +22,14 @@ interface UsageData {
   max_corrections: number;
   max_words_per_correction: number;
 }
+
+// Helper function to convert Json to string array
+const parseFeatures = (features: Json): string[] => {
+  if (Array.isArray(features)) {
+    return features as string[];
+  }
+  return [];
+};
 
 export const useSubscription = () => {
   const { user } = useAuth();
@@ -42,7 +51,11 @@ export const useSubscription = () => {
       }
 
       if (data && data.length > 0) {
-        setSubscription(data[0]);
+        const subscriptionData = data[0];
+        setSubscription({
+          ...subscriptionData,
+          features: parseFeatures(subscriptionData.features)
+        });
       }
     } catch (error) {
       console.error('Error in fetchSubscription:', error);
