@@ -9,11 +9,27 @@ import { useUsageLimits } from "@/hooks/useUsageLimits";
 const SmartRecommendationsCard = () => {
   const { subscription, usage, getUsagePercentage } = useUsageLimits();
 
-  if (!subscription || !usage) return null;
+  if (!usage) {
+    return (
+      <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
+        <CardHeader>
+          <CardTitle className="text-lg text-gray-800 flex items-center space-x-2">
+            <Lightbulb className="h-5 w-5 text-yellow-500" />
+            <span>स्मार्ट सुझाव</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-gray-600">सुझाव लोड हो रहे हैं...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
+  // Use fallback values if subscription is not available
+  const currentPlan = subscription || { plan_type: 'free', plan_name: 'Free' };
   const usagePercentage = getUsagePercentage();
-  const isHighUsage = usagePercentage > 70 && subscription.plan_type === 'free';
-  const isLowUsage = usagePercentage < 30 && subscription.plan_type !== 'free';
+  const isHighUsage = usagePercentage > 70 && currentPlan.plan_type === 'free';
+  const isLowUsage = usagePercentage < 30 && currentPlan.plan_type !== 'free';
 
   const recommendations = [];
 
@@ -30,7 +46,7 @@ const SmartRecommendationsCard = () => {
   }
 
   // Feature recommendations based on plan
-  if (subscription.plan_type === 'free') {
+  if (currentPlan.plan_type === 'free') {
     recommendations.push({
       icon: <Star className="h-4 w-4" />,
       title: "बेहतर सुविधाएं पाएं",
@@ -41,7 +57,7 @@ const SmartRecommendationsCard = () => {
     });
   }
 
-  if (subscription.plan_type === 'pro') {
+  if (currentPlan.plan_type === 'pro') {
     recommendations.push({
       icon: <Users className="h-4 w-4" />,
       title: "टीम प्लान पर विचार करें",

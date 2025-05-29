@@ -22,10 +22,17 @@ const PlanInfoCard = () => {
     );
   }
 
-  if (!subscription) return null;
+  // Fallback to Free plan if no subscription found
+  const currentPlan = subscription || {
+    plan_name: 'Free',
+    plan_type: 'free',
+    max_words_per_correction: 100,
+    max_corrections_per_month: 5,
+    features: ['व्याकरण सुधार', 'वर्तनी जांच', 'मूल सुधार']
+  };
 
   const getPlanIcon = () => {
-    switch (subscription.plan_type) {
+    switch (currentPlan.plan_type) {
       case 'pro':
         return <Zap className="h-5 w-5" />;
       case 'team':
@@ -36,7 +43,7 @@ const PlanInfoCard = () => {
   };
 
   const getPlanColor = () => {
-    switch (subscription.plan_type) {
+    switch (currentPlan.plan_type) {
       case 'pro':
         return 'from-blue-500 to-purple-600';
       case 'team':
@@ -47,7 +54,7 @@ const PlanInfoCard = () => {
   };
 
   const getBadgeColor = () => {
-    switch (subscription.plan_type) {
+    switch (currentPlan.plan_type) {
       case 'pro':
         return 'bg-blue-100 text-blue-800';
       case 'team':
@@ -78,16 +85,16 @@ const PlanInfoCard = () => {
 
       <CardContent className="space-y-4">
         <div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">{subscription.plan_name}</h3>
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">{currentPlan.plan_name}</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-600">शब्द सीमा:</span>
-              <div className="font-semibold">{subscription.max_words_per_correction}</div>
+              <div className="font-semibold">{currentPlan.max_words_per_correction}</div>
             </div>
             <div>
               <span className="text-gray-600">मासिक सुधार:</span>
               <div className="font-semibold">
-                {subscription.max_corrections_per_month === -1 ? 'असीमित' : subscription.max_corrections_per_month}
+                {currentPlan.max_corrections_per_month === -1 ? 'असीमित' : currentPlan.max_corrections_per_month}
               </div>
             </div>
           </div>
@@ -96,20 +103,20 @@ const PlanInfoCard = () => {
         <div className="space-y-2">
           <h4 className="font-medium text-gray-700">सुविधाएं:</h4>
           <div className="flex flex-wrap gap-2">
-            {subscription.features.slice(0, 3).map((feature, index) => (
+            {currentPlan.features.slice(0, 3).map((feature, index) => (
               <Badge key={index} variant="outline" className="text-xs">
                 {feature}
               </Badge>
             ))}
-            {subscription.features.length > 3 && (
+            {currentPlan.features.length > 3 && (
               <Badge variant="outline" className="text-xs">
-                +{subscription.features.length - 3} और
+                +{currentPlan.features.length - 3} और
               </Badge>
             )}
           </div>
         </div>
 
-        {subscription.plan_type === 'free' && (
+        {currentPlan.plan_type === 'free' && (
           <div className="pt-2">
             <Link to="/pricing">
               <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
@@ -119,7 +126,7 @@ const PlanInfoCard = () => {
           </div>
         )}
 
-        {subscription.plan_type !== 'free' && (
+        {currentPlan.plan_type !== 'free' && (
           <div className="pt-2">
             <Link to="/pricing">
               <Button variant="outline" className="w-full">

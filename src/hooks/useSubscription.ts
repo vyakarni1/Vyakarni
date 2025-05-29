@@ -37,6 +37,43 @@ export const useSubscription = () => {
   const [usage, setUsage] = useState<UsageData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const createDefaultSubscription = async () => {
+    if (!user) return;
+
+    try {
+      // Get the free plan ID
+      const { data: freePlan, error: planError } = await supabase
+        .from('subscription_plans')
+        .select('*')
+        .eq('plan_type', 'free')
+        .single();
+
+      if (planError || !freePlan) {
+        console.error('Error getting free plan:', planError);
+        return;
+      }
+
+      // Create subscription for the user
+      const { error: subscriptionError } = await supabase
+        .from('user_subscriptions')
+        .insert({
+          user_id: user.id,
+          plan_id: freePlan.id,
+          status: 'active'
+        });
+
+      if (subscriptionError) {
+        console.error('Error creating subscription:', subscriptionError);
+        return;
+      }
+
+      // Refetch subscription after creating
+      fetchSubscription();
+    } catch (error) {
+      console.error('Error in createDefaultSubscription:', error);
+    }
+  };
+
   const fetchSubscription = async () => {
     if (!user) return;
 
@@ -56,6 +93,10 @@ export const useSubscription = () => {
           ...subscriptionData,
           features: parseFeatures(subscriptionData.features)
         });
+      } else {
+        // No subscription found, create default free subscription
+        console.log('No subscription found, creating default free subscription');
+        await createDefaultSubscription();
       }
     } catch (error) {
       console.error('Error in fetchSubscription:', error);
@@ -77,6 +118,14 @@ export const useSubscription = () => {
 
       if (data && data.length > 0) {
         setUsage(data[0]);
+      } else {
+        // Set default usage values if no data found
+        setUsage({
+          corrections_used: 0,
+          words_processed: 0,
+          max_corrections: 5,
+          max_words_per_correction: 100
+        });
       }
     } catch (error) {
       console.error('Error in fetchUsage:', error);

@@ -10,7 +10,7 @@ import { useUsageLimits } from "@/hooks/useUsageLimits";
 const UsageProgressCard = () => {
   const { subscription, usage, getRemainingCorrections, getUsagePercentage } = useUsageLimits();
 
-  if (!subscription || !usage) {
+  if (!usage) {
     return (
       <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
         <CardHeader>
@@ -123,7 +123,7 @@ const UsageProgressCard = () => {
           <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
             <p className="text-sm text-green-800 flex items-center">
               <CheckCircle className="h-4 w-4 mr-2" />
-              असीमित सुधार उपलब्ध! आपका {subscription.plan_name} प्लान सक्रिय है।
+              असीमित सुधार उपलब्ध! आपका {subscription?.plan_name || 'Pro'} प्लान सक्रिय है।
             </p>
           </div>
         )}
