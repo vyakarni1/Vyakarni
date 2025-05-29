@@ -68,9 +68,9 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Legal */}
+          {/* Legal Policies */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">कानूनी</h3>
+            <h3 className="text-lg font-semibold">कानूनी नीतियाँ</h3>
             <div className="space-y-2">
               <Link 
                 to="/privacy" 
@@ -86,16 +86,46 @@ const Footer = () => {
                 सेवा की शर्तें
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
+              <Link 
+                to="/disclaimer" 
+                className="block text-gray-400 hover:text-white transition-colors duration-200 relative group"
+              >
+                अस्वीकरण
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+              <Link 
+                to="/refund-policy" 
+                className="block text-gray-400 hover:text-white transition-colors duration-200 relative group"
+              >
+                वापसी नीति
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
             </div>
           </div>
 
-          {/* Contact Info */}
+          {/* Additional Policies & Contact */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">संपर्क करें</h3>
-            <div className="space-y-2 text-gray-400 text-sm">
+            <h3 className="text-lg font-semibold">अन्य नीतियाँ</h3>
+            <div className="space-y-2">
+              <Link 
+                to="/data-protection" 
+                className="block text-gray-400 hover:text-white transition-colors duration-200 relative group"
+              >
+                डेटा संरक्षण
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+              <Link 
+                to="/other-policies" 
+                className="block text-gray-400 hover:text-white transition-colors duration-200 relative group"
+              >
+                अन्य नीतियाँ
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            </div>
+            <div className="mt-4 text-gray-400 text-sm">
               <p>ईमेल: support@vyakarni.com</p>
-              <p>फोन: +91-XXXX-XXXX-XX</p>
-              <p>समय: सोमवार - शुक्रवार, 9:00 AM - 6:00 PM</p>
+              <p className="mt-1">समय: सोमवार - शुक्रवार</p>
+              <p>9:00 AM - 6:00 PM</p>
             </div>
           </div>
         </div>

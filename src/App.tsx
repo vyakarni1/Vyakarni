@@ -13,6 +13,10 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Disclaimer from "./pages/Disclaimer";
+import RefundPolicy from "./pages/RefundPolicy";
+import DataProtection from "./pages/DataProtection";
+import OtherPolicies from "./pages/OtherPolicies";
 import Index from "./pages/Index";
 import TextEditorPage from "./pages/TextEditor";
 import Pricing from "./pages/Pricing";
@@ -36,6 +40,10 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/disclaimer" element={<Disclaimer />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/data-protection" element={<DataProtection />} />
+            <Route path="/other-policies" element={<OtherPolicies />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route 
               path="/dashboard" 
