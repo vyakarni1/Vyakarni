@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
@@ -6,33 +7,22 @@ import type { Database } from '@/integrations/supabase/types';
 type UserRole = Database['public']['Enums']['app_role'];
 
 export const useUserRole = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const [role, setRole] = useState<UserRole | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If auth is still loading, keep role loading as well
-    if (authLoading) {
-      console.log('useUserRole: Auth still loading, keeping role loading true');
-      setLoading(true);
-      return;
-    }
-
-    // If no user after auth is done loading, set defaults
     if (!user) {
-      console.log('useUserRole: No user found after auth loaded, setting defaults');
+      console.log('useUserRole: No user found, setting defaults');
       setRole(null);
       setIsAdmin(false);
       setLoading(false);
       return;
     }
 
-    // User exists and auth is done, now fetch role
     const fetchUserRole = async () => {
       console.log('useUserRole: Fetching role for user:', user.id);
-      setLoading(true); // Set loading true when starting fetch
-      
       try {
         const { data, error } = await supabase
           .from('user_roles')
@@ -65,7 +55,7 @@ export const useUserRole = () => {
     };
 
     fetchUserRole();
-  }, [user, authLoading]); // Include authLoading in dependencies
+  }, [user]);
 
   return { role, isAdmin, loading };
 };

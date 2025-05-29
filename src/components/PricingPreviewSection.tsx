@@ -1,23 +1,21 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Zap, Star, Crown, Clock } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import DiscountBadge from './DiscountBadge';
+import { CheckCircle, Zap, Star, Crown } from 'lucide-react';
 
 const PricingPreviewSection = () => {
   const plans = [
     {
-      name: 'टेस्ट प्लान',
-      nameHindi: 'टेस्ट प्लान',
+      name: 'Free',
+      nameHindi: 'मुफ्त',
       price: '₹0',
       period: '/महीना',
       description: 'वर्तमान प्लान',
       features: [
         'व्याकरण सुधार',
-        'वर्तनी जाँच', 
-        'मूल सुधार',
-        'एक-क्लिक वाक्य सुधार'
+        'वर्तनी जांच', 
+        'मूल सुधार'
       ],
       limits: {
         'प्रति सुधार शब्द सीमा:': '100',
@@ -28,22 +26,19 @@ const PricingPreviewSection = () => {
       buttonText: 'वर्तमान प्लान',
       buttonColor: 'bg-green-500 hover:bg-green-600',
       borderColor: 'border-green-500',
-      headerColor: 'bg-green-500',
-      comingSoon: false,
-      hasDiscount: false
+      headerColor: 'bg-green-500'
     },
     {
-      name: 'हॉबी प्लान',
-      nameHindi: 'हॉबी प्लान',
-      price: '₹999',
-      originalPrice: '₹1,499',
+      name: 'Pro',
+      nameHindi: 'प्रो',
+      price: '₹499',
       period: '/महीना',
       description: 'सबसे लोकप्रिय',
       features: [
         'असीमित सुधार',
         'तेजी सुधार',
         'उन्नत व्याकरण',
-        'एक-क्लिक वाक्य सुधार'
+        'प्राथमिकता सहायता'
       ],
       limits: {
         'प्रति सुधार शब्द सीमा:': '1000',
@@ -51,27 +46,22 @@ const PricingPreviewSection = () => {
       },
       icon: Star,
       popular: true,
-      buttonText: 'जल्द उपलब्ध',
-      buttonColor: 'bg-blue-600 hover:bg-blue-700 opacity-75',
+      buttonText: 'अपग्रेड करें',
+      buttonColor: 'bg-blue-600 hover:bg-blue-700',
       borderColor: 'border-blue-500',
-      headerColor: 'bg-blue-600',
-      comingSoon: true,
-      hasDiscount: true,
-      discountPercentage: 33
+      headerColor: 'bg-blue-600'
     },
     {
-      name: 'प्रोफेशनल प्लान',
-      nameHindi: 'प्रोफेशनल प्लान',
-      price: '₹9,999',
-      originalPrice: '₹12,999',
+      name: 'Team',
+      nameHindi: 'टीम',
+      price: '₹999',
       period: '/महीना',
       description: '',
       features: [
         'सभी Pro सुविधाएं',
         'टीम सहयोग',
         'उपयोग एनालिटिक्स',
-        'समर्पित सहायता',
-        'एक-क्लिक वाक्य सुधार'
+        'समर्पित सहायता'
       ],
       limits: {
         'प्रति सुधार शब्द सीमा:': '2000',
@@ -80,13 +70,10 @@ const PricingPreviewSection = () => {
       },
       icon: Crown,
       popular: false,
-      buttonText: 'जल्द उपलब्ध',
-      buttonColor: 'bg-purple-600 hover:bg-purple-700 opacity-75',
+      buttonText: 'अपग्रेड करें',
+      buttonColor: 'bg-purple-600 hover:bg-purple-700',
       borderColor: 'border-purple-500',
-      headerColor: 'bg-purple-600',
-      comingSoon: true,
-      hasDiscount: true,
-      discountPercentage: 23
+      headerColor: 'bg-purple-600'
     }
   ];
 
@@ -95,36 +82,17 @@ const PricingPreviewSection = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">सभी के लिए उपयुक्त प्लान</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             अपनी जरूरतों के अनुसार सबसे अच्छा प्लान चुनें और आज ही शुरू करें
           </p>
-          <div className="flex items-center justify-center space-x-2 text-sm bg-amber-50 text-amber-700 px-4 py-2 rounded-full border border-amber-200 inline-flex">
-            <Clock className="h-4 w-4" />
-            <span>पेमेंट सिस्टम जल्द ही उपलब्ध होगा</span>
-          </div>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto p-6">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`relative transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${plan.borderColor} border-2 bg-white`}
+              className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${plan.borderColor} border-2 bg-white`}
             >
-              {/* Discount Badge */}
-              {plan.hasDiscount && (
-                <DiscountBadge percentage={plan.discountPercentage} />
-              )}
-
-              {/* Coming Soon Badge for Paid Plans */}
-              {plan.comingSoon && (
-                <div className="absolute top-4 left-4 z-10">
-                  <Badge variant="outline" className="bg-amber-50 border-amber-300 text-amber-700">
-                    <Clock className="h-3 w-3 mr-1" />
-                    जल्द आएगा
-                  </Badge>
-                </div>
-              )}
-
               {/* Header with plan name */}
               {plan.description && (
                 <div className={`${plan.headerColor} text-white text-center py-3 text-sm font-medium`}>
@@ -143,9 +111,6 @@ const PricingPreviewSection = () => {
                 {/* Plan name and price */}
                 <CardTitle className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</CardTitle>
                 <div className="mb-4">
-                  {plan.originalPrice && (
-                    <div className="text-lg text-gray-500 line-through mb-1">{plan.originalPrice}</div>
-                  )}
                   <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                   <span className="text-gray-600 ml-1">{plan.period}</span>
                 </div>
@@ -175,24 +140,12 @@ const PricingPreviewSection = () => {
                 {/* Button */}
                 <Button 
                   className={`w-full ${plan.buttonColor} text-white font-medium py-3 transition-all duration-300`}
-                  asChild={!plan.comingSoon}
-                  disabled={plan.comingSoon}
+                  asChild
                 >
-                  {plan.comingSoon ? (
-                    <span>{plan.buttonText}</span>
-                  ) : (
-                    <Link to="/register">
-                      {plan.buttonText}
-                    </Link>
-                  )}
+                  <Link to="/register">
+                    {plan.buttonText}
+                  </Link>
                 </Button>
-
-                {/* Additional info for coming soon plans */}
-                {plan.comingSoon && (
-                  <p className="text-xs text-center text-gray-500 mt-2">
-                    पेमेंट गेटवे इंटीग्रेशन प्रगति में है
-                  </p>
-                )}
               </CardContent>
             </Card>
           ))}

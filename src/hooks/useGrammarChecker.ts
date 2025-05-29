@@ -2,12 +2,11 @@
 import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
-import { useWordLimits } from "@/hooks/useWordLimits";
+import { useUsageLimits } from "@/hooks/useUsageLimits";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
+import { extractCorrectionsFromResponse, extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
 import { createProgressSimulator, completeProgress, resetProgress } from "@/utils/progressUtils";
-
-const MAX_WORD_LIMIT = 5000;
 
 export const useGrammarChecker = () => {
   const [inputText, setInputText] = useState('');
@@ -18,23 +17,7 @@ export const useGrammarChecker = () => {
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
   const { trackUsage } = useUsageStats();
-  const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
-
-  const checkWordLimit = (text: string): boolean => {
-    const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
-    
-    if (wordCount > MAX_WORD_LIMIT) {
-      toast.error(
-        `शब्द सीमा पार हो गई! अधिकतम ${MAX_WORD_LIMIT} शब्द की अनुमति है। वर्तमान में ${wordCount} शब्द हैं।`,
-        {
-          duration: 5000,
-        }
-      );
-      return false;
-    }
-    
-    return true;
-  };
+  const { checkAndEnforceWordLimit, checkAndEnforceCorrectionLimit, trackUsage: trackLimitUsage } = useUsageLimits();
 
   const correctGrammar = async () => {
     if (!inputText.trim()) {
@@ -42,11 +25,12 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    if (!checkWordLimit(inputText)) {
+    // Check limits before processing
+    if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
 
-    if (!checkAndEnforceWordLimit(inputText)) {
+    if (!checkAndEnforceCorrectionLimit()) {
       return;
     }
 
@@ -59,18 +43,21 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
-      const response = await callGrammarCheckAPI(inputText);
+      const aiCorrected = await callGrammarCheckAPI(inputText);
       
       completeProgress(setProgress, progressInterval);
-      setCorrectedText(response.correctedText);
-      setCorrections(response.corrections);
+      setCorrectedText(aiCorrected);
+
+      const allCorrections = extractCorrectionsFromResponse(inputText, aiCorrected);
+      setCorrections(allCorrections);
       
       setIsLoading(false);
       
+      // Track usage for both systems
       await trackUsage('grammar_check');
-      await trackWordUsage(inputText, 'grammar_check');
+      await trackLimitUsage(inputText);
       
-      toast.success(`व्याकरण सुधार पूरा हो गया! ${response.corrections.length} सुधार मिले।`);
+      toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error correcting grammar:', error);
       setIsLoading(false);
@@ -85,11 +72,12 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    if (!checkWordLimit(inputText)) {
+    // Check limits before processing
+    if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
 
-    if (!checkAndEnforceWordLimit(inputText)) {
+    if (!checkAndEnforceCorrectionLimit()) {
       return;
     }
 
@@ -102,18 +90,21 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
-      const response = await callStyleEnhanceAPI(inputText);
+      const enhanced = await callStyleEnhanceAPI(inputText);
       
       completeProgress(setProgress, progressInterval);
-      setEnhancedText(response.enhancedText);
-      setCorrections(response.corrections);
+      setEnhancedText(enhanced);
+
+      const styleEnhancements = extractStyleEnhancements(inputText, enhanced);
+      setCorrections(styleEnhancements);
       
       setIsLoading(false);
       
+      // Track usage for both systems
       await trackUsage('style_enhance');
-      await trackWordUsage(inputText, 'style_enhance');
+      await trackLimitUsage(inputText);
       
-      toast.success(`शैली सुधार पूरा हो गया! ${response.corrections.length} सुधार मिले।`);
+      toast.success(`शैली सुधार पूरा हो गया! ${styleEnhancements.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error enhancing style:', error);
       setIsLoading(false);

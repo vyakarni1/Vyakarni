@@ -2,114 +2,98 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Lightbulb, ShoppingBag, TrendingUp, Zap, Target, Clock } from "lucide-react";
+import { Lightbulb, ArrowUp, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useWordCredits } from "@/hooks/useWordCredits";
-import { useUsageStats } from "@/hooks/useUsageStats";
+import { useUsageLimits } from "@/hooks/useUsageLimits";
 
 const SmartRecommendationsCard = () => {
-  const { balance, plans } = useWordCredits();
-  const { stats } = useUsageStats();
+  const { subscription, usage, getUsagePercentage } = useUsageLimits();
 
-  const avgWordsPerCorrection = 50;
-  const monthlyWordUsage = stats.corrections_this_month * avgWordsPerCorrection;
-  const dailyWordUsage = stats.corrections_today * avgWordsPerCorrection;
-  
-  const isLowBalance = balance.total_words_available < 100;
-  const isVeryLowBalance = balance.total_words_available < 50;
-  const isHighUsage = monthlyWordUsage > 1000;
-  const isFrequentUser = stats.corrections_today > 5;
+  if (!usage) {
+    return (
+      <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
+        <CardHeader>
+          <CardTitle className="text-lg text-gray-800 flex items-center space-x-2">
+            <Lightbulb className="h-5 w-5 text-yellow-500" />
+            <span>स्मार्ट सुझाव</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-gray-600">सुझाव लोड हो रहे हैं...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Use fallback values if subscription is not available
+  const currentPlan = subscription || { plan_type: 'free', plan_name: 'Free' };
+  const usagePercentage = getUsagePercentage();
+  const isHighUsage = usagePercentage > 70 && currentPlan.plan_type === 'free';
+  const isLowUsage = usagePercentage < 30 && currentPlan.plan_type !== 'free';
 
   const recommendations = [];
 
-  // Critical: Very low balance
-  if (isVeryLowBalance) {
+  // High usage recommendations for free users
+  if (isHighUsage) {
     recommendations.push({
-      icon: <ShoppingBag className="h-4 w-4" />,
-      title: "तुरंत शब्द खरीदें!",
-      description: `केवल ${balance.total_words_available} शब्द बचे हैं। व्याकरण चेकर का निरंतर उपयोग करने के लिए अभी शब्द खरीदें।`,
-      action: "अभी खरीदें",
+      icon: <ArrowUp className="h-4 w-4" />,
+      title: "प्रो में अपग्रेड करें",
+      description: "आप अपनी मुफ्त सीमा का 70% से अधिक उपयोग कर चुके हैं। असीमित सुधार के लिए प्रो प्लान में अपग्रेड करें।",
+      action: "अपग्रेड करें",
       link: "/pricing",
-      color: "bg-red-100 text-red-800",
-      priority: "high"
-    });
-  } 
-  // Warning: Low balance
-  else if (isLowBalance) {
-    recommendations.push({
-      icon: <Target className="h-4 w-4" />,
-      title: "शब्द बैलेंस कम है",
-      description: `${balance.total_words_available} शब्द बचे हैं। आपके उपयोग के अनुसार यह जल्दी समाप्त हो सकता है।`,
-      action: "शब्द पैकेज देखें",
-      link: "/pricing",
-      color: "bg-orange-100 text-orange-800",
-      priority: "medium"
+      color: "bg-blue-100 text-blue-800"
     });
   }
 
-  // High usage pattern recommendation
-  if (isHighUsage && !isLowBalance) {
-    const recommendedPlan = plans.find(plan => plan.words_included >= monthlyWordUsage * 1.5);
-    if (recommendedPlan) {
+  // Feature recommendations based on plan
+  if (currentPlan.plan_type === 'free') {
+    recommendations.push({
+      icon: <Star className="h-4 w-4" />,
+      title: "बेहतर सुविधाएं पाएं",
+      description: "प्रो प्लान में शैली सुधार, वाक्य संरचना और व्याकरण की गहरी जांच की सुविधा मिलती है।",
+      action: "सुविधाएं देखें",
+      link: "/pricing",
+      color: "bg-purple-100 text-purple-800"
+    });
+  }
+
+  if (currentPlan.plan_type === 'pro') {
+    recommendations.push({
+      icon: <Users className="h-4 w-4" />,
+      title: "टीम प्लान पर विचार करें",
+      description: "क्या आप टीम के साथ काम करते हैं? टीम प्लान में 5 सदस्यों के लिए सुविधा मिलती है।",
+      action: "टीम प्लान देखें",
+      link: "/pricing",
+      color: "bg-green-100 text-green-800"
+    });
+  }
+
+  // Usage efficiency recommendations
+  if (usage.corrections_used > 0) {
+    const avgWordsPerCorrection = usage.words_processed / usage.corrections_used;
+    if (avgWordsPerCorrection < 50) {
       recommendations.push({
-        icon: <TrendingUp className="h-4 w-4" />,
-        title: "बड़ा पैकेज लें",
-        description: `आप महीने में ~${monthlyWordUsage.toLocaleString()} शब्द उपयोग करते हैं। ${recommendedPlan.plan_name} पैकेज अधिक किफायती होगा।`,
-        action: "पैकेज देखें",
-        link: "/pricing",
-        color: "bg-blue-100 text-blue-800",
-        priority: "medium"
+        icon: <Lightbulb className="h-4 w-4" />,
+        title: "बेहतर उपयोग की सलाह",
+        description: "छोटे वाक्यों की बजाय लंबे पैराग्राफ एक साथ सुधारें। इससे बेहतर परिणाम मिलते हैं।",
+        action: "टिप्स देखें",
+        link: "/grammar-checker",
+        color: "bg-yellow-100 text-yellow-800"
       });
     }
   }
 
-  // Frequent user optimization
-  if (isFrequentUser && dailyWordUsage < 200) {
-    recommendations.push({
-      icon: <Zap className="h-4 w-4" />,
-      title: "उपयोग को अनुकूलित करें",
-      description: "छोटे टेक्स्ट की बजाय लंबे पैराग्राफ एक साथ जांचें। इससे बेहतर परिणाम और कम शब्द खर्च होंगे।",
-      action: "टिप्स देखें",
-      link: "/grammar-checker",
-      color: "bg-purple-100 text-purple-800",
-      priority: "low"
-    });
-  }
-
-  // Expiry warning
-  if (balance.next_expiry_date && balance.purchased_words > 0) {
-    const expiryDate = new Date(balance.next_expiry_date);
-    const daysUntilExpiry = Math.ceil((expiryDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysUntilExpiry <= 7 && daysUntilExpiry > 0) {
-      recommendations.push({
-        icon: <Clock className="h-4 w-4" />,
-        title: "शब्द जल्दी समाप्त होंगे",
-        description: `आपके ${balance.purchased_words} खरीदे गए शब्द ${daysUntilExpiry} दिन में समाप्त हो जाएंगे। नए शब्द खरीदने पर विचार करें।`,
-        action: "नवीनीकरण करें",
-        link: "/pricing",
-        color: "bg-yellow-100 text-yellow-800",
-        priority: "medium"
-      });
-    }
-  }
-
-  // Good usage pattern - positive reinforcement
-  if (!isLowBalance && !isHighUsage && stats.total_corrections > 10) {
+  // Low usage for paid users
+  if (isLowUsage) {
     recommendations.push({
       icon: <Lightbulb className="h-4 w-4" />,
-      title: "बेहतरीन उपयोग!",
-      description: "आप अपने शब्दों का संतुलित उपयोग कर रहे हैं। व्याकरण की गुणवत्ता में सुधार जारी रखें।",
-      action: "और सुधार करें",
+      title: "अधिक सुविधाओं का उपयोग करें",
+      description: "आप अपने प्लान की पूरी क्षमता का उपयोग नहीं कर रहे। व्याकरण चेकर के सभी फीचर्स आजमाएं।",
+      action: "शुरू करें",
       link: "/grammar-checker",
-      color: "bg-green-100 text-green-800",
-      priority: "low"
+      color: "bg-indigo-100 text-indigo-800"
     });
   }
-
-  // Sort by priority
-  const priorityOrder = { high: 3, medium: 2, low: 1 };
-  recommendations.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
 
   if (recommendations.length === 0) {
     return (
@@ -117,11 +101,11 @@ const SmartRecommendationsCard = () => {
         <CardHeader>
           <CardTitle className="text-lg text-gray-800 flex items-center space-x-2">
             <Lightbulb className="h-5 w-5 text-green-500" />
-            <span>सब कुछ बेहतरीन!</span>
+            <span>बधाई हो!</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600">आपका शब्द बैलेंस और उपयोग पैटर्न पूर्ण रूप से संतुलित है। व्याकरण सुधार जारी रखें!</p>
+          <p className="text-gray-600">आप अपने प्लान का बेहतरीन उपयोग कर रहे हैं। व्याकरण सुधार जारी रखें!</p>
         </CardContent>
       </Card>
     );
@@ -137,26 +121,16 @@ const SmartRecommendationsCard = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         {recommendations.slice(0, 2).map((rec, index) => (
-          <div key={index} className={`p-3 border rounded-lg hover:shadow-md transition-shadow ${
-            rec.priority === 'high' ? 'border-red-200 bg-red-50' : 
-            rec.priority === 'medium' ? 'border-orange-200 bg-orange-50' : 
-            'border-gray-200'
-          }`}>
+          <div key={index} className="p-3 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
             <div className="flex items-start space-x-3">
               <Badge className={`${rec.color} flex items-center space-x-1`}>
                 {rec.icon}
               </Badge>
               <div className="flex-1">
                 <h4 className="font-medium text-gray-800 mb-1">{rec.title}</h4>
-                <p className="text-sm text-gray-600 mb-2 leading-relaxed">{rec.description}</p>
+                <p className="text-sm text-gray-600 mb-2">{rec.description}</p>
                 <Link to={rec.link}>
-                  <Button 
-                    size="sm" 
-                    variant={rec.priority === 'high' ? 'default' : 'outline'} 
-                    className={`text-xs ${
-                      rec.priority === 'high' ? 'bg-red-600 hover:bg-red-700 text-white' : ''
-                    }`}
-                  >
+                  <Button size="sm" variant="outline" className="text-xs">
                     {rec.action}
                   </Button>
                 </Link>
@@ -164,12 +138,6 @@ const SmartRecommendationsCard = () => {
             </div>
           </div>
         ))}
-        
-        {recommendations.length > 2 && (
-          <div className="text-center pt-2">
-            <p className="text-xs text-gray-500">+{recommendations.length - 2} और सुझाव उपलब्ध</p>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

@@ -27,9 +27,6 @@ import AdminRoute from "./components/AdminRoute";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import ContactSubmissions from "./pages/Admin/ContactSubmissions";
 import UserManagement from "./pages/Admin/UserManagement";
-import Analytics from "./pages/Admin/Analytics";
-import Subscriptions from "./pages/Admin/Subscriptions";
-import Settings from "./pages/Admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -78,38 +75,6 @@ const App = () => (
               element={
                 <AdminRoute>
                   <AdminDashboard />
-                </AdminRoute>
-              } 
-            />
-            <Route 
-              path="/admin/dashboard" 
-              element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
-              } 
-            />
-            <Route 
-              path="/admin/analytics" 
-              element={
-                <AdminRoute>
-                  <Analytics />
-                </AdminRoute>
-              } 
-            />
-            <Route 
-              path="/admin/subscriptions" 
-              element={
-                <AdminRoute>
-                  <Subscriptions />
-                </AdminRoute>
-              } 
-            />
-            <Route 
-              path="/admin/settings" 
-              element={
-                <AdminRoute>
-                  <Settings />
                 </AdminRoute>
               } 
             />
