@@ -72,7 +72,7 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
           <div className="flex items-center space-x-3">
             <Link to="/" className={logoClasses}>
               <img 
-                src="/lovable-uploads/827c910f-4ee8-43bc-adf6-6f3a5552eb9b.png" 
+                src="/lovable-uploads/fa0d7e83-7b3b-4c0c-8eb8-0e8d6bc2ccc9.png" 
                 alt="व्याकरणी Logo" 
                 className={logoImageClasses}
               />
