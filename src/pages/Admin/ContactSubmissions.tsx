@@ -15,7 +15,7 @@ interface ContactSubmission {
   name: string;
   email: string;
   message: string;
-  status: 'unread' | 'read' | 'replied';
+  status: string;
   created_at: string;
   updated_at: string;
   handled_by?: string;
