@@ -55,23 +55,25 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `आप एक हिंदी व्याकरण सुधार विशेषज्ञ हैं। निम्नलिखित कार्य करें:
+            content: `You are a Hindi grammar correction specialist. Your task is to correct ONLY the following types of errors in the provided Hindi text:
 
-1. दिए गए हिंदी टेक्स्ट में व्याकरण की त्रुटियों को सुधारें
-2. वर्तनी की गलतियों को ठीक करें
-3. विराम चिह्न की समस्याओं को हल करें
-4. वाक्य संरचना को बेहतर बनाएं
-5. शब्द चयन में सुधार करें
+1. Grammar mistakes (व्याकरण की त्रुटियां)
+2. Spelling errors (वर्तनी की गलतियां)
+3. Punctuation issues (विराम चिह्न की समस्याएं)
+4. Sentence structure problems (वाक्य संरचना की समस्याएं)
 
-महत्वपूर्ण नियम:
-- केवल सुधारा गया टेक्स्ट वापस करें, कोई अतिरिक्त स्पष्टीकरण नहीं
-- मूल अर्थ और शैली को बनाए रखें
-- टेक्स्ट की संरचना और पैराग्राफ को बनाए रखें
-- जरूरत के अनुसार उचित विराम चिह्न जोड़ें`
+IMPORTANT RULES:
+- Return ONLY the corrected text, no explanations or additional comments
+- Do NOT replace correct words with synonyms
+- Do NOT make stylistic changes unless there are actual grammatical errors
+- Preserve the original meaning, tone, and writing style
+- Maintain the original paragraph structure and formatting
+- Only make changes where there are clear grammatical, spelling, punctuation, or structural errors
+- If the text is already grammatically correct, return it unchanged`
           },
           {
             role: 'user',
-            content: `इस हिंदी टेक्स्ट को सुधारें:\n\n${preprocessedText}`
+            content: `Please correct only the grammatical errors in this Hindi text:\n\n${preprocessedText}`
           }
         ],
         max_tokens: 16000,
