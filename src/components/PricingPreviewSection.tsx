@@ -1,8 +1,10 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Zap, Star, Crown, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import DiscountBadge from './DiscountBadge';
 
 const PricingPreviewSection = () => {
   const plans = [
@@ -14,8 +16,9 @@ const PricingPreviewSection = () => {
       description: 'वर्तमान प्लान',
       features: [
         'व्याकरण सुधार',
-        'वर्तनी जांच', 
-        'मूल सुधार'
+        'वर्तनी जाँच', 
+        'मूल सुधार',
+        'एक-क्लिक वाक्य सुधार'
       ],
       limits: {
         'प्रति सुधार शब्द सीमा:': '100',
@@ -27,19 +30,21 @@ const PricingPreviewSection = () => {
       buttonColor: 'bg-green-500 hover:bg-green-600',
       borderColor: 'border-green-500',
       headerColor: 'bg-green-500',
-      comingSoon: false
+      comingSoon: false,
+      hasDiscount: false
     },
     {
       name: 'हॉबी प्लान',
       nameHindi: 'हॉबी प्लान',
-      price: '₹499',
+      price: '₹999',
+      originalPrice: '₹1,499',
       period: '/महीना',
       description: 'सबसे लोकप्रिय',
       features: [
         'असीमित सुधार',
         'तेजी सुधार',
         'उन्नत व्याकरण',
-        'प्राथमिकता सहायता'
+        'एक-क्लिक वाक्य सुधार'
       ],
       limits: {
         'प्रति सुधार शब्द सीमा:': '1000',
@@ -51,19 +56,23 @@ const PricingPreviewSection = () => {
       buttonColor: 'bg-blue-600 hover:bg-blue-700 opacity-75',
       borderColor: 'border-blue-500',
       headerColor: 'bg-blue-600',
-      comingSoon: true
+      comingSoon: true,
+      hasDiscount: true,
+      discountPercentage: 33
     },
     {
       name: 'प्रोफेशनल प्लान',
       nameHindi: 'प्रोफेशनल प्लान',
-      price: '₹999',
+      price: '₹9,999',
+      originalPrice: '₹12,999',
       period: '/महीना',
       description: '',
       features: [
         'सभी Pro सुविधाएं',
         'टीम सहयोग',
         'उपयोग एनालिटिक्स',
-        'समर्पित सहायता'
+        'समर्पित सहायता',
+        'एक-क्लिक वाक्य सुधार'
       ],
       limits: {
         'प्रति सुधार शब्द सीमा:': '2000',
@@ -76,7 +85,9 @@ const PricingPreviewSection = () => {
       buttonColor: 'bg-purple-600 hover:bg-purple-700 opacity-75',
       borderColor: 'border-purple-500',
       headerColor: 'bg-purple-600',
-      comingSoon: true
+      comingSoon: true,
+      hasDiscount: true,
+      discountPercentage: 23
     }
   ];
 
@@ -100,9 +111,14 @@ const PricingPreviewSection = () => {
               key={index} 
               className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${plan.borderColor} border-2 bg-white`}
             >
+              {/* Discount Badge */}
+              {plan.hasDiscount && (
+                <DiscountBadge percentage={plan.discountPercentage} />
+              )}
+
               {/* Coming Soon Badge for Paid Plans */}
               {plan.comingSoon && (
-                <div className="absolute top-4 right-4 z-10">
+                <div className="absolute top-4 left-4 z-10">
                   <Badge variant="outline" className="bg-amber-50 border-amber-300 text-amber-700">
                     <Clock className="h-3 w-3 mr-1" />
                     जल्द आएगा
@@ -128,6 +144,9 @@ const PricingPreviewSection = () => {
                 {/* Plan name and price */}
                 <CardTitle className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</CardTitle>
                 <div className="mb-4">
+                  {plan.originalPrice && (
+                    <div className="text-lg text-gray-500 line-through mb-1">{plan.originalPrice}</div>
+                  )}
                   <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                   <span className="text-gray-600 ml-1">{plan.period}</span>
                 </div>

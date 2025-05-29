@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { LogOut, Check, Star, Zap, Crown, Calculator, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 import { useWordCredits } from "@/hooks/useWordCredits";
+import DiscountBadge from "@/components/DiscountBadge";
 
 const Pricing = () => {
   const { user, loading: authLoading } = useAuth();
@@ -23,15 +23,6 @@ const Pricing = () => {
     } catch (error) {
       toast.error("लॉग आउट में त्रुटि");
     }
-  };
-
-  const calculateGSTPrice = (basePrice: number, gstPercentage: number) => {
-    const gstAmount = (basePrice * gstPercentage) / 100;
-    return {
-      basePrice,
-      gstAmount,
-      totalPrice: basePrice + gstAmount
-    };
   };
 
   const handleSelectPlan = async (plan: any) => {
@@ -77,6 +68,17 @@ const Pricing = () => {
         return 'from-purple-600 to-pink-600';
       default:
         return 'from-gray-500 to-gray-600';
+    }
+  };
+
+  const getDiscountInfo = (planType: string) => {
+    switch (planType) {
+      case 'basic':
+        return { hasDiscount: true, percentage: 33, originalPrice: 1499 };
+      case 'premium':
+        return { hasDiscount: true, percentage: 23, originalPrice: 12999 };
+      default:
+        return { hasDiscount: false, percentage: 0, originalPrice: 0 };
     }
   };
 
@@ -127,7 +129,7 @@ const Pricing = () => {
           </p>
           <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
             <Calculator className="h-4 w-4" />
-            <span>सभी पैकेज 30 दिन तक वैध • 18% GST अतिरिक्त</span>
+            <span>सभी पैकेज 30 दिन तक वैध • शानदार छूट उपलब्ध</span>
           </div>
           <div className="flex items-center justify-center space-x-2 text-sm bg-amber-50 text-amber-700 px-4 py-2 rounded-full border border-amber-200 inline-flex">
             <Clock className="h-4 w-4" />
@@ -138,7 +140,7 @@ const Pricing = () => {
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan) => {
-            const pricing = calculateGSTPrice(plan.price_before_gst, plan.gst_percentage);
+            const discountInfo = getDiscountInfo(plan.plan_type);
             
             return (
               <Card
@@ -147,6 +149,11 @@ const Pricing = () => {
                   plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
                 }`}
               >
+                {/* Discount Badge */}
+                {discountInfo.hasDiscount && (
+                  <DiscountBadge percentage={discountInfo.percentage} />
+                )}
+
                 {plan.plan_type === 'basic' && (
                   <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
                     सबसे लोकप्रिय
@@ -155,7 +162,7 @@ const Pricing = () => {
 
                 {/* Coming Soon Badge for Paid Plans */}
                 {plan.plan_type !== 'free' && (
-                  <div className="absolute top-4 right-4 z-10">
+                  <div className="absolute top-4 left-4 z-10">
                     <Badge variant="outline" className="bg-amber-50 border-amber-300 text-amber-700">
                       <Clock className="h-3 w-3 mr-1" />
                       जल्द आएगा
@@ -175,13 +182,14 @@ const Pricing = () => {
                     {plan.plan_type !== 'free' && (
                       <div className="space-y-1">
                         <div className="flex items-center justify-center space-x-2">
+                          {discountInfo.hasDiscount && (
+                            <span className="text-lg text-gray-500 line-through">
+                              ₹{discountInfo.originalPrice.toLocaleString('hi-IN')}
+                            </span>
+                          )}
                           <span className="text-2xl font-bold text-gray-900">
-                            ₹{pricing.totalPrice.toLocaleString('hi-IN')}
+                            ₹{plan.price_before_gst.toLocaleString('hi-IN')}
                           </span>
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          <div>बेस प्राइस: ₹{pricing.basePrice.toLocaleString('hi-IN')}</div>
-                          <div>GST (18%): ₹{pricing.gstAmount.toLocaleString('hi-IN')}</div>
                         </div>
                         <Badge variant="outline" className="text-xs">
                           30 दिन की वैधता
@@ -196,11 +204,11 @@ const Pricing = () => {
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">हिंदी व्याकरण जांच</span>
+                      <span className="text-sm text-gray-700">हिंदी व्याकरण जाँच</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">स्टाइल एन्हांसमेंट</span>
+                      <span className="text-sm text-gray-700">एक-क्लिक वाक्य सुधार</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
@@ -210,7 +218,7 @@ const Pricing = () => {
                       <>
                         <div className="flex items-center space-x-3">
                           <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-700">प्राथमिकता सपोर्ट</span>
+                          <span className="text-sm text-gray-700">समर्पित सहायता</span>
                         </div>
                         <div className="flex items-center space-x-3">
                           <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
@@ -261,7 +269,7 @@ const Pricing = () => {
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="p-6 bg-white rounded-lg shadow-sm">
               <h3 className="font-semibold text-gray-800 mb-2">शब्द कैसे गिने जाते हैं?</h3>
-              <p className="text-gray-600 text-sm">आपके द्वारा जांच के लिए भेजे गए टेक्स्ट में जितने शब्द होंगे, उतने ही आपके बैलेंस से काटे जाएंगे।</p>
+              <p className="text-gray-600 text-sm">आपके द्वारा जाँच के लिए भेजे गए टेक्स्ट में जितने शब्द होंगे, उतने ही आपके बैलेंस से काटे जाएंगे।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
               <h3 className="font-semibold text-gray-800 mb-2">शब्द की वैधता कितनी है?</h3>
