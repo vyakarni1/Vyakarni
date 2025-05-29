@@ -72,9 +72,13 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
           <div className="flex items-center space-x-3">
             <Link to="/" className={logoClasses}>
               <img 
-                src="/lovable-uploads/fa0d7e83-7b3b-4c0c-8eb8-0e8d6bc2ccc9.png" 
+                src="/lovable-uploads/d3577f71-1a8f-4a2c-8b5f-7808b6658a8f.png" 
                 alt="व्याकरणी Logo" 
                 className={logoImageClasses}
+                onError={(e) => {
+                  console.log('Logo failed to load, falling back to text');
+                  e.currentTarget.style.display = 'none';
+                }}
               />
               <span className={logoTextClasses}>
                 व्याकरणी
