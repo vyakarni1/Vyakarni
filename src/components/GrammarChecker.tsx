@@ -29,9 +29,9 @@ const GrammarChecker = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       <Header />
 
-      {/* Main Editor Section */}
-      <div className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="grid lg:grid-cols-2 gap-8">
+      {/* Main Editor Section - Responsive Grid */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-12 sm:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <TextInputPanel
             inputText={inputText}
             setInputText={setInputText}
