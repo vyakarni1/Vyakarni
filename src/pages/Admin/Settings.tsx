@@ -19,37 +19,77 @@ import {
   RefreshCw,
   Shield,
   Bell,
-  Mail,
+  Key,
   Database,
-  Key
+  Loader2
 } from 'lucide-react';
-import { useState } from 'react';
+import { useSystemSettings } from '@/hooks/useSystemSettings';
+import { useState, useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const Settings = () => {
-  const [settings, setSettings] = useState({
-    siteName: 'हिंदी व्याकरण चेकर',
-    siteDescription: 'उन्नत हिंदी व्याकरण और शैली सुधार उपकरण',
-    adminEmail: 'admin@grammarcheck.com',
-    maxFileSize: '10',
-    enableRegistration: true,
-    enableNotifications: true,
-    autoBackup: true,
-    maintenanceMode: false,
-    apiRateLimit: '100',
-    sessionTimeout: '30'
-  });
+  const { settingsMap, isLoading, updateSetting, isUpdating } = useSystemSettings();
+  const { toast } = useToast();
+  
+  const [localSettings, setLocalSettings] = useState<Record<string, any>>({});
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Initialize local settings when data loads
+  useEffect(() => {
+    if (Object.keys(settingsMap).length > 0) {
+      setLocalSettings(settingsMap);
+    }
+  }, [settingsMap]);
+
+  // Check for changes
+  useEffect(() => {
+    const changed = Object.keys(localSettings).some(
+      key => localSettings[key] !== settingsMap[key]
+    );
+    setHasChanges(changed);
+  }, [localSettings, settingsMap]);
 
   const handleSettingChange = (key: string, value: any) => {
-    setSettings(prev => ({
+    setLocalSettings(prev => ({
       ...prev,
       [key]: value
     }));
   };
 
-  const handleSave = () => {
-    // TODO: Implement save functionality
-    console.log('Saving settings:', settings);
+  const handleSave = async () => {
+    const changedKeys = Object.keys(localSettings).filter(
+      key => localSettings[key] !== settingsMap[key]
+    );
+
+    try {
+      for (const key of changedKeys) {
+        await updateSetting(key, localSettings[key]);
+      }
+      setHasChanges(false);
+    } catch (error) {
+      console.error('Error saving settings:', error);
+    }
   };
+
+  const handleReset = () => {
+    setLocalSettings(settingsMap);
+    setHasChanges(false);
+    toast({
+      title: "सेटिंग्स रीसेट की गईं",
+      description: "सभी परिवर्तन रीसेट कर दिए गए हैं।",
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <ModernAdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2">सेटिंग्स लोड हो रही हैं...</span>
+        </div>
+      </ModernAdminLayout>
+    );
+  }
 
   return (
     <ModernAdminLayout>
@@ -66,12 +106,25 @@ const Settings = () => {
           </div>
           
           <div className="flex items-center space-x-3">
-            <Button variant="outline" className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={handleReset}
+              disabled={!hasChanges || isUpdating}
+              className="flex items-center space-x-2"
+            >
               <RefreshCw className="h-4 w-4" />
               <span>रीसेट</span>
             </Button>
-            <Button onClick={handleSave} className="flex items-center space-x-2">
-              <Save className="h-4 w-4" />
+            <Button 
+              onClick={handleSave}
+              disabled={!hasChanges || isUpdating}
+              className="flex items-center space-x-2"
+            >
+              {isUpdating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
               <span>सेव करें</span>
             </Button>
           </div>
@@ -91,8 +144,8 @@ const Settings = () => {
                 <Label htmlFor="siteName">साइट का नाम</Label>
                 <Input
                   id="siteName"
-                  value={settings.siteName}
-                  onChange={(e) => handleSettingChange('siteName', e.target.value)}
+                  value={localSettings.site_name || ''}
+                  onChange={(e) => handleSettingChange('site_name', e.target.value)}
                 />
               </div>
 
@@ -100,8 +153,8 @@ const Settings = () => {
                 <Label htmlFor="siteDescription">साइट विवरण</Label>
                 <Textarea
                   id="siteDescription"
-                  value={settings.siteDescription}
-                  onChange={(e) => handleSettingChange('siteDescription', e.target.value)}
+                  value={localSettings.site_description || ''}
+                  onChange={(e) => handleSettingChange('site_description', e.target.value)}
                   rows={3}
                 />
               </div>
@@ -111,8 +164,8 @@ const Settings = () => {
                 <Input
                   id="adminEmail"
                   type="email"
-                  value={settings.adminEmail}
-                  onChange={(e) => handleSettingChange('adminEmail', e.target.value)}
+                  value={localSettings.admin_email || ''}
+                  onChange={(e) => handleSettingChange('admin_email', e.target.value)}
                 />
               </div>
 
@@ -121,8 +174,8 @@ const Settings = () => {
                 <Input
                   id="maxFileSize"
                   type="number"
-                  value={settings.maxFileSize}
-                  onChange={(e) => handleSettingChange('maxFileSize', e.target.value)}
+                  value={localSettings.max_file_size || ''}
+                  onChange={(e) => handleSettingChange('max_file_size', parseInt(e.target.value))}
                 />
               </div>
             </CardContent>
@@ -142,8 +195,8 @@ const Settings = () => {
                 <Input
                   id="apiRateLimit"
                   type="number"
-                  value={settings.apiRateLimit}
-                  onChange={(e) => handleSettingChange('apiRateLimit', e.target.value)}
+                  value={localSettings.api_rate_limit || ''}
+                  onChange={(e) => handleSettingChange('api_rate_limit', parseInt(e.target.value))}
                 />
               </div>
 
@@ -152,8 +205,8 @@ const Settings = () => {
                 <Input
                   id="sessionTimeout"
                   type="number"
-                  value={settings.sessionTimeout}
-                  onChange={(e) => handleSettingChange('sessionTimeout', e.target.value)}
+                  value={localSettings.session_timeout || ''}
+                  onChange={(e) => handleSettingChange('session_timeout', parseInt(e.target.value))}
                 />
               </div>
 
@@ -163,8 +216,8 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">नए उपयोगकर्ता साइन अप कर सकते हैं</p>
                 </div>
                 <Switch
-                  checked={settings.enableRegistration}
-                  onCheckedChange={(checked) => handleSettingChange('enableRegistration', checked)}
+                  checked={localSettings.enable_registration || false}
+                  onCheckedChange={(checked) => handleSettingChange('enable_registration', checked)}
                 />
               </div>
 
@@ -174,8 +227,8 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">साइट को रखरखाव मोड में रखें</p>
                 </div>
                 <Switch
-                  checked={settings.maintenanceMode}
-                  onCheckedChange={(checked) => handleSettingChange('maintenanceMode', checked)}
+                  checked={localSettings.maintenance_mode || false}
+                  onCheckedChange={(checked) => handleSettingChange('maintenance_mode', checked)}
                 />
               </div>
             </CardContent>
@@ -196,8 +249,8 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">महत्वपूर्ण अपडेट के लिए ईमेल भेजें</p>
                 </div>
                 <Switch
-                  checked={settings.enableNotifications}
-                  onCheckedChange={(checked) => handleSettingChange('enableNotifications', checked)}
+                  checked={localSettings.enable_notifications || false}
+                  onCheckedChange={(checked) => handleSettingChange('enable_notifications', checked)}
                 />
               </div>
 
@@ -207,8 +260,8 @@ const Settings = () => {
                   <p className="text-sm text-gray-500">दैनिक डेटा बैकअप सक्षम करें</p>
                 </div>
                 <Switch
-                  checked={settings.autoBackup}
-                  onCheckedChange={(checked) => handleSettingChange('autoBackup', checked)}
+                  checked={localSettings.auto_backup || false}
+                  onCheckedChange={(checked) => handleSettingChange('auto_backup', checked)}
                 />
               </div>
 
@@ -294,6 +347,15 @@ const Settings = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Save Indicator */}
+        {hasChanges && (
+          <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-300 rounded-lg p-3 shadow-lg">
+            <p className="text-sm text-yellow-800">
+              आपके पास अनसेव्ड परिवर्तन हैं।
+            </p>
+          </div>
+        )}
       </div>
     </ModernAdminLayout>
   );

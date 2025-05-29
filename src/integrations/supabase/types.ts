@@ -191,6 +191,42 @@ export type Database = {
         }
         Relationships: []
       }
+      system_settings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          setting_key: string
+          setting_type: string
+          setting_value: Json
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          setting_key: string
+          setting_type?: string
+          setting_value: Json
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          setting_key?: string
+          setting_type?: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           assigned_at: string | null
@@ -330,6 +366,17 @@ export type Database = {
           max_words_per_correction: number
         }[]
       }
+      get_settings_by_category: {
+        Args: { category_filter?: string }
+        Returns: {
+          setting_key: string
+          setting_value: Json
+          setting_type: string
+          description: string
+          category: string
+          is_public: boolean
+        }[]
+      }
       get_user_stats: {
         Args: { user_uuid: string }
         Returns: {
@@ -362,6 +409,10 @@ export type Database = {
       }
       is_admin: {
         Args: { _user_id: string }
+        Returns: boolean
+      }
+      update_system_setting: {
+        Args: { key_name: string; new_value: Json; updated_by?: string }
         Returns: boolean
       }
     }
