@@ -2,7 +2,8 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Zap, Star, Crown } from 'lucide-react';
+import { CheckCircle, Zap, Star, Crown, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const PricingPreviewSection = () => {
   const plans = [
@@ -26,7 +27,8 @@ const PricingPreviewSection = () => {
       buttonText: 'वर्तमान प्लान',
       buttonColor: 'bg-green-500 hover:bg-green-600',
       borderColor: 'border-green-500',
-      headerColor: 'bg-green-500'
+      headerColor: 'bg-green-500',
+      comingSoon: false
     },
     {
       name: 'Pro',
@@ -46,10 +48,11 @@ const PricingPreviewSection = () => {
       },
       icon: Star,
       popular: true,
-      buttonText: 'अपग्रेड करें',
-      buttonColor: 'bg-blue-600 hover:bg-blue-700',
+      buttonText: 'जल्द उपलब्ध',
+      buttonColor: 'bg-blue-600 hover:bg-blue-700 opacity-75',
       borderColor: 'border-blue-500',
-      headerColor: 'bg-blue-600'
+      headerColor: 'bg-blue-600',
+      comingSoon: true
     },
     {
       name: 'Team',
@@ -70,10 +73,11 @@ const PricingPreviewSection = () => {
       },
       icon: Crown,
       popular: false,
-      buttonText: 'अपग्रेड करें',
-      buttonColor: 'bg-purple-600 hover:bg-purple-700',
+      buttonText: 'जल्द उपलब्ध',
+      buttonColor: 'bg-purple-600 hover:bg-purple-700 opacity-75',
       borderColor: 'border-purple-500',
-      headerColor: 'bg-purple-600'
+      headerColor: 'bg-purple-600',
+      comingSoon: true
     }
   ];
 
@@ -82,9 +86,13 @@ const PricingPreviewSection = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">सभी के लिए उपयुक्त प्लान</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
             अपनी जरूरतों के अनुसार सबसे अच्छा प्लान चुनें और आज ही शुरू करें
           </p>
+          <div className="flex items-center justify-center space-x-2 text-sm bg-amber-50 text-amber-700 px-4 py-2 rounded-full border border-amber-200 inline-flex">
+            <Clock className="h-4 w-4" />
+            <span>पेमेंट सिस्टम जल्द ही उपलब्ध होगा</span>
+          </div>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -93,6 +101,16 @@ const PricingPreviewSection = () => {
               key={index} 
               className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${plan.borderColor} border-2 bg-white`}
             >
+              {/* Coming Soon Badge for Paid Plans */}
+              {plan.comingSoon && (
+                <div className="absolute top-4 right-4 z-10">
+                  <Badge variant="outline" className="bg-amber-50 border-amber-300 text-amber-700">
+                    <Clock className="h-3 w-3 mr-1" />
+                    जल्द आएगा
+                  </Badge>
+                </div>
+              )}
+
               {/* Header with plan name */}
               {plan.description && (
                 <div className={`${plan.headerColor} text-white text-center py-3 text-sm font-medium`}>
@@ -140,12 +158,24 @@ const PricingPreviewSection = () => {
                 {/* Button */}
                 <Button 
                   className={`w-full ${plan.buttonColor} text-white font-medium py-3 transition-all duration-300`}
-                  asChild
+                  asChild={!plan.comingSoon}
+                  disabled={plan.comingSoon}
                 >
-                  <Link to="/register">
-                    {plan.buttonText}
-                  </Link>
+                  {plan.comingSoon ? (
+                    <span>{plan.buttonText}</span>
+                  ) : (
+                    <Link to="/register">
+                      {plan.buttonText}
+                    </Link>
+                  )}
                 </Button>
+
+                {/* Additional info for coming soon plans */}
+                {plan.comingSoon && (
+                  <p className="text-xs text-center text-gray-500 mt-2">
+                    पेमेंट गेटवे इंटीग्रेशन प्रगति में है
+                  </p>
+                )}
               </CardContent>
             </Card>
           ))}

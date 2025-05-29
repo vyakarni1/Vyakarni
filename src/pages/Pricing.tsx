@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, Check, Star, Zap, Crown, Calculator } from "lucide-react";
+import { LogOut, Check, Star, Zap, Crown, Calculator, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import { useWordCredits } from "@/hooks/useWordCredits";
 
 const Pricing = () => {
   const { user, loading: authLoading } = useAuth();
-  const { plans, loading: plansLoading, addWordCredits } = useWordCredits();
+  const { plans, loading: plansLoading } = useWordCredits();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -45,14 +45,13 @@ const Pricing = () => {
       return;
     }
 
-    // For now, simulate successful purchase - we'll implement Razorpay later
-    const success = await addWordCredits(plan.plan_type, plan.words_included);
-    
-    if (success) {
-      toast.success(`${plan.words_included} शब्द सफलतापूर्वक जोड़े गए!`);
-    } else {
-      toast.error("खरीदारी में समस्या हुई");
-    }
+    // Show coming soon message for paid plans
+    toast.info(
+      "पेमेंट सिस्टम जल्द ही लाइव होगा! हम Razorpay के साथ सुरक्षित पेमेंट इंटीग्रेशन पर काम कर रहे हैं। कृपया कुछ दिन बाद दोबारा आएं।",
+      {
+        duration: 6000,
+      }
+    );
   };
 
   const getPlanIcon = (planType: string) => {
@@ -126,9 +125,13 @@ const Pricing = () => {
           <p className="text-xl text-gray-600 mb-4">
             अपनी आवश्यकताओं के अनुसार शब्द पैकेज चुनें
           </p>
-          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
             <Calculator className="h-4 w-4" />
             <span>सभी पैकेज 30 दिन तक वैध • 18% GST अतिरिक्त</span>
+          </div>
+          <div className="flex items-center justify-center space-x-2 text-sm bg-amber-50 text-amber-700 px-4 py-2 rounded-full border border-amber-200 inline-flex">
+            <Clock className="h-4 w-4" />
+            <span>पेमेंट सिस्टम जल्द ही उपलब्ध होगा - Razorpay इंटीग्रेशन प्रगति में है</span>
           </div>
         </div>
 
@@ -147,6 +150,16 @@ const Pricing = () => {
                 {plan.plan_type === 'basic' && (
                   <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
                     सबसे लोकप्रिय
+                  </div>
+                )}
+
+                {/* Coming Soon Badge for Paid Plans */}
+                {plan.plan_type !== 'free' && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge variant="outline" className="bg-amber-50 border-amber-300 text-amber-700">
+                      <Clock className="h-3 w-3 mr-1" />
+                      जल्द आएगा
+                    </Badge>
                   </div>
                 )}
 
@@ -221,11 +234,21 @@ const Pricing = () => {
                         : plan.plan_type === 'premium'
                         ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
                         : 'bg-gray-600 hover:bg-gray-700'
-                    }`}
+                    } ${plan.plan_type !== 'free' ? 'opacity-75' : ''}`}
                     disabled={plan.plan_type === 'free'}
                   >
-                    {plan.plan_type === 'free' ? 'साइनअप पर मिलता है' : 'अभी खरीदें'}
+                    {plan.plan_type === 'free' 
+                      ? 'साइनअप पर मिलता है' 
+                      : 'जल्द उपलब्ध होगा'
+                    }
                   </Button>
+
+                  {/* Additional info for paid plans */}
+                  {plan.plan_type !== 'free' && (
+                    <p className="text-xs text-center text-gray-500 mt-2">
+                      पेमेंट गेटवे इंटीग्रेशन प्रगति में है
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             );
@@ -245,8 +268,8 @@ const Pricing = () => {
               <p className="text-gray-600 text-sm">खरीदे गए सभी शब्द खरीदारी की तारीख से 30 दिन तक वैध रहते हैं।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-2">GST कैसे लगती है?</h3>
-              <p className="text-gray-600 text-sm">सभी पैकेज पर 18% GST लगती है जो चेकआउट के समय जोड़ी जाती है।</p>
+              <h3 className="font-semibold text-gray-800 mb-2">पेमेंट सिस्टम कब उपलब्ध होगा?</h3>
+              <p className="text-gray-600 text-sm">हम Razorpay के साथ सुरक्षित पेमेंट इंटीग्रेशन पर काम कर रहे हैं। यह जल्द ही उपलब्ध होगा।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
               <h3 className="font-semibold text-gray-800 mb-2">रिफंड की नीति क्या है?</h3>
