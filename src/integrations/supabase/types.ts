@@ -359,11 +359,161 @@ export type Database = {
         }
         Relationships: []
       }
+      user_word_credits: {
+        Row: {
+          created_at: string
+          expiry_date: string | null
+          id: string
+          is_free_credit: boolean | null
+          purchase_date: string | null
+          updated_at: string
+          user_id: string
+          words_available: number
+          words_purchased: number
+        }
+        Insert: {
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          is_free_credit?: boolean | null
+          purchase_date?: string | null
+          updated_at?: string
+          user_id: string
+          words_available?: number
+          words_purchased?: number
+        }
+        Update: {
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          is_free_credit?: boolean | null
+          purchase_date?: string | null
+          updated_at?: string
+          user_id?: string
+          words_available?: number
+          words_purchased?: number
+        }
+        Relationships: []
+      }
+      word_plans: {
+        Row: {
+          created_at: string
+          gst_percentage: number
+          id: string
+          is_active: boolean
+          plan_name: string
+          plan_type: string
+          price_before_gst: number
+          words_included: number
+        }
+        Insert: {
+          created_at?: string
+          gst_percentage?: number
+          id?: string
+          is_active?: boolean
+          plan_name: string
+          plan_type: string
+          price_before_gst?: number
+          words_included: number
+        }
+        Update: {
+          created_at?: string
+          gst_percentage?: number
+          id?: string
+          is_active?: boolean
+          plan_name?: string
+          plan_type?: string
+          price_before_gst?: number
+          words_included?: number
+        }
+        Relationships: []
+      }
+      word_purchases: {
+        Row: {
+          amount_before_gst: number
+          created_at: string
+          expiry_date: string
+          gst_amount: number
+          id: string
+          purchase_date: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          status: string
+          total_amount: number
+          user_id: string
+          words_purchased: number
+        }
+        Insert: {
+          amount_before_gst: number
+          created_at?: string
+          expiry_date: string
+          gst_amount: number
+          id?: string
+          purchase_date?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          total_amount: number
+          user_id: string
+          words_purchased: number
+        }
+        Update: {
+          amount_before_gst?: number
+          created_at?: string
+          expiry_date?: string
+          gst_amount?: number
+          id?: string
+          purchase_date?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          total_amount?: number
+          user_id?: string
+          words_purchased?: number
+        }
+        Relationships: []
+      }
+      word_usage_history: {
+        Row: {
+          action_type: string
+          created_at: string
+          id: string
+          text_processed: string | null
+          user_id: string
+          words_used: number
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          id?: string
+          text_processed?: string | null
+          user_id: string
+          words_used: number
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          id?: string
+          text_processed?: string | null
+          user_id?: string
+          words_used?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      deduct_words: {
+        Args: {
+          user_uuid: string
+          words_to_deduct: number
+          action_type: string
+          text_content?: string
+        }
+        Returns: boolean
+      }
       get_monthly_usage: {
         Args: { user_uuid: string }
         Returns: {
@@ -405,6 +555,15 @@ export type Database = {
           features: Json
           status: string
           expires_at: string
+        }[]
+      }
+      get_user_word_balance: {
+        Args: { user_uuid: string }
+        Returns: {
+          total_words_available: number
+          free_words: number
+          purchased_words: number
+          next_expiry_date: string
         }[]
       }
       has_role: {

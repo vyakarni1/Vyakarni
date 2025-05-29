@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
-import { useUsageLimits } from "@/hooks/useUsageLimits";
+import { useWordLimits } from "@/hooks/useWordLimits";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import { extractCorrectionsFromResponse, extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
@@ -17,7 +17,7 @@ export const useGrammarChecker = () => {
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
   const { trackUsage } = useUsageStats();
-  const { checkAndEnforceWordLimit, checkAndEnforceCorrectionLimit, trackUsage: trackLimitUsage } = useUsageLimits();
+  const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
 
   const correctGrammar = async () => {
     if (!inputText.trim()) {
@@ -25,12 +25,8 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check limits before processing
+    // Check word limits before processing
     if (!checkAndEnforceWordLimit(inputText)) {
-      return;
-    }
-
-    if (!checkAndEnforceCorrectionLimit()) {
       return;
     }
 
@@ -55,7 +51,7 @@ export const useGrammarChecker = () => {
       
       // Track usage for both systems
       await trackUsage('grammar_check');
-      await trackLimitUsage(inputText);
+      await trackWordUsage(inputText, 'grammar_check');
       
       toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
     } catch (error) {
@@ -72,12 +68,8 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check limits before processing
+    // Check word limits before processing
     if (!checkAndEnforceWordLimit(inputText)) {
-      return;
-    }
-
-    if (!checkAndEnforceCorrectionLimit()) {
       return;
     }
 
@@ -102,7 +94,7 @@ export const useGrammarChecker = () => {
       
       // Track usage for both systems
       await trackUsage('style_enhance');
-      await trackLimitUsage(inputText);
+      await trackWordUsage(inputText, 'style_enhance');
       
       toast.success(`शैली सुधार पूरा हो गया! ${styleEnhancements.length} सुधार मिले।`);
     } catch (error) {
