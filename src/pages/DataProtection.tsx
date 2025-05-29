@@ -1,108 +1,108 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import Layout from "@/components/Layout";
 
 const DataProtection = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("english");
 
   const englishContent = {
-    title: "Data Protection and Retention Policy",
-    subtitle: "How we protect and manage your data",
+    title: "Data Protection Policy",
+    subtitle: "How we protect your data",
     content: (
       <div className="space-y-8">
         <div className="text-sm text-gray-500 mb-6">
-          Last Updated: 28.05.2025
+          Effective Date: 28.05.2025
         </div>
-        
+
         <div className="text-gray-600 leading-relaxed">
-          Vyakarni and SNS Innovation Labs Pvt. Ltd. takes your privacy and the protection of your personal data very seriously. This policy explains how long we retain your information and the measures we take to keep it secure.
+          SNS Innovation Labs Private Limited ("we," "Vyakarni," "the company") is committed to protecting the privacy and security of your personal data. This Data Protection Policy explains how we collect, use, and safeguard your information in compliance with applicable data protection laws and regulations.
         </div>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">1. Purpose of Data Retention</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            We retain your personal information and usage data only for the purposes for which it was collected, such as:
+          <h2 className="text-2xl font-bold mb-4">1. Data Collection</h2>
+          <p className="text-gray-600 leading-relaxed">
+            We collect personal data that you provide to us directly, such as when you register for an account, use our services, or contact us for support. This may include your name, email address, contact information, and any other information you choose to provide.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">2. Use of Data</h2>
+          <p className="text-gray-600 leading-relaxed">
+            We use your personal data for the following purposes:
           </p>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
-            <li>Providing and improving your service</li>
-            <li>Customer support and issue resolution</li>
-            <li>Legal and regulatory compliance</li>
-            <li>Service usage analysis and performance enhancement</li>
+            <li>To provide and improve our services</li>
+            <li>To personalize your experience</li>
+            <li>To communicate with you about updates, promotions, and other relevant information</li>
+            <li>To analyze usage patterns and trends</li>
+            <li>To comply with legal obligations</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">2. Types of Data Collected</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            We may collect the following information you provide:
+          <h2 className="text-2xl font-bold mb-4">3. Data Security</h2>
+          <p className="text-gray-600 leading-relaxed">
+            We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, disclosure, alteration, or destruction. These measures include:
           </p>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
-            <li>Registration details (such as name, email address)</li>
-            <li>Usage logs and activity records</li>
-            <li>Payment information (remains with payment gateway service provider) (securely stored, only necessary data stored, read payment gateway providers' policy)</li>
-            <li>Contact and support requests</li>
-            <li>Other optional information you provide</li>
+            <li>Encryption of data in transit and at rest</li>
+            <li>Regular security assessments and audits</li>
+            <li>Access controls and authentication mechanisms</li>
+            <li>Employee training on data protection best practices</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">3. Data Retention Period</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            We retain your information only as long as necessary:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-            <li>While your user account is active and for service usage purposes</li>
-            <li>For the minimum period required by legal or regulatory obligations</li>
-            <li>For the duration necessary to resolve service-related disputes or claims</li>
-          </ul>
+          <h2 className="text-2xl font-bold mb-4">4. Data Sharing</h2>
           <p className="text-gray-600 leading-relaxed">
-            If your service ends or you delete your account, we will take appropriate steps to securely delete or anonymise your personal data, unless legal reasons require us to retain it.
+            We may share your personal data with trusted third parties who assist us in providing our services, such as hosting providers, payment processors, and analytics providers. We ensure that these third parties are contractually obligated to protect your data and use it only for the purposes we specify.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">4. Data Security Measures</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            We implement the following technical and organisational measures to protect your data:
+          <h2 className="text-2xl font-bold mb-4">5. Data Retention</h2>
+          <p className="text-gray-600 leading-relaxed">
+            We retain your personal data for as long as necessary to fulfill the purposes for which it was collected, or as required by applicable laws and regulations. When your data is no longer needed, we securely delete or anonymize it.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">6. Your Rights</h2>
+          <p className="text-gray-600 leading-relaxed">
+            You have the following rights regarding your personal data:
           </p>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
-            <li>Data encryption and secure servers</li>
-            <li>Access controls and authentication</li>
-            <li>Regular security reviews and updates</li>
-            <li>Privacy training for employees</li>
+            <li>The right to access your data</li>
+            <li>The right to rectify inaccurate data</li>
+            <li>The right to erase your data</li>
+            <li>The right to restrict the processing of your data</li>
+            <li>The right to data portability</li>
+            <li>The right to object to the processing of your data</li>
           </ul>
+          <p className="text-gray-600 leading-relaxed mt-4">
+            To exercise these rights, please contact us at support@vyakarni.com.
+          </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">5. Your Rights</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            You have the following rights:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-            <li>To request access to your personal information</li>
-            <li>To request correction of inaccurate or irrelevant information</li>
-            <li>To request deletion or deactivation of your data (subject to legal restrictions)</li>
-            <li>To withdraw your consent for data processing</li>
-          </ul>
+          <h2 className="text-2xl font-bold mb-4">7. International Data Transfers</h2>
           <p className="text-gray-600 leading-relaxed">
-            If you wish to exercise your data rights, please contact us at: support@vyakarni.com
+            If we transfer your personal data to countries outside of your jurisdiction, we will ensure that appropriate safeguards are in place to protect your data in accordance with applicable data protection laws.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">6. Changes to the Policy</h2>
+          <h2 className="text-2xl font-bold mb-4">8. Updates to this Policy</h2>
           <p className="text-gray-600 leading-relaxed">
-            This policy may be updated from time to time. Any changes will be posted on the website. Please check this page periodically.
+            We may update this Data Protection Policy from time to time to reflect changes in our data processing practices or legal requirements. We will post the updated policy on our website and notify you of any material changes.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">7. Contact Information</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            If you have any questions about this policy or your data, please contact:
+          <h2 className="text-2xl font-bold mb-4">9. Contact Us</h2>
+          <p className="text-gray-600 leading-relaxed">
+            If you have any questions or concerns about this Data Protection Policy or our data processing practices, please contact us at:
           </p>
           <div className="text-gray-600">
             📧 support@vyakarni.com<br />
@@ -114,100 +114,102 @@ const DataProtection = () => {
   };
 
   const hindiContent = {
-    title: "डेटा संरक्षण और संग्रहन नीति",
-    subtitle: "हम आपके डेटा की सुरक्षा और प्रबंधन कैसे करते हैं",
+    title: "डेटा संरक्षण नीति",
+    subtitle: "हम आपके डेटा को कैसे सुरक्षित रखते हैं",
     content: (
       <div className="space-y-8">
         <div className="text-sm text-gray-500 mb-6">
-          अंतिम अद्यतन: २८.०५.२०२५
+          प्रभावी तिथि: २८.०५.२०२५
         </div>
-        
+
         <div className="text-gray-600 leading-relaxed">
-          व्याकरणी (Vyakarni) एंड SNS Innovation Labs Pvt. Ltd. आपकी गोपनीयता और व्यक्तिगत डेटा की सुरक्षा को अत्यंत गंभीरता से लेता है। यह नीति बताती है कि हम आपकी जानकारी को कितने समय तक रखते हैं और इसे सुरक्षित रखने के लिये हम क्या उपाय करते हैं।
+          एसएनएस इनोवेशन लैब्स प्राइवेट लिमिटेड ("हम", "व्याकरणी", "कंपनी") आपकी व्यक्तिगत डेटा की गोपनीयता और सुरक्षा की रक्षा के लिए प्रतिबद्ध है। यह डेटा संरक्षण नीति बताती है कि हम लागू डेटा संरक्षण कानूनों और विनियमों के अनुपालन में आपकी जानकारी कैसे एकत्र, उपयोग और सुरक्षित करते हैं।
         </div>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">1. डेटा संग्रहण का उद्देश्य</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            हम आपकी व्यक्तिगत जानकारी और उपयोग डेटा को केवल उन उद्देश्यों के लिये संग्रहित करते हैं जिनके लिये इसे प्राप्त किया गया है, जैसे कि:
+          <h2 className="text-2xl font-bold mb-4">1. डेटा संग्रह</h2>
+          <p className="text-gray-600 leading-relaxed">
+            हम व्यक्तिगत डेटा एकत्र करते हैं जो आप हमें सीधे प्रदान करते हैं, जैसे कि जब आप किसी खाते के लिए पंजीकरण करते हैं, हमारी सेवाओं का उपयोग करते हैं, या समर्थन के लिए हमसे संपर्क करते हैं। इसमें आपका नाम, ईमेल पता, संपर्क जानकारी और आपके द्वारा प्रदान की जाने वाली कोई अन्य जानकारी शामिल हो सकती है।
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">2. डेटा का उपयोग</h2>
+          <p className="text-gray-600 leading-relaxed">
+            हम आपकी व्यक्तिगत डेटा का उपयोग निम्नलिखित उद्देश्यों के लिए करते हैं:
           </p>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
-            <li>आपको सेवा प्रदान करना और उसे सुधारना</li>
-            <li>ग्राहक सहायता और समस्या समाधान</li>
-            <li>कानूनी और नियामक अनुपालन</li>
-            <li>सेवा उपयोग का विश्लेषण और प्रदर्शन वृद्धि</li>
+            <li>हमारी सेवाओं को प्रदान और बेहतर बनाना</li>
+            <li>आपके अनुभव को निजीकृत करना</li>
+            <li>आपको अपडेट, प्रचार और अन्य प्रासंगिक जानकारी के बारे में सूचित करना</li>
+            <li>उपयोग के पैटर्न और रुझानों का विश्लेषण करना</li>
+            <li>कानूनी दायित्वों का पालन करना</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">2. डेटा किस प्रकार संग्रहित किया जाता है</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            हम आपके द्वारा प्रदान की गई निम्नलिखित जानकारी संग्रहित कर सकते हैं:
+          <h2 className="text-2xl font-bold mb-4">3. डेटा सुरक्षा</h2>
+          <p className="text-gray-600 leading-relaxed">
+            हम आपकी व्यक्तिगत डेटा को अनधिकृत पहुंच, प्रकटीकरण, परिवर्तन या विनाश से बचाने के लिए उचित तकनीकी और संगठनात्मक उपाय लागू करते हैं। इन उपायों में शामिल हैं:
           </p>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
-            <li>पंजीकरण विवरण (जैसे नाम, ईमेल पता)</li>
-            <li>उपयोग लॉग और गतिविधि रिकॉर्ड</li>
-            <li>भुगतान जानकारी (यह पेमेंट गेटवे प्रदाता के पास रहती है) (सुरक्षित रूप से, केवल आवश्यक डेटा लिया जाता है, इस सम्बन्ध में पेमेंट गेटवे प्रदाता की नीतियों को जानें)</li>
-            <li>संपर्क और सहायता अनुरोध</li>
-            <li>अन्य वैकल्पिक जानकारी जो आप हमें देते हैं</li>
+            <li>डेटा का पारगमन और आराम में एन्क्रिप्शन</li>
+            <li>नियमित सुरक्षा आकलन और ऑडिट</li>
+            <li>पहुंच नियंत्रण और प्रमाणीकरण तंत्र</li>
+            <li>डेटा संरक्षण सर्वोत्तम प्रथाओं पर कर्मचारी प्रशिक्षण</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">3. डेटा संरक्षण अवधि</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            हम आपकी जानकारी को केवल तब तक रखते हैं जब तक कि वह आवश्यक हो:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-            <li>उपयोगकर्ता के खाते की सक्रियता अवधि के दौरान और सेवा उपयोग के लिये आवश्यक</li>
-            <li>वैधानिक या नियामक आवश्यकताओं के अनुसार न्यूनतम अवधि के लिये</li>
-            <li>सेवा संबंधी विवादों या दावा समाधान तक आवश्यक अवधि के लिये</li>
-          </ul>
+          <h2 className="text-2xl font-bold mb-4">4. डेटा साझाकरण</h2>
           <p className="text-gray-600 leading-relaxed">
-            यदि आपकी सेवा समाप्त हो जाती है या आप खाते को हटा देते हैं, तो हम आपकी व्यक्तिगत जानकारी को सुरक्षित रूप से हटाने या निरस्त करने के लिये उचित कदम उठायेंगे, जब तक कि वैधानिक कारणवश इसे बनाये रखने की आवश्यकता न हो।
+            हम आपकी व्यक्तिगत डेटा को विश्वसनीय तृतीय पक्षों के साथ साझा कर सकते हैं जो हमारी सेवाओं को प्रदान करने में हमारी सहायता करते हैं, जैसे कि होस्टिंग प्रदाता, भुगतान प्रोसेसर और एनालिटिक्स प्रदाता। हम यह सुनिश्चित करते हैं कि ये तृतीय पक्ष संविदात्मक रूप से आपके डेटा की सुरक्षा के लिए बाध्य हैं और इसका उपयोग केवल उन उद्देश्यों के लिए करते हैं जो हम निर्दिष्ट करते हैं।
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">4. डेटा सुरक्षा उपाय</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            हम आपके डेटा की सुरक्षा के लिये निम्नलिखित तकनीकी और संगठनात्मक उपाय अपनाते हैं:
+          <h2 className="text-2xl font-bold mb-4">5. डेटा प्रतिधारण</h2>
+          <p className="text-gray-600 leading-relaxed">
+            हम आपकी व्यक्तिगत डेटा को तब तक बनाए रखते हैं जब तक कि उन उद्देश्यों को पूरा करने के लिए आवश्यक हो जिनके लिए इसे एकत्र किया गया था, या लागू कानूनों और विनियमों द्वारा आवश्यक है। जब आपके डेटा की आवश्यकता नहीं होती है, तो हम इसे सुरक्षित रूप से हटा या गुमनाम कर देते हैं।
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">6. आपके अधिकार</h2>
+          <p className="text-gray-600 leading-relaxed">
+            आपके पास अपनी व्यक्तिगत डेटा के बारे में निम्नलिखित अधिकार हैं:
           </p>
           <ul className="list-disc list-inside text-gray-600 space-y-2">
-            <li>डेटा एन्क्रिप्शन और सुरक्षित सर्वर</li>
-            <li>पहुँच नियंत्रण और प्रमाणीकरण</li>
-            <li>नियमित सुरक्षा समीक्षा और अपडेट</li>
-            <li>कर्मचारियों के लिये गोपनीयता प्रशिक्षण</li>
+            <li>अपने डेटा तक पहुंचने का अधिकार</li>
+            <li>गलत डेटा को सुधारने का अधिकार</li>
+            <li>अपने डेटा को मिटाने का अधिकार</li>
+            <li>अपने डेटा के प्रसंस्करण को प्रतिबंधित करने का अधिकार</li>
+            <li>डेटा पोर्टेबिलिटी का अधिकार</li>
+            <li>अपने डेटा के प्रसंस्करण पर आपत्ति करने का अधिकार</li>
           </ul>
+          <p className="text-gray-600 leading-relaxed mt-4">
+            इन अधिकारों का प्रयोग करने के लिए, कृपया हमसे support@vyakarni.com पर संपर्क करें।
+          </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">5. आपके अधिकार</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            आपके पास निम्न अधिकार हैं:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-            <li>अपनी व्यक्तिगत जानकारी तक पहुँच का अनुरोध करना</li>
-            <li>गलत या अप्रासंगिक जानकारी को सुधारने का अनुरोध</li>
-            <li>अपनी जानकारी को हटाने या निष्क्रिय करने का अनुरोध (कानूनी प्रतिबंधों के अधीन)</li>
-            <li>अपनी डेटा प्रोसेसिंग की सहमति वापस लेने का अधिकार</li>
-          </ul>
+          <h2 className="text-2xl font-bold mb-4">7. अंतर्राष्ट्रीय डेटा स्थानांतरण</h2>
           <p className="text-gray-600 leading-relaxed">
-            यदि आप अपने डेटा अधिकारों का प्रयोग करना चाहते हैं, तो कृपया हमसे संपर्क करें: support@vyakarni.com
+            यदि हम आपकी व्यक्तिगत डेटा को आपके अधिकार क्षेत्र के बाहर के देशों में स्थानांतरित करते हैं, तो हम यह सुनिश्चित करेंगे कि लागू डेटा संरक्षण कानूनों के अनुसार आपके डेटा की सुरक्षा के लिए उचित सुरक्षा उपाय किए गए हैं।
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">6. नीति में बदलाव</h2>
+          <h2 className="text-2xl font-bold mb-4">8. इस नीति में अपडेट</h2>
           <p className="text-gray-600 leading-relaxed">
-            यह नीति समय-समय पर परिवर्तित एवं अपडेट की जा सकती है। किसी भी परिवर्तन की सूचना वेबसाइट पर प्रकाशित कर दी जायेगी। कृपया समय-समय पर इस पृष्ठ को देखें।
+            हम अपनी डेटा प्रसंस्करण प्रथाओं या कानूनी आवश्यकताओं में परिवर्तन को दर्शाने के लिए समय-समय पर इस डेटा संरक्षण नीति को अपडेट कर सकते हैं। हम अद्यतन नीति को अपनी वेबसाइट पर पोस्ट करेंगे और आपको किसी भी भौतिक परिवर्तन की सूचना देंगे।
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">7. संपर्क जानकारी</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            यदि आपको इस नीति या आपके डेटा के बारे में कोई प्रश्न हो, तो कृपया संपर्क करें:
+          <h2 className="text-2xl font-bold mb-4">9. हमसे संपर्क करें</h2>
+          <p className="text-gray-600 leading-relaxed">
+            यदि आपके पास इस डेटा संरक्षण नीति या हमारी डेटा प्रसंस्करण प्रथाओं के बारे में कोई प्रश्न या चिंता है, तो कृपया हमसे संपर्क करें:
           </p>
           <div className="text-gray-600 mb-4">
             📧 support@vyakarni.com<br />
@@ -215,7 +217,7 @@ const DataProtection = () => {
           </div>
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-sm text-blue-800">
-              📌 नोट: यह नीति हिंदी में आपके बेहतर समझ के लिये प्रस्तुत की गई है। यदि किसी कानूनी विवाद या व्याख्या की आवश्यकता हो, तो अंग्रेज़ी संस्करण प्राथमिक माना जायेगा।
+              📌 नोट: यह दस्तावेज़ आपकी सुविधा के लिये हिंदी में प्रस्तुत किया गया है। यदि किसी कानूनी व्याख्या या विवाद की स्थिति उत्पन्न होती है, तो अंग्रेज़ी संस्करण को प्राथमिकता दी जायेगी।
             </p>
           </div>
         </section>
@@ -226,66 +228,49 @@ const DataProtection = () => {
   const currentContent = language === "english" ? englishContent : hindiContent;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
-            </Link>
-            <div className="space-x-4">
-              <Link to="/login">
-                <Button variant="outline">लॉगिन</Button>
-              </Link>
-              <Link to="/register">
-                <Button>रजिस्टर करें</Button>
-              </Link>
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {currentContent.title}
+            </h1>
+            <p className="text-xl text-gray-600 mb-6">
+              {currentContent.subtitle}
+            </p>
+            
+            {/* Language Toggle */}
+            <div className="flex justify-center mb-8">
+              <ToggleGroup
+                type="single"
+                value={language}
+                onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
+                className="bg-white border rounded-lg p-1"
+              >
+                <ToggleGroupItem
+                  value="english"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  English
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="hindi"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  हिंदी
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
           </div>
-        </div>
-      </nav>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {currentContent.title}
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            {currentContent.subtitle}
-          </p>
-          
-          {/* Language Toggle */}
-          <div className="flex justify-center mb-8">
-            <ToggleGroup
-              type="single"
-              value={language}
-              onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
-              className="bg-white border rounded-lg p-1"
-            >
-              <ToggleGroupItem
-                value="english"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                English
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="hindi"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                हिंदी
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          <Card>
+            <CardContent className="p-8 prose prose-lg max-w-none">
+              {currentContent.content}
+            </CardContent>
+          </Card>
         </div>
-
-        <Card>
-          <CardContent className="p-8 prose prose-lg max-w-none">
-            {currentContent.content}
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </Layout>
   );
 };
 

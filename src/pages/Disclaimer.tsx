@@ -1,9 +1,7 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import Layout from "@/components/Layout";
 
 const Disclaimer = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("english");
@@ -33,12 +31,12 @@ const Disclaimer = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             We do not guarantee that:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>All grammatical or language errors will be fully corrected,</li>
             <li>Suggestions will be 100% accurate or appropriate,</li>
             <li>Results will suit every user's language style or needs.</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             Our services are provided "as-is" and "as available." We do not warrant suitability or accuracy for any particular purpose.
           </p>
         </section>
@@ -110,12 +108,12 @@ const Disclaimer = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             हम यह गारंटी नहीं देते हैं कि:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>सभी व्याकरण या भाषा त्रुटियों का पूरी तरह से समाधान होगा,</li>
             <li>सुझाव 100% सटीक या उपयुक्त होंगे,</li>
             <li>परिणाम हर उपयोगकर्ता की भाषा शैली या आवश्यकता के अनुसार होंगे।</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             हमारी सेवायें "जैसी हैं" (as-is) और "उपलब्धता के आधार पर" (as available) प्रदान की जाती हैं। हम किसी विशेष उद्देश्य हेतु उपयुक्तता या सटीकता की कोई गारंटी नहीं देते।
           </p>
         </section>
@@ -144,7 +142,7 @@ const Disclaimer = () => {
         <section>
           <h2 className="text-2xl font-bold mb-4">6. परिवर्तन का अधिकार</h2>
           <p className="text-gray-600 leading-relaxed">
-            व्याकरणी (Vyakarni) इस अस्वीकरण को बिना पूर्व सूचना के किसी भी समय अपडेट अतवा परिवर्तित करने का अधिकार सुरक्षित रखता है। अद्यतन अस्वीकरण वेबसाइट पर प्रकाशित किया जायेगा और उपयोग के लिये प्रभावी होगा। कृपया समय-समय पर इस पृष्ठ को जाँचते रहें।
+            व्याकरणी (Vyakarni) इस अस्वीकरण को बिना पूर्व सूचना के किसी भी समय अपडेट अथवा परिवर्तित करने का अधिकार सुरक्षित रखता है। अद्यतन अस्वीकरण वेबसाइट पर प्रकाशित किया जायेगा और उपयोग के लिये प्रभावी होगा। कृपया समय-समय पर इस पृष्ठ को जाँचते रहें।
           </p>
         </section>
 
@@ -170,66 +168,49 @@ const Disclaimer = () => {
   const currentContent = language === "english" ? englishContent : hindiContent;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
-            </Link>
-            <div className="space-x-4">
-              <Link to="/login">
-                <Button variant="outline">लॉगिन</Button>
-              </Link>
-              <Link to="/register">
-                <Button>रजिस्टर करें</Button>
-              </Link>
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {currentContent.title}
+            </h1>
+            <p className="text-xl text-gray-600 mb-6">
+              {currentContent.subtitle}
+            </p>
+            
+            {/* Language Toggle */}
+            <div className="flex justify-center mb-8">
+              <ToggleGroup
+                type="single"
+                value={language}
+                onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
+                className="bg-white border rounded-lg p-1"
+              >
+                <ToggleGroupItem
+                  value="english"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  English
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="hindi"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  हिंदी
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
           </div>
-        </div>
-      </nav>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {currentContent.title}
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            {currentContent.subtitle}
-          </p>
-          
-          {/* Language Toggle */}
-          <div className="flex justify-center mb-8">
-            <ToggleGroup
-              type="single"
-              value={language}
-              onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
-              className="bg-white border rounded-lg p-1"
-            >
-              <ToggleGroupItem
-                value="english"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                English
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="hindi"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                हिंदी
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          <Card>
+            <CardContent className="p-8 prose prose-lg max-w-none">
+              {currentContent.content}
+            </CardContent>
+          </Card>
         </div>
-
-        <Card>
-          <CardContent className="p-8 prose prose-lg max-w-none">
-            {currentContent.content}
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </Layout>
   );
 };
 

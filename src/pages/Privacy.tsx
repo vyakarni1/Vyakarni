@@ -1,16 +1,14 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import Layout from "@/components/Layout";
 
 const Privacy = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("english");
 
   const englishContent = {
     title: "Privacy Policy",
-    subtitle: "Your privacy is our priority",
+    subtitle: "How we collect, use, and protect your information",
     content: (
       <div className="space-y-8">
         <div className="text-sm text-gray-500 mb-6">
@@ -20,40 +18,33 @@ const Privacy = () => {
         <div className="text-gray-600 leading-relaxed">
           SNS Innovation Labs Private Limited ("we," "Vyakarni," "the company") through this Privacy Policy wishes to inform you how we collect, use, share and protect your personal information when you use our website www.vyakarni.com ("Website"), our Hindi writing assistant app ("App") and our Hindi writing assistant services ("Services").
         </div>
-        
-        <div className="text-gray-600 leading-relaxed">
-          The purpose of this policy is to maintain transparency so that you can use Vyakarni with confidence.
-        </div>
 
         <section>
           <h2 className="text-2xl font-bold mb-4">1. What information do we collect?</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             When you use Vyakarni, we may collect the following types of information:
           </p>
-          
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold mb-2">(a) Personal Information:</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
                 <li>Name</li>
                 <li>Email address</li>
                 <li>Contact details</li>
                 <li>Login or account-related information</li>
               </ul>
             </div>
-            
             <div>
               <h3 className="text-lg font-semibold mb-2">(b) Usage Data:</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
                 <li>Which services you used</li>
                 <li>Time and duration</li>
                 <li>Hindi sentences you submit (only for processing purposes)</li>
               </ul>
             </div>
-            
             <div>
               <h3 className="text-lg font-semibold mb-2">(c) Device and Browser Information:</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
                 <li>IP address</li>
                 <li>Browser type</li>
                 <li>Device type and operating system</li>
@@ -82,12 +73,12 @@ const Privacy = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             We do not sell your personal information to third parties. We may share information only under the following circumstances:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>With trusted technical service providers (such as hosting or payment gateways) who provide services on our behalf</li>
             <li>When required by law or government order</li>
             <li>To enforce our Terms of Service</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             The information shared by us is minimal and purpose-specific.
           </p>
         </section>
@@ -97,13 +88,13 @@ const Privacy = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             We adopt appropriate technical and organisational measures to secure your information, such as:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>SSL encryption</li>
             <li>Secure server hosting</li>
             <li>Access control and authentication</li>
             <li>API keys stored securely only on the server</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             However, 100% security on the internet cannot be guaranteed.
           </p>
         </section>
@@ -120,13 +111,13 @@ const Privacy = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             You have the following rights:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>To request a copy of your personal data and not the text etc. that you submit for processing and correction my out website or app.</li>
             <li>To request updating or deletion of your data</li>
             <li>To request removal of your account from services</li>
             <li>To unsubscribe from marketing emails</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             To exercise any of these rights, please contact us at support@vyakarni.com.
           </p>
         </section>
@@ -161,7 +152,7 @@ const Privacy = () => {
 
   const hindiContent = {
     title: "गोपनीयता नीति",
-    subtitle: "आपकी निजता हमारी प्राथमिकता है",
+    subtitle: "हम आपकी जानकारी कैसे एकत्र, उपयोग और सुरक्षित करते हैं",
     content: (
       <div className="space-y-8">
         <div className="text-sm text-gray-500 mb-6">
@@ -171,40 +162,33 @@ const Privacy = () => {
         <div className="text-gray-600 leading-relaxed">
           SNS Innovation Labs Private Limited ("हम", "Vyakarni", "कंपनी") इस गोपनीयता नीति के माध्यम से यह बताना चाहता है कि हम आपकी व्यक्तिगत जानकारी को कैसे एकत्र करते हैं, उपयोग करते हैं, साझा करते हैं और सुरक्षित रखते हैं, जब आप हमारी वेबसाइट www.vyakarni.com ("वेबसाइट"), हिंदी लेखन सहायक एप ("एप") और हिंदी लेखन सहायक सेवाओं ("सेवायें") का उपयोग करते हैं।
         </div>
-        
-        <div className="text-gray-600 leading-relaxed">
-          इस नीति का उद्देश्य पारदर्शिता है ताकि आप विश्वास के साथ व्याकरणी (Vyakarni) का उपयोग कर सकें।
-        </div>
 
         <section>
           <h2 className="text-2xl font-bold mb-4">1. हम कौन सी जानकारी एकत्र करते हैं?</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             जब आप व्याकरणी (Vyakarni) का उपयोग करते हैं, तो हम निम्नलिखित प्रकार की जानकारी एकत्र कर सकते हैं:
           </p>
-          
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold mb-2">निजी सूचनायें:</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
                 <li>नाम</li>
                 <li>ईमेल पता</li>
                 <li>संपर्क विवरण</li>
                 <li>लॉगिन या अकाउंट संबंधी जानकारी</li>
               </ul>
             </div>
-            
             <div>
               <h3 className="text-lg font-semibold mb-2">प्रयोग संबंधी सूचनायें/डाटा (Usage Data):</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
                 <li>आपने कौन सी सेवायें उपयोग कीं</li>
                 <li>समय और अवधि</li>
                 <li>आपके द्वारा सबमिट की गई हिंदी पंक्तियाँ (केवल प्रोसेसिंग के उद्देश्य से)</li>
               </ul>
             </div>
-            
             <div>
               <h3 className="text-lg font-semibold mb-2">डिवाइस और ब्राउज़र संबंधी सूचनायें:</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
+              <ul className="list-disc list-inside text-gray-600 space-y-1">
                 <li>IP पता</li>
                 <li>ब्राउज़र का प्रकार</li>
                 <li>डिवाइस का प्रकार और ऑपरेटिंग सिस्टम</li>
@@ -233,12 +217,12 @@ const Privacy = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             हम आपकी व्यक्तिगत जानकारी को किसी भी तीसरे पक्ष को बेचते नहीं हैं। हम केवल निम्न परिस्थितियों में ही जानकारी साझा कर सकते हैं:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>भरोसेमंद तकनीकी सेवा प्रदाताओं (जैसे होस्टिंग या पेमेंट गेटवे) के साथ, जो हमारी ओर से सेवायें प्रदान करते हैं</li>
             <li>जब ऐसा करना कानून या सरकारी आदेश के अंतर्गत आवश्यक हो</li>
             <li>जब यह हमारी सेवा की शर्तों को लागू करने के लिये हो</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             हमारी ओर से साझा की जाने वाली जानकारी न्यूनतम और उद्देश्य-निर्धारित होती है।
           </p>
         </section>
@@ -248,13 +232,13 @@ const Privacy = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             हम आपकी जानकारी की सुरक्षा के लिये उचित तकनीकी और संगठनात्मक उपाय अपनाते हैं, जैसे:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>SSL एन्क्रिप्शन</li>
             <li>सुरक्षित सर्वर होस्टिंग</li>
             <li>एक्सेस कंट्रोल और ऑथेंटिकेशन</li>
             <li>एपीआई कुंजी केवल सर्वर पर सुरक्षित रूप से संग्रहित रहती है</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             हालांकि, यह समझना आवश्यक है कि इंटरनेट पर 100% सुरक्षा की गारंटी नहीं दी जा सकती।
           </p>
         </section>
@@ -271,13 +255,13 @@ const Privacy = () => {
           <p className="text-gray-600 leading-relaxed mb-4">
             आपके पास निम्नलिखित अधिकार हैं:
           </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
             <li>अपने डेटा की प्रतिलिपि माँगना जो कि आपकी निजी सूचनाओं से सम्बंधित हों न कि हिंदी लेखों के वे इनपुट जो आपने भाषा सुधार अथवा प्रसंस्करण हेतु दिये हों</li>
             <li>अपने डेटा को अपडेट या हटवाने का अनुरोध करना</li>
             <li>सेवाओं से अपना खाता हटवाने का अनुरोध करना</li>
             <li>मार्केटिंग ईमेल से 'unsubscribe' करना</li>
           </ul>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed mt-4">
             इनमें से किसी भी अधिकार का प्रयोग करने के लिये कृपया हमें support@vyakarni.com पर संपर्क करें।
           </p>
         </section>
@@ -318,81 +302,49 @@ const Privacy = () => {
   const currentContent = language === "english" ? englishContent : hindiContent;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              हिंदी व्याकरण सुधारक
-            </Link>
-            <div className="space-x-4">
-              <Link to="/login">
-                <Button variant="outline">लॉगिन</Button>
-              </Link>
-              <Link to="/register">
-                <Button>रजिस्टर करें</Button>
-              </Link>
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {currentContent.title}
+            </h1>
+            <p className="text-xl text-gray-600 mb-6">
+              {currentContent.subtitle}
+            </p>
+            
+            {/* Language Toggle */}
+            <div className="flex justify-center mb-8">
+              <ToggleGroup
+                type="single"
+                value={language}
+                onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
+                className="bg-white border rounded-lg p-1"
+              >
+                <ToggleGroupItem
+                  value="english"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  English
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="hindi"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  हिंदी
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
           </div>
-        </div>
-      </nav>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {currentContent.title}
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            {currentContent.subtitle}
-          </p>
-          
-          {/* Language Toggle */}
-          <div className="flex justify-center mb-8">
-            <ToggleGroup
-              type="single"
-              value={language}
-              onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
-              className="bg-white border rounded-lg p-1"
-            >
-              <ToggleGroupItem
-                value="english"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                English
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="hindi"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                हिंदी
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          <Card>
+            <CardContent className="p-8 prose prose-lg max-w-none">
+              {currentContent.content}
+            </CardContent>
+          </Card>
         </div>
-
-        <Card>
-          <CardContent className="p-8 prose prose-lg max-w-none">
-            {currentContent.content}
-          </CardContent>
-        </Card>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 mt-16">
-        <div className="container mx-auto px-6 text-center">
-          <div className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            हिंदी व्याकरण सुधारक
-          </div>
-          <p className="text-gray-400 mb-4">AI की शक्ति से हिंदी भाषा को बेहतर बनाएं</p>
-          <div className="space-x-6">
-            <Link to="/" className="text-gray-400 hover:text-white">होम</Link>
-            <Link to="/about" className="text-gray-400 hover:text-white">हमारे बारे में</Link>
-            <Link to="/contact" className="text-gray-400 hover:text-white">संपर्क</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </Layout>
   );
 };
 

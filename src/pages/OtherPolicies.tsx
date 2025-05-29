@@ -1,9 +1,7 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import Layout from "@/components/Layout";
 
 const OtherPolicies = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("english");
@@ -140,66 +138,49 @@ const OtherPolicies = () => {
   const currentContent = language === "english" ? englishContent : hindiContent;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
-            </Link>
-            <div className="space-x-4">
-              <Link to="/login">
-                <Button variant="outline">लॉगिन</Button>
-              </Link>
-              <Link to="/register">
-                <Button>रजिस्टर करें</Button>
-              </Link>
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {currentContent.title}
+            </h1>
+            <p className="text-xl text-gray-600 mb-6">
+              {currentContent.subtitle}
+            </p>
+            
+            {/* Language Toggle */}
+            <div className="flex justify-center mb-8">
+              <ToggleGroup
+                type="single"
+                value={language}
+                onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
+                className="bg-white border rounded-lg p-1"
+              >
+                <ToggleGroupItem
+                  value="english"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  English
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="hindi"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  हिंदी
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
           </div>
-        </div>
-      </nav>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {currentContent.title}
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            {currentContent.subtitle}
-          </p>
-          
-          {/* Language Toggle */}
-          <div className="flex justify-center mb-8">
-            <ToggleGroup
-              type="single"
-              value={language}
-              onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
-              className="bg-white border rounded-lg p-1"
-            >
-              <ToggleGroupItem
-                value="english"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                English
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="hindi"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                हिंदी
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          <Card>
+            <CardContent className="p-8 prose prose-lg max-w-none">
+              {currentContent.content}
+            </CardContent>
+          </Card>
         </div>
-
-        <Card>
-          <CardContent className="p-8 prose prose-lg max-w-none">
-            {currentContent.content}
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </Layout>
   );
 };
 

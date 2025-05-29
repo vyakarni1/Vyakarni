@@ -1,16 +1,14 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import Layout from "@/components/Layout";
 
 const RefundPolicy = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("english");
 
   const englishContent = {
-    title: "Refund & Cancellation Policy",
-    subtitle: "Understanding our refund and cancellation terms",
+    title: "Refund Policy",
+    subtitle: "Guidelines for refunds on our services",
     content: (
       <div className="space-y-8">
         <div className="text-sm text-gray-500 mb-6">
@@ -18,85 +16,64 @@ const RefundPolicy = () => {
         </div>
         
         <div className="text-gray-600 leading-relaxed">
-          Vyakarni, operated by SNS Innovation Labs Pvt. Ltd., is a digital service providing AI-based assistance for Hindi writing improvement. Our policy is based on transparency and user satisfaction. Please read the following terms carefully.
+          This Refund Policy applies to all services offered by Vyakarni and SNS Innovation Labs Pvt. Ltd. Please read this policy carefully before using our services.
         </div>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">1. Nature of Digital Services</h2>
+          <h2 className="text-2xl font-bold mb-4">1. Eligibility for Refunds</h2>
           <p className="text-gray-600 leading-relaxed">
-            Vyakarni is a digital subscription-based service. Once you make a payment for the service, your subscription is activated immediately and you gain access to the services. Therefore, refunds like those for traditional products are generally not possible.
+            Refunds are considered under the following circumstances:
           </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-4">2. Cancellation Policy</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">(a) Monthly / Annual Subscriptions:</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
-                <li>You may cancel your subscription at any time before the next billing cycle.</li>
-                <li>After cancellation, your service will continue until the end of the paid period, but no further payments will be taken.</li>
-                <li>Cancellation requests can be made via account settings or by emailing us at: support@vyakarni.com</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-2">(b) Auto-Renewal:</h3>
-              <p className="text-gray-600 leading-relaxed ml-4">
-                Subscriptions may renew automatically unless you manually cancel. Please cancel in time if you do not wish to continue the service for the next period.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-4">3. Refund Policy</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            Due to the nature of digital services, we generally do not provide refunds. However, refunds may be considered in the following cases:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-            <li>If the service was unusable due to technical reasons proven to be on our side</li>
-            <li>If payment was made but the service was not activated</li>
-            <li>If the user accidentally made duplicate payments for the same service</li>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li>Service Unavailability: If the service is unavailable for more than 7 consecutive days due to technical issues on our end.</li>
+            <li>Incorrect Charge: If you were incorrectly charged due to a system error.</li>
+            <li>Plan Downgrade: If you downgrade your subscription plan within 14 days of purchase, you may be eligible for a partial refund.</li>
           </ul>
-          
-          <div className="bg-blue-50 p-4 rounded-lg mb-4">
-            <h4 className="font-semibold mb-2">To request a refund:</h4>
-            <p className="text-sm text-gray-700 mb-2">
-              Please email us within 24 hours including the following details:
-            </p>
-            <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-4">
-              <li>Date of payment and a screenshot</li>
-              <li>Registered email ID</li>
-              <li>A brief description of the issue</li>
-            </ul>
-            <p className="text-sm text-gray-700 mt-2">
-              📧 Send email to: support@vyakarni.com
-            </p>
-            <p className="text-sm text-gray-700">
-              We endeavour to respond within 5–7 business days.
-            </p>
-          </div>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">4. Payment Gateway Issues</h2>
+          <h2 className="text-2xl font-bold mb-4">2. Non-Refundable Cases</h2>
           <p className="text-gray-600 leading-relaxed">
-            Vyakarni accepts payments via third-party payment gateways (such as Razorpay, Stripe, etc.). If your payment was deducted but the service was not activated, please inform us first. Final resolution of gateway-related disputes lies with the payment gateway provider.
+            Refunds will not be issued in the following cases:
+          </p>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li>Usage: Refunds are not provided based on the extent of service usage.</li>
+            <li>Dissatisfaction: If you are dissatisfied with the service's features or suggestions.</li>
+            <li>Violation of Terms: If your account is terminated due to a violation of our Terms of Service.</li>
+            <li>Delay in Usage: If you did not use the service during your subscription period.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">3. Refund Request Procedure</h2>
+          <p className="text-gray-600 leading-relaxed">
+            To request a refund, please follow these steps:
+          </p>
+          <ol className="list-decimal list-inside text-gray-600 space-y-2">
+            <li>Contact Support: Email us at support@vyakarni.com with your refund request.</li>
+            <li>Provide Details: Include your account details, the reason for the refund request, and any supporting documentation.</li>
+            <li>Review Process: Our team will review your request within 7 business days.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">4. Refund Processing Time</h2>
+          <p className="text-gray-600 leading-relaxed">
+            If your refund request is approved, the refund will be processed within 14 business days. The refund will be issued to the original payment method.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">5. Rights Reserved</h2>
+          <h2 className="text-2xl font-bold mb-4">5. Changes to the Refund Policy</h2>
           <p className="text-gray-600 leading-relaxed">
-            Vyakarni by SNS Innovations Labs Private Limited reserves the full right to accept or reject any refund or cancellation request. Such decisions will be made based on technical verification, usage records and company policy.
+            We reserve the right to modify this Refund Policy at any time. Changes will be effective immediately upon posting on our website.
           </p>
         </section>
 
         <section>
           <h2 className="text-2xl font-bold mb-4">6. Contact Us</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            If you have any questions related to this policy, please contact us:
+            If you have any questions or concerns regarding this Refund Policy, please contact us at:
           </p>
           <div className="text-gray-600">
             📧 support@vyakarni.com<br />
@@ -108,8 +85,8 @@ const RefundPolicy = () => {
   };
 
   const hindiContent = {
-    title: "वापसी और निरस्त/रद्द करने की नीति",
-    subtitle: "हमारी वापसी और रद्दीकरण शर्तों को समझें",
+    title: "वापसी नीति",
+    subtitle: "हमारी सेवाओं पर धन वापसी के दिशानिर्देश",
     content: (
       <div className="space-y-8">
         <div className="text-sm text-gray-500 mb-6">
@@ -117,85 +94,64 @@ const RefundPolicy = () => {
         </div>
         
         <div className="text-gray-600 leading-relaxed">
-          व्याकरणी (Vyakarni), SNS Innovation Labs Pvt. Ltd. द्वारा संचालित एक डिजिटल सेवा है, जो हिंदी लेखन सुधार के लिये एआई आधारित सहायता प्रदान करती है। हमारी नीति पारदर्शिता और उपयोगकर्ता संतुष्टि पर आधारित है। कृपया निम्नलिखित नियमों को ध्यानपूर्वक पढ़ें।
+          यह वापसी नीति व्याकरणी (Vyakarni) और SNS Innovation Labs Pvt. Ltd. द्वारा दी जाने वाली सभी सेवाओं पर लागू होती है। हमारी सेवाओं का उपयोग करने से पहले कृपया इस नीति को ध्यान से पढ़ें।
         </div>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">1. डिजिटल सेवाओं की प्रकृति</h2>
+          <h2 className="text-2xl font-bold mb-4">1. धन वापसी के लिए पात्रता</h2>
           <p className="text-gray-600 leading-relaxed">
-            व्याकरणी (Vyakarni) एक डिजिटल सदस्यता आधारित सेवा है। एक बार जब आप सेवा के लिये भुगतान करते हैं, तो आपकी सदस्यता तुरंत सक्रिय हो जाती है और सेवाओं तक आपकी पहुंच आरंभ हो जाती है। इस कारण हमारी डिजिटल सेवाओं में पारंपरिक उत्पादों की तरह वापसी (return) संभव नहीं होती है।
+            धन वापसी पर निम्नलिखित परिस्थितियों में विचार किया जाता है:
           </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-4">2. निरस्त/रद्द करने की नीति</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">निरस्तीकरण:</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
-                <li>आप अपनी सदस्यता किसी भी समय भविष्य के बिलिंग चक्र से पहले रद्द कर सकते हैं।</li>
-                <li>निरस्ती करण के बाद, आपकी सेवा उस भुगतान अवधि की समाप्ति तक जारी रहेगी, लेकिन अगला भुगतान नहीं लिया जायेगा।</li>
-                <li>निरस्त करने का अनुरोध [account settings] द्वारा या हमें इस पते पर ईमेल करके किया जा सकता है: support@vyakarni.com</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-2">स्वतः नवीनीकरण:</h3>
-              <p className="text-gray-600 leading-relaxed ml-4">
-                सदस्यता स्वतः नवीनीकृत हो सकती है जब तक कि आप उसे मैन्युअली निरस्त/रद्द न करें। कृपया समय पर निरस्तीकरण/रद्दीकरण करें यदि आप अगली अवधि के लिये सेवा जारी नहीं रखना चाहते।
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-4">3. वापसी नीति</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
-            हम डिजिटल सेवाओं की प्रकृति के कारण सामान्यतः कोई वापसी नहीं प्रदान करते हैं। हालांकि, निम्नलिखित परिस्थितियों में वापसी पर विचार किया जा सकता है:
-          </p>
-          <ul className="list-disc list-inside text-gray-600 space-y-2 mb-4">
-            <li>अगर तकनीकी कारणों से सेवा का उपयोग संभव नहीं रहा और यह हमारी ओर से साबित हुआ</li>
-            <li>यदि भुगतान किया गया लेकिन सेवा सक्रिय नहीं हुई</li>
-            <li>यदि उपयोगकर्ता ने गलती से एक ही सेवा के लिये दोहरा भुगतान कर दिया हो</li>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li>सेवा अनुपलब्धता: यदि हमारी ओर से तकनीकी समस्याओं के कारण सेवा लगातार 7 दिनों से अधिक समय तक अनुपलब्ध रहती है।</li>
+            <li>गलत शुल्क: यदि सिस्टम त्रुटि के कारण आपसे गलत शुल्क लिया गया था।</li>
+            <li>योजना डाउनग्रेड: यदि आप खरीद के 14 दिनों के भीतर अपनी सदस्यता योजना को डाउनग्रेड करते हैं, तो आप आंशिक धन वापसी के लिए पात्र हो सकते हैं।</li>
           </ul>
-          
-          <div className="bg-blue-50 p-4 rounded-lg mb-4">
-            <h4 className="font-semibold mb-2">वापसी का अनुरोध करने के लिये:</h4>
-            <p className="text-sm text-gray-700 mb-2">
-              कृपया २४ घंटों के भीतर निम्न विवरण के साथ ईमेल करें:
-            </p>
-            <ul className="list-disc list-inside text-sm text-gray-700 space-y-1 ml-4">
-              <li>भुगतान की तारीख और स्क्रीनशॉट</li>
-              <li>पंजीकृत ईमेल आईडी</li>
-              <li>समस्या का संक्षिप्त विवरण</li>
-            </ul>
-            <p className="text-sm text-gray-700 mt-2">
-              📧 ईमेल भेजें: support@vyakarni.com
-            </p>
-            <p className="text-sm text-gray-700">
-              हम 5-7 कार्यदिवसों में उत्तर देने का प्रयास करते हैं।
-            </p>
-          </div>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">4. भुगतान गेटवे से संबंधित मुद्दे</h2>
+          <h2 className="text-2xl font-bold mb-4">2. गैर-वापसी योग्य मामले</h2>
           <p className="text-gray-600 leading-relaxed">
-            व्याकरणी (Vyakarni) थर्ड पार्टी पेमेंट गेटवे (जैसे Razorpay, Stripe आदि) के माध्यम से भुगतान स्वीकार करता है। यदि आपका भुगतान कट गया है लेकिन सेवा सक्रिय नहीं हुई, तो कृपया पहले हमें सूचित करें। गेटवे संबंधित विवादों में अंतिम समाधान की जिम्मेदारी गेटवे प्रदाता की होगी।
+            निम्नलिखित मामलों में धन वापसी जारी नहीं की जाएगी:
+          </p>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li>उपयोग: सेवा उपयोग की सीमा के आधार पर धन वापसी प्रदान नहीं की जाती है।</li>
+            <li>असंतुष्टि: यदि आप सेवा की सुविधाओं या सुझावों से असंतुष्ट हैं।</li>
+            <li>शर्तों का उल्लंघन: यदि हमारी सेवा की शर्तों के उल्लंघन के कारण आपका खाता समाप्त कर दिया जाता है।</li>
+            <li>उपयोग में देरी: यदि आपने अपनी सदस्यता अवधि के दौरान सेवा का उपयोग नहीं किया।</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">3. धन वापसी अनुरोध प्रक्रिया</h2>
+          <p className="text-gray-600 leading-relaxed">
+            धन वापसी का अनुरोध करने के लिए, कृपया इन चरणों का पालन करें:
+          </p>
+          <ol className="list-decimal list-inside text-gray-600 space-y-2">
+            <li>समर्थन से संपर्क करें: अपने धन वापसी अनुरोध के साथ हमें support@vyakarni.com पर ईमेल करें।</li>
+            <li>विवरण प्रदान करें: अपने खाते का विवरण, धन वापसी अनुरोध का कारण और कोई भी सहायक दस्तावेज शामिल करें।</li>
+            <li>समीक्षा प्रक्रिया: हमारी टीम 7 व्यावसायिक दिनों के भीतर आपके अनुरोध की समीक्षा करेगी।</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4">4. धन वापसी प्रसंस्करण समय</h2>
+          <p className="text-gray-600 leading-relaxed">
+            यदि आपका धन वापसी अनुरोध स्वीकृत हो जाता है, तो धन वापसी 14 व्यावसायिक दिनों के भीतर संसाधित हो जाएगी। धन वापसी मूल भुगतान विधि में जारी की जाएगी।
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">5. अधिकार सुरक्षित</h2>
+          <h2 className="text-2xl font-bold mb-4">5. धन वापसी नीति में परिवर्तन</h2>
           <p className="text-gray-600 leading-relaxed">
-            व्याकरणी (Vyakarni) किसी भी वापसी या रद्दीकरण अनुरोध को स्वीकार या अस्वीकार करने का पूर्ण अधिकार सुरक्षित रखता है। यह निर्णय तकनीकी सत्यापन, उपयोग रिकॉर्ड और कंपनी की नीति के अनुसार लिया जायेगा।
+            हम किसी भी समय इस धन वापसी नीति को संशोधित करने का अधिकार सुरक्षित रखते हैं। परिवर्तन हमारी वेबसाइट पर पोस्ट करने के तुरंत बाद प्रभावी होंगे।
           </p>
         </section>
 
         <section>
           <h2 className="text-2xl font-bold mb-4">6. संपर्क करें</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            यदि आपकी नीति से संबंधित कोई प्रश्न हैं, तो कृपया हमसे संपर्क करें:
+            यदि आपके पास इस धन वापसी नीति के बारे में कोई प्रश्न या चिंता है, तो कृपया हमसे संपर्क करें:
           </p>
           <div className="text-gray-600 mb-4">
             📧 support@vyakarni.com<br />
@@ -203,7 +159,7 @@ const RefundPolicy = () => {
           </div>
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-sm text-blue-800">
-              📌 नोट: यह नीति हिंदी में दी गई है ताकि हमारे उपयोगकर्ताओं को आसानी से समझ आ सके। यदि किसी कानूनी व्याख्या की आवश्यकता हो, तो अंग्रेज़ी संस्करण मान्य होगा।
+              📌 नोट: यह दस्तावेज़ आपकी सुविधा के लिये हिंदी में प्रस्तुत किया गया है। यदि किसी कानूनी व्याख्या या विवाद की स्थिति उत्पन्न होती है, तो अंग्रेज़ी संस्करण को प्राथमिकता दी जायेगी।
             </p>
           </div>
         </section>
@@ -214,66 +170,49 @@ const RefundPolicy = () => {
   const currentContent = language === "english" ? englishContent : hindiContent;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
-            </Link>
-            <div className="space-x-4">
-              <Link to="/login">
-                <Button variant="outline">लॉगिन</Button>
-              </Link>
-              <Link to="/register">
-                <Button>रजिस्टर करें</Button>
-              </Link>
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {currentContent.title}
+            </h1>
+            <p className="text-xl text-gray-600 mb-6">
+              {currentContent.subtitle}
+            </p>
+            
+            {/* Language Toggle */}
+            <div className="flex justify-center mb-8">
+              <ToggleGroup
+                type="single"
+                value={language}
+                onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
+                className="bg-white border rounded-lg p-1"
+              >
+                <ToggleGroupItem
+                  value="english"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  English
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="hindi"
+                  className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+                >
+                  हिंदी
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
           </div>
-        </div>
-      </nav>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {currentContent.title}
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            {currentContent.subtitle}
-          </p>
-          
-          {/* Language Toggle */}
-          <div className="flex justify-center mb-8">
-            <ToggleGroup
-              type="single"
-              value={language}
-              onValueChange={(value: "english" | "hindi") => value && setLanguage(value)}
-              className="bg-white border rounded-lg p-1"
-            >
-              <ToggleGroupItem
-                value="english"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                English
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="hindi"
-                className="px-4 py-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-              >
-                हिंदी
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          <Card>
+            <CardContent className="p-8 prose prose-lg max-w-none">
+              {currentContent.content}
+            </CardContent>
+          </Card>
         </div>
-
-        <Card>
-          <CardContent className="p-8 prose prose-lg max-w-none">
-            {currentContent.content}
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </Layout>
   );
 };
 
