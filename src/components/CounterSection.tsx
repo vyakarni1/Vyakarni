@@ -1,7 +1,5 @@
-
 import { useEffect, useState } from 'react';
 import { Users, FileText, CheckCircle, Clock } from 'lucide-react';
-
 const CounterSection = () => {
   const [counters, setCounters] = useState({
     users: 0,
@@ -9,19 +7,16 @@ const CounterSection = () => {
     corrections: 0,
     saved: 0
   });
-
   const finalValues = {
     users: 25000,
     texts: 150000,
     corrections: 500000,
     saved: 75000
   };
-
   useEffect(() => {
     const duration = 2000; // 2 seconds
     const steps = 60;
     const interval = duration / steps;
-
     const timer = setInterval(() => {
       setCounters(prev => ({
         users: Math.min(prev.users + Math.ceil(finalValues.users / steps), finalValues.users),
@@ -30,51 +25,38 @@ const CounterSection = () => {
         saved: Math.min(prev.saved + Math.ceil(finalValues.saved / steps), finalValues.saved)
       }));
     }, interval);
-
     return () => clearInterval(timer);
   }, []);
-
-  const stats = [
-    {
-      icon: Users,
-      value: counters.users.toLocaleString('hi-IN'),
-      label: 'खुश उपयोगकर्ता',
-      suffix: '+'
-    },
-    {
-      icon: FileText,
-      value: counters.texts.toLocaleString('hi-IN'),
-      label: 'टेक्स्ट जांचे गए',
-      suffix: '+'
-    },
-    {
-      icon: CheckCircle,
-      value: counters.corrections.toLocaleString('hi-IN'),
-      label: 'त्रुटियां सुधारी गईं',
-      suffix: '+'
-    },
-    {
-      icon: Clock,
-      value: counters.saved.toLocaleString('hi-IN'),
-      label: 'घंटे बचाए गए',
-      suffix: '+'
-    }
-  ];
-
-  return (
-    <section className="bg-gradient-to-r from-blue-600 to-purple-600 py-16 text-white">
+  const stats = [{
+    icon: Users,
+    value: counters.users.toLocaleString('hi-IN'),
+    label: 'खुश उपयोगकर्ता',
+    suffix: '+'
+  }, {
+    icon: FileText,
+    value: counters.texts.toLocaleString('hi-IN'),
+    label: 'टेक्स्ट जांचे गए',
+    suffix: '+'
+  }, {
+    icon: CheckCircle,
+    value: counters.corrections.toLocaleString('hi-IN'),
+    label: 'त्रुटियां सुधारी गईं',
+    suffix: '+'
+  }, {
+    icon: Clock,
+    value: counters.saved.toLocaleString('hi-IN'),
+    label: 'घंटे बचाए गए',
+    suffix: '+'
+  }];
+  return <section className="bg-gradient-to-r from-blue-600 to-purple-600 py-16 text-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">आंकड़ों में हमारी सफलता</h2>
-          <p className="text-xl opacity-90">हजारों उपयोगकर्ता हमारे AI टूल पर भरोसा करते हैं</p>
+          <p className="text-xl opacity-90">जानियें कितने उपयोगकर्ता हमारे AI टूल पर विश्वास करते हैं</p>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat, index) => (
-            <div 
-              key={index} 
-              className="text-center group hover:scale-105 transition-transform duration-300"
-            >
+          {stats.map((stat, index) => <div key={index} className="text-center group hover:scale-105 transition-transform duration-300">
               <div className="mb-4 flex justify-center">
                 <div className="p-4 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors duration-300">
                   <stat.icon className="h-8 w-8" />
@@ -84,12 +66,9 @@ const CounterSection = () => {
                 {stat.value}{stat.suffix}
               </div>
               <div className="text-lg opacity-90">{stat.label}</div>
-            </div>
-          ))}
+            </div>)}
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CounterSection;
