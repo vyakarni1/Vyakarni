@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CheckCircle, Copy, ArrowRight, Sparkles } from "lucide-react";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import CorrectionsDropdown from './CorrectionsDropdown';
+import HighlightedText from './HighlightedText';
 
 interface CorrectedTextPanelProps {
   correctedText: string;
@@ -16,7 +17,9 @@ interface CorrectedTextPanelProps {
   isLoading: boolean;
   processingMode: ProcessingMode;
   progress: number;
+  selectedCorrectionId: string | null;
   onCopyToClipboard: () => void;
+  onCorrectionSelect: (correctionId: string | null) => void;
 }
 
 const CorrectedTextPanel = ({ 
@@ -25,8 +28,10 @@ const CorrectedTextPanel = ({
   corrections, 
   isLoading, 
   processingMode,
-  progress, 
-  onCopyToClipboard 
+  progress,
+  selectedCorrectionId,
+  onCopyToClipboard,
+  onCorrectionSelect
 }: CorrectedTextPanelProps) => {
   const currentText = processingMode === 'style' ? enhancedText : correctedText;
   const wordCount = currentText.trim() ? currentText.trim().split(/\s+/).length : 0;
@@ -38,6 +43,10 @@ const CorrectedTextPanel = ({
   
   const headerTitle = isGrammarMode ? "सुधारा गया टेक्स्ट" : "शैली सुधारा गया टेक्स्ट";
   const headerIcon = isGrammarMode ? CheckCircle : Sparkles;
+
+  const clearSelection = () => {
+    onCorrectionSelect(null);
+  };
 
   return (
     <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col">
@@ -54,7 +63,11 @@ const CorrectedTextPanel = ({
                 {wordCount} शब्द
               </Badge>
             )}
-            <CorrectionsDropdown corrections={corrections} />
+            <CorrectionsDropdown 
+              corrections={corrections} 
+              selectedCorrectionId={selectedCorrectionId}
+              onCorrectionSelect={onCorrectionSelect}
+            />
           </div>
         </div>
       </CardHeader>
@@ -63,9 +76,12 @@ const CorrectedTextPanel = ({
           {currentText ? (
             <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
               <div className="p-4 sm:p-6">
-                <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
-                  {currentText}
-                </p>
+                <HighlightedText
+                  text={currentText}
+                  corrections={corrections}
+                  selectedCorrectionId={selectedCorrectionId}
+                  onClick={clearSelection}
+                />
               </div>
             </ScrollArea>
           ) : (

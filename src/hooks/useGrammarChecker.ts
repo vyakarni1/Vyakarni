@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
@@ -17,6 +18,7 @@ export const useGrammarChecker = () => {
   const [processingMode, setProcessingMode] = useState<ProcessingMode>('grammar');
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
+  const [selectedCorrectionId, setSelectedCorrectionId] = useState<string | null>(null);
   const { trackUsage } = useUsageStats();
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
 
@@ -57,6 +59,7 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setCorrectedText('');
     setCorrections([]);
+    setSelectedCorrectionId(null);
 
     const progressInterval = createProgressSimulator(setProgress);
 
@@ -105,6 +108,7 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setEnhancedText('');
     setCorrections([]);
+    setSelectedCorrectionId(null);
 
     const progressInterval = createProgressSimulator(setProgress);
 
@@ -139,6 +143,7 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setCorrections([]);
     setProcessingMode('grammar');
+    setSelectedCorrectionId(null);
   };
 
   const copyToClipboard = async () => {
@@ -153,6 +158,10 @@ export const useGrammarChecker = () => {
     return processingMode === 'style' ? enhancedText : correctedText;
   };
 
+  const selectCorrection = (correctionId: string | null) => {
+    setSelectedCorrectionId(correctionId);
+  };
+
   return {
     inputText,
     setInputText,
@@ -162,10 +171,12 @@ export const useGrammarChecker = () => {
     processingMode,
     progress,
     corrections,
+    selectedCorrectionId,
     correctGrammar,
     enhanceStyle,
     resetText,
     copyToClipboard,
-    getCurrentProcessedText
+    getCurrentProcessedText,
+    selectCorrection
   };
 };

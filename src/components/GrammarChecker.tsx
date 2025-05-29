@@ -16,10 +16,12 @@ const GrammarChecker = () => {
     processingMode,
     progress,
     corrections,
+    selectedCorrectionId,
     correctGrammar,
     enhanceStyle,
     resetText,
-    copyToClipboard
+    copyToClipboard,
+    selectCorrection
   } = useGrammarChecker();
 
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
@@ -50,7 +52,9 @@ const GrammarChecker = () => {
             isLoading={isLoading}
             processingMode={processingMode}
             progress={progress}
+            selectedCorrectionId={selectedCorrectionId}
             onCopyToClipboard={copyToClipboard}
+            onCorrectionSelect={selectCorrection}
           />
         </div>
 
