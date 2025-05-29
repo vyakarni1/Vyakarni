@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +7,8 @@ import { Badge } from '@/components/ui/badge';
 const PricingPreviewSection = () => {
   const plans = [
     {
-      name: 'Free',
-      nameHindi: 'मुफ्त',
+      name: 'टेस्ट प्लान',
+      nameHindi: 'टेस्ट प्लान',
       price: '₹0',
       period: '/महीना',
       description: 'वर्तमान प्लान',
@@ -31,8 +30,8 @@ const PricingPreviewSection = () => {
       comingSoon: false
     },
     {
-      name: 'Pro',
-      nameHindi: 'प्रो',
+      name: 'हॉबी प्लान',
+      nameHindi: 'हॉबी प्लान',
       price: '₹499',
       period: '/महीना',
       description: 'सबसे लोकप्रिय',
@@ -55,8 +54,8 @@ const PricingPreviewSection = () => {
       comingSoon: true
     },
     {
-      name: 'Team',
-      nameHindi: 'टीम',
+      name: 'प्रोफेशनल प्लान',
+      nameHindi: 'प्रोफेशनल प्लान',
       price: '₹999',
       period: '/महीना',
       description: '',
