@@ -27,6 +27,10 @@ const GrammarChecker = () => {
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
   const charCount = inputText.length;
 
+  const clearSelection = () => {
+    selectCorrection(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       <Header />
@@ -40,9 +44,12 @@ const GrammarChecker = () => {
             isLoading={isLoading}
             wordCount={wordCount}
             charCount={charCount}
+            corrections={corrections}
+            selectedCorrectionId={selectedCorrectionId}
             onCorrectGrammar={correctGrammar}
             onEnhanceStyle={enhanceStyle}
             onResetText={resetText}
+            onClearSelection={clearSelection}
           />
 
           <CorrectedTextPanel
