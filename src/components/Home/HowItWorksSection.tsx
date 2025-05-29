@@ -31,7 +31,7 @@ const HowItWorksSection = () => {
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce delay-75"></div>
             </div>
             <h3 className="text-2xl font-semibold mb-3 text-gray-800">टेक्स्ट लिखें</h3>
-            <p className="text-gray-600 leading-relaxed">अपना हिंदी पाठ की प्रविष्टि करें एवं परिणाम प्राप्त करें। किसी भी लंबाई का टेक्स्ट स्वीकार्य है।</p>
+            <p className="text-gray-600 leading-relaxed">अपना हिंदी पाठ की प्रविष्टि करें एवं परिणाम प्राप्त करें। </p>
           </div>
           
           <div className="text-center group">
