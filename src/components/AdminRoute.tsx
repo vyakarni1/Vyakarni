@@ -12,7 +12,11 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   const { user, loading: authLoading } = useAuth();
   const { isAdmin, loading: roleLoading } = useUserRole();
 
+  console.log('AdminRoute: authLoading:', authLoading, 'roleLoading:', roleLoading);
+  console.log('AdminRoute: user:', user?.id, 'isAdmin:', isAdmin);
+
   if (authLoading || roleLoading) {
+    console.log('AdminRoute: Still loading, showing spinner');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -21,13 +25,16 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   }
 
   if (!user) {
+    console.log('AdminRoute: No user, redirecting to login');
     return <Navigate to="/login" replace />;
   }
 
   if (!isAdmin) {
+    console.log('AdminRoute: User is not admin, redirecting to dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 
+  console.log('AdminRoute: User is admin, rendering admin content');
   return <>{children}</>;
 };
 

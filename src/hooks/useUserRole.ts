@@ -14,6 +14,7 @@ export const useUserRole = () => {
 
   useEffect(() => {
     if (!user) {
+      console.log('useUserRole: No user found, setting defaults');
       setRole(null);
       setIsAdmin(false);
       setLoading(false);
@@ -21,6 +22,7 @@ export const useUserRole = () => {
     }
 
     const fetchUserRole = async () => {
+      console.log('useUserRole: Fetching role for user:', user.id);
       try {
         const { data, error } = await supabase
           .from('user_roles')
@@ -28,18 +30,25 @@ export const useUserRole = () => {
           .eq('user_id', user.id)
           .order('assigned_at', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle(); // Use maybeSingle instead of single to handle 0 rows gracefully
 
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error fetching user role:', error);
+        if (error) {
+          console.error('useUserRole: Error fetching user role:', error);
+          // Set default role on error
+          setRole('user');
+          setIsAdmin(false);
           return;
         }
 
         const userRole = data?.role || 'user';
+        console.log('useUserRole: Found role:', userRole);
         setRole(userRole);
         setIsAdmin(userRole === 'admin');
       } catch (error) {
-        console.error('Error in fetchUserRole:', error);
+        console.error('useUserRole: Exception in fetchUserRole:', error);
+        // Set default role on exception
+        setRole('user');
+        setIsAdmin(false);
       } finally {
         setLoading(false);
       }
