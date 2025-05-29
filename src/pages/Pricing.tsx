@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -138,14 +137,14 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto p-6">
           {plans.map((plan) => {
             const discountInfo = getDiscountInfo(plan.plan_type);
             
             return (
               <Card
                 key={plan.id}
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
+                className={`relative transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
                   plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
                 }`}
               >
