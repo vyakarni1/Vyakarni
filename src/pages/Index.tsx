@@ -6,6 +6,7 @@ import { LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import GrammarChecker from "@/components/GrammarChecker";
+import { UsageLimitDisplay } from "@/components/UsageLimitDisplay";
 import { useEffect, useState } from "react";
 
 const Index = () => {
@@ -64,6 +65,9 @@ const Index = () => {
               <Link to="/dashboard">
                 <Button variant="outline">डैशबोर्ड</Button>
               </Link>
+              <Link to="/pricing">
+                <Button variant="outline">प्राइसिंग</Button>
+              </Link>
               {user && (
                 <>
                   <span className="text-gray-600">नमस्ते, {profile?.name || user.email}</span>
@@ -79,6 +83,7 @@ const Index = () => {
       </nav>
 
       <div className="container mx-auto py-8">
+        <UsageLimitDisplay />
         <GrammarChecker />
       </div>
     </div>

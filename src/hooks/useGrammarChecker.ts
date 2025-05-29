@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
+import { useUsageLimits } from "@/hooks/useUsageLimits";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import { extractCorrectionsFromResponse, extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
@@ -16,10 +17,20 @@ export const useGrammarChecker = () => {
   const [progress, setProgress] = useState(0);
   const [corrections, setCorrections] = useState<Correction[]>([]);
   const { trackUsage } = useUsageStats();
+  const { checkAndEnforceWordLimit, checkAndEnforceCorrectionLimit, trackUsage: trackLimitUsage } = useUsageLimits();
 
   const correctGrammar = async () => {
     if (!inputText.trim()) {
       toast.error("कृपया पहले कुछ टेक्स्ट लिखें");
+      return;
+    }
+
+    // Check limits before processing
+    if (!checkAndEnforceWordLimit(inputText)) {
+      return;
+    }
+
+    if (!checkAndEnforceCorrectionLimit()) {
       return;
     }
 
@@ -42,7 +53,9 @@ export const useGrammarChecker = () => {
       
       setIsLoading(false);
       
+      // Track usage for both systems
       await trackUsage('grammar_check');
+      await trackLimitUsage(inputText);
       
       toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
     } catch (error) {
@@ -56,6 +69,15 @@ export const useGrammarChecker = () => {
   const enhanceStyle = async () => {
     if (!inputText.trim()) {
       toast.error("कृपया पहले कुछ टेक्स्ट लिखें");
+      return;
+    }
+
+    // Check limits before processing
+    if (!checkAndEnforceWordLimit(inputText)) {
+      return;
+    }
+
+    if (!checkAndEnforceCorrectionLimit()) {
       return;
     }
 
@@ -78,7 +100,9 @@ export const useGrammarChecker = () => {
       
       setIsLoading(false);
       
+      // Track usage for both systems
       await trackUsage('style_enhance');
+      await trackLimitUsage(inputText);
       
       toast.success(`शैली सुधार पूरा हो गया! ${styleEnhancements.length} सुधार मिले।`);
     } catch (error) {
