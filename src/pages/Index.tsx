@@ -2,7 +2,7 @@
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import GrammarChecker from "@/components/GrammarChecker";
-import { UsageLimitDisplay } from "@/components/UsageLimitDisplay";
+import WordBalanceDisplay from "@/components/WordBalanceDisplay";
 import { useEffect } from "react";
 import Layout from "@/components/Layout";
 
@@ -29,7 +29,7 @@ const Index = () => {
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="container mx-auto py-4 sm:py-8">
-          <UsageLimitDisplay />
+          <WordBalanceDisplay />
           <GrammarChecker />
         </div>
       </div>

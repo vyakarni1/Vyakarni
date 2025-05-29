@@ -1,10 +1,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Calendar, CalendarDays, CalendarRange, TrendingUp } from "lucide-react";
+import { FileText, Calendar, CalendarDays, TrendingUp, Coins, Zap } from "lucide-react";
 import { useUsageStats } from "@/hooks/useUsageStats";
+import { useWordCredits } from "@/hooks/useWordCredits";
 
-const UsageStatsCards = () => {
+const WordUsageStatsCards = () => {
   const { stats, loading } = useUsageStats();
+  const { balance } = useWordCredits();
 
   if (loading) {
     return (
@@ -25,42 +27,53 @@ const UsageStatsCards = () => {
     );
   }
 
+  // Estimate words processed (average 50 words per correction)
+  const avgWordsPerCorrection = 50;
+  const totalWordsProcessed = stats.total_corrections * avgWordsPerCorrection;
+  const wordsToday = stats.corrections_today * avgWordsPerCorrection;
+  const wordsThisWeek = stats.corrections_this_week * avgWordsPerCorrection;
+  const wordsThisMonth = stats.corrections_this_month * avgWordsPerCorrection;
+
   const statCards = [
     {
-      title: "कुल सुधार",
-      value: stats.total_corrections,
+      title: "कुल शब्द प्रसंस्कृत",
+      value: totalWordsProcessed.toLocaleString(),
       description: "सभी समय में",
       icon: FileText,
       gradient: "from-blue-500 to-blue-600",
       bgGradient: "from-blue-50 to-blue-100",
-      iconBg: "bg-blue-500"
+      iconBg: "bg-blue-500",
+      subtitle: `${stats.total_corrections} सुधार`
     },
     {
-      title: "आज के सुधार",
-      value: stats.corrections_today,
-      description: "आज तक",
+      title: "आज के शब्द",
+      value: wordsToday.toLocaleString(),
+      description: "आज प्रसंस्कृत",
       icon: Calendar,
       gradient: "from-green-500 to-green-600",
       bgGradient: "from-green-50 to-green-100",
-      iconBg: "bg-green-500"
+      iconBg: "bg-green-500",
+      subtitle: `${stats.corrections_today} सुधार`
     },
     {
-      title: "इस सप्ताह",
-      value: stats.corrections_this_week,
-      description: "सप्ताह में",
+      title: "साप्ताहिक शब्द",
+      value: wordsThisWeek.toLocaleString(),
+      description: "इस सप्ताह",
       icon: CalendarDays,
       gradient: "from-purple-500 to-purple-600",
       bgGradient: "from-purple-50 to-purple-100",
-      iconBg: "bg-purple-500"
+      iconBg: "bg-purple-500",
+      subtitle: `${stats.corrections_this_week} सुधार`
     },
     {
-      title: "इस महीने",
-      value: stats.corrections_this_month,
-      description: "महीने में",
-      icon: CalendarRange,
+      title: "वर्तमान बैलेंस",
+      value: balance.total_words_available.toLocaleString(),
+      description: "उपलब्ध शब्द",
+      icon: Coins,
       gradient: "from-orange-500 to-orange-600",
       bgGradient: "from-orange-50 to-orange-100",
-      iconBg: "bg-orange-500"
+      iconBg: "bg-orange-500",
+      subtitle: balance.free_words > 0 ? `${balance.free_words} फ्री` : "खरीदे गए शब्द"
     }
   ];
 
@@ -79,24 +92,30 @@ const UsageStatsCards = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline space-x-2">
-                <div className={`text-3xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
+                <div className={`text-2xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
                   {stat.value}
                 </div>
-                {stat.value > 0 && (
+                {parseInt(stat.value.replace(/,/g, '')) > 0 && (
                   <TrendingUp className="h-4 w-4 text-green-500" />
                 )}
               </div>
               <p className="text-xs text-gray-600 mt-1 font-medium">{stat.description}</p>
-              {stat.value > 0 && (
-                <div className="mt-2 flex items-center">
-                  <div className="w-full bg-white/50 rounded-full h-1.5">
-                    <div 
-                      className={`bg-gradient-to-r ${stat.gradient} h-1.5 rounded-full transition-all duration-500`}
-                      style={{ width: `${Math.min((stat.value / Math.max(stats.total_corrections, 1)) * 100, 100)}%` }}
-                    ></div>
-                  </div>
+              <p className="text-xs text-gray-500 mt-1">{stat.subtitle}</p>
+              
+              {/* Progress bar for visual representation */}
+              <div className="mt-2 flex items-center">
+                <div className="w-full bg-white/50 rounded-full h-1.5">
+                  <div 
+                    className={`bg-gradient-to-r ${stat.gradient} h-1.5 rounded-full transition-all duration-500`}
+                    style={{ 
+                      width: `${Math.min(
+                        (parseInt(stat.value.replace(/,/g, '')) / Math.max(totalWordsProcessed || 1, balance.total_words_available || 1)) * 100, 
+                        100
+                      )}%` 
+                    }}
+                  ></div>
                 </div>
-              )}
+              </div>
             </CardContent>
           </Card>
         );
@@ -105,4 +124,4 @@ const UsageStatsCards = () => {
   );
 };
 
-export default UsageStatsCards;
+export default WordUsageStatsCards;
