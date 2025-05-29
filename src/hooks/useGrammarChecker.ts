@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useWordLimits } from "@/hooks/useWordLimits";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
-import { extractCorrectionsFromResponse, extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
 import { createProgressSimulator, completeProgress, resetProgress } from "@/utils/progressUtils";
 
@@ -60,20 +59,18 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
-      const aiCorrected = await callGrammarCheckAPI(inputText);
+      const response = await callGrammarCheckAPI(inputText);
       
       completeProgress(setProgress, progressInterval);
-      setCorrectedText(aiCorrected);
-
-      const allCorrections = extractCorrectionsFromResponse(inputText, aiCorrected);
-      setCorrections(allCorrections);
+      setCorrectedText(response.correctedText);
+      setCorrections(response.corrections);
       
       setIsLoading(false);
       
       await trackUsage('grammar_check');
       await trackWordUsage(inputText, 'grammar_check');
       
-      toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
+      toast.success(`व्याकरण सुधार पूरा हो गया! ${response.corrections.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error correcting grammar:', error);
       setIsLoading(false);
@@ -105,20 +102,18 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
-      const enhanced = await callStyleEnhanceAPI(inputText);
+      const response = await callStyleEnhanceAPI(inputText);
       
       completeProgress(setProgress, progressInterval);
-      setEnhancedText(enhanced);
-
-      const styleEnhancements = extractStyleEnhancements(inputText, enhanced);
-      setCorrections(styleEnhancements);
+      setEnhancedText(response.enhancedText);
+      setCorrections(response.corrections);
       
       setIsLoading(false);
       
       await trackUsage('style_enhance');
       await trackWordUsage(inputText, 'style_enhance');
       
-      toast.success(`शैली सुधार पूरा हो गया! ${styleEnhancements.length} सुधार मिले।`);
+      toast.success(`शैली सुधार पूरा हो गया! ${response.corrections.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error enhancing style:', error);
       setIsLoading(false);

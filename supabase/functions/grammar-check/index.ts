@@ -51,11 +51,11 @@ serve(async (req) => {
         'Authorization': `Bearer ${openAIApiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4.5-preview',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
-            content: `आप एक हिंदी व्याकरण सुधार विशेषज्ञ हैं। अत्यंत महत्वपूर्ण निर्देश:
+            content: `आप एक हिंदी व्याकरण सुधार विशेषज्ञ हैं। 
 
 **मुख्य कार्य:**
 1. दिए गए हिंदी टेक्स्ट में व्याकरण की त्रुटियों को सुधारें
@@ -70,15 +70,26 @@ serve(async (req) => {
 - सभी पैराग्राफ, वाक्य और विवरण को संरक्षित रखें
 - केवल व्याकरण सुधार करें, सामग्री कम न करें
 - मूल अर्थ और शैली को बनाए रखें
-- टेक्स्ट की संरचना और पैराग्राफ को बनाए रखें
-- केवल सुधारा गया टेक्स्ट वापस करें, कोई अतिरिक्त स्पष्टीकरण नहीं
-- यदि टेक्स्ट बहुत लंबा है तो उसे पूर्ण रूप में वापस करना आवश्यक है
 
-**यह व्याकरण सुधार है, संक्षेपीकरण नहीं। पूरा टेक्स्ट लौटाना अनिवार्य है।**`
+**आउटपुट फॉर्मेट:**
+आपको JSON फॉर्मेट में उत्तर देना है:
+{
+  "correctedText": "सुधारा गया पूरा टेक्स्ट",
+  "corrections": [
+    {
+      "incorrect": "गलत शब्द/वाक्यांश",
+      "correct": "सही शब्द/वाक्यांश",
+      "reason": "सुधार का कारण",
+      "type": "grammar" | "spelling" | "punctuation" | "syntax" | "vocabulary"
+    }
+  ]
+}
+
+केवल वास्तविक सुधार ही corrections array में शामिल करें। यदि कोई सुधार नहीं है तो corrections array खाली रखें।`
           },
           {
             role: 'user',
-            content: `इस हिंदी टेक्स्ट को सुधारें (पूरा टेक्स्ट वापस करें):\n\n${preprocessedText}`
+            content: `इस हिंदी टेक्स्ट को सुधारें और JSON फॉर्मेट में परिणाम दें:\n\n${preprocessedText}`
           }
         ],
         max_tokens: 16384,
@@ -94,27 +105,37 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    let correctedText = data.choices[0].message.content.trim();
+    let responseContent = data.choices[0].message.content.trim();
 
-    // Remove any quotation marks that might have been added by the AI
-    correctedText = correctedText.replace(/^["']|["']$/g, '');
+    // Remove any markdown formatting that might wrap the JSON
+    responseContent = responseContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
 
-    console.log('AI corrected text:', correctedText);
+    console.log('AI response content:', responseContent);
 
-    // Log output word count for monitoring and check for significant reduction
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(responseContent);
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', parseError);
+      // Fallback: treat as plain text
+      parsedResponse = {
+        correctedText: responseContent,
+        corrections: []
+      };
+    }
+
+    const { correctedText, corrections } = parsedResponse;
+
+    // Log output word count for monitoring
     const outputWordCount = correctedText.trim().split(/\s+/).length;
     const reductionPercentage = ((inputWordCount - outputWordCount) / inputWordCount) * 100;
     
     console.log(`Output text has ${outputWordCount} words (${inputWordCount} input → ${outputWordCount} output)`);
     console.log(`Word reduction: ${reductionPercentage.toFixed(1)}%`);
-
-    // If the output is significantly shorter, log a warning
-    if (reductionPercentage > 30) {
-      console.warn(`WARNING: Significant text reduction detected (${reductionPercentage.toFixed(1)}%). This may indicate summarization instead of grammar correction.`);
-    }
+    console.log(`Found ${corrections.length} corrections`);
 
     return new Response(
-      JSON.stringify({ correctedText }), 
+      JSON.stringify({ correctedText, corrections }), 
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }

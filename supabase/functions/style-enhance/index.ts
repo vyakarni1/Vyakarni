@@ -34,27 +34,41 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are an expert Hindi language stylist. Your task is to enhance the writing style of Hindi text while maintaining its original meaning. Focus on:
+            content: `आप एक हिंदी भाषा शैली विशेषज्ञ हैं। आपका कार्य हिंदी टेक्स्ट की शैली को बेहतर बनाना है।
 
-1. Vocabulary Enhancement: Replace simple words with more sophisticated alternatives
-2. Sentence Flow: Improve rhythm and flow between sentences  
-3. Engagement: Make text more engaging and interesting
-4. Clarity: Improve clarity while adding stylistic flair
-5. Eloquence: Add literary elements where appropriate
+**मुख्य उद्देश्य:**
+1. शब्दावली सुधार: सरल शब्दों को बेहतर विकल्पों से बदलें
+2. वाक्य प्रवाह: वाक्यों के बीच लय और प्रवाह सुधारें  
+3. आकर्षण: टेक्स्ट को और दिलचस्प बनाएं
+4. स्पष्टता: शैलीगत सुधार के साथ स्पष्टता बढ़ाएं
+5. वाग्मिता: उपयुक्त स्थानों पर साहित्यिक तत्व जोड़ें
 
-Guidelines:
-- Maintain the original meaning completely
-- Use more sophisticated Hindi vocabulary where appropriate
-- Improve sentence structure for better flow
-- Make the text more engaging and eloquent
-- Keep it natural and readable
-- Focus on style improvement, not grammar correction
+**नियम:**
+- मूल अर्थ पूर्णतः बनाए रखें
+- अधिक परिष्कृत हिंदी शब्दावली का उपयोग करें
+- वाक्य संरचना को बेहतर प्रवाह के लिए सुधारें
+- टेक्स्ट को अधिक आकर्षक और वाग्मितापूर्ण बनाएं
+- प्राकृतिक और पठनीय रखें
 
-Return only the enhanced text in Hindi, nothing else.`
+**आउटपुट फॉर्मेट:**
+JSON फॉर्मेट में उत्तर दें:
+{
+  "enhancedText": "शैली सुधारा गया पूरा टेक्स्ट",
+  "corrections": [
+    {
+      "incorrect": "मूल शब्द/वाक्यांश",
+      "correct": "सुधारा गया शब्द/वाक्यांश",
+      "reason": "शैली सुधार का कारण",
+      "type": "vocabulary" | "flow" | "eloquence" | "engagement"
+    }
+  ]
+}
+
+केवल वास्तविक शैली सुधार ही corrections में शामिल करें।`
           },
           {
             role: 'user',
-            content: `Please enhance the style of this Hindi text while keeping the meaning intact:\n\n${inputText}`
+            content: `इस हिंदी टेक्स्ट की शैली सुधारें और JSON फॉर्मेट में परिणाम दें:\n\n${inputText}`
           }
         ],
         temperature: 0.7,
@@ -67,11 +81,31 @@ Return only the enhanced text in Hindi, nothing else.`
     }
 
     const data = await response.json();
-    const enhancedText = data.choices[0].message.content.trim();
+    let responseContent = data.choices[0].message.content.trim();
+
+    // Remove any markdown formatting that might wrap the JSON
+    responseContent = responseContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    
+    console.log('AI response content:', responseContent);
+
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(responseContent);
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', parseError);
+      // Fallback: treat as plain text
+      parsedResponse = {
+        enhancedText: responseContent,
+        corrections: []
+      };
+    }
+
+    const { enhancedText, corrections } = parsedResponse;
     
     console.log('Style enhanced text:', enhancedText);
+    console.log(`Found ${corrections.length} style improvements`);
 
-    return new Response(JSON.stringify({ enhancedText }), {
+    return new Response(JSON.stringify({ enhancedText, corrections }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
