@@ -39,26 +39,36 @@ export const useAdvancedUserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
+      // Get user roles with profiles
+      const { data: userRoles, error: rolesError } = await supabase
         .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+
+      // Get profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, name, created_at');
+
+      if (profilesError) throw profilesError;
+
+      // Get subscriptions with plans
+      const { data: subscriptions, error: subscriptionsError } = await supabase
+        .from('user_subscriptions')
         .select(`
           user_id,
-          role,
-          profiles!inner(id, name, created_at),
-          user_subscriptions!inner(
-            status,
-            subscription_plans!inner(plan_name, plan_type)
-          )
-        `);
+          status,
+          subscription_plans(plan_name, plan_type)
+        `)
+        .eq('status', 'active');
 
-      if (error) throw error;
+      if (subscriptionsError) throw subscriptionsError;
 
       // Get user usage stats
-      const userIds = data?.map(item => item.user_id) || [];
       const { data: usageData } = await supabase
         .from('user_usage')
-        .select('user_id, created_at')
-        .in('user_id', userIds);
+        .select('user_id, created_at');
 
       const usageMap = usageData?.reduce((acc, usage) => {
         if (!acc[usage.user_id]) {
@@ -71,17 +81,24 @@ export const useAdvancedUserManagement = () => {
         return acc;
       }, {} as Record<string, { count: number; lastActivity: string }>) || {};
 
-      const formattedUsers = data?.map(item => ({
-        id: item.user_id,
-        name: item.profiles.name,
-        created_at: item.profiles.created_at,
-        role: item.role,
-        plan_name: item.user_subscriptions[0]?.subscription_plans?.plan_name || 'Free',
-        plan_type: item.user_subscriptions[0]?.subscription_plans?.plan_type || 'free',
-        subscription_status: item.user_subscriptions[0]?.status || 'inactive',
-        last_activity: usageMap[item.user_id]?.lastActivity || item.profiles.created_at,
-        total_corrections: usageMap[item.user_id]?.count || 0,
-      })) || [];
+      // Combine all data
+      const formattedUsers: UserWithDetails[] = profiles?.map(profile => {
+        const userRole = userRoles?.find(role => role.user_id === profile.id);
+        const userSubscription = subscriptions?.find(sub => sub.user_id === profile.id);
+        const usage = usageMap[profile.id];
+
+        return {
+          id: profile.id,
+          name: profile.name,
+          created_at: profile.created_at,
+          role: userRole?.role || 'user',
+          plan_name: (userSubscription?.subscription_plans as any)?.plan_name || 'Free',
+          plan_type: (userSubscription?.subscription_plans as any)?.plan_type || 'free',
+          subscription_status: userSubscription?.status || 'inactive',
+          last_activity: usage?.lastActivity || profile.created_at,
+          total_corrections: usage?.count || 0,
+        };
+      }) || [];
 
       setUsers(formattedUsers);
     } catch (error) {
@@ -130,13 +147,31 @@ export const useAdvancedUserManagement = () => {
 
   const updateUserSubscription = async (userId: string, planId: string) => {
     try {
-      const { error } = await supabase.rpc('update_user_subscription', {
-        user_uuid: userId,
-        new_plan_id: planId,
-        admin_id: user?.id || '',
-      });
+      // Deactivate current subscription
+      await supabase
+        .from('user_subscriptions')
+        .update({ status: 'cancelled' })
+        .eq('user_id', userId)
+        .eq('status', 'active');
+
+      // Create new subscription
+      const { error } = await supabase
+        .from('user_subscriptions')
+        .insert({
+          user_id: userId,
+          plan_id: planId,
+          status: 'active'
+        });
 
       if (error) throw error;
+
+      await supabase.from('admin_logs').insert({
+        admin_id: user?.id || '',
+        action: 'subscription_updated',
+        target_type: 'user',
+        target_id: userId,
+        details: { new_plan_id: planId },
+      });
 
       toast.success('सब्सक्रिप्शन सफलतापूर्वक अपडेट की गई');
       fetchUsers();
