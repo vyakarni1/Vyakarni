@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import UsageStatsCards from "@/components/UsageStatsCards";
 import PlanInfoCard from "@/components/PlanInfoCard";
 import UsageProgressCard from "@/components/UsageProgressCard";
 import SmartRecommendationsCard from "@/components/SmartRecommendationsCard";
+import Footer from "@/components/Footer";
 import { useSubscription } from "@/hooks/useSubscription";
 
 const Dashboard = () => {
@@ -211,6 +211,9 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
