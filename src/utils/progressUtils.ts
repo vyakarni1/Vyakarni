@@ -1,6 +1,6 @@
 
 export const createProgressSimulator = (
-  setProgress: (value: number) => void,
+  setProgress: (value: number | ((prev: number) => number)) => void,
   targetProgress: number = 90,
   interval: number = 200,
   increment: number = 10
@@ -19,7 +19,7 @@ export const createProgressSimulator = (
 };
 
 export const completeProgress = (
-  setProgress: (value: number) => void,
+  setProgress: (value: number | ((prev: number) => number)) => void,
   progressInterval: NodeJS.Timeout
 ) => {
   setProgress(100);
@@ -27,7 +27,7 @@ export const completeProgress = (
 };
 
 export const resetProgress = (
-  setProgress: (value: number) => void,
+  setProgress: (value: number | ((prev: number) => number)) => void,
   progressInterval: NodeJS.Timeout
 ) => {
   setProgress(0);
