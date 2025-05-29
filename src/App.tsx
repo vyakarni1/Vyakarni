@@ -17,6 +17,8 @@ import Disclaimer from "./pages/Disclaimer";
 import RefundPolicy from "./pages/RefundPolicy";
 import DataProtection from "./pages/DataProtection";
 import OtherPolicies from "./pages/OtherPolicies";
+import PricingPolicy from "./pages/PricingPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
 import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
@@ -41,6 +43,8 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/pricing-policy" element={<PricingPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
             <Route path="/data-protection" element={<DataProtection />} />
             <Route path="/other-policies" element={<OtherPolicies />} />
             <Route path="/pricing" element={<Pricing />} />

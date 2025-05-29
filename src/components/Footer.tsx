@@ -100,6 +100,13 @@ const Footer = () => {
                 वापसी नीति
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
+              <Link 
+                to="/pricing-policy" 
+                className="block text-gray-400 hover:text-white transition-colors duration-200 relative group"
+              >
+                मूल्य निर्धारण नीति
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
             </div>
           </div>
 
@@ -112,6 +119,13 @@ const Footer = () => {
                 className="block text-gray-400 hover:text-white transition-colors duration-200 relative group"
               >
                 डेटा संरक्षण
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+              <Link 
+                to="/shipping-policy" 
+                className="block text-gray-400 hover:text-white transition-colors duration-200 relative group"
+              >
+                शिपिंग नीति
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link 
