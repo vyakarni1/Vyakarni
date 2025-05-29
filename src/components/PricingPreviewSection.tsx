@@ -2,47 +2,83 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Zap, Crown } from 'lucide-react';
+import { CheckCircle, Zap, Star, Crown } from 'lucide-react';
 
 const PricingPreviewSection = () => {
   const plans = [
     {
-      name: 'मुफ्त',
+      name: 'Free',
+      nameHindi: 'मुफ्त',
       price: '₹0',
       period: '/महीना',
-      description: 'शुरुआत के लिए बेहतरीन',
-      features: ['दैनिक 50 जांच', 'बुनियादी व्याकरण सुधार', 'ईमेल सपोर्ट'],
-      icon: CheckCircle,
-      popular: false,
-      buttonText: 'मुफ्त शुरू करें',
-      gradient: 'from-gray-500 to-gray-600'
-    },
-    {
-      name: 'प्रो',
-      price: '₹299',
-      period: '/महीना',
-      description: 'व्यक्तिगत उपयोग के लिए',
-      features: ['असीमित जांच', 'उन्नत व्याकरण सुधार', 'तुरंत सहायता', 'PDF निर्यात'],
+      description: 'वर्तमान प्लान',
+      features: [
+        'व्याकरण सुधार',
+        'वर्तनी जांच', 
+        'मूल सुधार'
+      ],
+      limits: {
+        'प्रति सुधार शब्द सीमा:': '100',
+        'मासिक सुधार:': '5'
+      },
       icon: Zap,
-      popular: true,
-      buttonText: 'प्रो चुनें',
-      gradient: 'from-blue-500 to-purple-500'
+      popular: false,
+      buttonText: 'वर्तमान प्लान',
+      buttonColor: 'bg-green-500 hover:bg-green-600',
+      borderColor: 'border-green-500',
+      headerColor: 'bg-green-500'
     },
     {
-      name: 'बिजनेस',
+      name: 'Pro',
+      nameHindi: 'प्रो',
+      price: '₹499',
+      period: '/महीना',
+      description: 'सबसे लोकप्रिय',
+      features: [
+        'असीमित सुधार',
+        'तेजी सुधार',
+        'उन्नत व्याकरण',
+        'प्राथमिकता सहायता'
+      ],
+      limits: {
+        'प्रति सुधार शब्द सीमा:': '1000',
+        'मासिक सुधार:': 'असीमित'
+      },
+      icon: Star,
+      popular: true,
+      buttonText: 'अपग्रेड करें',
+      buttonColor: 'bg-blue-600 hover:bg-blue-700',
+      borderColor: 'border-blue-500',
+      headerColor: 'bg-blue-600'
+    },
+    {
+      name: 'Team',
+      nameHindi: 'टीम',
       price: '₹999',
       period: '/महीना',
-      description: 'टीमों और व्यवसायों के लिए',
-      features: ['सभी प्रो फीचर्स', 'टीम मैनेजमेंट', 'प्राथमिकता सपोर्ट', 'कस्टम इंटीग्रेशन'],
+      description: '',
+      features: [
+        'सभी Pro सुविधाएं',
+        'टीम सहयोग',
+        'उपयोग एनालिटिक्स',
+        'समर्पित सहायता'
+      ],
+      limits: {
+        'प्रति सुधार शब्द सीमा:': '2000',
+        'मासिक सुधार:': 'असीमित',
+        'टीम सदस्य:': '5'
+      },
       icon: Crown,
       popular: false,
-      buttonText: 'बिजनेस चुनें',
-      gradient: 'from-purple-500 to-pink-500'
+      buttonText: 'अपग्रेड करें',
+      buttonColor: 'bg-purple-600 hover:bg-purple-700',
+      borderColor: 'border-purple-500',
+      headerColor: 'bg-purple-600'
     }
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">सभी के लिए उपयुक्त प्लान</h2>
@@ -55,48 +91,55 @@ const PricingPreviewSection = () => {
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`relative group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 ${
-                plan.popular ? 'border-2 border-blue-500 scale-105' : 'border border-gray-200'
-              } overflow-hidden`}
+              className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${plan.borderColor} border-2 bg-white`}
             >
-              {plan.popular && (
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    सबसे लोकप्रिय
-                  </div>
+              {/* Header with plan name */}
+              {plan.description && (
+                <div className={`${plan.headerColor} text-white text-center py-3 text-sm font-medium`}>
+                  {plan.description}
                 </div>
               )}
               
-              <CardHeader className="text-center pb-6">
-                <div className="mb-4 flex justify-center">
-                  <div className={`p-3 bg-gradient-to-r ${plan.gradient} rounded-full text-white`}>
+              <CardHeader className="text-center pb-4">
+                {/* Icon */}
+                <div className="flex justify-center mb-4">
+                  <div className={`p-3 ${plan.headerColor} rounded-full text-white`}>
                     <plan.icon className="h-6 w-6" />
                   </div>
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-800">{plan.name}</CardTitle>
-                <p className="text-gray-600">{plan.description}</p>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold text-gray-800">{plan.price}</span>
-                  <span className="text-gray-600">{plan.period}</span>
+                
+                {/* Plan name and price */}
+                <CardTitle className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</CardTitle>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                  <span className="text-gray-600 ml-1">{plan.period}</span>
                 </div>
               </CardHeader>
               
-              <CardContent className="pt-0">
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
-                      <span className="text-gray-600">{feature}</span>
-                    </li>
+              <CardContent className="pt-0 px-6 pb-6">
+                {/* Limits */}
+                <div className="space-y-3 mb-6">
+                  {Object.entries(plan.limits).map(([key, value], limitIndex) => (
+                    <div key={limitIndex} className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">{key}</span>
+                      <span className="font-semibold text-gray-800">{value}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
+
+                {/* Features */}
+                <div className="space-y-3 mb-8">
+                  {plan.features.map((feature, featureIndex) => (
+                    <div key={featureIndex} className="flex items-center space-x-3">
+                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span className="text-sm text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
                 
+                {/* Button */}
                 <Button 
-                  className={`w-full ${
-                    plan.popular 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600' 
-                      : 'bg-gray-800 hover:bg-gray-900'
-                  } text-white font-semibold py-3 transform hover:scale-105 transition-all duration-300`}
+                  className={`w-full ${plan.buttonColor} text-white font-medium py-3 transition-all duration-300`}
                   asChild
                 >
                   <Link to="/register">
