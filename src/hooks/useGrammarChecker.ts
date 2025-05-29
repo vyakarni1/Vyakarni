@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
@@ -7,6 +6,8 @@ import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import { extractCorrectionsFromResponse, extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
 import { createProgressSimulator, completeProgress, resetProgress } from "@/utils/progressUtils";
+
+const MAX_WORD_LIMIT = 5000;
 
 export const useGrammarChecker = () => {
   const [inputText, setInputText] = useState('');
@@ -19,13 +20,34 @@ export const useGrammarChecker = () => {
   const { trackUsage } = useUsageStats();
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
 
+  const checkWordLimit = (text: string): boolean => {
+    const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    
+    if (wordCount > MAX_WORD_LIMIT) {
+      toast.error(
+        `शब्द सीमा पार हो गई! अधिकतम ${MAX_WORD_LIMIT} शब्द की अनुमति है। वर्तमान में ${wordCount} शब्द हैं।`,
+        {
+          duration: 5000,
+        }
+      );
+      return false;
+    }
+    
+    return true;
+  };
+
   const correctGrammar = async () => {
     if (!inputText.trim()) {
       toast.error("कृपया पहले कुछ टेक्स्ट लिखें");
       return;
     }
 
-    // Check word limits before processing
+    // Check 5000 word limit first
+    if (!checkWordLimit(inputText)) {
+      return;
+    }
+
+    // Check word limits before processing (existing word credit system)
     if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
@@ -68,7 +90,12 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check word limits before processing
+    // Check 5000 word limit first
+    if (!checkWordLimit(inputText)) {
+      return;
+    }
+
+    // Check word limits before processing (existing word credit system)
     if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
