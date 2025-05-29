@@ -81,8 +81,8 @@ const useSubscriptionManagement = () => {
           billing_cycle,
           created_at,
           expires_at,
-          profiles(name),
-          subscription_plans(
+          profiles!inner(name),
+          subscription_plans!inner(
             plan_name,
             plan_type,
             price_monthly,
@@ -98,14 +98,14 @@ const useSubscriptionManagement = () => {
       return data.map(sub => ({
         id: sub.id,
         user_id: sub.user_id,
-        user_name: sub.profiles?.name || 'Unknown User',
+        user_name: sub.profiles.name,
         email: `user_${sub.user_id.slice(0, 8)}@example.com`, // Fallback email format
-        plan_name: sub.subscription_plans?.plan_name || 'Unknown Plan',
-        plan_type: sub.subscription_plans?.plan_type || 'unknown',
+        plan_name: sub.subscription_plans.plan_name,
+        plan_type: sub.subscription_plans.plan_type,
         status: sub.status,
         amount: sub.billing_cycle === 'yearly' 
-          ? Number(sub.subscription_plans?.price_yearly || 0)
-          : Number(sub.subscription_plans?.price_monthly || 0),
+          ? Number(sub.subscription_plans.price_yearly)
+          : Number(sub.subscription_plans.price_monthly),
         created_at: sub.created_at,
         expires_at: sub.expires_at,
         billing_cycle: sub.billing_cycle,
