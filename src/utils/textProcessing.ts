@@ -2,6 +2,9 @@
 import { wordReplacements } from "@/data/wordReplacements";
 import { Correction } from "@/types/grammarChecker";
 
+// Simple utility to generate unique IDs
+const generateId = () => Math.random().toString(36).substr(2, 9);
+
 export const applyWordReplacements = (text: string): {
   correctedText: string;
   appliedCorrections: Correction[];
@@ -14,6 +17,7 @@ export const applyWordReplacements = (text: string): {
     if (regex.test(correctedText)) {
       correctedText = correctedText.replace(regex, replacement);
       appliedCorrections.push({
+        id: generateId(),
         incorrect: original,
         correct: replacement,
         reason: `सही वर्तनी के लिए "${original}" को "${replacement}" से बदला गया`,
@@ -56,6 +60,7 @@ export const extractCorrectionsFromResponse = (original: string, corrected: stri
       
       if (!alreadyCovered && originalWord.length > 0 && correctedWord.length > 0) {
         foundCorrections.push({
+          id: generateId(),
           incorrect: originalWord,
           correct: correctedWord,
           reason: `व्याकरण सुधार: "${originalWord}" को "${correctedWord}" से बदला गया`,
@@ -72,6 +77,7 @@ export const extractCorrectionsFromResponse = (original: string, corrected: stri
     const correctedWord = correctedWords[correctedIndex].replace(/[।\.\!\?,;:]/g, '');
     if (correctedWord.length > 0) {
       foundCorrections.push({
+        id: generateId(),
         incorrect: '[अनुपस्थित]',
         correct: correctedWord,
         reason: 'वाक्य पूर्णता के लिए शब्द जोड़ा गया',
@@ -86,6 +92,7 @@ export const extractCorrectionsFromResponse = (original: string, corrected: stri
     const originalWord = originalWords[originalIndex].replace(/[।\.\!\?,;:]/g, '');
     if (originalWord.length > 0) {
       foundCorrections.push({
+        id: generateId(),
         incorrect: originalWord,
         correct: '[हटाया गया]',
         reason: 'अनावश्यक शब्द हटाया गया',
@@ -114,6 +121,7 @@ export const extractStyleEnhancements = (original: string, enhanced: string): Co
 
     if (originalWord !== enhancedWord && originalWord.length > 0 && enhancedWord.length > 0) {
       enhancements.push({
+        id: generateId(),
         incorrect: originalWord,
         correct: enhancedWord,
         reason: `शैली सुधार: "${originalWord}" को अधिक प्रभावी "${enhancedWord}" से बदला गया`,
