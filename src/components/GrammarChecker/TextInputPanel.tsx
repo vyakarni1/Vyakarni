@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, RotateCcw, Zap } from "lucide-react";
+import { FileText, RotateCcw, Zap, Sparkles } from "lucide-react";
 
 interface TextInputPanelProps {
   inputText: string;
@@ -13,6 +13,7 @@ interface TextInputPanelProps {
   wordCount: number;
   charCount: number;
   onCorrectGrammar: () => void;
+  onEnhanceStyle: () => void;
   onResetText: () => void;
 }
 
@@ -22,7 +23,8 @@ const TextInputPanel = ({
   isLoading, 
   wordCount, 
   charCount, 
-  onCorrectGrammar, 
+  onCorrectGrammar,
+  onEnhanceStyle,
   onResetText 
 }: TextInputPanelProps) => {
   return (
@@ -61,10 +63,18 @@ const TextInputPanel = ({
             <Button
               onClick={onCorrectGrammar}
               disabled={isLoading || !inputText.trim()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
             >
               <Zap className="h-4 w-4 mr-2" />
               {isLoading ? 'सुधार रहे हैं...' : 'व्याकरण सुधारें'}
+            </Button>
+            <Button
+              onClick={onEnhanceStyle}
+              disabled={isLoading || !inputText.trim()}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              {isLoading ? 'शैली सुधार रहे हैं...' : 'शैली सुधारें'}
             </Button>
           </div>
         </div>

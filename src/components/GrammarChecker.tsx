@@ -11,10 +11,13 @@ const GrammarChecker = () => {
     inputText,
     setInputText,
     correctedText,
+    enhancedText,
     isLoading,
+    processingMode,
     progress,
     corrections,
     correctGrammar,
+    enhanceStyle,
     resetText,
     copyToClipboard
   } = useGrammarChecker();
@@ -36,13 +39,16 @@ const GrammarChecker = () => {
             wordCount={wordCount}
             charCount={charCount}
             onCorrectGrammar={correctGrammar}
+            onEnhanceStyle={enhanceStyle}
             onResetText={resetText}
           />
 
           <CorrectedTextPanel
             correctedText={correctedText}
+            enhancedText={enhancedText}
             corrections={corrections}
             isLoading={isLoading}
+            processingMode={processingMode}
             progress={progress}
             onCopyToClipboard={copyToClipboard}
           />
