@@ -1,11 +1,8 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
-
 const HowItWorksSection = () => {
-  return (
-    <section className="bg-gradient-to-r from-gray-50 to-blue-50 py-20">
+  return <section className="bg-gradient-to-r from-gray-50 to-blue-50 py-20">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">कैसे काम करता है</h2>
@@ -23,9 +20,7 @@ const HowItWorksSection = () => {
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce"></div>
             </div>
             <h3 className="text-2xl font-semibold mb-3 text-gray-800">रजिस्टर करें</h3>
-            <p className="text-gray-600 leading-relaxed">
-              मुफ्त खाता बनाएं और तुरंत शुरू करें। कोई शुल्क नहीं, कोई छुपी हुई लागत नहीं।
-            </p>
+            <p className="text-gray-600 leading-relaxed">निशुल्क खता बनायें एवं तत्काल रूप से कार्य शुरू करें। कोई गुप्त शुल्क नहीं।</p>
           </div>
           
           <div className="text-center group">
@@ -64,8 +59,6 @@ const HowItWorksSection = () => {
           </Link>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HowItWorksSection;
