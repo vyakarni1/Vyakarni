@@ -1,10 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap, Shield, BookOpen, Globe } from "lucide-react";
-
 const FeaturesSection = () => {
-  return (
-    <section className="container mx-auto px-6 py-20">
+  return <section className="container mx-auto px-6 py-20">
       <div className="text-center mb-16">
         <h2 className="text-4xl font-bold text-gray-800 mb-4">विशेषताएं</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -37,9 +34,7 @@ const FeaturesSection = () => {
             <CardTitle className="text-xl text-gray-800">AI संचालित</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 leading-relaxed">
-              OpenAI की शक्तिशाली तकनीक से संचालित। अत्याधुनिक AI मॉडल का उपयोग।
-            </p>
+            <p className="text-gray-600 leading-relaxed">AI की शक्तिशाली तकनीक से संचालित। अत्याधुनिक AI मॉडल का उपयोग।</p>
           </CardContent>
         </Card>
 
@@ -73,8 +68,6 @@ const FeaturesSection = () => {
           </CardContent>
         </Card>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default FeaturesSection;
