@@ -1,23 +1,24 @@
+
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, User, Sparkles, TrendingUp } from "lucide-react";
+import { LogOut, User, Sparkles, TrendingUp, Coins } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
-import UsageStatsCards from "@/components/UsageStatsCards";
-import PlanInfoCard from "@/components/PlanInfoCard";
-import UsageProgressCard from "@/components/UsageProgressCard";
+import WordUsageStatsCards from "@/components/WordUsageStatsCards";
+import WordBalanceCard from "@/components/WordBalanceCard";
+import WordUsageCard from "@/components/WordUsageCard";
 import SmartRecommendationsCard from "@/components/SmartRecommendationsCard";
 import Footer from "@/components/Footer";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useWordCredits } from "@/hooks/useWordCredits";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
-  const { subscription } = useSubscription();
+  const { balance } = useWordCredits();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -73,12 +74,10 @@ const Dashboard = () => {
                 व्याकरणी
               </div>
               <Sparkles className="h-6 w-6 text-purple-500" />
-              {subscription && (
-                <div className="hidden md:flex items-center ml-4">
-                  <span className="text-sm text-gray-500 mr-2">प्लान:</span>
-                  <span className="text-sm font-medium text-gray-700">{subscription.plan_name}</span>
-                </div>
-              )}
+              <div className="hidden md:flex items-center ml-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full px-3 py-1">
+                <Coins className="h-4 w-4 text-blue-500 mr-1" />
+                <span className="text-sm font-medium text-gray-700">{balance.total_words_available} शब्द</span>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="hidden md:flex items-center space-x-2 bg-gray-50 rounded-full px-4 py-2">
@@ -103,28 +102,28 @@ const Dashboard = () => {
             </h1>
             <TrendingUp className="h-8 w-8 text-blue-500" />
           </div>
-          <p className="text-lg text-gray-600">आपके खाते का विस्तृत अवलोकन</p>
+          <p className="text-lg text-gray-600">आपके शब्द बैलेंस और उपयोग का विस्तृत अवलोकन</p>
           <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200/50">
             <p className="text-blue-800">
               🎉 नमस्कार <span className="font-semibold">{profile?.name || user.email?.split('@')[0]}</span>! 
-              आज भी अपनी हिंदी लेखन को बेहतर बनाएं।
+              आपके पास <span className="font-bold">{balance.total_words_available} शब्द</span> उपलब्ध हैं।
             </p>
           </div>
         </div>
 
-        {/* Plan and Usage Overview */}
+        {/* Word Balance and Usage Overview */}
         <div className="grid lg:grid-cols-3 gap-8 mb-8">
-          <PlanInfoCard />
-          <UsageProgressCard />
+          <WordBalanceCard />
+          <WordUsageCard />
           <SmartRecommendationsCard />
         </div>
 
-        {/* Real-time Usage Statistics */}
+        {/* Real-time Word Usage Statistics */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            📊 विस्तृत उपयोग की जानकारी
+            📊 विस्तृत शब्द उपयोग की जानकारी
           </h2>
-          <UsageStatsCards />
+          <WordUsageStatsCards />
         </div>
 
         {/* Action Cards */}
@@ -152,11 +151,10 @@ const Dashboard = () => {
               <div className="pt-2 text-sm text-gray-600">
                 खाता स्थिति: <span className="text-green-600 font-medium">सक्रिय</span>
               </div>
-              {subscription && (
-                <div className="pt-2 text-sm text-gray-600">
-                  वर्तमान प्लान: <span className="font-medium text-blue-600">{subscription.plan_name}</span>
-                </div>
-              )}
+              <div className="pt-2 text-sm text-gray-600 flex items-center">
+                <Coins className="h-4 w-4 mr-1 text-blue-500" />
+                कुल शब्द: <span className="font-medium text-blue-600">{balance.total_words_available}</span>
+              </div>
             </CardContent>
           </Card>
 
@@ -184,11 +182,10 @@ const Dashboard = () => {
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span>विराम चिह्न सुधार</span>
               </div>
-              {subscription && (
-                <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                  आपकी सीमा: {subscription.max_words_per_correction} शब्द प्रति सुधार
-                </div>
-              )}
+              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded flex items-center">
+                <Coins className="h-3 w-3 mr-1" />
+                आपका बैलेंस: {balance.total_words_available} शब्द
+              </div>
               <Link to="/grammar-checker" className="block">
                 <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all duration-300 transform group-hover:scale-105">
                   व्याकरण सुधारक खोलें
@@ -202,9 +199,10 @@ const Dashboard = () => {
         {/* Footer Stats */}
         <div className="mt-12 text-center">
           <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 shadow-lg border border-gray-200">
-            <span className="text-gray-600">आपका प्लान:</span>
+            <Coins className="h-5 w-5 text-blue-500" />
+            <span className="text-gray-600">आपका बैलेंस:</span>
             <span className="font-bold text-blue-600 text-lg">
-              {subscription?.plan_name || 'लोड हो रहा है...'}
+              {balance.total_words_available} शब्द
             </span>
             <span className="text-gray-400">|</span>
             <span className="text-gray-600">हिंदी लेखन को बेहतर बनाने के लिए यहां हैं</span>
