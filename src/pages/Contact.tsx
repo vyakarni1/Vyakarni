@@ -1,170 +1,220 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import Layout from "@/components/Layout";
+
+interface ContactFormData {
+  name: string;
+  email: string;
+  message: string;
+}
 
 const Contact = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!name || !email || !message) {
-      toast.error("कृपया सभी फील्ड भरें");
+  const onSubmit = async (data: ContactFormData) => {
+    if (!user) {
+      toast.error("संदेश भेजने के लिए कृपया लॉगिन करें");
       return;
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      toast.success("आपका संदेश भेज दिया गया है! हम जल्दी ही आपसे संपर्क करेंगे।");
-      setName("");
-      setEmail("");
-      setMessage("");
-      setIsLoading(false);
-    }, 1000);
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: data.name,
+          email: data.email,
+          message: data.message,
+        });
+
+      if (error) {
+        console.error('Error submitting contact form:', error);
+        toast.error("संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करें।");
+        return;
+      }
+
+      toast.success("आपका संदेश सफलतापूर्वक भेज दिया गया है! हम जल्द ही आपसे संपर्क करेंगे।");
+      reset();
+    } catch (error) {
+      console.error('Error in contact form submission:', error);
+      toast.error("कुछ गलत हुआ है। कृपया पुनः प्रयास करें।");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
-            </Link>
-            <div className="space-x-4">
-              <Link to="/login">
-                <Button variant="outline">लॉगिन</Button>
-              </Link>
-              <Link to="/register">
-                <Button>रजिस्टर करें</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            संपर्क करें
-          </h1>
-          <p className="text-xl text-gray-600">
-            हमसे जुड़ें और अपने सवाल पूछें
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-12">
-          <div>
-            <h2 className="text-2xl font-bold mb-6">हमसे बात करें</h2>
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <Mail className="h-6 w-6 text-blue-600" />
-                <div>
-                  <h3 className="font-semibold">ईमेल</h3>
-                  <p className="text-gray-600">support@hindigrammar.com</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Phone className="h-6 w-6 text-green-600" />
-                <div>
-                  <h3 className="font-semibold">फोन</h3>
-                  <p className="text-gray-600">+91 98765 43210</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <MapPin className="h-6 w-6 text-red-600" />
-                <div>
-                  <h3 className="font-semibold">पता</h3>
-                  <p className="text-gray-600">नई दिल्ली, भारत</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold mb-4">कार्य समय</h3>
-              <div className="space-y-2 text-gray-600">
-                <p>सोमवार - शुक्रवार: 9:00 AM - 6:00 PM</p>
-                <p>शनिवार: 10:00 AM - 4:00 PM</p>
-                <p>रविवार: बंद</p>
-              </div>
-            </div>
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              हमसे संपर्क करें
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              हमारी टीम आपकी सहायता के लिए तैयार है। अपने प्रश्न या सुझाव साझा करें।
+            </p>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>संदेश भेजें</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">नाम</Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="आपका नाम"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">ईमेल</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="आपका ईमेल"
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="message">संदेश</Label>
-                  <Textarea
-                    id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="आपका संदेश..."
-                    className="min-h-[120px]"
-                    disabled={isLoading}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "भेजा जा रहा है..." : "संदेश भेजें"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            {/* Contact Form */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-gray-900 flex items-center">
+                  <Send className="mr-2 h-6 w-6" />
+                  संदेश भेजें
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!user ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-600 mb-4">संदेश भेजने के लिए कृपया लॉगिन करें</p>
+                    <Button asChild>
+                      <a href="/login">लॉगिन करें</a>
+                    </Button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div>
+                      <Label htmlFor="name">पूरा नाम</Label>
+                      <Input
+                        id="name"
+                        {...register("name", { required: "नाम आवश्यक है" })}
+                        placeholder="आपका नाम"
+                        className="mt-1"
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email">ईमेल पता</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        {...register("email", { 
+                          required: "ईमेल आवश्यक है",
+                          pattern: {
+                            value: /^\S+@\S+$/i,
+                            message: "वैध ईमेल दर्ज करें"
+                          }
+                        })}
+                        placeholder="आपका ईमेल"
+                        className="mt-1"
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="message">संदेश</Label>
+                      <Textarea
+                        id="message"
+                        {...register("message", { required: "संदेश आवश्यक है" })}
+                        placeholder="आपका संदेश यहाँ लिखें..."
+                        rows={6}
+                        className="mt-1"
+                      />
+                      {errors.message && (
+                        <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                      )}
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" 
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "भेजा जा रहा है..." : "संदेश भेजें"}
+                    </Button>
+                  </form>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Contact Information */}
+            <div className="space-y-8">
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-gray-900">संपर्क जानकारी</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-blue-100 p-3 rounded-full">
+                      <Mail className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">ईमेल</h3>
+                      <p className="text-gray-600">support@vyakarni.com</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <Phone className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">फोन</h3>
+                      <p className="text-gray-600">+91 98765 43210</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-purple-100 p-3 rounded-full">
+                      <MapPin className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">पता</h3>
+                      <p className="text-gray-600">
+                        व्याकरणी टेक्नोलॉजीज<br />
+                        नई दिल्ली, भारत
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-gray-900">कार्यसमय</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">सोमवार - शुक्रवार</span>
+                      <span className="font-semibold">9:00 AM - 6:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">शनिवार</span>
+                      <span className="font-semibold">10:00 AM - 4:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">रविवार</span>
+                      <span className="font-semibold">बंद</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 mt-16">
-        <div className="container mx-auto px-6 text-center">
-          <div className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            व्याकरणी
-          </div>
-          <p className="text-gray-400 mb-4">AI की शक्ति से हिंदी भाषा को बेहतर बनाएं</p>
-          <div className="space-x-6">
-            <Link to="/" className="text-gray-400 hover:text-white">होम</Link>
-            <Link to="/about" className="text-gray-400 hover:text-white">हमारे बारे में</Link>
-            <Link to="/privacy" className="text-gray-400 hover:text-white">प्राइवेसी पॉलिसी</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </Layout>
   );
 };
 

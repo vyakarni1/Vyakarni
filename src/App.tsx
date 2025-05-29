@@ -23,6 +23,10 @@ import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+import AdminDashboard from "./pages/Admin/Dashboard";
+import ContactSubmissions from "./pages/Admin/ContactSubmissions";
+import UserManagement from "./pages/Admin/UserManagement";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +68,33 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            
+            {/* Admin Routes */}
+            <Route 
+              path="/admin" 
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/contacts" 
+              element={
+                <AdminRoute>
+                  <ContactSubmissions />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                <AdminRoute>
+                  <UserManagement />
+                </AdminRoute>
+              } 
+            />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

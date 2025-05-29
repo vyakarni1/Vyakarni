@@ -1,7 +1,8 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface AuthButtonsProps {
   user: any;
@@ -11,19 +12,28 @@ interface AuthButtonsProps {
 }
 
 const AuthButtons = ({ user, profile, variant, onLogout }: AuthButtonsProps) => {
+  const { isAdmin } = useUserRole();
   const isHome = variant === "home";
 
   if (user) {
     return (
-      <>
+      <div className="flex items-center space-x-3">
         <span className="text-sm text-gray-600 truncate max-w-32 lg:max-w-none">
           नमस्ते, {profile?.name || user.email?.split('@')[0]}
         </span>
+        {isAdmin && (
+          <Link to="/admin">
+            <Button variant="outline" size="sm" className="flex items-center space-x-1">
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">एडमिन</span>
+            </Button>
+          </Link>
+        )}
         <Button variant="outline" size="sm" onClick={onLogout}>
           <LogOut className="h-4 w-4 mr-1" />
           लॉग आउट
         </Button>
-      </>
+      </div>
     );
   }
 
