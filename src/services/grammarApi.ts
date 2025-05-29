@@ -22,7 +22,12 @@ export const callGrammarCheckAPI = async (inputText: string) => {
   }
 
   console.log('Received corrected text:', data.correctedText);
-  return data.correctedText;
+  console.log('Received corrections:', data.corrections);
+  
+  return {
+    correctedText: data.correctedText,
+    corrections: data.corrections || []
+  };
 };
 
 export const callStyleEnhanceAPI = async (inputText: string) => {

@@ -1,9 +1,10 @@
+
 import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useWordLimits } from "@/hooks/useWordLimits";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
-import { extractCorrectionsFromResponse, extractStyleEnhancements } from "@/utils/textProcessing";
+import { extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
 import { createProgressSimulator, completeProgress, resetProgress } from "@/utils/progressUtils";
 
@@ -61,13 +62,11 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
-      const aiCorrected = await callGrammarCheckAPI(inputText);
+      const result = await callGrammarCheckAPI(inputText);
       
       completeProgress(setProgress, progressInterval);
-      setCorrectedText(aiCorrected);
-
-      const allCorrections = extractCorrectionsFromResponse(inputText, aiCorrected);
-      setCorrections(allCorrections);
+      setCorrectedText(result.correctedText);
+      setCorrections(result.corrections);
       
       setIsLoading(false);
       
@@ -75,7 +74,7 @@ export const useGrammarChecker = () => {
       await trackUsage('grammar_check');
       await trackWordUsage(inputText, 'grammar_check');
       
-      toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
+      toast.success(`व्याकरण सुधार पूरा हो गया! ${result.corrections.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error correcting grammar:', error);
       setIsLoading(false);

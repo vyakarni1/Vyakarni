@@ -55,7 +55,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a Hindi grammar correction specialist. Your task is to correct ONLY the following types of errors in the provided Hindi text:
+            content: `You are a Hindi grammar correction specialist. Your task is to correct ONLY the following types of errors in the provided Hindi text and provide a detailed list of corrections made.
 
 CORRECTION TYPES ALLOWED:
 1. Grammar mistakes (व्याकरण की त्रुटियां)
@@ -65,28 +65,41 @@ CORRECTION TYPES ALLOWED:
 5. Spelling errors (वर्तनी की गलतियां)
 
 STRICT PRESERVATION RULES:
-- GPT will NOT change any word that has been corrected or replaced by dictionary under any circumstances
-- GPT will NOT change meaning, tone, and level of politeness, respectfulness, or formality in the given text
-- GPT will NOT convert 'तुम' to 'आप' or 'हम' to 'मैं', and vice versa
-- GPT will NOT change the level of formality or informality of the text
-
-WHAT NOT TO CHANGE:
-- Avoid rewriting and beautifying sentences unnecessarily
-- Should avoid word order change unnecessarily
-- Do NOT replace correct words with synonyms just for variety
-- Do NOT make stylistic changes unless there are actual grammatical errors
-- Do NOT change casual/formal tone or pronouns without grammatical necessity
+- DO NOT change any word that has been corrected or replaced by dictionary under any circumstances
+- DO NOT change meaning, tone, and level of politeness, respectfulness, or formality in the given text
+- DO NOT convert 'तुम' to 'आप' or 'हम' to 'मैं', and vice versa
+- DO NOT change the level of formality or informality of the text
+- DO NOT replace correct words with synonyms just for variety
+- DO NOT make stylistic changes unless there are actual grammatical errors
+- DO NOT change casual/formal tone or pronouns without grammatical necessity
 
 OUTPUT REQUIREMENTS:
-- Return ONLY the corrected text, no explanations or additional comments
-- Preserve the original paragraph structure and formatting
-- Only make changes where there are clear errors
-- If the text is already grammatically correct, return it unchanged
-- Maintain the original writing style and voice`
+You must return a JSON object with exactly this structure:
+{
+  "correctedText": "The corrected Hindi text here",
+  "corrections": [
+    {
+      "incorrect": "गलत शब्द या वाक्यांश",
+      "correct": "सही शब्द या वाक्यांश", 
+      "reason": "सुधार का विस्तृत कारण हिंदी में",
+      "type": "grammar|spelling|punctuation|syntax"
+    }
+  ]
+}
+
+IMPORTANT INSTRUCTIONS FOR CORRECTIONS LIST:
+- Only include significant grammatical corrections that you actually made
+- DO NOT include dictionary word replacements in the corrections list
+- Each correction should have a clear, educational reason in Hindi
+- Use these types: "grammar" for व्याकरण, "spelling" for वर्तनी, "punctuation" for विराम चिह्न, "syntax" for वाक्य संरचना
+- If no corrections are needed, return an empty corrections array
+- Be precise about what was changed and why it was necessary
+
+Return ONLY the JSON object, no additional text or explanations.`
           },
           {
             role: 'user',
-            content: `Please correct only the grammatical errors in this Hindi text following the strict rules above:\n\n${preprocessedText}`
+            content: `Please correct the grammatical errors in this Hindi text and provide a detailed list of corrections following the JSON format specified:\n\n${preprocessedText}`
           }
         ],
         max_tokens: 16000,
@@ -102,19 +115,42 @@ OUTPUT REQUIREMENTS:
     }
 
     const data = await response.json();
-    let correctedText = data.choices[0].message.content.trim();
+    let aiResponse = data.choices[0].message.content.trim();
 
-    // Remove any quotation marks that might have been added by the AI
-    correctedText = correctedText.replace(/^["']|["']$/g, '');
+    // Remove any markdown code blocks if present
+    aiResponse = aiResponse.replace(/```json\s*|\s*```/g, '');
+    
+    console.log('AI raw response:', aiResponse);
 
-    console.log('AI corrected text:', correctedText);
+    // Parse the JSON response
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(aiResponse);
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', parseError);
+      console.error('AI response was:', aiResponse);
+      throw new Error('Invalid JSON response from AI');
+    }
+
+    const { correctedText, corrections = [] } = parsedResponse;
+
+    if (!correctedText) {
+      throw new Error('No corrected text in AI response');
+    }
+
+    console.log('Parsed corrected text:', correctedText);
+    console.log('Parsed corrections:', corrections);
 
     // Log output word count for monitoring
     const outputWordCount = correctedText.trim().split(/\s+/).length;
     console.log(`Output text has ${outputWordCount} words (${inputWordCount} input → ${outputWordCount} output)`);
+    console.log(`Found ${corrections.length} corrections`);
 
     return new Response(
-      JSON.stringify({ correctedText }), 
+      JSON.stringify({ 
+        correctedText,
+        corrections: corrections || []
+      }), 
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
