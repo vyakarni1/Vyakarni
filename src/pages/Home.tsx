@@ -1,5 +1,5 @@
 
-import Navigation from "@/components/Home/Navigation";
+import UnifiedNavigation from "@/components/UnifiedNavigation";
 import HeroSection from "@/components/Home/HeroSection";
 import FeaturesSection from "@/components/Home/FeaturesSection";
 import HowItWorksSection from "@/components/Home/HowItWorksSection";
@@ -14,7 +14,7 @@ import CTABanner from "@/components/CTABanner";
 const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
-      <Navigation />
+      <UnifiedNavigation variant="home" />
       <HeroSection />
       <FeaturesSection />
       <USPSection />
