@@ -8,7 +8,7 @@ import { ContactSubmission } from '@/types/contact';
 interface SubmissionDetailModalProps {
   submission: ContactSubmission;
   onClose: () => void;
-  onMarkAsRead: (id: string) => void;
+  onMarkAsRead: (id: string, status: 'read' | 'replied') => void;
 }
 
 const SubmissionDetailModal = ({ submission, onClose, onMarkAsRead }: SubmissionDetailModalProps) => {
@@ -47,7 +47,7 @@ const SubmissionDetailModal = ({ submission, onClose, onMarkAsRead }: Submission
             {submission.status === 'unread' && (
               <Button
                 onClick={() => {
-                  onMarkAsRead(submission.id);
+                  onMarkAsRead(submission.id, 'read');
                   onClose();
                 }}
               >
