@@ -19,9 +19,7 @@ const FeaturesSection = () => {
             <CardTitle className="text-xl text-gray-800">तत्काल सुधार</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 leading-relaxed">
-              एक क्लिक में व्याकरण की त्रुटियों को तुरंत ठीक करें। कोई प्रतीक्षा नहीं, तुरंत परिणाम।
-            </p>
+            <p className="text-gray-600 leading-relaxed">एक क्लिक में व्याकरण की त्रुटियों को त्वरित रूप से दूर करें।</p>
           </CardContent>
         </Card>
 
@@ -47,9 +45,7 @@ const FeaturesSection = () => {
             <CardTitle className="text-xl text-gray-800">हिंदी विशेषज्ञता</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 leading-relaxed">
-              हिंदी व्याकरण में विशेष रूप से प्रशिक्षित। देवनागरी लिपि की पूर्ण समझ।
-            </p>
+            <p className="text-gray-600 leading-relaxed">हिंदी व्याकरण में विशेष रूप से प्रशिक्षित। देवनागरी लिपि में पूर्णतः पारंगत।</p>
           </CardContent>
         </Card>
 
