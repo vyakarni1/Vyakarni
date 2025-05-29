@@ -72,7 +72,7 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
           <div className="flex items-center space-x-3">
             <Link to="/" className={logoClasses}>
               <img 
-                src="/lovable-uploads/d3577f71-1a8f-4a2c-8b5f-7808b6658a8f.png" 
+                src="/lovable-uploads/c81f0976-b2c6-455e-b2e4-f829a290148d.png" 
                 alt="व्याकरणी Logo" 
                 className={logoImageClasses}
                 onError={(e) => {
