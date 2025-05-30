@@ -16,18 +16,17 @@ export const applyFinalDictionaryCorrections = (text: string): { correctedText: 
       console.log(`Found word "${original}" in text, replacing with "${replacement}"`);
       
       // Count how many times it appears before replacement
-      const beforeCount = (correctedText.match(new RegExp(original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+      const beforeMatches = correctedText.split(original).length - 1;
       
-      // Replace all occurrences globally
+      // Replace all occurrences globally using split and join method
       const beforeReplacement = correctedText;
-      correctedText = correctedText.replace(new RegExp(original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), replacement);
+      correctedText = correctedText.split(original).join(replacement);
       
       // Verify the replacement actually happened
-      const afterCount = (correctedText.match(new RegExp(replacement.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
-      const actualReplacements = beforeCount;
+      const afterMatches = correctedText.split(replacement).length - 1;
       
-      if (correctedText !== beforeReplacement && actualReplacements > 0) {
-        console.log(`✅ Successfully replaced "${original}" with "${replacement}" (${actualReplacements} times)`);
+      if (correctedText !== beforeReplacement && beforeMatches > 0) {
+        console.log(`✅ Successfully replaced "${original}" with "${replacement}" (${beforeMatches} times)`);
         console.log('Before:', beforeReplacement);
         console.log('After:', correctedText);
         
