@@ -26,13 +26,6 @@ import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminRoute from "./components/AdminRoute";
-import AdminDashboard from "./pages/Admin/Dashboard";
-import ContactSubmissions from "./pages/Admin/ContactSubmissions";
-import UserManagement from "./pages/Admin/UserManagement";
-import Analytics from "./pages/Admin/Analytics";
-import Subscriptions from "./pages/Admin/Subscriptions";
-import Settings from "./pages/Admin/Settings";
 import Billing from "@/pages/Billing";
 
 const queryClient = new QueryClient();
@@ -84,64 +77,6 @@ function App() {
                   <ProtectedRoute>
                     <Index />
                   </ProtectedRoute>
-                } 
-              />
-              
-              {/* Admin Routes */}
-              <Route 
-                path="/admin" 
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/dashboard" 
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/analytics" 
-                element={
-                  <AdminRoute>
-                    <Analytics />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/subscriptions" 
-                element={
-                  <AdminRoute>
-                    <Subscriptions />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/settings" 
-                element={
-                  <AdminRoute>
-                    <Settings />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/contacts" 
-                element={
-                  <AdminRoute>
-                    <ContactSubmissions />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/users" 
-                element={
-                  <AdminRoute>
-                    <UserManagement />
-                  </AdminRoute>
                 } 
               />
               
