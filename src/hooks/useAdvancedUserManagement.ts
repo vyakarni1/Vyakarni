@@ -58,6 +58,8 @@ export const useAdvancedUserManagement = () => {
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['advanced-users', filters],
     queryFn: async () => {
+      console.log('🔍 Starting user fetch with filters:', filters);
+      
       // Base profiles query
       let profileQuery = supabase
         .from('profiles')
@@ -96,9 +98,15 @@ export const useAdvancedUserManagement = () => {
       const { data: profilesData, error: profilesError } = await profileQuery
         .order(filters.sort_by === 'name' ? 'name' : 'created_at', { ascending: filters.sort_order === 'asc' });
 
-      if (profilesError) throw profilesError;
+      if (profilesError) {
+        console.error('❌ Error fetching profiles:', profilesError);
+        throw profilesError;
+      }
+
+      console.log('👥 Fetched profiles:', profilesData?.length || 0);
 
       if (!profilesData || profilesData.length === 0) {
+        console.log('⚠️ No profiles found');
         return [];
       }
 
@@ -108,7 +116,12 @@ export const useAdvancedUserManagement = () => {
         .select('user_id, role')
         .in('user_id', profilesData.map(p => p.id));
 
-      if (rolesError) throw rolesError;
+      if (rolesError) {
+        console.error('❌ Error fetching roles:', rolesError);
+        throw rolesError;
+      }
+
+      console.log('🔐 Fetched roles:', rolesData?.length || 0, rolesData);
 
       // Get word credits data
       const { data: creditsData, error: creditsError } = await supabase
@@ -117,7 +130,12 @@ export const useAdvancedUserManagement = () => {
         .in('user_id', profilesData.map(p => p.id))
         .gt('words_available', 0);
 
-      if (creditsError) throw creditsError;
+      if (creditsError) {
+        console.error('❌ Error fetching credits:', creditsError);
+        throw creditsError;
+      }
+
+      console.log('💰 Fetched credits:', creditsData?.length || 0);
 
       // Get usage data
       const { data: usageData, error: usageError } = await supabase
@@ -125,12 +143,19 @@ export const useAdvancedUserManagement = () => {
         .select('user_id, words_used, created_at')
         .in('user_id', profilesData.map(p => p.id));
 
-      if (usageError) throw usageError;
+      if (usageError) {
+        console.error('❌ Error fetching usage:', usageError);
+        throw usageError;
+      }
+
+      console.log('📊 Fetched usage:', usageData?.length || 0);
 
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
         const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
-        const userRole = userRoles[0]?.role || 'user'; // Changed back to default 'user'
+        const userRole = userRoles[0]?.role || 'user';
+        
+        console.log(`👤 Processing user ${user.email}: role = ${userRole}`);
         
         const userCredits = creditsData?.filter(c => c.user_id === user.id) || [];
         const totalWords = userCredits.reduce((sum, credit) => sum + credit.words_available, 0);
@@ -193,21 +218,29 @@ export const useAdvancedUserManagement = () => {
         };
       });
 
+      console.log('🔄 Processed users before filtering:', processedUsers.length);
+      console.log('📋 User roles found:', processedUsers.map(u => ({ email: u.email, role: u.role })));
+
       // Apply role filter
       let filteredUsers = processedUsers;
       if (filters.role !== 'all') {
+        console.log(`🎯 Filtering by role: ${filters.role}`);
         filteredUsers = filteredUsers.filter(user => user.role === filters.role);
+        console.log(`✅ Users after role filter: ${filteredUsers.length}`);
       }
 
       // Apply activity status filter
       if (filters.activity_status !== 'all') {
+        console.log(`🎯 Filtering by activity: ${filters.activity_status}`);
         filteredUsers = filteredUsers.filter(user => 
           filters.activity_status === 'active' ? user.is_active : !user.is_active
         );
+        console.log(`✅ Users after activity filter: ${filteredUsers.length}`);
       }
 
       // Apply word balance filter
       if (filters.word_balance_range !== 'all') {
+        console.log(`🎯 Filtering by word balance: ${filters.word_balance_range}`);
         filteredUsers = filteredUsers.filter(user => {
           const balance = user.word_balance.total_words_available;
           switch (filters.word_balance_range) {
@@ -218,13 +251,16 @@ export const useAdvancedUserManagement = () => {
             default: return true;
           }
         });
+        console.log(`✅ Users after word balance filter: ${filteredUsers.length}`);
       }
 
       // Apply profile completion filter
       if (filters.profile_completion !== 'all') {
+        console.log(`🎯 Filtering by profile completion: ${filters.profile_completion}`);
         filteredUsers = filteredUsers.filter(user => 
           filters.profile_completion === 'complete' ? user.profile_completion === 100 : user.profile_completion < 100
         );
+        console.log(`✅ Users after profile completion filter: ${filteredUsers.length}`);
       }
 
       // Apply sorting
@@ -260,13 +296,17 @@ export const useAdvancedUserManagement = () => {
         }
       });
 
+      console.log('🎯 Final filtered users:', filteredUsers.length);
       return filteredUsers;
     },
   });
 
   // Separate admin and regular users
   const adminUsers = users?.filter(user => user.role === 'admin' || user.role === 'moderator') || [];
-  const regularUsers = users?.filter(user => user.role === 'user') || []; // Changed back to filter for 'user'
+  const regularUsers = users?.filter(user => user.role === 'user') || [];
+
+  console.log('👑 Admin users:', adminUsers.length);
+  console.log('👤 Regular users:', regularUsers.length);
 
   // Bulk operations
   const bulkUpdateMutation = useMutation({
