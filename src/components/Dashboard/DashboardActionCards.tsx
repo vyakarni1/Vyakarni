@@ -1,7 +1,6 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Sparkles, Coins } from "lucide-react";
+import { User, Sparkles, Coins, BarChart3, Badge } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface DashboardActionCardsProps {
@@ -12,7 +11,7 @@ interface DashboardActionCardsProps {
 
 const DashboardActionCards = ({ profile, userEmail, balance }: DashboardActionCardsProps) => {
   return (
-    <div className="grid md:grid-cols-2 gap-8">
+    <div className="grid lg:grid-cols-3 gap-6 mb-8">
       <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
@@ -77,6 +76,37 @@ const DashboardActionCards = ({ profile, userEmail, balance }: DashboardActionCa
               <Sparkles className="h-4 w-4 ml-2" />
             </Button>
           </Link>
+        </CardContent>
+      </Card>
+
+      {/* Billing & Usage Card */}
+      <Card className="hover:shadow-lg transition-shadow duration-300 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-purple-100 rounded-full">
+              <BarChart3 className="h-6 w-6 text-purple-600" />
+            </div>
+            <Badge variant="outline" className="text-purple-600 border-purple-200">
+              एनालिटिक्स
+            </Badge>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            बिलिंग और उपयोग
+          </h3>
+          <p className="text-gray-600 text-sm mb-4">
+            अपने खाते की जानकारी, शब्द उपयोग और बिलिंग हिस्ट्री देखें
+          </p>
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-gray-500">
+              बैलेंस: {balance} शब्द
+            </div>
+            <Link to="/billing">
+              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                विवरण देखें
+              </Button>
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>
