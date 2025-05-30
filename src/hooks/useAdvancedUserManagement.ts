@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,24 +5,27 @@ import { useToast } from '@/hooks/use-toast';
 
 interface UserWithDetails {
   id: string;
-  name: string;
-  email?: string;
+  name?: string;
+  email: string;
   created_at: string;
   avatar_url?: string;
-  subscription_status: string;
-  plan_name: string;
-  total_corrections: number;
-  words_used: number;
+  phone?: string;
+  bio?: string;
   last_login?: string;
   is_active: boolean;
-  role: 'admin' | 'moderator' | 'user';
+  role: string;
+  profile_completion: number;
   word_balance: {
     total_words_available: number;
     free_words: number;
     purchased_words: number;
     next_expiry_date?: string;
   };
-  profile_completion: number;
+  usage_stats: {
+    total_corrections: number;
+    words_used_today: number;
+    words_used_this_month: number;
+  };
 }
 
 interface UserFilters {
@@ -138,7 +140,22 @@ export const useAdvancedUserManagement = () => {
         
         const userUsage = usageData?.filter(u => u.user_id === user.id) || [];
         const totalCorrections = userUsage.length;
-        const wordsUsed = userUsage.reduce((sum, usage) => sum + (usage.words_used || 0), 0);
+        const wordsUsedTotal = userUsage.reduce((sum, usage) => sum + (usage.words_used || 0), 0);
+        
+        // Calculate today's usage
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const wordsUsedToday = userUsage
+          .filter(u => new Date(u.created_at) >= today)
+          .reduce((sum, usage) => sum + (usage.words_used || 0), 0);
+        
+        // Calculate this month's usage
+        const thisMonth = new Date();
+        thisMonth.setDate(1);
+        thisMonth.setHours(0, 0, 0, 0);
+        const wordsUsedThisMonth = userUsage
+          .filter(u => new Date(u.created_at) >= thisMonth)
+          .reduce((sum, usage) => sum + (usage.words_used || 0), 0);
         
         // Calculate profile completion
         let completionScore = 0;
@@ -152,17 +169,15 @@ export const useAdvancedUserManagement = () => {
 
         return {
           id: user.id,
-          name: user.name || 'अनाम उपयोगकर्ता',
+          name: user.name,
           email: user.email,
           created_at: user.created_at,
           avatar_url: user.avatar_url,
-          subscription_status: 'active', // Default for word-based system
-          plan_name: 'Word Credits',
-          total_corrections: totalCorrections,
-          words_used: wordsUsed,
+          phone: user.phone,
+          bio: user.bio,
           last_login: lastLogin,
           is_active: isActive,
-          role: userRole as 'admin' | 'moderator' | 'user',
+          role: userRole,
           word_balance: {
             total_words_available: totalWords,
             free_words: freeWords,
@@ -170,6 +185,11 @@ export const useAdvancedUserManagement = () => {
             next_expiry_date: nextExpiry,
           },
           profile_completion: completionScore,
+          usage_stats: {
+            total_corrections: totalCorrections,
+            words_used_today: wordsUsedToday,
+            words_used_this_month: wordsUsedThisMonth,
+          },
         };
       });
 
@@ -213,8 +233,8 @@ export const useAdvancedUserManagement = () => {
         
         switch (filters.sort_by) {
           case 'name':
-            aValue = a.name.toLowerCase();
-            bValue = b.name.toLowerCase();
+            aValue = (a.name || 'अनाम उपयोगकर्ता').toLowerCase();
+            bValue = (b.name || 'अनाम उपयोगकर्ता').toLowerCase();
             break;
           case 'word_balance':
             aValue = a.word_balance.total_words_available;
@@ -335,9 +355,9 @@ export const useAdvancedUserManagement = () => {
         URL.revokeObjectURL(url);
       } else {
         const csvContent = [
-          'Name,Email,Created At,Role,Word Balance,Profile Completion,Total Corrections,Words Used,Last Login',
+          'Name,Email,Created At,Role,Word Balance,Profile Completion,Total Corrections,Words Used Today,Last Login',
           ...exportData.map(user => 
-            `"${user.name}","${user.email || 'N/A'}","${user.created_at}","${user.role}",${user.word_balance.total_words_available},${user.profile_completion},${user.total_corrections},${user.words_used},"${user.last_login}"`
+            `"${user.name || 'अनाम उपयोगकर्ता'}","${user.email}","${user.created_at}","${user.role}",${user.word_balance.total_words_available},${user.profile_completion},${user.usage_stats.total_corrections},${user.usage_stats.words_used_today},"${user.last_login}"`
           )
         ].join('\n');
 
