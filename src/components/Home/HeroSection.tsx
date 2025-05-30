@@ -1,7 +1,8 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Star, CheckCircle } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle } from "lucide-react";
+import ConchShell from "@/components/ui/ConchShell";
 
 const HeroSection = () => {
   return (
@@ -14,7 +15,7 @@ const HeroSection = () => {
       <div className="relative z-10">
         <div className="flex justify-center mb-6">
           <div className="relative">
-            <Sparkles className="h-16 w-16 text-purple-500 animate-pulse" />
+            <ConchShell className="h-16 w-16 animate-pulse" />
             <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-bounce"></div>
           </div>
         </div>
@@ -33,7 +34,7 @@ const HeroSection = () => {
         
         <div className="flex justify-center space-x-4 mb-8">
           <div className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
-            <Star className="h-4 w-4 text-yellow-500" />
+            <ConchShell className="h-4 w-4" />
             <span className="text-sm text-gray-600">मुफ्त उपयोग</span>
           </div>
           <div className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
