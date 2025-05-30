@@ -7,8 +7,9 @@ import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import { extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
 import { createProgressSimulator, completeProgress, resetProgress } from "@/utils/progressUtils";
+import { applyDictionaryCorrections, trackDictionaryCorrections } from "@/utils/dictionaryCorrections";
 
-const MAX_WORD_LIMIT = 5000;
+const MAX_WORD_LIMIT = 1000;
 
 export const useGrammarChecker = () => {
   const [inputText, setInputText] = useState('');
@@ -43,7 +44,7 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check 5000 word limit first
+    // Check 1000 word limit first
     if (!checkWordLimit(inputText)) {
       return;
     }
@@ -62,19 +63,37 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
-      const result = await callGrammarCheckAPI(inputText);
+      // Step 1: Apply dictionary corrections to input text
+      console.log('Step 1: Applying dictionary corrections to input');
+      const { correctedText: step1Text, corrections: step1Corrections } = applyDictionaryCorrections(inputText);
+      
+      // Step 2: Send dictionary-corrected text to GPT for grammar analysis
+      console.log('Step 2: Sending to GPT for grammar analysis');
+      const gptResult = await callGrammarCheckAPI(step1Text);
+      
+      // Step 3: Apply dictionary corrections again to GPT output
+      console.log('Step 3: Applying dictionary corrections to GPT output');
+      const { correctedText: finalText, corrections: step3Corrections } = applyDictionaryCorrections(gptResult.correctedText);
       
       completeProgress(setProgress, progressInterval);
-      setCorrectedText(result.correctedText);
-      setCorrections(result.corrections);
+      setCorrectedText(finalText);
       
+      // Combine all corrections: Step 1 + GPT + Step 3
+      const allCorrections = [
+        ...step1Corrections,
+        ...gptResult.corrections.map(correction => ({ ...correction, source: 'gpt' as const })),
+        ...step3Corrections
+      ];
+      
+      setCorrections(allCorrections);
       setIsLoading(false);
       
       // Track usage for both systems
       await trackUsage('grammar_check');
       await trackWordUsage(inputText, 'grammar_check');
       
-      toast.success(`व्याकरण सुधार पूरा हो गया! ${result.corrections.length} सुधार मिले।`);
+      console.log(`Grammar correction completed with ${allCorrections.length} total corrections`);
+      toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error correcting grammar:', error);
       setIsLoading(false);
@@ -89,7 +108,7 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check 5000 word limit first
+    // Check 1000 word limit first
     if (!checkWordLimit(inputText)) {
       return;
     }

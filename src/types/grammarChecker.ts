@@ -4,6 +4,7 @@ export interface Correction {
   correct: string;
   reason: string;
   type: 'grammar' | 'spelling' | 'punctuation' | 'syntax' | 'vocabulary' | 'flow' | 'eloquence' | 'engagement';
+  source?: 'dictionary' | 'gpt';
 }
 
 export interface WordReplacement {

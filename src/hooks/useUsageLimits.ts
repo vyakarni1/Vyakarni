@@ -1,4 +1,3 @@
-
 import { useSubscription } from './useSubscription';
 import { toast } from 'sonner';
 
@@ -10,9 +9,9 @@ export const useUsageLimits = () => {
     
     if (!usage) return false;
 
-    if (wordCount > usage.max_words_per_correction) {
+    if (wordCount > 1000) {
       toast.error(
-        `शब्द सीमा पार हो गई! अधिकतम ${usage.max_words_per_correction} शब्द की अनुमति है। वर्तमान में ${wordCount} शब्द हैं।`
+        `शब्द सीमा पार हो गई! अधिकतम 1000 शब्द की अनुमति है। वर्तमान में ${wordCount} शब्द हैं।`
       );
       return false;
     }

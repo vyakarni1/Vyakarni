@@ -17,7 +17,7 @@ interface TextInputPanelProps {
   onResetText: () => void;
 }
 
-const MAX_WORD_LIMIT = 5000;
+const MAX_WORD_LIMIT = 1000;
 
 const TextInputPanel = ({ 
   inputText, 
@@ -31,8 +31,8 @@ const TextInputPanel = ({
 }: TextInputPanelProps) => {
   const getWordCountColor = () => {
     if (wordCount > MAX_WORD_LIMIT) return 'bg-red-500 text-white';
-    if (wordCount > 4800) return 'bg-red-100 text-red-700';
-    if (wordCount > 4000) return 'bg-yellow-100 text-yellow-700';
+    if (wordCount > 900) return 'bg-red-100 text-red-700';
+    if (wordCount > 800) return 'bg-yellow-100 text-yellow-700';
     return 'bg-green-100 text-green-700';
   };
 
@@ -74,7 +74,7 @@ const TextInputPanel = ({
           </div>
         )}
         
-        {wordCount > 4500 && wordCount <= MAX_WORD_LIMIT && (
+        {wordCount > 800 && wordCount <= MAX_WORD_LIMIT && (
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-yellow-500 flex-shrink-0" />
             <p className="text-sm text-yellow-700">
