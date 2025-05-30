@@ -126,7 +126,10 @@ async function createOrder(req: Request, supabase: any, user: any) {
   // Generate unique order ID
   const orderId = `ORDER_${Date.now()}_${user.id.slice(0, 8)}`
 
-  // Prepare Cashfree order data
+  // Get the origin from request headers for return URL
+  const origin = req.headers.get('origin') || 'https://lovableproject.com'
+  
+  // Prepare Cashfree order data with flexible return URL
   const orderData = {
     order_id: orderId,
     order_amount: totalAmount,
@@ -138,12 +141,13 @@ async function createOrder(req: Request, supabase: any, user: any) {
       customer_phone: customer_phone,
     },
     order_meta: {
-      return_url: `${req.headers.get('origin')}/billing?payment=success&order_id=${orderId}`,
+      return_url: `${origin}/billing?payment=success&order_id=${orderId}`,
       notify_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/cashfree-payment/webhook`,
     }
   }
 
-  console.log('Creating Cashfree order:', JSON.stringify(orderData, null, 2))
+  console.log('Creating Cashfree order with return URL:', orderData.order_meta.return_url)
+  console.log('Order data:', JSON.stringify(orderData, null, 2))
 
   // Use production endpoint for live payments
   const cashfreeBaseUrl = 'https://api.cashfree.com/pg'
@@ -166,6 +170,20 @@ async function createOrder(req: Request, supabase: any, user: any) {
 
   if (!cashfreeResponse.ok) {
     console.error('Cashfree API error:', responseText)
+    
+    // Check if it's a domain whitelisting error
+    if (responseText.includes('whitelisted') || responseText.includes('domain')) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Domain not whitelisted', 
+          details: 'Please whitelist your domain in Cashfree merchant dashboard',
+          action_required: 'Add your domain to Cashfree whitelist',
+          status: cashfreeResponse.status
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
     return new Response(
       JSON.stringify({ 
         error: 'Failed to create payment order', 
@@ -218,6 +236,7 @@ async function createOrder(req: Request, supabase: any, user: any) {
       order_id: orderId,
       payment_session_id: cashfreeOrder.payment_session_id,
       order_status: cashfreeOrder.order_status,
+      return_url: orderData.order_meta.return_url,
     }),
     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   )
