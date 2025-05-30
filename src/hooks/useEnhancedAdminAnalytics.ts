@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -53,12 +54,7 @@ export const useEnhancedAdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_cached_analytics');
       if (error) throw error;
-      // Type assertion with proper validation
-      const result = data as unknown;
-      if (typeof result === 'object' && result !== null) {
-        return result as EnhancedAnalytics;
-      }
-      throw new Error('Invalid analytics data format');
+      return data as EnhancedAnalytics;
     },
     refetchInterval: 30000, // Refresh every 30 seconds
   });
@@ -146,7 +142,7 @@ export const useEnhancedAdminAnalytics = () => {
     },
   });
 
-  // Fetch recent user activity with separate queries to avoid relation issues
+  // Fetch recent user activity
   const { data: userActivity, isLoading: activityLoading } = useQuery({
     queryKey: ['user-activity'],
     queryFn: async () => {
@@ -181,7 +177,7 @@ export const useEnhancedAdminAnalytics = () => {
         
         return {
           user_id: profile.id,
-          user_name: profile.name,
+          user_name: profile.name || 'अनाम उपयोगकर्ता',
           last_login: profile.created_at,
           corrections_count: userUsage.length,
           subscription_status: userSubscription?.status || 'free',

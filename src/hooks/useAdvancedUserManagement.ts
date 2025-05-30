@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -73,7 +74,7 @@ export const useAdvancedUserManagement = () => {
           bio
         `);
 
-      // Only apply date range filter if it's not 'all'
+      // Apply date range filter if it's not 'all'
       if (filters.date_range !== 'all') {
         let dateThreshold = new Date();
         switch (filters.date_range) {
@@ -91,7 +92,7 @@ export const useAdvancedUserManagement = () => {
         console.log('📅 Applied date filter:', filters.date_range, 'threshold:', dateThreshold.toISOString());
       }
 
-      // Only apply search filter if there's actual search text
+      // Apply search filter if there's actual search text
       if (filters.search && filters.search.trim()) {
         profileQuery = profileQuery.or(`name.ilike.%${filters.search.trim()}%,email.ilike.%${filters.search.trim()}%`);
         console.log('🔍 Applied search filter:', filters.search.trim());
@@ -115,7 +116,7 @@ export const useAdvancedUserManagement = () => {
       const userIds = profilesData.map(p => p.id);
       console.log('👤 User IDs for further queries:', userIds);
 
-      // Get user roles - fetch ALL roles, don't filter here
+      // Get user roles
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
         .select('user_id, role')
@@ -158,7 +159,6 @@ export const useAdvancedUserManagement = () => {
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
         const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
-        // Default to 'user' role if no role is found
         const userRole = userRoles[0]?.role || 'user';
         
         console.log(`👤 Processing user ${user.email}: role = ${userRole} (from ${userRoles.length} role records)`);

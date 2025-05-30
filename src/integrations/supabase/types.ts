@@ -251,6 +251,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_payment_transactions_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "payment_transactions_subscription_id_fkey"
             columns: ["subscription_id"]
             isOneToOne: false
@@ -269,7 +276,7 @@ export type Database = {
           id: string
           name: string | null
           phone: string | null
-          preferred_language: string | null
+          preferred_language: Database["public"]["Enums"]["app_language"] | null
           privacy_settings: Json | null
           updated_at: string | null
         }
@@ -282,7 +289,9 @@ export type Database = {
           id: string
           name?: string | null
           phone?: string | null
-          preferred_language?: string | null
+          preferred_language?:
+            | Database["public"]["Enums"]["app_language"]
+            | null
           privacy_settings?: Json | null
           updated_at?: string | null
         }
@@ -295,7 +304,9 @@ export type Database = {
           id?: string
           name?: string | null
           phone?: string | null
-          preferred_language?: string | null
+          preferred_language?:
+            | Database["public"]["Enums"]["app_language"]
+            | null
           privacy_settings?: Json | null
           updated_at?: string | null
         }
@@ -307,6 +318,7 @@ export type Database = {
           features: Json | null
           id: string
           is_active: boolean
+          max_corrections_per_month: number
           max_team_members: number
           max_words_per_correction: number
           plan_name: string
@@ -320,6 +332,7 @@ export type Database = {
           features?: Json | null
           id?: string
           is_active?: boolean
+          max_corrections_per_month?: number
           max_team_members?: number
           max_words_per_correction?: number
           plan_name: string
@@ -333,6 +346,7 @@ export type Database = {
           features?: Json | null
           id?: string
           is_active?: boolean
+          max_corrections_per_month?: number
           max_team_members?: number
           max_words_per_correction?: number
           plan_name?: string
@@ -487,7 +501,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_notifications_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -511,7 +533,15 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_roles_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_subscriptions: {
         Row: {
@@ -586,7 +616,15 @@ export type Database = {
           id?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_usage_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_word_credits: {
         Row: {
@@ -622,7 +660,15 @@ export type Database = {
           words_available?: number
           words_purchased?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_word_credits_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       word_plans: {
         Row: {
@@ -727,7 +773,15 @@ export type Database = {
           user_id?: string
           words_used?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_word_usage_history_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -847,6 +901,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_language: "hindi" | "english" | "marathi" | "gujarati" | "bengali"
       app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
@@ -963,6 +1018,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_language: ["hindi", "english", "marathi", "gujarati", "bengali"],
       app_role: ["admin", "moderator", "user"],
     },
   },
