@@ -54,7 +54,7 @@ export const useEnhancedAdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_cached_analytics');
       if (error) throw error;
-      return data as EnhancedAnalytics;
+      return data as unknown as EnhancedAnalytics;
     },
     refetchInterval: 30000, // Refresh every 30 seconds
   });

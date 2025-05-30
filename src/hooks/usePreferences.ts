@@ -3,8 +3,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+type AppLanguage = 'hindi' | 'english' | 'marathi' | 'gujarati' | 'bengali';
+
 interface PreferencesState {
-  preferred_language: string;
+  preferred_language: AppLanguage;
   email_preferences: {
     marketing: boolean;
     system: boolean;
@@ -18,7 +20,7 @@ interface PreferencesState {
 
 export const usePreferences = (profile: any, onProfileUpdate: (profile: any) => void) => {
   const [preferences, setPreferences] = useState<PreferencesState>({
-    preferred_language: profile?.preferred_language || 'hindi',
+    preferred_language: (profile?.preferred_language as AppLanguage) || 'hindi',
     email_preferences: {
       marketing: profile?.email_preferences?.marketing ?? true,
       system: profile?.email_preferences?.system ?? true,
