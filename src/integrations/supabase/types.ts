@@ -102,6 +102,98 @@ export type Database = {
         }
         Relationships: []
       }
+      cashfree_orders: {
+        Row: {
+          created_at: string | null
+          customer_details: Json
+          id: string
+          order_amount: number
+          order_currency: string | null
+          order_id: string
+          order_meta: Json | null
+          order_status: string | null
+          order_tags: Json | null
+          payment_session_id: string | null
+          updated_at: string | null
+          user_id: string
+          word_plan_id: string | null
+          words_to_credit: number
+        }
+        Insert: {
+          created_at?: string | null
+          customer_details: Json
+          id?: string
+          order_amount: number
+          order_currency?: string | null
+          order_id: string
+          order_meta?: Json | null
+          order_status?: string | null
+          order_tags?: Json | null
+          payment_session_id?: string | null
+          updated_at?: string | null
+          user_id: string
+          word_plan_id?: string | null
+          words_to_credit: number
+        }
+        Update: {
+          created_at?: string | null
+          customer_details?: Json
+          id?: string
+          order_amount?: number
+          order_currency?: string | null
+          order_id?: string
+          order_meta?: Json | null
+          order_status?: string | null
+          order_tags?: Json | null
+          payment_session_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+          word_plan_id?: string | null
+          words_to_credit?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cashfree_orders_word_plan_id_fkey"
+            columns: ["word_plan_id"]
+            isOneToOne: false
+            referencedRelation: "word_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cashfree_webhook_logs: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          order_id: string | null
+          payment_id: string | null
+          processed: boolean | null
+          signature: string | null
+          webhook_data: Json
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          processed?: boolean | null
+          signature?: string | null
+          webhook_data: Json
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          processed?: boolean | null
+          signature?: string | null
+          webhook_data?: Json
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           admin_notes: string | null
@@ -212,9 +304,12 @@ export type Database = {
       payment_transactions: {
         Row: {
           amount: number
+          cashfree_order_id: string | null
+          cashfree_payment_id: string | null
           created_at: string
           currency: string
           id: string
+          payment_gateway: string | null
           payment_method: string | null
           razorpay_order_id: string | null
           razorpay_payment_id: string | null
@@ -225,9 +320,12 @@ export type Database = {
         }
         Insert: {
           amount: number
+          cashfree_order_id?: string | null
+          cashfree_payment_id?: string | null
           created_at?: string
           currency?: string
           id?: string
+          payment_gateway?: string | null
           payment_method?: string | null
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
@@ -238,9 +336,12 @@ export type Database = {
         }
         Update: {
           amount?: number
+          cashfree_order_id?: string | null
+          cashfree_payment_id?: string | null
           created_at?: string
           currency?: string
           id?: string
+          payment_gateway?: string | null
           payment_method?: string | null
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
@@ -664,7 +765,7 @@ export type Database = {
           {
             foreignKeyName: "fk_user_word_credits_profiles"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
