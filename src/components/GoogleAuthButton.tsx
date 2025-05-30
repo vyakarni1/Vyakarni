@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 interface GoogleAuthButtonProps {
   mode: "login" | "register";
@@ -11,27 +10,35 @@ interface GoogleAuthButtonProps {
 
 const GoogleAuthButton = ({ mode }: GoogleAuthButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleGoogleAuth = async () => {
     setIsLoading(true);
     
     try {
+      console.log('Starting Google OAuth flow for:', mode);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/dashboard`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         }
       });
 
       if (error) {
+        console.error('Google OAuth error:', error);
         toast.error("Google प्रमाणीकरण में त्रुटि: " + error.message);
         return;
       }
 
+      console.log('Google OAuth initiated successfully');
       // OAuth redirect will handle the rest
     } catch (error) {
-      toast.error("Google प्रमाणीकरण में त्रुटि हुई");
+      console.error('Unexpected Google OAuth error:', error);
+      toast.error("Google प्रमाणीकरण में अप्रत्याशित त्रुटि हुई");
     } finally {
       setIsLoading(false);
     }

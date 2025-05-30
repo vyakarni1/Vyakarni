@@ -43,15 +43,48 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    // Set up auth state listener
+    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (mounted) {
-          console.log('Auth state changed:', event, session?.user?.id);
+      async (event, session) => {
+        if (!mounted) return;
+        
+        console.log('Auth state changed:', event, session?.user?.id);
+        
+        if (session?.user) {
           setSession(session);
-          setUser(session?.user ?? null);
-          setLoading(false);
+          setUser(session.user);
+          
+          // For Google OAuth, ensure profile exists after successful login
+          if (event === 'SIGNED_IN' && session.user.app_metadata?.provider === 'google') {
+            setTimeout(async () => {
+              try {
+                // Check if profile exists
+                const { data: profile } = await supabase
+                  .from('profiles')
+                  .select('id')
+                  .eq('id', session.user.id)
+                  .single();
+                
+                if (!profile) {
+                  console.log('Creating profile for Google user');
+                  // Create profile if it doesn't exist
+                  await supabase.from('profiles').insert({
+                    id: session.user.id,
+                    name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
+                    email: session.user.email,
+                  });
+                }
+              } catch (error) {
+                console.error('Error handling Google user profile:', error);
+              }
+            }, 100);
+          }
+        } else {
+          setSession(null);
+          setUser(null);
         }
+        
+        setLoading(false);
       }
     );
 
