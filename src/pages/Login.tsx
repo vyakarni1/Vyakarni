@@ -1,100 +1,98 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
-import { useEffect } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { toast } from "sonner";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       navigate("/dashboard");
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
-  const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
-    if (!email.trim()) newErrors.email = "ईमेल आवश्यक है";
-    if (!password) newErrors.password = "पासवर्ड आवश्यक है";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      toast.error("कृपया सभी फील्ड भरें");
-      return;
-    }
-
     setIsLoading(true);
-    
+
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) {
-        if (error.message === "Invalid login credentials") {
-          toast.error("गलत ईमेल या पासवर्ड");
-        } else {
-          toast.error("लॉगिन में त्रुटि: " + error.message);
-        }
-        return;
-      }
+      if (error) throw error;
 
-      if (data.user) {
-        toast.success("सफलतापूर्वक लॉगिन हो गए!");
-        navigate("/dashboard");
-      }
-    } catch (error) {
-      toast.error("लॉगिन में त्रुटि हुई");
+      toast.success("सफलतापूर्वक लॉग इन हो गए!");
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.error("Login error:", error);
+      toast.error(error.message || "लॉग इन में त्रुटि");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <Header variant="transparent" />
-      
-      <div className="flex items-center justify-center min-h-screen p-6 pt-24">
-        <Card className="w-full max-w-md animate-scale-in shadow-xl">
-          <CardHeader className="text-center space-y-4">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 animate-fade-in">
-              व्याकरणी
-            </div>
-            <CardTitle className="text-xl animate-fade-in">
-              लॉगिन करें
-            </CardTitle>
-            <p className="text-gray-600 animate-fade-in">अपने खाते में प्रवेश करें</p>
-          </CardHeader>
-          
-          <CardContent className="space-y-6">
-            <div className="animate-fade-in">
-              <GoogleAuthButton mode="login" />
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="mb-6">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="mb-4">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              होम पर वापस जाएं
+            </Button>
+          </Link>
+        </div>
 
-            <div className="relative animate-fade-in">
+        <Card className="shadow-xl">
+          <CardHeader className="space-y-4">
+            <div className="text-center">
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <img 
+                  src="/lovable-uploads/c81f0976-b2c6-455e-b2e4-f829a290148d.png" 
+                  alt="व्याकरणी Logo" 
+                  className="h-10 w-10"
+                />
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  व्याकरणी
+                </h1>
+              </div>
+              <CardTitle className="text-2xl font-bold text-gray-800">
+                वापस आपका स्वागत है!
+              </CardTitle>
+              <p className="text-gray-600 mt-2">
+                अपने खाते में लॉग इन करें
+              </p>
+            </div>
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            <GoogleAuthButton />
+            
+            <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
               </div>
@@ -103,73 +101,65 @@ const Login = () => {
               </div>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2 animate-fade-in">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
                 <Label htmlFor="email">ईमेल</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) setErrors({...errors, email: ""});
-                  }}
-                  placeholder="आपका ईमेल"
-                  disabled={isLoading}
-                  className={`transition-all duration-200 focus:scale-[1.02] ${errors.email ? 'border-red-500' : ''}`}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="आपका ईमेल पता"
+                  required
                 />
-                {errors.email && <p className="text-red-500 text-sm animate-fade-in">{errors.email}</p>}
               </div>
 
-              <div className="space-y-2 animate-fade-in">
+              <div className="space-y-2">
                 <Label htmlFor="password">पासवर्ड</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (errors.password) setErrors({...errors, password: ""});
-                  }}
-                  placeholder="आपका पासवर्ड"
-                  disabled={isLoading}
-                  className={`transition-all duration-200 focus:scale-[1.02] ${errors.password ? 'border-red-500' : ''}`}
-                />
-                {errors.password && <p className="text-red-500 text-sm animate-fade-in">{errors.password}</p>}
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="आपका पासवर्ड"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 animate-fade-in" 
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    लॉगिन हो रहे हैं...
-                  </div>
-                ) : (
-                  "लॉगिन करें"
-                )}
+              <div className="flex justify-end">
+                <Link 
+                  to="/forgot-password" 
+                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                >
+                  पासवर्ड भूल गए?
+                </Link>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "लॉग इन हो रहे हैं..." : "लॉग इन करें"}
               </Button>
             </form>
-            
-            <div className="mt-4 text-center animate-fade-in">
-              <p className="text-sm text-gray-600">
-                खाता नहीं है?{" "}
-                <Link to="/register" className="text-blue-600 hover:underline transition-colors duration-200">
-                  रजिस्टर करें
-                </Link>
-              </p>
-              <Link to="/" className="text-sm text-gray-500 hover:underline transition-colors duration-200">
-                होम पेज पर वापस जाएं
+
+            <div className="text-center">
+              <span className="text-gray-600">खाता नहीं है? </span>
+              <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+                रजिस्टर करें
               </Link>
             </div>
           </CardContent>
         </Card>
       </div>
-      
-      <Footer />
     </div>
   );
 };

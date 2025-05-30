@@ -40,8 +40,8 @@ const GrammarChecker = () => {
     'output'
   );
 
-  // Show highlights only when we have corrections and text
-  const showHighlights = corrections.length > 0 && (correctedText || enhancedText);
+  // Show highlights only when we have corrections and text - fix: ensure boolean type
+  const showHighlights = Boolean(corrections.length > 0 && (correctedText || enhancedText));
 
   const handleSegmentClick = (correctionIndex: number) => {
     highlighting.highlightCorrection(correctionIndex);
