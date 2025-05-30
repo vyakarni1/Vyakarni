@@ -40,6 +40,12 @@ serve(async (req) => {
       return await handleWebhook(req, supabase)
     }
 
+    // Handle GET requests to webhook for testing
+    if (req.method === 'GET' && path === 'webhook') {
+      console.log('GET request to webhook - returning OK for testing')
+      return new Response('OK', { status: 200, headers: corsHeaders })
+    }
+
     // For all other requests, require authentication
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
@@ -82,6 +88,20 @@ async function createOrder(req: Request, supabase: any, user: any) {
 
   console.log('Creating order for user:', user.id, 'plan:', word_plan_id)
 
+  // Check if API credentials are available
+  const cashfreeAppId = Deno.env.get('CASHFREE_APP_ID')
+  const cashfreeSecretKey = Deno.env.get('CASHFREE_SECRET_KEY')
+
+  if (!cashfreeAppId || !cashfreeSecretKey) {
+    console.error('Cashfree API credentials not found')
+    return new Response(
+      JSON.stringify({ error: 'Payment gateway configuration error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
+  console.log('Using Cashfree App ID:', cashfreeAppId.substring(0, 8) + '...')
+
   // Get word plan details
   const { data: wordPlan, error: planError } = await supabase
     .from('word_plans')
@@ -91,6 +111,7 @@ async function createOrder(req: Request, supabase: any, user: any) {
     .single()
 
   if (planError || !wordPlan) {
+    console.error('Word plan error:', planError)
     return new Response(
       JSON.stringify({ error: 'Invalid word plan' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -122,28 +143,49 @@ async function createOrder(req: Request, supabase: any, user: any) {
     }
   }
 
+  console.log('Creating Cashfree order:', JSON.stringify(orderData, null, 2))
+
+  // Use production endpoint for live payments
+  const cashfreeBaseUrl = 'https://api.cashfree.com/pg'
+  
   // Create order with Cashfree
-  const cashfreeResponse = await fetch('https://sandbox.cashfree.com/pg/orders', {
+  const cashfreeResponse = await fetch(`${cashfreeBaseUrl}/orders`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-client-id': Deno.env.get('CASHFREE_APP_ID') ?? '',
-      'x-client-secret': Deno.env.get('CASHFREE_SECRET_KEY') ?? '',
+      'x-client-id': cashfreeAppId,
+      'x-client-secret': cashfreeSecretKey,
       'x-api-version': '2023-08-01',
     },
     body: JSON.stringify(orderData)
   })
 
+  console.log('Cashfree response status:', cashfreeResponse.status)
+  const responseText = await cashfreeResponse.text()
+  console.log('Cashfree response:', responseText)
+
   if (!cashfreeResponse.ok) {
-    const errorText = await cashfreeResponse.text()
-    console.error('Cashfree API error:', errorText)
+    console.error('Cashfree API error:', responseText)
     return new Response(
-      JSON.stringify({ error: 'Failed to create order', details: errorText }),
+      JSON.stringify({ 
+        error: 'Failed to create payment order', 
+        details: responseText,
+        status: cashfreeResponse.status
+      }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
-  const cashfreeOrder: CashfreeOrderResponse = await cashfreeResponse.json()
+  let cashfreeOrder: CashfreeOrderResponse
+  try {
+    cashfreeOrder = JSON.parse(responseText)
+  } catch (parseError) {
+    console.error('Failed to parse Cashfree response:', parseError)
+    return new Response(
+      JSON.stringify({ error: 'Invalid response from payment gateway' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
 
   // Store order in database
   const { error: dbError } = await supabase
@@ -168,6 +210,8 @@ async function createOrder(req: Request, supabase: any, user: any) {
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
+
+  console.log('Order created successfully:', orderId)
 
   return new Response(
     JSON.stringify({
