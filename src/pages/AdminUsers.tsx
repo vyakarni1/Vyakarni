@@ -2,41 +2,24 @@
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Users, 
-  Search, 
-  Filter, 
-  Download, 
+  Crown,
+  User,
   Plus,
-  Edit,
-  Trash2,
   Shield,
-  ShieldOff
+  UserCog
 } from "lucide-react";
-import { useState } from "react";
 import { useAdvancedUserManagement } from "@/hooks/useAdvancedUserManagement";
 import EnhancedUserFilters from "@/components/Admin/UserManagement/EnhancedUserFilters";
 import EnhancedBulkActions from "@/components/Admin/UserManagement/EnhancedBulkActions";
+import EnhancedUserTable from "@/components/Admin/UserManagement/EnhancedUserTable";
 
 const AdminUsers = () => {
   const {
-    users,
+    adminUsers,
+    regularUsers,
     isLoading,
     filters,
     setFilters,
@@ -47,11 +30,13 @@ const AdminUsers = () => {
     exportUsers,
   } = useAdvancedUserManagement();
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = (checked: boolean, userType: 'admin' | 'regular') => {
+    const targetUsers = userType === 'admin' ? adminUsers : regularUsers;
     if (checked) {
-      setSelectedUsers(users?.map(user => user.id) || []);
+      setSelectedUsers([...selectedUsers, ...targetUsers.map(user => user.id)]);
     } else {
-      setSelectedUsers([]);
+      const targetUserIds = targetUsers.map(user => user.id);
+      setSelectedUsers(selectedUsers.filter(id => !targetUserIds.includes(id)));
     }
   };
 
@@ -68,7 +53,6 @@ const AdminUsers = () => {
   };
 
   const refreshData = () => {
-    // Force refresh by updating filters
     setFilters({ ...filters });
   };
 
@@ -104,7 +88,7 @@ const AdminUsers = () => {
           onExport={exportUsers}
           onRefresh={refreshData}
           isLoading={isLoading}
-          totalUsers={users?.length || 0}
+          totalUsers={(adminUsers?.length || 0) + (regularUsers?.length || 0)}
         />
 
         {/* Bulk Actions */}
@@ -114,112 +98,113 @@ const AdminUsers = () => {
           isUpdating={isBulkUpdating}
         />
 
-        {/* Users Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>उपयोगकर्ता सूची</span>
-              <span className="text-sm text-gray-500">({users?.length || 0})</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12">
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.length === users?.length && users?.length > 0}
-                        onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="rounded border-gray-300"
-                      />
-                    </TableHead>
-                    <TableHead>उपयोगकर्ता</TableHead>
-                    <TableHead>सब्स्क्रिप्शन</TableHead>
-                    <TableHead>गतिविधि</TableHead>
-                    <TableHead>शब्द बैलेंस</TableHead>
-                    <TableHead>स्थिति</TableHead>
-                    <TableHead className="text-right">कार्य</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users?.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <input
-                          type="checkbox"
-                          checked={selectedUsers.includes(user.id)}
-                          onChange={(e) => handleSelectUser(user.id, e.target.checked)}
-                          className="rounded border-gray-300"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium text-blue-700">
-                              {user.name?.charAt(0)?.toUpperCase()}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="font-medium">{user.name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            user.subscription_status === 'active' 
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {user.plan_name}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div>{user.total_corrections} सुधार</div>
-                          <div className="text-gray-500">{user.words_used} शब्द</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div className="font-medium">0 शब्द</div>
-                          <div className="text-gray-500">उपलब्ध</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          user.is_active 
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {user.is_active ? 'सक्रिय' : 'निष्क्रिय'}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <Shield className="h-4 w-4" />
-                          </Button>
-                          <Button variant="outline" size="sm" className="text-red-600">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+        {/* User Sections with Tabs */}
+        <Tabs defaultValue="regular" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="regular" className="flex items-center space-x-2">
+              <User className="h-4 w-4" />
+              <span>नियमित उपयोगकर्ता ({regularUsers?.length || 0})</span>
+            </TabsTrigger>
+            <TabsTrigger value="admin" className="flex items-center space-x-2">
+              <Crown className="h-4 w-4" />
+              <span>एडमिन उपयोगकर्ता ({adminUsers?.length || 0})</span>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Regular Users Tab */}
+          <TabsContent value="regular" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <User className="h-5 w-5" />
+                  <span>नियमित उपयोगकर्ता</span>
+                  <span className="text-sm text-gray-500">({regularUsers?.length || 0})</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <EnhancedUserTable
+                  users={regularUsers || []}
+                  selectedUsers={selectedUsers}
+                  onSelectUser={handleSelectUser}
+                  onSelectAll={(checked) => handleSelectAll(checked, 'regular')}
+                  onEditUser={(user) => console.log('Edit user:', user)}
+                  onDeleteUser={(userId) => handleBulkAction('delete', { userIds: [userId] })}
+                  onViewDetails={(user) => console.log('View details:', user)}
+                  onManageCredits={(user) => console.log('Manage credits:', user)}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Admin Users Tab */}
+          <TabsContent value="admin" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Crown className="h-5 w-5" />
+                  <span>एडमिन उपयोगकर्ता</span>
+                  <span className="text-sm text-gray-500">({adminUsers?.length || 0})</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <EnhancedUserTable
+                  users={adminUsers || []}
+                  selectedUsers={selectedUsers}
+                  onSelectUser={handleSelectUser}
+                  onSelectAll={(checked) => handleSelectAll(checked, 'admin')}
+                  onEditUser={(user) => console.log('Edit admin:', user)}
+                  onDeleteUser={(userId) => handleBulkAction('delete', { userIds: [userId] })}
+                  onViewDetails={(user) => console.log('View admin details:', user)}
+                  onManageCredits={(user) => console.log('Manage admin credits:', user)}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">कुल उपयोगकर्ता</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{(adminUsers?.length || 0) + (regularUsers?.length || 0)}</div>
+              <p className="text-xs text-muted-foreground">
+                {regularUsers?.length || 0} नियमित + {adminUsers?.length || 0} एडमिन
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">सक्रिय उपयोगकर्ता</CardTitle>
+              <Shield className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {[...(adminUsers || []), ...(regularUsers || [])].filter(user => user.is_active).length}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                पिछले 7 दिनों में सक्रिय
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">चयनित उपयोगकर्ता</CardTitle>
+              <UserCog className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{selectedUsers.length}</div>
+              <p className="text-xs text-muted-foreground">
+                बल्क ऑपरेशन के लिए तैयार
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </AdminLayout>
   );

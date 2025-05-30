@@ -16,13 +16,24 @@ interface UserWithDetails {
   words_used: number;
   last_login?: string;
   is_active: boolean;
+  role: 'admin' | 'moderator' | 'user';
+  word_balance: {
+    total_words_available: number;
+    free_words: number;
+    purchased_words: number;
+    next_expiry_date?: string;
+  };
+  profile_completion: number;
 }
 
 interface UserFilters {
   search: string;
-  subscription_status: string;
+  role: string;
+  activity_status: string;
+  word_balance_range: string;
+  profile_completion: string;
   date_range: 'all' | 'today' | 'week' | 'month';
-  sort_by: 'name' | 'created_at' | 'corrections' | 'words_used';
+  sort_by: 'name' | 'created_at' | 'word_balance' | 'profile_completion' | 'last_activity';
   sort_order: 'asc' | 'desc';
 }
 
@@ -31,21 +42,32 @@ export const useAdvancedUserManagement = () => {
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
-    subscription_status: 'all',
+    role: 'all',
+    activity_status: 'all',
+    word_balance_range: 'all',
+    profile_completion: 'all',
     date_range: 'all',
     sort_by: 'created_at',
     sort_order: 'desc',
   });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
-  // Fetch users with advanced filtering using separate queries to avoid relation issues
+  // Fetch users with advanced filtering
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['advanced-users', filters],
     queryFn: async () => {
       // Base profiles query
       let profileQuery = supabase
         .from('profiles')
-        .select('id, name, created_at, avatar_url');
+        .select(`
+          id, 
+          name, 
+          email,
+          created_at, 
+          avatar_url,
+          phone,
+          bio
+        `);
 
       // Apply date range filter
       if (filters.date_range !== 'all') {
@@ -66,11 +88,11 @@ export const useAdvancedUserManagement = () => {
 
       // Apply search filter
       if (filters.search) {
-        profileQuery = profileQuery.ilike('name', `%${filters.search}%`);
+        profileQuery = profileQuery.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
       }
 
       const { data: profilesData, error: profilesError } = await profileQuery
-        .order(filters.sort_by, { ascending: filters.sort_order === 'asc' });
+        .order(filters.sort_by === 'name' ? 'name' : 'created_at', { ascending: filters.sort_order === 'asc' });
 
       if (profilesError) throw profilesError;
 
@@ -78,77 +100,202 @@ export const useAdvancedUserManagement = () => {
         return [];
       }
 
-      // Get subscription data separately
-      const { data: subscriptionsData, error: subError } = await supabase
-        .from('user_subscriptions')
-        .select(`
-          user_id,
-          status,
-          subscription_plans(plan_name)
-        `)
+      // Get user roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role')
         .in('user_id', profilesData.map(p => p.id));
 
-      if (subError) throw subError;
+      if (rolesError) throw rolesError;
 
-      // Get usage data separately
+      // Get word credits data
+      const { data: creditsData, error: creditsError } = await supabase
+        .from('user_word_credits')
+        .select('user_id, words_available, is_free_credit, expiry_date')
+        .in('user_id', profilesData.map(p => p.id))
+        .gt('words_available', 0);
+
+      if (creditsError) throw creditsError;
+
+      // Get usage data
       const { data: usageData, error: usageError } = await supabase
         .from('word_usage_history')
-        .select('user_id, words_used')
+        .select('user_id, words_used, created_at')
         .in('user_id', profilesData.map(p => p.id));
 
       if (usageError) throw usageError;
 
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
-        const userSubscriptions = subscriptionsData?.filter(s => s.user_id === user.id) || [];
-        const subscription = userSubscriptions[0];
+        const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
+        const userRole = userRoles[0]?.role || 'user';
+        
+        const userCredits = creditsData?.filter(c => c.user_id === user.id) || [];
+        const totalWords = userCredits.reduce((sum, credit) => sum + credit.words_available, 0);
+        const freeWords = userCredits.filter(c => c.is_free_credit).reduce((sum, credit) => sum + credit.words_available, 0);
+        const purchasedWords = userCredits.filter(c => !c.is_free_credit).reduce((sum, credit) => sum + credit.words_available, 0);
+        const nextExpiry = userCredits.filter(c => c.expiry_date).sort((a, b) => new Date(a.expiry_date!).getTime() - new Date(b.expiry_date!).getTime())[0]?.expiry_date;
+        
         const userUsage = usageData?.filter(u => u.user_id === user.id) || [];
         const totalCorrections = userUsage.length;
         const wordsUsed = userUsage.reduce((sum, usage) => sum + (usage.words_used || 0), 0);
+        
+        // Calculate profile completion
+        let completionScore = 0;
+        if (user.name) completionScore += 25;
+        if (user.email) completionScore += 25;
+        if (user.avatar_url) completionScore += 25;
+        if (user.bio) completionScore += 25;
+
         const lastLogin = user.created_at;
+        const isActive = new Date(lastLogin) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
         return {
           id: user.id,
-          name: user.name,
+          name: user.name || 'अनाम उपयोगकर्ता',
+          email: user.email,
           created_at: user.created_at,
           avatar_url: user.avatar_url,
-          subscription_status: subscription?.status || 'free',
-          plan_name: (subscription?.subscription_plans as any)?.plan_name || 'Free',
+          subscription_status: 'active', // Default for word-based system
+          plan_name: 'Word Credits',
           total_corrections: totalCorrections,
           words_used: wordsUsed,
           last_login: lastLogin,
-          is_active: new Date(lastLogin) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          is_active: isActive,
+          role: userRole as 'admin' | 'moderator' | 'user',
+          word_balance: {
+            total_words_available: totalWords,
+            free_words: freeWords,
+            purchased_words: purchasedWords,
+            next_expiry_date: nextExpiry,
+          },
+          profile_completion: completionScore,
         };
       });
 
-      // Apply subscription status filter
-      if (filters.subscription_status !== 'all') {
-        return processedUsers.filter(user => user.subscription_status === filters.subscription_status);
+      // Apply role filter
+      let filteredUsers = processedUsers;
+      if (filters.role !== 'all') {
+        filteredUsers = filteredUsers.filter(user => user.role === filters.role);
       }
 
-      return processedUsers;
+      // Apply activity status filter
+      if (filters.activity_status !== 'all') {
+        filteredUsers = filteredUsers.filter(user => 
+          filters.activity_status === 'active' ? user.is_active : !user.is_active
+        );
+      }
+
+      // Apply word balance filter
+      if (filters.word_balance_range !== 'all') {
+        filteredUsers = filteredUsers.filter(user => {
+          const balance = user.word_balance.total_words_available;
+          switch (filters.word_balance_range) {
+            case 'none': return balance === 0;
+            case 'low': return balance > 0 && balance < 100;
+            case 'medium': return balance >= 100 && balance < 1000;
+            case 'high': return balance >= 1000;
+            default: return true;
+          }
+        });
+      }
+
+      // Apply profile completion filter
+      if (filters.profile_completion !== 'all') {
+        filteredUsers = filteredUsers.filter(user => 
+          filters.profile_completion === 'complete' ? user.profile_completion === 100 : user.profile_completion < 100
+        );
+      }
+
+      // Apply sorting
+      filteredUsers.sort((a, b) => {
+        let aValue: any, bValue: any;
+        
+        switch (filters.sort_by) {
+          case 'name':
+            aValue = a.name.toLowerCase();
+            bValue = b.name.toLowerCase();
+            break;
+          case 'word_balance':
+            aValue = a.word_balance.total_words_available;
+            bValue = b.word_balance.total_words_available;
+            break;
+          case 'profile_completion':
+            aValue = a.profile_completion;
+            bValue = b.profile_completion;
+            break;
+          case 'last_activity':
+            aValue = new Date(a.last_login || 0).getTime();
+            bValue = new Date(b.last_login || 0).getTime();
+            break;
+          default:
+            aValue = new Date(a.created_at).getTime();
+            bValue = new Date(b.created_at).getTime();
+        }
+        
+        if (filters.sort_order === 'asc') {
+          return aValue > bValue ? 1 : -1;
+        } else {
+          return aValue < bValue ? 1 : -1;
+        }
+      });
+
+      return filteredUsers;
     },
   });
+
+  // Separate admin and regular users
+  const adminUsers = users?.filter(user => user.role === 'admin' || user.role === 'moderator') || [];
+  const regularUsers = users?.filter(user => user.role === 'user') || [];
 
   // Bulk operations
   const bulkUpdateMutation = useMutation({
     mutationFn: async ({ userIds, action, value }: { userIds: string[]; action: string; value?: any }) => {
-      if (action === 'suspend') {
-        // Update subscription status to suspended
-        const { error } = await supabase
-          .from('user_subscriptions')
-          .update({ status: 'suspended' })
+      if (action === 'add_credits' || action === 'deduct_credits') {
+        const amount = value.amount;
+        const reason = value.reason;
+        const isFree = value.is_free;
+        const expiryDate = value.expiry_date;
+
+        if (action === 'add_credits') {
+          // Add credits to selected users
+          const creditEntries = userIds.map(userId => ({
+            user_id: userId,
+            words_available: amount,
+            words_purchased: amount,
+            is_free_credit: isFree,
+            expiry_date: expiryDate,
+            purchase_date: new Date().toISOString(),
+          }));
+
+          const { error } = await supabase
+            .from('user_word_credits')
+            .insert(creditEntries);
+          if (error) throw error;
+        } else {
+          // Deduct credits (implementation needed based on requirements)
+          throw new Error('Credit deduction not implemented yet');
+        }
+      } else if (action === 'assign_role') {
+        // Update user roles
+        const roleEntries = userIds.map(userId => ({
+          user_id: userId,
+          role: value.role,
+        }));
+
+        // Delete existing roles first
+        await supabase
+          .from('user_roles')
+          .delete()
           .in('user_id', userIds);
-        if (error) throw error;
-      } else if (action === 'activate') {
-        // Update subscription status to active
+
+        // Insert new roles
         const { error } = await supabase
-          .from('user_subscriptions')
-          .update({ status: 'active' })
-          .in('user_id', userIds);
+          .from('user_roles')
+          .insert(roleEntries);
         if (error) throw error;
       } else if (action === 'delete') {
-        // Delete users (cascade will handle related data)
+        // Delete users (this will cascade to related data)
         const { error } = await supabase
           .from('profiles')
           .delete()
@@ -188,9 +335,9 @@ export const useAdvancedUserManagement = () => {
         URL.revokeObjectURL(url);
       } else {
         const csvContent = [
-          'Name,Email,Created At,Subscription Status,Plan Name,Total Corrections,Words Used,Last Login',
+          'Name,Email,Created At,Role,Word Balance,Profile Completion,Total Corrections,Words Used,Last Login',
           ...exportData.map(user => 
-            `"${user.name}","${user.email || 'N/A'}","${user.created_at}","${user.subscription_status}","${user.plan_name}",${user.total_corrections},${user.words_used},"${user.last_login}"`
+            `"${user.name}","${user.email || 'N/A'}","${user.created_at}","${user.role}",${user.word_balance.total_words_available},${user.profile_completion},${user.total_corrections},${user.words_used},"${user.last_login}"`
           )
         ].join('\n');
 
@@ -216,33 +363,10 @@ export const useAdvancedUserManagement = () => {
     }
   };
 
-  // Update user details
-  const updateUserMutation = useMutation({
-    mutationFn: async ({ userId, updates }: { userId: string; updates: Partial<UserWithDetails> }) => {
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', userId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['advanced-users'] });
-      toast({
-        title: "अपडेट सफल",
-        description: "उपयोगकर्ता की जानकारी अपडेट हो गई।",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "त्रुटि",
-        description: "उपयोगकर्ता अपडेट करने में त्रुटि हुई।",
-        variant: "destructive",
-      });
-    },
-  });
-
   return {
     users,
+    adminUsers,
+    regularUsers,
     isLoading,
     error,
     filters,
@@ -251,8 +375,6 @@ export const useAdvancedUserManagement = () => {
     setSelectedUsers,
     bulkUpdate: bulkUpdateMutation.mutate,
     isBulkUpdating: bulkUpdateMutation.isPending,
-    updateUser: updateUserMutation.mutate,
-    isUpdating: updateUserMutation.isPending,
     exportUsers,
   };
 };
