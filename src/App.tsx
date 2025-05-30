@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,6 +26,8 @@ import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Billing from "@/pages/Billing";
+import AdminRoute from "./components/AdminRoute";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,15 @@ function App() {
               />
               
               <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+              
+              <Route 
+                path="/admin" 
+                element={
+                  <AdminRoute>
+                    <Admin />
+                  </AdminRoute>
+                } 
+              />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
