@@ -1,93 +1,163 @@
 
 import { useAuth } from "@/components/AuthProvider";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, CreditCard, Calendar, Download, BarChart3 } from "lucide-react";
+import { useWordCredits } from "@/hooks/useWordCredits";
+import WordCreditsOverview from "@/components/Billing/WordCreditsOverview";
 import BillingHistory from "@/components/Billing/BillingHistory";
 import UsageAnalytics from "@/components/Billing/UsageAnalytics";
 import CurrentPlan from "@/components/Billing/CurrentPlan";
-import WordCreditsOverview from "@/components/Billing/WordCreditsOverview";
-import { ArrowLeft, CreditCard, BarChart3, History, Coins } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import PaymentSuccessHandler from "@/components/Payment/PaymentSuccessHandler";
 
 const Billing = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { balance, loading: balanceLoading } = useWordCredits();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/login");
-    }
-  }, [user, loading, navigate]);
+  // Check if this is a payment success redirect
+  const paymentStatus = searchParams.get('payment');
+  const orderId = searchParams.get('order_id');
 
-  if (loading) {
+  if (!authLoading && !user) {
+    navigate("/login");
+    return null;
+  }
+
+  // Show payment success handler if it's a payment success redirect
+  if (paymentStatus === 'success') {
+    return <PaymentSuccessHandler />;
+  }
+
+  if (authLoading || balanceLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">लोड हो रहा है...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (!user) return null;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-6 py-8">
-        <div className="mb-6">
-          <Link to="/dashboard">
-            <Button variant="ghost" size="sm" className="mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              डैशबोर्ड पर वापस जाएं
-            </Button>
-          </Link>
-          <div className="flex items-center space-x-3 mb-2">
-            <CreditCard className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">बिलिंग और उपयोग</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Link to="/dashboard" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              व्याकरणी
+            </Link>
+            <div className="flex items-center space-x-4">
+              <Link to="/dashboard">
+                <Button variant="outline" size="sm">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  डैशबोर्ड
+                </Button>
+              </Link>
+            </div>
           </div>
-          <p className="text-gray-600">अपने खाते की जानकारी और उपयोग का विवरण देखें</p>
+        </div>
+      </nav>
+
+      <div className="container mx-auto px-6 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">बिलिंग और उपयोग</h1>
+          <p className="text-gray-600">अपने खाते की जानकारी, शब्द उपयोग और भुगतान इतिहास देखें</p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview" className="flex items-center space-x-2">
-              <Coins className="h-4 w-4" />
-              <span>ओवरव्यू</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4" />
-              <span>एनालिटिक्स</span>
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center space-x-2">
-              <History className="h-4 w-4" />
-              <span>हिस्ट्री</span>
-            </TabsTrigger>
-            <TabsTrigger value="plan" className="flex items-center space-x-2">
-              <CreditCard className="h-4 w-4" />
-              <span>प्लान</span>
-            </TabsTrigger>
-          </TabsList>
+        {/* Quick Stats */}
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">कुल शब्द</p>
+                  <p className="text-2xl font-bold text-blue-600">{balance.total_words_available}</p>
+                </div>
+                <CreditCard className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
 
-          <TabsContent value="overview" className="space-y-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">फ्री शब्द</p>
+                  <p className="text-2xl font-bold text-green-600">{balance.free_words}</p>
+                </div>
+                <Badge variant="outline" className="text-green-600 border-green-600">फ्री</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">खरीदे गए</p>
+                  <p className="text-2xl font-bold text-purple-600">{balance.purchased_words}</p>
+                </div>
+                <Calendar className="h-8 w-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">खाता स्थिति</p>
+                  <p className="text-lg font-semibold text-green-600">सक्रिय</p>
+                </div>
+                <BarChart3 className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            {/* Word Credits Overview */}
             <WordCreditsOverview />
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-6">
+            
+            {/* Usage Analytics */}
             <UsageAnalytics />
-          </TabsContent>
+          </div>
 
-          <TabsContent value="history" className="space-y-6">
-            <BillingHistory />
-          </TabsContent>
-
-          <TabsContent value="plan" className="space-y-6">
+          <div className="space-y-6">
+            {/* Current Plan */}
             <CurrentPlan />
-          </TabsContent>
-        </Tabs>
+            
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>त्वरित कार्रवाई</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Link to="/pricing" className="block">
+                  <Button className="w-full">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    अधिक शब्द खरीदें
+                  </Button>
+                </Link>
+                <Button variant="outline" className="w-full">
+                  <Download className="h-4 w-4 mr-2" />
+                  बिल डाउनलोड करें
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Billing History */}
+        <div className="mt-8">
+          <BillingHistory />
+        </div>
       </div>
     </div>
   );

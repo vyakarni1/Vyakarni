@@ -1,13 +1,15 @@
+
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, Check, Star, Zap, Crown, Calculator, Clock } from "lucide-react";
+import { LogOut, Check, Star, Zap, Crown, Calculator } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import DiscountBadge from "@/components/DiscountBadge";
+import CashfreePaymentButton from "@/components/Payment/CashfreePaymentButton";
 
 const Pricing = () => {
   const { user, loading: authLoading } = useAuth();
@@ -34,14 +36,6 @@ const Pricing = () => {
       toast.info("फ्री प्लान पहले से ही मिल चुका है!");
       return;
     }
-
-    // Show coming soon message for paid plans
-    toast.info(
-      "पेमेंट सिस्टम जल्द ही लाइव होगा! हम Razorpay के साथ सुरक्षित पेमेंट इंटीग्रेशन पर काम कर रहे हैं। कृपया कुछ दिन बाद दोबारा आएं।",
-      {
-        duration: 6000,
-      }
-    );
   };
 
   const getPlanIcon = (planType: string) => {
@@ -130,10 +124,6 @@ const Pricing = () => {
             <Calculator className="h-4 w-4" />
             <span>सभी पैकेज 30 दिन तक वैध • शानदार छूट उपलब्ध</span>
           </div>
-          <div className="flex items-center justify-center space-x-2 text-sm bg-amber-50 text-amber-700 px-4 py-2 rounded-full border border-amber-200 inline-flex">
-            <Clock className="h-4 w-4" />
-            <span>पेमेंट सिस्टम जल्द ही उपलब्ध होगा - Razorpay इंटीग्रेशन प्रगति में है</span>
-          </div>
         </div>
 
         {/* Pricing Cards */}
@@ -156,16 +146,6 @@ const Pricing = () => {
                 {plan.plan_type === 'basic' && (
                   <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
                     सबसे लोकप्रिय
-                  </div>
-                )}
-
-                {/* Coming Soon Badge for Paid Plans */}
-                {plan.plan_type !== 'free' && (
-                  <div className="absolute top-4 left-4 z-10">
-                    <Badge variant="outline" className="bg-amber-50 border-amber-300 text-amber-700">
-                      <Clock className="h-3 w-3 mr-1" />
-                      जल्द आएगा
-                    </Badge>
                   </div>
                 )}
 
@@ -233,29 +213,26 @@ const Pricing = () => {
                     )}
                   </div>
 
-                  <Button
-                    onClick={() => handleSelectPlan(plan)}
-                    className={`w-full mt-6 ${
-                      plan.plan_type === 'basic'
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                        : plan.plan_type === 'premium'
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                        : 'bg-gray-600 hover:bg-gray-700'
-                    } ${plan.plan_type !== 'free' ? 'opacity-75' : ''}`}
-                    disabled={plan.plan_type === 'free'}
-                  >
-                    {plan.plan_type === 'free' 
-                      ? 'साइनअप पर मिलता है' 
-                      : 'जल्द उपलब्ध होगा'
-                    }
-                  </Button>
-
-                  {/* Additional info for paid plans */}
-                  {plan.plan_type !== 'free' && (
-                    <p className="text-xs text-center text-gray-500 mt-2">
-                      पेमेंट गेटवे इंटीग्रेशन प्रगति में है
-                    </p>
-                  )}
+                  {/* Payment Button */}
+                  <div className="pt-4">
+                    {plan.plan_type === 'free' ? (
+                      <Button
+                        onClick={() => handleSelectPlan(plan)}
+                        className="w-full bg-gray-600 hover:bg-gray-700"
+                        disabled
+                      >
+                        साइनअप पर मिलता है
+                      </Button>
+                    ) : (
+                      <CashfreePaymentButton 
+                        wordPlan={plan}
+                        onPaymentSuccess={() => {
+                          toast.success("भुगतान सफल! शब्द आपके खाते में जोड़ दिए गए हैं।");
+                          navigate("/billing");
+                        }}
+                      />
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -275,8 +252,8 @@ const Pricing = () => {
               <p className="text-gray-600 text-sm">खरीदे गए सभी शब्द खरीदारी की तारीख से 30 दिन तक वैध रहते हैं।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-2">पेमेंट सिस्टम कब उपलब्ध होगा?</h3>
-              <p className="text-gray-600 text-sm">हम Razorpay के साथ सुरक्षित पेमेंट इंटीग्रेशन पर काम कर रहे हैं। यह जल्द ही उपलब्ध होगा।</p>
+              <h3 className="font-semibold text-gray-800 mb-2">भुगतान सुरक्षित है?</h3>
+              <p className="text-gray-600 text-sm">हाँ, हम Cashfree के सुरक्षित पेमेंट गेटवे का उपयोग करते हैं जो बैंक-ग्रेड सिक्योरिटी प्रदान करता है।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
               <h3 className="font-semibold text-gray-800 mb-2">रिफंड की नीति क्या है?</h3>
