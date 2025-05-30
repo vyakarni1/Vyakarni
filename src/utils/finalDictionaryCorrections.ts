@@ -1,0 +1,71 @@
+
+import { wordReplacements } from "@/data/wordReplacements";
+import { Correction } from "@/types/grammarChecker";
+
+export const applyFinalDictionaryCorrections = (text: string): { correctedText: string; corrections: Correction[] } => {
+  let correctedText = text;
+  const corrections: Correction[] = [];
+
+  console.log('=== FINAL DICTIONARY CORRECTIONS START ===');
+  console.log('Input text:', text);
+  console.log('Text length:', text.length);
+
+  wordReplacements.forEach(({ original, replacement }) => {
+    // Check if the original word exists in the text (simple contains check)
+    if (correctedText.includes(original)) {
+      console.log(`Found word "${original}" in text, replacing with "${replacement}"`);
+      
+      // Count how many times it appears before replacement
+      const beforeCount = (correctedText.match(new RegExp(original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+      
+      // Replace all occurrences globally
+      const beforeReplacement = correctedText;
+      correctedText = correctedText.replace(new RegExp(original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), replacement);
+      
+      // Verify the replacement actually happened
+      const afterCount = (correctedText.match(new RegExp(replacement.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+      const actualReplacements = beforeCount;
+      
+      if (correctedText !== beforeReplacement && actualReplacements > 0) {
+        console.log(`✅ Successfully replaced "${original}" with "${replacement}" (${actualReplacements} times)`);
+        console.log('Before:', beforeReplacement);
+        console.log('After:', correctedText);
+        
+        corrections.push({
+          incorrect: original,
+          correct: replacement,
+          reason: `शब्दावली सुधार - "${original}" को मानक वर्तनी "${replacement}" के अनुसार सुधार किया गया`,
+          type: 'vocabulary',
+          source: 'dictionary'
+        });
+      } else {
+        console.log(`❌ Failed to replace "${original}" with "${replacement}"`);
+      }
+    } else {
+      console.log(`ℹ️ Word "${original}" not found in text`);
+    }
+  });
+
+  console.log(`Final dictionary corrections completed: ${corrections.length} corrections applied`);
+  console.log('Final corrected text:', correctedText);
+  console.log('Original vs Final:');
+  console.log('Original:', text);
+  console.log('Final:   ', correctedText);
+  console.log('=== FINAL DICTIONARY CORRECTIONS END ===');
+  
+  return { correctedText, corrections };
+};
+
+// Verification function to test specific words
+export const verifyCorrections = (text: string): void => {
+  console.log('=== VERIFICATION OF SPECIFIC CORRECTIONS ===');
+  const testWords = ['शुभकामनाएं', 'खाएं', 'जाएं', 'गए', 'आए', 'हुए'];
+  const expectedWords = ['शुभकामनायें', 'खाये', 'जाये', 'गये', 'आये', 'हुये'];
+  
+  testWords.forEach((word, index) => {
+    const hasOriginal = text.includes(word);
+    const hasExpected = text.includes(expectedWords[index]);
+    console.log(`Word "${word}": original=${hasOriginal}, expected="${expectedWords[index]}"=${hasExpected}`);
+  });
+  console.log('=== VERIFICATION END ===');
+};
