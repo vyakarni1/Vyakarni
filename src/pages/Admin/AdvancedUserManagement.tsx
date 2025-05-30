@@ -42,58 +42,21 @@ import {
   UserCheck,
   UserX
 } from 'lucide-react';
-import type { Database } from '@/integrations/supabase/types';
-
-type UserRole = Database['public']['Enums']['app_role'];
 
 const AdvancedUserManagement = () => {
   const {
     users,
-    plans,
-    loading,
-    searchTerm,
-    setSearchTerm,
-    roleFilter,
-    setRoleFilter,
-    planFilter,
-    setPlanFilter,
+    isLoading,
+    filters,
+    setFilters,
     selectedUsers,
     setSelectedUsers,
-    updateUserRole,
-    updateUserSubscription,
-    bulkUpdateRole,
+    bulkUpdate,
+    isBulkUpdating,
+    exportUsers,
   } = useAdvancedUserManagement();
 
   const [bulkAction, setBulkAction] = useState<string>('');
-
-  const getRoleIcon = (role: UserRole) => {
-    switch (role) {
-      case 'admin':
-        return <Shield className="h-4 w-4 text-red-600" />;
-      case 'moderator':
-        return <Users className="h-4 w-4 text-blue-600" />;
-      default:
-        return <User className="h-4 w-4 text-gray-600" />;
-    }
-  };
-
-  const getRoleBadge = (role: UserRole) => {
-    const colors = {
-      admin: "bg-red-100 text-red-800 border-red-200",
-      moderator: "bg-blue-100 text-blue-800 border-blue-200",
-      user: "bg-gray-100 text-gray-800 border-gray-200",
-    };
-    return colors[role];
-  };
-
-  const getPlanBadge = (planType: string) => {
-    const colors = {
-      free: "bg-gray-100 text-gray-800",
-      premium: "bg-yellow-100 text-yellow-800",
-      pro: "bg-purple-100 text-purple-800",
-    };
-    return colors[planType as keyof typeof colors] || colors.free;
-  };
 
   const getStatusBadge = (status: string) => {
     return status === 'active' 
@@ -103,7 +66,7 @@ const AdvancedUserManagement = () => {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedUsers(users.map(user => user.id));
+      setSelectedUsers(users?.map(user => user.id) || []);
     } else {
       setSelectedUsers([]);
     }
@@ -119,15 +82,12 @@ const AdvancedUserManagement = () => {
 
   const handleBulkAction = () => {
     if (bulkAction && selectedUsers.length > 0) {
-      if (bulkAction.startsWith('role-')) {
-        const role = bulkAction.replace('role-', '') as UserRole;
-        bulkUpdateRole(role);
-      }
+      bulkUpdate({ userIds: selectedUsers, action: bulkAction });
       setBulkAction('');
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <ModernAdminLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -147,12 +107,12 @@ const AdvancedUserManagement = () => {
               उन्नत उपयोगकर्ता प्रबंधन
             </h1>
             <p className="text-gray-600 mt-1">
-              उपयोगकर्ता भूमिकाएं, सब्सक्रिप्शन और गतिविधि प्रबंधन
+              उपयोगकर्ता सब्सक्रिप्शन और गतिविधि प्रबंधन
             </p>
           </div>
           <div className="flex items-center space-x-2">
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              {users.length} कुल उपयोगकर्ता
+              {users?.length || 0} कुल उपयोगकर्ता
             </Badge>
             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
               {selectedUsers.length} चयनित
@@ -174,33 +134,33 @@ const AdvancedUserManagement = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   placeholder="नाम या ID से खोजें..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={filters.search}
+                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                   className="pl-9"
                 />
               </div>
               
-              <Select value={roleFilter} onValueChange={(value: UserRole | 'all') => setRoleFilter(value)}>
+              <Select value={filters.subscription_status} onValueChange={(value) => setFilters({ ...filters, subscription_status: value })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="भूमिका फ़िल्टर" />
+                  <SelectValue placeholder="सब्सक्रिप्शन फ़िल्टर" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">सभी भूमिकाएं</SelectItem>
-                  <SelectItem value="admin">व्यवस्थापक</SelectItem>
-                  <SelectItem value="moderator">मॉडरेटर</SelectItem>
-                  <SelectItem value="user">उपयोगकर्ता</SelectItem>
+                  <SelectItem value="all">सभी स्थितियां</SelectItem>
+                  <SelectItem value="active">सक्रिय</SelectItem>
+                  <SelectItem value="free">मुफ़्त</SelectItem>
+                  <SelectItem value="suspended">निलंबित</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Select value={planFilter} onValueChange={setPlanFilter}>
+              <Select value={filters.date_range} onValueChange={(value) => setFilters({ ...filters, date_range: value })}>
                 <SelectTrigger>
-                  <SelectValue placeholder="प्लान फ़िल्टर" />
+                  <SelectValue placeholder="दिनांक फ़िल्टर" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">सभी प्लान</SelectItem>
-                  <SelectItem value="free">मुफ़्त</SelectItem>
-                  <SelectItem value="premium">प्रीमियम</SelectItem>
-                  <SelectItem value="pro">प्रो</SelectItem>
+                  <SelectItem value="all">सभी समय</SelectItem>
+                  <SelectItem value="today">आज</SelectItem>
+                  <SelectItem value="week">इस सप्ताह</SelectItem>
+                  <SelectItem value="month">इस महीने</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -211,12 +171,12 @@ const AdvancedUserManagement = () => {
                       <SelectValue placeholder="बल्क एक्शन" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="role-admin">एडमिन बनाएं</SelectItem>
-                      <SelectItem value="role-moderator">मॉडरेटर बनाएं</SelectItem>
-                      <SelectItem value="role-user">यूजर बनाएं</SelectItem>
+                      <SelectItem value="activate">सक्रिय करें</SelectItem>
+                      <SelectItem value="suspend">निलंबित करें</SelectItem>
+                      <SelectItem value="delete">हटाएं</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button onClick={handleBulkAction} disabled={!bulkAction}>
+                  <Button onClick={handleBulkAction} disabled={!bulkAction || isBulkUpdating}>
                     लागू करें
                   </Button>
                 </div>
@@ -225,17 +185,27 @@ const AdvancedUserManagement = () => {
           </CardContent>
         </Card>
 
+        {/* Export Actions */}
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" onClick={() => exportUsers('csv')}>
+            CSV एक्सपोर्ट
+          </Button>
+          <Button variant="outline" onClick={() => exportUsers('json')}>
+            JSON एक्सपोर्ट
+          </Button>
+        </div>
+
         {/* User Table */}
         <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Users className="h-5 w-5" />
-                <span>उपयोगकर्ता सूची ({users.length})</span>
+                <span>उपयोगकर्ता सूची ({users?.length || 0})</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  checked={selectedUsers.length === users.length && users.length > 0}
+                  checked={selectedUsers.length === (users?.length || 0) && (users?.length || 0) > 0}
                   onCheckedChange={handleSelectAll}
                 />
                 <span className="text-sm text-gray-600">सभी चुनें</span>
@@ -249,7 +219,6 @@ const AdvancedUserManagement = () => {
                   <TableRow>
                     <TableHead className="w-12">चुनें</TableHead>
                     <TableHead>उपयोगकर्ता</TableHead>
-                    <TableHead>भूमिका</TableHead>
                     <TableHead>सब्सक्रिप्शन</TableHead>
                     <TableHead>स्थिति</TableHead>
                     <TableHead>गतिविधि</TableHead>
@@ -258,7 +227,7 @@ const AdvancedUserManagement = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user) => (
+                  {users?.map((user) => (
                     <TableRow key={user.id} className="hover:bg-gray-50/50 transition-colors">
                       <TableCell>
                         <Checkbox
@@ -280,21 +249,11 @@ const AdvancedUserManagement = () => {
                       </TableCell>
                       
                       <TableCell>
-                        <Badge className={`flex items-center space-x-1 w-fit ${getRoleBadge(user.role)}`}>
-                          {getRoleIcon(user.role)}
-                          <span>
-                            {user.role === 'admin' ? 'व्यवस्थापक' : 
-                             user.role === 'moderator' ? 'मॉडरेटर' : 'उपयोगकर्ता'}
-                          </span>
-                        </Badge>
-                      </TableCell>
-                      
-                      <TableCell>
                         <div className="flex items-center space-x-2">
-                          <Badge className={getPlanBadge(user.plan_type)}>
+                          <Badge className={getStatusBadge(user.subscription_status)}>
                             {user.plan_name}
                           </Badge>
-                          {user.plan_type !== 'free' && (
+                          {user.subscription_status === 'active' && user.plan_name !== 'Free' && (
                             <Crown className="h-4 w-4 text-yellow-500" />
                           )}
                         </div>
@@ -312,7 +271,7 @@ const AdvancedUserManagement = () => {
                           <span>{user.total_corrections} सुधार</span>
                         </div>
                         <div className="text-xs text-gray-500">
-                          {new Date(user.last_activity).toLocaleDateString('hi-IN')}
+                          {user.words_used.toLocaleString()} शब्द उपयोग
                         </div>
                       </TableCell>
                       
@@ -332,36 +291,26 @@ const AdvancedUserManagement = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuItem 
-                              onClick={() => updateUserRole(user.id, 'admin')}
-                              disabled={user.role === 'admin'}
+                              onClick={() => bulkUpdate({ userIds: [user.id], action: 'activate' })}
+                              disabled={user.subscription_status === 'active'}
                             >
-                              <Shield className="h-4 w-4 mr-2" />
-                              एडमिन बनाएं
+                              <UserCheck className="h-4 w-4 mr-2" />
+                              सक्रिय करें
                             </DropdownMenuItem>
                             <DropdownMenuItem 
-                              onClick={() => updateUserRole(user.id, 'moderator')}
-                              disabled={user.role === 'moderator'}
+                              onClick={() => bulkUpdate({ userIds: [user.id], action: 'suspend' })}
+                              disabled={user.subscription_status === 'suspended'}
                             >
-                              <Users className="h-4 w-4 mr-2" />
-                              मॉडरेटर बनाएं
+                              <UserX className="h-4 w-4 mr-2" />
+                              निलंबित करें
                             </DropdownMenuItem>
                             <DropdownMenuItem 
-                              onClick={() => updateUserRole(user.id, 'user')}
-                              disabled={user.role === 'user'}
+                              onClick={() => bulkUpdate({ userIds: [user.id], action: 'delete' })}
+                              className="text-red-600"
                             >
-                              <User className="h-4 w-4 mr-2" />
-                              यूजर बनाएं
+                              <Settings className="h-4 w-4 mr-2" />
+                              हटाएं
                             </DropdownMenuItem>
-                            
-                            {plans.map((plan) => (
-                              <DropdownMenuItem 
-                                key={plan.id}
-                                onClick={() => updateUserSubscription(user.id, plan.id)}
-                              >
-                                <Crown className="h-4 w-4 mr-2" />
-                                {plan.plan_name} में अपग्रेड
-                              </DropdownMenuItem>
-                            ))}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -371,7 +320,7 @@ const AdvancedUserManagement = () => {
               </Table>
             </div>
             
-            {users.length === 0 && (
+            {(!users || users.length === 0) && (
               <div className="text-center py-12">
                 <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">कोई उपयोगकर्ता नहीं मिला</h3>
