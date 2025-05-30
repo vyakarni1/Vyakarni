@@ -60,7 +60,7 @@ export const useAdvancedUserManagement = () => {
     queryFn: async () => {
       console.log('🔍 Starting user fetch with filters:', filters);
       
-      // Base profiles query
+      // Base profiles query - get ALL profiles first
       let profileQuery = supabase
         .from('profiles')
         .select(`
@@ -73,7 +73,7 @@ export const useAdvancedUserManagement = () => {
           bio
         `);
 
-      // Apply date range filter
+      // Only apply date range filter if it's not 'all'
       if (filters.date_range !== 'all') {
         let dateThreshold = new Date();
         switch (filters.date_range) {
@@ -88,11 +88,13 @@ export const useAdvancedUserManagement = () => {
             break;
         }
         profileQuery = profileQuery.gte('created_at', dateThreshold.toISOString());
+        console.log('📅 Applied date filter:', filters.date_range, 'threshold:', dateThreshold.toISOString());
       }
 
-      // Apply search filter
-      if (filters.search) {
-        profileQuery = profileQuery.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
+      // Only apply search filter if there's actual search text
+      if (filters.search && filters.search.trim()) {
+        profileQuery = profileQuery.or(`name.ilike.%${filters.search.trim()}%,email.ilike.%${filters.search.trim()}%`);
+        console.log('🔍 Applied search filter:', filters.search.trim());
       }
 
       const { data: profilesData, error: profilesError } = await profileQuery
@@ -103,18 +105,21 @@ export const useAdvancedUserManagement = () => {
         throw profilesError;
       }
 
-      console.log('👥 Fetched profiles:', profilesData?.length || 0);
+      console.log('👥 Fetched profiles:', profilesData?.length || 0, 'profiles');
 
       if (!profilesData || profilesData.length === 0) {
         console.log('⚠️ No profiles found');
         return [];
       }
 
-      // Get user roles
+      const userIds = profilesData.map(p => p.id);
+      console.log('👤 User IDs for further queries:', userIds);
+
+      // Get user roles - fetch ALL roles, don't filter here
       const { data: rolesData, error: rolesError } = await supabase
         .from('user_roles')
         .select('user_id, role')
-        .in('user_id', profilesData.map(p => p.id));
+        .in('user_id', userIds);
 
       if (rolesError) {
         console.error('❌ Error fetching roles:', rolesError);
@@ -127,7 +132,7 @@ export const useAdvancedUserManagement = () => {
       const { data: creditsData, error: creditsError } = await supabase
         .from('user_word_credits')
         .select('user_id, words_available, is_free_credit, expiry_date')
-        .in('user_id', profilesData.map(p => p.id))
+        .in('user_id', userIds)
         .gt('words_available', 0);
 
       if (creditsError) {
@@ -141,7 +146,7 @@ export const useAdvancedUserManagement = () => {
       const { data: usageData, error: usageError } = await supabase
         .from('word_usage_history')
         .select('user_id, words_used, created_at')
-        .in('user_id', profilesData.map(p => p.id));
+        .in('user_id', userIds);
 
       if (usageError) {
         console.error('❌ Error fetching usage:', usageError);
@@ -153,9 +158,10 @@ export const useAdvancedUserManagement = () => {
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
         const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
+        // Default to 'user' role if no role is found
         const userRole = userRoles[0]?.role || 'user';
         
-        console.log(`👤 Processing user ${user.email}: role = ${userRole}`);
+        console.log(`👤 Processing user ${user.email}: role = ${userRole} (from ${userRoles.length} role records)`);
         
         const userCredits = creditsData?.filter(c => c.user_id === user.id) || [];
         const totalWords = userCredits.reduce((sum, credit) => sum + credit.words_available, 0);
@@ -221,26 +227,31 @@ export const useAdvancedUserManagement = () => {
       console.log('🔄 Processed users before filtering:', processedUsers.length);
       console.log('📋 User roles found:', processedUsers.map(u => ({ email: u.email, role: u.role })));
 
-      // Apply role filter
+      // Apply filters AFTER processing all users
       let filteredUsers = processedUsers;
+
+      // Apply role filter
       if (filters.role !== 'all') {
         console.log(`🎯 Filtering by role: ${filters.role}`);
+        const beforeCount = filteredUsers.length;
         filteredUsers = filteredUsers.filter(user => user.role === filters.role);
-        console.log(`✅ Users after role filter: ${filteredUsers.length}`);
+        console.log(`✅ Users after role filter: ${filteredUsers.length} (filtered out ${beforeCount - filteredUsers.length})`);
       }
 
       // Apply activity status filter
       if (filters.activity_status !== 'all') {
         console.log(`🎯 Filtering by activity: ${filters.activity_status}`);
+        const beforeCount = filteredUsers.length;
         filteredUsers = filteredUsers.filter(user => 
           filters.activity_status === 'active' ? user.is_active : !user.is_active
         );
-        console.log(`✅ Users after activity filter: ${filteredUsers.length}`);
+        console.log(`✅ Users after activity filter: ${filteredUsers.length} (filtered out ${beforeCount - filteredUsers.length})`);
       }
 
       // Apply word balance filter
       if (filters.word_balance_range !== 'all') {
         console.log(`🎯 Filtering by word balance: ${filters.word_balance_range}`);
+        const beforeCount = filteredUsers.length;
         filteredUsers = filteredUsers.filter(user => {
           const balance = user.word_balance.total_words_available;
           switch (filters.word_balance_range) {
@@ -251,16 +262,17 @@ export const useAdvancedUserManagement = () => {
             default: return true;
           }
         });
-        console.log(`✅ Users after word balance filter: ${filteredUsers.length}`);
+        console.log(`✅ Users after word balance filter: ${filteredUsers.length} (filtered out ${beforeCount - filteredUsers.length})`);
       }
 
       // Apply profile completion filter
       if (filters.profile_completion !== 'all') {
         console.log(`🎯 Filtering by profile completion: ${filters.profile_completion}`);
+        const beforeCount = filteredUsers.length;
         filteredUsers = filteredUsers.filter(user => 
           filters.profile_completion === 'complete' ? user.profile_completion === 100 : user.profile_completion < 100
         );
-        console.log(`✅ Users after profile completion filter: ${filteredUsers.length}`);
+        console.log(`✅ Users after profile completion filter: ${filteredUsers.length} (filtered out ${beforeCount - filteredUsers.length})`);
       }
 
       // Apply sorting
@@ -305,8 +317,12 @@ export const useAdvancedUserManagement = () => {
   const adminUsers = users?.filter(user => user.role === 'admin' || user.role === 'moderator') || [];
   const regularUsers = users?.filter(user => user.role === 'user') || [];
 
-  console.log('👑 Admin users:', adminUsers.length);
-  console.log('👤 Regular users:', regularUsers.length);
+  console.log('👑 Admin users count:', adminUsers.length);
+  console.log('👤 Regular users count:', regularUsers.length);
+  console.log('📊 All users by role:', users?.reduce((acc, user) => {
+    acc[user.role] = (acc[user.role] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>));
 
   // Bulk operations
   const bulkUpdateMutation = useMutation({
