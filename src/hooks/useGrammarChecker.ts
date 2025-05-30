@@ -6,7 +6,8 @@ import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import { extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
 import { createProgressSimulator, completeProgress, resetProgress } from "@/utils/progressUtils";
-import { applyDictionaryCorrections, applyFinalDictionaryCorrections, verifyCorrections } from "@/utils/finalDictionaryCorrections";
+import { applyDictionaryCorrections } from "@/utils/dictionaryCorrections";
+import { applyFinalDictionaryCorrections, verifyCorrections } from "@/utils/finalDictionaryCorrections";
 
 const MAX_WORD_LIMIT = 1000;
 
