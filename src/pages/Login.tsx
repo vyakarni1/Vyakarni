@@ -90,7 +90,7 @@ const Login = () => {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <GoogleAuthButton />
+            <GoogleAuthButton mode="login" />
             
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
