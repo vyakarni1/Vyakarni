@@ -35,7 +35,7 @@ const WordUsageStatsCards = () => {
   const wordsThisMonth = stats.corrections_this_month * avgWordsPerCorrection;
 
   // Calculate trends (mock data - you can replace with real historical data)
-  const getTrend = (current: number, category: string) => {
+  const getTrend = (current: number, category: string): { trend: 'up' | 'down' | 'neutral'; value: string } => {
     if (current === 0) return { trend: 'neutral' as const, value: '0%' };
     
     // Mock trend calculation - replace with real historical comparison
@@ -97,7 +97,7 @@ const WordUsageStatsCards = () => {
       bgGradient: "from-orange-50 to-orange-100",
       iconBg: "bg-gradient-to-r from-orange-500 to-orange-600",
       subtitle: balance.free_words > 0 ? `${balance.free_words} फ्री शब्द` : "खरीदे गए शब्द",
-      trend: balance.total_words_available > 1000 ? 'up' : balance.total_words_available > 100 ? 'neutral' : 'down' as const,
+      trend: (balance.total_words_available > 1000 ? 'up' : balance.total_words_available > 100 ? 'neutral' : 'down') as 'up' | 'down' | 'neutral',
       trendValue: balance.total_words_available > 1000 ? 'अच्छा' : balance.total_words_available > 100 ? 'ठीक' : 'कम',
       tooltip: "आपके खाते में उपलब्ध कुल शब्द क्रेडिट्स",
       onClick: () => window.open('/billing', '_blank')
