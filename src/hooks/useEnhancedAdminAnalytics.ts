@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -215,7 +214,7 @@ export const useEnhancedAdminAnalytics = () => {
     };
   }, [queryClient]);
 
-  const exportAnalytics = async (format: 'csv' | 'json' = 'csv') => {
+  const exportAnalytics = async (format: 'csv' | 'json' | 'pdf' = 'csv') => {
     try {
       const exportData = {
         analytics,
@@ -233,8 +232,49 @@ export const useEnhancedAdminAnalytics = () => {
         a.download = `admin-analytics-${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
+      } else if (format === 'pdf') {
+        // For PDF export, we'll create a formatted HTML content that can be printed as PDF
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Admin Analytics Report</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 40px; }
+              .header { text-align: center; margin-bottom: 30px; }
+              .metric { margin: 10px 0; }
+              .section { margin: 20px 0; }
+              .table { width: 100%; border-collapse: collapse; }
+              .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              .table th { background-color: #f2f2f2; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h1>Admin Analytics Report</h1>
+              <p>Generated on: ${new Date().toLocaleDateString('hi-IN')}</p>
+            </div>
+            <div class="section">
+              <h2>Key Metrics</h2>
+              <div class="metric">Total Users: ${analytics?.total_users || 0}</div>
+              <div class="metric">Users Today: ${analytics?.users_today || 0}</div>
+              <div class="metric">Active Subscriptions: ${analytics?.active_subscriptions || 0}</div>
+              <div class="metric">Total Revenue: ₹${analytics?.total_revenue || 0}</div>
+              <div class="metric">Revenue This Month: ₹${analytics?.revenue_this_month || 0}</div>
+            </div>
+          </body>
+          </html>
+        `;
+        
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `admin-analytics-${new Date().toISOString().split('T')[0]}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
       } else {
-        // Convert to CSV format
+        // CSV format
         const csvContent = [
           'Metric,Value',
           `Total Users,${analytics?.total_users || 0}`,
