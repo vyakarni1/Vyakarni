@@ -130,7 +130,7 @@ export const useAdvancedUserManagement = () => {
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
         const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
-        const userRole = userRoles[0]?.role || 'user';
+        const userRole = userRoles[0]?.role || 'customer'; // Changed default from 'user' to 'customer';
         
         const userCredits = creditsData?.filter(c => c.user_id === user.id) || [];
         const totalWords = userCredits.reduce((sum, credit) => sum + credit.words_available, 0);
@@ -266,7 +266,7 @@ export const useAdvancedUserManagement = () => {
 
   // Separate admin and regular users
   const adminUsers = users?.filter(user => user.role === 'admin' || user.role === 'moderator') || [];
-  const regularUsers = users?.filter(user => user.role === 'user') || [];
+  const regularUsers = users?.filter(user => user.role === 'customer') || []; // Changed from 'user' to 'customer'
 
   // Bulk operations
   const bulkUpdateMutation = useMutation({

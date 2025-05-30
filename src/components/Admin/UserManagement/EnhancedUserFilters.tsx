@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -114,7 +113,7 @@ const EnhancedUserFilters = ({
               <SelectContent>
                 <SelectItem value="all">सभी भूमिकाएं</SelectItem>
                 <SelectItem value="admin">एडमिन</SelectItem>
-                <SelectItem value="user">उपयोगकर्ता</SelectItem>
+                <SelectItem value="customer">उपयोगकर्ता</SelectItem>
                 <SelectItem value="suspended">निलंबित</SelectItem>
               </SelectContent>
             </Select>
