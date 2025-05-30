@@ -32,7 +32,23 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const authHeader = req.headers.get('Authorization')!
+    const url = new URL(req.url)
+    const path = url.pathname.split('/').pop()
+
+    // Handle webhook requests (no authentication required)
+    if (req.method === 'POST' && path === 'webhook') {
+      return await handleWebhook(req, supabase)
+    }
+
+    // For all other requests, require authentication
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization header required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const token = authHeader.replace('Bearer ', '')
     const { data: { user } } = await supabase.auth.getUser(token)
 
@@ -43,15 +59,8 @@ serve(async (req) => {
       )
     }
 
-    const url = new URL(req.url)
-    const path = url.pathname.split('/').pop()
-
-    if (req.method === 'POST') {
-      if (path === 'create-order') {
-        return await createOrder(req, supabase, user)
-      } else if (path === 'webhook') {
-        return await handleWebhook(req, supabase)
-      }
+    if (req.method === 'POST' && path === 'create-order') {
+      return await createOrder(req, supabase, user)
     }
 
     return new Response(
@@ -171,6 +180,14 @@ async function createOrder(req: Request, supabase: any, user: any) {
 }
 
 async function handleWebhook(req: Request, supabase: any) {
+  console.log('Webhook received:', req.method, req.url)
+  
+  // Handle test requests from Cashfree
+  if (req.method === 'GET') {
+    console.log('GET request to webhook - returning OK for testing')
+    return new Response('OK', { status: 200, headers: corsHeaders })
+  }
+
   const webhookData = await req.json()
   
   console.log('Received webhook:', webhookData)
@@ -203,7 +220,7 @@ async function handleWebhook(req: Request, supabase: any) {
 
     if (orderError) {
       console.error('Error updating order:', orderError)
-      return new Response('Error updating order', { status: 500 })
+      return new Response('Error updating order', { status: 500, headers: corsHeaders })
     }
 
     // Create payment transaction record
@@ -247,5 +264,5 @@ async function handleWebhook(req: Request, supabase: any) {
       .eq('order_id', order_id)
   }
 
-  return new Response('OK', { status: 200 })
+  return new Response('OK', { status: 200, headers: corsHeaders })
 }
