@@ -5,8 +5,8 @@ import { useToast } from '@/hooks/use-toast';
 
 interface UserWithDetails {
   id: string;
-  name: string;
-  email?: string;
+  name?: string; // Made optional
+  email: string; // Now comes from profiles table
   created_at: string;
   avatar_url?: string;
   phone?: string;
@@ -61,14 +61,14 @@ export const useEnhancedUserManagement = () => {
       console.log('Fetching complete user data with filters:', filters);
       
       try {
-        // First, get all profiles
+        // First, get all profiles with email
         let profileQuery = supabase
           .from('profiles')
-          .select('id, name, created_at, avatar_url, phone, bio');
+          .select('id, name, email, created_at, avatar_url, phone, bio');
 
         // Apply search filter if provided
         if (filters.search) {
-          profileQuery = profileQuery.or(`name.ilike.%${filters.search}%,id.ilike.%${filters.search}%`);
+          profileQuery = profileQuery.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,id.ilike.%${filters.search}%`);
         }
 
         // Apply date range filter
@@ -218,27 +218,15 @@ export const useEnhancedUserManagement = () => {
           
           // Calculate profile completion
           let completionScore = 0;
-          if (user.name) completionScore += 25;
+          if (user.email) completionScore += 30; // Email is now mandatory and worth more
+          if (user.name) completionScore += 20; // Name is optional but still valuable
           if (user.avatar_url) completionScore += 25;
           if (user.phone) completionScore += 25;
-          if (user.bio) completionScore += 25;
-
-          // Generate a more realistic email based on user name
-          const generateEmail = (name: string, id: string) => {
-            if (!name || name === 'Unknown User') {
-              return `user_${id.slice(0, 8)}@example.com`;
-            }
-            const cleanName = name.toLowerCase()
-              .replace(/[^a-z0-9\s]/g, '') // Remove special characters
-              .replace(/\s+/g, '.') // Replace spaces with dots
-              .slice(0, 20); // Limit length
-            return `${cleanName}@example.com`;
-          };
 
           return {
             id: user.id,
-            name: user.name || 'Unknown User',
-            email: generateEmail(user.name, user.id),
+            name: user.name || undefined, // Keep as optional
+            email: user.email, // Real email from profiles table
             created_at: user.created_at,
             avatar_url: user.avatar_url,
             phone: user.phone,
@@ -401,7 +389,7 @@ export const useEnhancedUserManagement = () => {
         const csvContent = [
           'Name,Email,Role,Profile Completion,Word Balance,Free Words,Purchased Words,Total Corrections,Words Used Today,Created At',
           ...exportData.map(user => 
-            `"${user.name}","${user.email}","${user.role}",${user.profile_completion}%,${user.word_balance.total_words_available},${user.word_balance.free_words},${user.word_balance.purchased_words},${user.usage_stats.total_corrections},${user.usage_stats.words_used_today},"${user.created_at}"`
+            `"${user.name || ''}","${user.email}","${user.role}",${user.profile_completion}%,${user.word_balance.total_words_available},${user.word_balance.free_words},${user.word_balance.purchased_words},${user.usage_stats.total_corrections},${user.usage_stats.words_used_today},"${user.created_at}"`
           )
         ].join('\n');
 

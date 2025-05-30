@@ -1,7 +1,8 @@
 
 export interface Profile {
   id: string;
-  name: string;
+  name?: string; // Made optional
+  email: string; // Made mandatory
   phone?: string;
   bio?: string;
   avatar_url?: string;

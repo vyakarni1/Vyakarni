@@ -3,82 +3,67 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/AuthProvider";
-import { useEffect } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 const Register = () => {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const navigate = useNavigate();
-  const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
-
-  const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
-
-    if (!name.trim()) newErrors.name = "नाम आवश्यक है";
-    if (!email.trim()) newErrors.email = "ईमेल आवश्यक है";
-    if (!password) newErrors.password = "पासवर्ड आवश्यक है";
-    if (password.length < 6) newErrors.password = "पासवर्ड कम से कम 6 अक्षर का होना चाहिए";
-    if (password !== confirmPassword) newErrors.confirmPassword = "पासवर्ड मेल नहीं खाते";
-    if (!acceptTerms) newErrors.acceptTerms = "सेवा की शर्तों और गोपनीयता नीति को स्वीकार करना आवश्यक है";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      toast.error("कृपया सभी आवश्यक फील्ड भरें");
+    if (!email.trim()) {
+      toast.error("ईमेल आवश्यक है");
+      return;
+    }
+
+    if (!password) {
+      toast.error("पासवर्ड आवश्यक है");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("पासवर्ड मैच नहीं कर रहे");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("पासवर्ड कम से कम 6 अक्षर का होना चाहिए");
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
+      const { error } = await supabase.auth.signUp({
+        email: email.trim(),
         password,
         options: {
           data: {
-            name: name,
+            name: name.trim() || null, // Allow empty name
           }
         }
       });
 
       if (error) {
-        if (error.message === "User already registered") {
-          toast.error("यह ईमेल पहले से रजिस्टर है");
+        if (error.message.includes("already registered")) {
+          toast.error("यह ईमेल पहले से पंजीकृत है। कृपया लॉगिन करें।");
         } else {
           toast.error("रजिस्ट्रेशन में त्रुटि: " + error.message);
         }
         return;
       }
 
-      if (data.user) {
-        toast.success("सफलतापूर्वक रजिस्टर हो गए!");
-        navigate("/dashboard");
-      }
+      toast.success("रजिस्ट्रेशन सफल! कृपया अपना ईमेल चेक करें।");
+      navigate("/login");
     } catch (error) {
       toast.error("रजिस्ट्रेशन में त्रुटि हुई");
     } finally {
@@ -87,165 +72,116 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <Header variant="transparent" />
-      
-      <div className="flex items-center justify-center min-h-screen p-6 pt-24">
-        <Card className="w-full max-w-md animate-scale-in shadow-xl">
-          <CardHeader className="text-center space-y-4">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 animate-fade-in">
-              व्याकरणी
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4">
+      <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            व्याकरणी में शामिल हों
+          </CardTitle>
+          <CardDescription className="text-gray-600">
+            नया खाता बनाएं और व्याकरण सुधार की शुरुआत करें
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-700 font-medium">
+                ईमेल पता <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your.email@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
+              />
             </div>
-            <CardTitle className="text-xl animate-fade-in">
-              रजिस्टर करें
-            </CardTitle>
-            <p className="text-gray-600 animate-fade-in">नया खाता बनाएं</p>
-          </CardHeader>
-          
-          <CardContent className="space-y-6">
-            <div className="animate-fade-in">
-              <GoogleAuthButton mode="register" />
+
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-gray-700 font-medium">
+                नाम <span className="text-gray-400">(वैकल्पिक)</span>
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="आपका नाम"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
+              />
             </div>
 
-            <div className="relative animate-fade-in">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">या</span>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-gray-700 font-medium">
+                पासवर्ड <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="कम से कम 6 अक्षर"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
+              />
             </div>
 
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="name">नाम</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (errors.name) setErrors({...errors, name: ""});
-                  }}
-                  placeholder="आपका नाम"
-                  disabled={isLoading}
-                  className={`transition-all duration-200 focus:scale-[1.02] ${errors.name ? 'border-red-500' : ''}`}
-                />
-                {errors.name && <p className="text-red-500 text-sm animate-fade-in">{errors.name}</p>}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">
+                पासवर्ड की पुष्टि करें <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="पासवर्ड दोबारा डालें"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
+              />
+            </div>
 
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="email">ईमेल</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) setErrors({...errors, email: ""});
-                  }}
-                  placeholder="आपका ईमेल"
-                  disabled={isLoading}
-                  className={`transition-all duration-200 focus:scale-[1.02] ${errors.email ? 'border-red-500' : ''}`}
-                />
-                {errors.email && <p className="text-red-500 text-sm animate-fade-in">{errors.email}</p>}
-              </div>
-
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="password">पासवर्ड</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (errors.password) setErrors({...errors, password: ""});
-                  }}
-                  placeholder="पासवर्ड (कम से कम 6 अक्षर)"
-                  disabled={isLoading}
-                  className={`transition-all duration-200 focus:scale-[1.02] ${errors.password ? 'border-red-500' : ''}`}
-                />
-                {errors.password && <p className="text-red-500 text-sm animate-fade-in">{errors.password}</p>}
-              </div>
-
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="confirmPassword">पासवर्ड की पुष्टि करें</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    if (errors.confirmPassword) setErrors({...errors, confirmPassword: ""});
-                  }}
-                  placeholder="पासवर्ड दोबारा लिखें"
-                  disabled={isLoading}
-                  className={`transition-all duration-200 focus:scale-[1.02] ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                />
-                {errors.confirmPassword && <p className="text-red-500 text-sm animate-fade-in">{errors.confirmPassword}</p>}
-              </div>
-
-              <div className="space-y-2 animate-fade-in">
-                <div className="flex items-start space-x-2">
-                  <Checkbox 
-                    id="acceptTerms" 
-                    checked={acceptTerms}
-                    onCheckedChange={(checked) => {
-                      setAcceptTerms(checked as boolean);
-                      if (errors.acceptTerms) setErrors({...errors, acceptTerms: ""});
-                    }}
-                    disabled={isLoading}
-                    className={`mt-1 transition-all duration-200 ${errors.acceptTerms ? 'border-red-500' : ''}`}
-                  />
-                  <div className="text-sm leading-relaxed">
-                    <label htmlFor="acceptTerms" className="text-gray-700 cursor-pointer">
-                      मैं{" "}
-                      <Link to="/terms" className="text-blue-600 hover:underline transition-colors duration-200">
-                        सेवा की शर्तों
-                      </Link>
-                      {" "}और{" "}
-                      <Link to="/privacy" className="text-blue-600 hover:underline transition-colors duration-200">
-                        गोपनीयता नीति
-                      </Link>
-                      {" "}से सहमत हूं।
-                    </label>
-                  </div>
+            <Button 
+              type="submit" 
+              className="w-full transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  रजिस्टर हो रहे हैं...
                 </div>
-                {errors.acceptTerms && <p className="text-red-500 text-sm animate-fade-in">{errors.acceptTerms}</p>}
-              </div>
+              ) : (
+                "रजिस्टर करें"
+              )}
+            </Button>
+          </form>
 
-              <Button 
-                type="submit" 
-                className="w-full transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 animate-fade-in" 
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    रजिस्टर हो रहे हैं...
-                  </div>
-                ) : (
-                  "रजिस्टर करें"
-                )}
-              </Button>
-            </form>
-            
-            <div className="mt-4 text-center animate-fade-in">
-              <p className="text-sm text-gray-600">
-                पहले से खाता है?{" "}
-                <Link to="/login" className="text-blue-600 hover:underline transition-colors duration-200">
-                  लॉगिन करें
-                </Link>
-              </p>
-              <Link to="/" className="text-sm text-gray-500 hover:underline transition-colors duration-200">
-                होम पेज पर वापस जाएं
-              </Link>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-300" />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <Footer />
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-gray-500">या</span>
+            </div>
+          </div>
+
+          <GoogleAuthButton mode="register" />
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              पहले से खाता है?{" "}
+              <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                लॉगिन करें
+              </Link>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

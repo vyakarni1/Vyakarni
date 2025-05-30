@@ -36,8 +36,8 @@ import { Card, CardContent } from "@/components/ui/card";
 
 interface UserWithDetails {
   id: string;
-  name: string;
-  email?: string;
+  name?: string; // Made optional
+  email: string; // Now mandatory from profiles
   created_at: string;
   avatar_url?: string;
   phone?: string;
@@ -111,6 +111,20 @@ const EnhancedUserTable = ({
     return 'text-green-600';
   };
 
+  const getDisplayName = (user: UserWithDetails) => {
+    return user.name || 'अनाम उपयोगकर्ता';
+  };
+
+  const getAvatarFallback = (user: UserWithDetails) => {
+    if (user.name) {
+      return user.name.charAt(0).toUpperCase();
+    }
+    if (user.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
+
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardContent className="p-0">
@@ -146,16 +160,16 @@ const EnhancedUserTable = ({
                   <TableCell>
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-10 w-10 ring-2 ring-gray-200">
-                        <AvatarImage src={user.avatar_url} alt={user.name} />
+                        <AvatarImage src={user.avatar_url} alt={getDisplayName(user)} />
                         <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold">
-                          {user.name.charAt(0).toUpperCase()}
+                          {getAvatarFallback(user)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
-                        <div className="font-medium text-gray-900 truncate">{user.name}</div>
+                        <div className="font-medium text-gray-900 truncate">{getDisplayName(user)}</div>
                         <div className="flex items-center space-x-2 text-sm text-gray-500">
                           <Mail className="h-3 w-3" />
-                          <span className="truncate">{user.email || 'ईमेल नहीं'}</span>
+                          <span className="truncate">{user.email}</span>
                         </div>
                         {user.phone && (
                           <div className="flex items-center space-x-2 text-sm text-gray-500">
