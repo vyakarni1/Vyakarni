@@ -2,14 +2,6 @@
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { 
   Table,
   TableBody,
@@ -20,16 +12,11 @@ import {
 } from "@/components/ui/table";
 import { 
   Users, 
-  Search, 
-  Filter, 
-  Download, 
   Plus,
   Edit,
   Trash2,
-  Shield,
-  ShieldOff
+  Shield
 } from "lucide-react";
-import { useState } from "react";
 import { useAdvancedUserManagement } from "@/hooks/useAdvancedUserManagement";
 import EnhancedUserFilters from "@/components/Admin/UserManagement/EnhancedUserFilters";
 import EnhancedBulkActions from "@/components/Admin/UserManagement/EnhancedBulkActions";
@@ -137,7 +124,7 @@ const AdminUsers = () => {
                       />
                     </TableHead>
                     <TableHead>उपयोगकर्ता</TableHead>
-                    <TableHead>सब्स्क्रिप्शन</TableHead>
+                    <TableHead>भूमिका</TableHead>
                     <TableHead>गतिविधि</TableHead>
                     <TableHead>शब्द बैलेंस</TableHead>
                     <TableHead>स्थिति</TableHead>
@@ -159,35 +146,33 @@ const AdminUsers = () => {
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                             <span className="text-sm font-medium text-blue-700">
-                              {user.name?.charAt(0)?.toUpperCase()}
+                              {user.name?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <div className="font-medium">{user.name}</div>
+                            <div className="font-medium">{user.name || 'नाम नहीं'}</div>
                             <div className="text-sm text-gray-500">{user.email}</div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            user.subscription_status === 'active' 
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {user.plan_name}
-                          </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          user.role === 'admin' 
+                            ? 'bg-purple-100 text-purple-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {user.role === 'admin' ? 'एडमिन' : 'उपयोगकर्ता'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div>{user.usage_stats.total_corrections} सुधार</div>
+                          <div className="text-gray-500">{user.usage_stats.words_used_today} शब्द आज</div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          <div>{user.total_corrections} सुधार</div>
-                          <div className="text-gray-500">{user.words_used} शब्द</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div className="font-medium">0 शब्द</div>
+                          <div className="font-medium">{user.word_balance.total_words_available} शब्द</div>
                           <div className="text-gray-500">उपलब्ध</div>
                         </div>
                       </TableCell>
