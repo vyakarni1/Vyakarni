@@ -14,7 +14,7 @@ export const wordReplacements = [
     replacement: 'शुभकामनायें'
   }, {
    }, {
-    original: 'शुभकामनाएं',
+    original: 'शुभकामनाएँ',
     replacement: 'शुभकामनायें'
   }, {
     original: 'कामनाएं',
