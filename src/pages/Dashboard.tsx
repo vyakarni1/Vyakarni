@@ -1,14 +1,14 @@
 
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import WordUsageStatsCards from "@/components/WordUsageStatsCards";
 import WordBalanceCard from "@/components/WordBalanceCard";
 import WordUsageCard from "@/components/WordUsageCard";
 import SmartRecommendationsCard from "@/components/SmartRecommendationsCard";
 import Footer from "@/components/Footer";
 import { useWordCredits } from "@/hooks/useWordCredits";
+import { useProfile } from "@/hooks/useProfile";
 import UnifiedNavigation from "@/components/UnifiedNavigation";
 import DashboardWelcome from "@/components/Dashboard/DashboardWelcome";
 import DashboardActionCards from "@/components/Dashboard/DashboardActionCards";
@@ -17,7 +17,7 @@ import DashboardFooterStats from "@/components/Dashboard/DashboardFooterStats";
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<any>(null);
+  const { profile, loading: profileLoading } = useProfile(user?.id);
   const { balance } = useWordCredits();
 
   useEffect(() => {
@@ -25,22 +25,9 @@ const Dashboard = () => {
       navigate("/login");
       return;
     }
-
-    if (user) {
-      // Fetch user profile
-      const fetchProfile = async () => {
-        const { data } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        setProfile(data);
-      };
-      fetchProfile();
-    }
   }, [user, loading, navigate]);
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="flex flex-col items-center space-y-4">
