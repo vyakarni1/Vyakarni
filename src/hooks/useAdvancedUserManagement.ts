@@ -6,16 +6,27 @@ import { useToast } from '@/hooks/use-toast';
 
 interface UserWithDetails {
   id: string;
-  name: string;
-  email?: string;
+  name?: string;
+  email: string;
   created_at: string;
   avatar_url?: string;
-  subscription_status: string;
-  plan_name: string;
-  total_corrections: number;
-  words_used: number;
+  phone?: string;
+  bio?: string;
   last_login?: string;
   is_active: boolean;
+  role: string;
+  profile_completion: number;
+  word_balance: {
+    total_words_available: number;
+    free_words: number;
+    purchased_words: number;
+    next_expiry_date?: string;
+  };
+  usage_stats: {
+    total_corrections: number;
+    words_used_today: number;
+    words_used_this_month: number;
+  };
 }
 
 interface UserFilters {
@@ -44,14 +55,14 @@ export const useAdvancedUserManagement = () => {
   });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
-  // Fetch users with advanced filtering using separate queries to avoid relation issues
+  // Fetch users with advanced filtering using current database structure
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['advanced-users', filters],
     queryFn: async () => {
       // Base profiles query
       let profileQuery = supabase
         .from('profiles')
-        .select('id, name, created_at, avatar_url');
+        .select('id, name, email, created_at, avatar_url, phone, bio');
 
       // Apply date range filter
       if (filters.date_range !== 'all') {
@@ -72,7 +83,7 @@ export const useAdvancedUserManagement = () => {
 
       // Apply search filter
       if (filters.search) {
-        profileQuery = profileQuery.ilike('name', `%${filters.search}%`);
+        profileQuery = profileQuery.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
       }
 
       const { data: profilesData, error: profilesError } = await profileQuery
@@ -84,55 +95,155 @@ export const useAdvancedUserManagement = () => {
         return [];
       }
 
-      // Get subscription data separately
-      const { data: subscriptionsData, error: subError } = await supabase
-        .from('user_subscriptions')
-        .select(`
-          user_id,
-          status,
-          subscription_plans(plan_name)
-        `)
+      // Get user roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role')
         .in('user_id', profilesData.map(p => p.id));
 
-      if (subError) throw subError;
+      if (rolesError) throw rolesError;
 
-      // Get usage data separately
+      // Get word balance data
+      const { data: wordCreditsData, error: creditsError } = await supabase
+        .from('user_word_credits')
+        .select('user_id, words_available, is_free_credit, expiry_date')
+        .in('user_id', profilesData.map(p => p.id))
+        .gt('words_available', 0);
+
+      if (creditsError) throw creditsError;
+
+      // Get usage history data
       const { data: usageData, error: usageError } = await supabase
         .from('word_usage_history')
-        .select('user_id, words_used')
+        .select('user_id, words_used, created_at')
         .in('user_id', profilesData.map(p => p.id));
 
       if (usageError) throw usageError;
 
+      // Get user stats
+      const { data: userUsageData, error: userUsageError } = await supabase
+        .from('user_usage')
+        .select('user_id, created_at')
+        .in('user_id', profilesData.map(p => p.id));
+
+      if (userUsageError) throw userUsageError;
+
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
-        const userSubscriptions = subscriptionsData?.filter(s => s.user_id === user.id) || [];
-        const subscription = userSubscriptions[0];
-        const userUsage = usageData?.filter(u => u.user_id === user.id) || [];
-        const totalCorrections = userUsage.length;
-        const wordsUsed = userUsage.reduce((sum, usage) => sum + (usage.words_used || 0), 0);
-        const lastLogin = user.created_at;
+        const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
+        const userRole = userRoles[0]?.role || 'user';
+        
+        // Calculate word balance
+        const userWordCredits = wordCreditsData?.filter(w => w.user_id === user.id) || [];
+        const totalWords = userWordCredits.reduce((sum, credit) => sum + credit.words_available, 0);
+        const freeWords = userWordCredits
+          .filter(credit => credit.is_free_credit)
+          .reduce((sum, credit) => sum + credit.words_available, 0);
+        const purchasedWords = totalWords - freeWords;
+        const nextExpiry = userWordCredits
+          .filter(credit => credit.expiry_date)
+          .sort((a, b) => new Date(a.expiry_date!).getTime() - new Date(b.expiry_date!).getTime())[0]?.expiry_date;
+
+        // Calculate usage stats
+        const userUsageHistory = usageData?.filter(u => u.user_id === user.id) || [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        const wordsUsedToday = userUsageHistory
+          .filter(usage => new Date(usage.created_at) >= today)
+          .reduce((sum, usage) => sum + usage.words_used, 0);
+        
+        const wordsUsedThisMonth = userUsageHistory
+          .filter(usage => new Date(usage.created_at) >= monthStart)
+          .reduce((sum, usage) => sum + usage.words_used, 0);
+
+        const totalCorrections = userUsageData?.filter(u => u.user_id === user.id).length || 0;
+
+        // Calculate profile completion
+        let completionScore = 0;
+        if (user.name) completionScore += 25;
+        if (user.email) completionScore += 25;
+        if (user.avatar_url) completionScore += 25;
+        if (user.phone || user.bio) completionScore += 25;
+
+        // Determine if user is active (used service in last 7 days)
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const isActive = userUsageHistory.some(usage => new Date(usage.created_at) >= weekAgo);
 
         return {
           id: user.id,
           name: user.name,
+          email: user.email,
           created_at: user.created_at,
           avatar_url: user.avatar_url,
-          subscription_status: subscription?.status || 'free',
-          plan_name: (subscription?.subscription_plans as any)?.plan_name || 'Free',
-          total_corrections: totalCorrections,
-          words_used: wordsUsed,
-          last_login: lastLogin,
-          is_active: new Date(lastLogin) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          phone: user.phone,
+          bio: user.bio,
+          last_login: user.created_at, // Using created_at as placeholder since we don't track last login
+          is_active: isActive,
+          role: userRole,
+          profile_completion: completionScore,
+          word_balance: {
+            total_words_available: totalWords,
+            free_words: freeWords,
+            purchased_words: purchasedWords,
+            next_expiry_date: nextExpiry,
+          },
+          usage_stats: {
+            total_corrections: totalCorrections,
+            words_used_today: wordsUsedToday,
+            words_used_this_month: wordsUsedThisMonth,
+          },
         };
       });
 
-      // Apply subscription status filter
-      if (filters.subscription_status !== 'all') {
-        return processedUsers.filter(user => user.subscription_status === filters.subscription_status);
+      // Apply additional filters
+      let filteredUsers = processedUsers;
+
+      // Role filter
+      if (filters.role !== 'all') {
+        filteredUsers = filteredUsers.filter(user => user.role === filters.role);
       }
 
-      return processedUsers;
+      // Activity status filter
+      if (filters.activity_status !== 'all') {
+        if (filters.activity_status === 'active') {
+          filteredUsers = filteredUsers.filter(user => user.is_active);
+        } else if (filters.activity_status === 'inactive') {
+          filteredUsers = filteredUsers.filter(user => !user.is_active);
+        }
+      }
+
+      // Word balance range filter
+      if (filters.word_balance_range !== 'all') {
+        filteredUsers = filteredUsers.filter(user => {
+          const balance = user.word_balance.total_words_available;
+          switch (filters.word_balance_range) {
+            case 'none':
+              return balance === 0;
+            case 'low':
+              return balance > 0 && balance <= 99;
+            case 'medium':
+              return balance >= 100 && balance <= 999;
+            case 'high':
+              return balance >= 1000;
+            default:
+              return true;
+          }
+        });
+      }
+
+      // Profile completion filter
+      if (filters.profile_completion !== 'all') {
+        if (filters.profile_completion === 'complete') {
+          filteredUsers = filteredUsers.filter(user => user.profile_completion === 100);
+        } else if (filters.profile_completion === 'incomplete') {
+          filteredUsers = filteredUsers.filter(user => user.profile_completion < 100);
+        }
+      }
+
+      return filteredUsers;
     },
   });
 
@@ -140,19 +251,21 @@ export const useAdvancedUserManagement = () => {
   const bulkUpdateMutation = useMutation({
     mutationFn: async ({ userIds, action, value }: { userIds: string[]; action: string; value?: any }) => {
       if (action === 'suspend') {
-        // Update subscription status to suspended
-        const { error } = await supabase
-          .from('user_subscriptions')
-          .update({ status: 'suspended' })
-          .in('user_id', userIds);
-        if (error) throw error;
+        // Update user role to suspended
+        for (const userId of userIds) {
+          const { error } = await supabase
+            .from('user_roles')
+            .upsert({ user_id: userId, role: 'suspended' }, { onConflict: 'user_id' });
+          if (error) throw error;
+        }
       } else if (action === 'activate') {
-        // Update subscription status to active
-        const { error } = await supabase
-          .from('user_subscriptions')
-          .update({ status: 'active' })
-          .in('user_id', userIds);
-        if (error) throw error;
+        // Update user role back to user
+        for (const userId of userIds) {
+          const { error } = await supabase
+            .from('user_roles')
+            .upsert({ user_id: userId, role: 'user' }, { onConflict: 'user_id' });
+          if (error) throw error;
+        }
       } else if (action === 'delete') {
         // Delete users (cascade will handle related data)
         const { error } = await supabase
@@ -160,6 +273,20 @@ export const useAdvancedUserManagement = () => {
           .delete()
           .in('id', userIds);
         if (error) throw error;
+      } else if (action === 'add_credits') {
+        // Add word credits to users
+        const wordsToAdd = value || 100;
+        for (const userId of userIds) {
+          const { error } = await supabase
+            .from('user_word_credits')
+            .insert({
+              user_id: userId,
+              words_available: wordsToAdd,
+              words_purchased: wordsToAdd,
+              is_free_credit: true,
+            });
+          if (error) throw error;
+        }
       }
     },
     onSuccess: (_, { action, userIds }) => {
@@ -194,9 +321,9 @@ export const useAdvancedUserManagement = () => {
         URL.revokeObjectURL(url);
       } else {
         const csvContent = [
-          'Name,Email,Created At,Subscription Status,Plan Name,Total Corrections,Words Used,Last Login',
+          'Name,Email,Created At,Role,Word Balance,Profile Completion,Is Active',
           ...exportData.map(user => 
-            `"${user.name}","${user.email || 'N/A'}","${user.created_at}","${user.subscription_status}","${user.plan_name}",${user.total_corrections},${user.words_used},"${user.last_login}"`
+            `"${user.name || 'N/A'}","${user.email}","${user.created_at}","${user.role}",${user.word_balance.total_words_available},${user.profile_completion}%,${user.is_active ? 'Yes' : 'No'}`
           )
         ].join('\n');
 
