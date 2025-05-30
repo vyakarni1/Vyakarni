@@ -9,7 +9,7 @@ import WordUsageCard from "@/components/WordUsageCard";
 import SmartRecommendationsCard from "@/components/SmartRecommendationsCard";
 import Footer from "@/components/Footer";
 import { useWordCredits } from "@/hooks/useWordCredits";
-import DashboardNavigation from "@/components/Dashboard/DashboardNavigation";
+import UnifiedNavigation from "@/components/UnifiedNavigation";
 import DashboardWelcome from "@/components/Dashboard/DashboardWelcome";
 import DashboardActionCards from "@/components/Dashboard/DashboardActionCards";
 import DashboardFooterStats from "@/components/Dashboard/DashboardFooterStats";
@@ -55,13 +55,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <DashboardNavigation 
-        profile={profile} 
-        userEmail={user.email || ''} 
-        balance={balance.total_words_available} 
-      />
+      <UnifiedNavigation variant="default" />
 
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 pt-24">
         <DashboardWelcome 
           profile={profile} 
           userEmail={user.email || ''} 
