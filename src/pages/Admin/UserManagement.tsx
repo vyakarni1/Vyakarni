@@ -1,8 +1,8 @@
 
-import AdvancedUserManagement from './AdvancedUserManagement';
+import EnhancedUserManagement from './EnhancedUserManagement';
 
 const UserManagement = () => {
-  return <AdvancedUserManagement />;
+  return <EnhancedUserManagement />;
 };
 
 export default UserManagement;

@@ -55,13 +55,13 @@ export const useEnhancedUserManagement = () => {
   });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
-  // Simplified query to fetch basic user data first
+  // Enhanced query to fetch all user data with word balances and proper role handling
   const { data: users, isLoading, error } = useQuery({
-    queryKey: ['enhanced-users-simplified', filters],
+    queryKey: ['enhanced-users-complete', filters],
     queryFn: async () => {
-      console.log('Fetching users with filters:', filters);
+      console.log('Fetching complete user data with filters:', filters);
       
-      // Start with basic profiles query
+      // First, get all profiles
       let profileQuery = supabase
         .from('profiles')
         .select('id, name, created_at, avatar_url, phone, bio');
@@ -96,74 +96,147 @@ export const useEnhancedUserManagement = () => {
         throw profilesError;
       }
 
-      console.log('Fetched profiles:', profilesData?.length || 0);
+      console.log('Fetched profiles:', profilesData?.length || 0, profilesData);
 
       if (!profilesData || profilesData.length === 0) {
         return [];
       }
 
-      // Get user roles for all users
-      const { data: rolesData } = await supabase
+      // Get or create user roles for all users
+      const userIds = profilesData.map(p => p.id);
+      
+      // First get existing roles
+      const { data: existingRoles } = await supabase
         .from('user_roles')
         .select('user_id, role')
-        .in('user_id', profilesData.map(p => p.id));
+        .in('user_id', userIds);
 
-      console.log('Fetched roles:', rolesData?.length || 0);
+      console.log('Existing roles:', existingRoles?.length || 0, existingRoles);
 
-      // Transform the basic data with minimal processing
-      const processedUsers: UserWithDetails[] = profilesData.map(user => {
-        const userRole = rolesData?.find(r => r.user_id === user.id);
+      // Find users without roles and create default 'user' role for them
+      const usersWithRoles = existingRoles?.map(r => r.user_id) || [];
+      const usersWithoutRoles = userIds.filter(id => !usersWithRoles.includes(id));
+      
+      if (usersWithoutRoles.length > 0) {
+        console.log('Creating roles for users without roles:', usersWithoutRoles);
+        const rolesToInsert = usersWithoutRoles.map(userId => ({
+          user_id: userId,
+          role: 'user'
+        }));
         
-        // Calculate basic profile completion
+        const { error: roleInsertError } = await supabase
+          .from('user_roles')
+          .insert(rolesToInsert);
+          
+        if (roleInsertError) {
+          console.error('Error creating default roles:', roleInsertError);
+        }
+      }
+
+      // Get all roles again (including newly created ones)
+      const { data: allRoles } = await supabase
+        .from('user_roles')
+        .select('user_id, role')
+        .in('user_id', userIds);
+
+      console.log('All roles after creation:', allRoles?.length || 0, allRoles);
+
+      // Get word balances for all users
+      const wordBalancePromises = userIds.map(async (userId) => {
+        const { data } = await supabase.rpc('get_user_word_balance', { user_uuid: userId });
+        return {
+          userId,
+          balance: data?.[0] || {
+            total_words_available: 0,
+            free_words: 0,
+            purchased_words: 0,
+            next_expiry_date: null
+          }
+        };
+      });
+
+      const wordBalances = await Promise.all(wordBalancePromises);
+      console.log('Word balances fetched:', wordBalances.length);
+
+      // Get usage stats for all users
+      const { data: usageData } = await supabase
+        .from('word_usage_history')
+        .select('user_id, words_used, created_at')
+        .in('user_id', userIds);
+
+      console.log('Usage data fetched:', usageData?.length || 0);
+
+      // Process the complete user data
+      const processedUsers: UserWithDetails[] = profilesData.map(user => {
+        const userRole = allRoles?.find(r => r.user_id === user.id);
+        const userWordBalance = wordBalances.find(b => b.userId === user.id)?.balance || {
+          total_words_available: 0,
+          free_words: 0,
+          purchased_words: 0,
+          next_expiry_date: null
+        };
+        
+        const userUsage = usageData?.filter(u => u.user_id === user.id) || [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        const wordsUsedToday = userUsage
+          .filter(u => new Date(u.created_at) >= today)
+          .reduce((sum, u) => sum + (u.words_used || 0), 0);
+          
+        const wordsUsedThisMonth = userUsage
+          .filter(u => new Date(u.created_at) >= thisMonth)
+          .reduce((sum, u) => sum + (u.words_used || 0), 0);
+        
+        // Calculate profile completion
         let completionScore = 0;
         if (user.name) completionScore += 25;
         if (user.avatar_url) completionScore += 25;
         if (user.phone) completionScore += 25;
         if (user.bio) completionScore += 25;
 
-        // Basic defaults for now - we'll enhance these later
         return {
           id: user.id,
           name: user.name || 'Unknown User',
-          email: `user-${user.id.slice(0, 8)}@example.com`, // Placeholder
+          email: `${user.name?.toLowerCase().replace(/\s+/g, '.')}@example.com`, // Generate placeholder email
           created_at: user.created_at,
           avatar_url: user.avatar_url,
           phone: user.phone,
           bio: user.bio,
           last_login: user.created_at, // Using created_at as fallback
-          is_active: true, // Default to active for now
+          is_active: true, // Default to active
           role: userRole?.role || 'user',
           profile_completion: completionScore,
           word_balance: {
-            total_words_available: 0, // We'll add this back later
-            free_words: 0,
-            purchased_words: 0,
-            next_expiry_date: undefined
+            total_words_available: userWordBalance.total_words_available,
+            free_words: userWordBalance.free_words,
+            purchased_words: userWordBalance.purchased_words,
+            next_expiry_date: userWordBalance.next_expiry_date
           },
           usage_stats: {
-            total_corrections: 0, // We'll add this back later
-            words_used_today: 0,
-            words_used_this_month: 0
+            total_corrections: userUsage.length,
+            words_used_today: wordsUsedToday,
+            words_used_this_month: wordsUsedThisMonth
           }
         };
       });
 
-      console.log('Processed users:', processedUsers.length);
+      console.log('Processed users:', processedUsers.length, processedUsers);
 
-      // Apply role filter
+      // Apply filters
       let filteredUsers = processedUsers;
+      
       if (filters.role !== 'all') {
         filteredUsers = filteredUsers.filter(user => user.role === filters.role);
       }
 
-      // Apply activity status filter
       if (filters.activity_status !== 'all') {
         filteredUsers = filteredUsers.filter(user => 
           filters.activity_status === 'active' ? user.is_active : !user.is_active
         );
       }
 
-      // Apply profile completion filter
       if (filters.profile_completion !== 'all') {
         filteredUsers = filteredUsers.filter(user => {
           switch (filters.profile_completion) {
@@ -174,18 +247,31 @@ export const useEnhancedUserManagement = () => {
         });
       }
 
+      if (filters.word_balance_range !== 'all') {
+        filteredUsers = filteredUsers.filter(user => {
+          const balance = user.word_balance.total_words_available;
+          switch (filters.word_balance_range) {
+            case 'zero': return balance === 0;
+            case 'low': return balance > 0 && balance <= 100;
+            case 'medium': return balance > 100 && balance <= 1000;
+            case 'high': return balance > 1000;
+            default: return true;
+          }
+        });
+      }
+
       console.log('Final filtered users:', filteredUsers.length);
       return filteredUsers;
     },
   });
 
-  // Simplified bulk operations
+  // Enhanced bulk operations
   const bulkUpdateMutation = useMutation({
     mutationFn: async ({ userIds, action, value }: { userIds: string[]; action: string; value?: any }) => {
-      console.log('Bulk action:', action, 'for users:', userIds);
+      console.log('Bulk action:', action, 'for users:', userIds, 'with value:', value);
       
       if (action === 'activate') {
-        // Ensure users have 'user' role
+        // Ensure users have 'user' role and are active
         const promises = userIds.map(userId => 
           supabase.from('user_roles').upsert({
             user_id: userId,
@@ -194,13 +280,14 @@ export const useEnhancedUserManagement = () => {
         );
         await Promise.all(promises);
       } else if (action === 'suspend') {
-        // For now, just log this action
-        console.log('Suspend action requested for users:', userIds);
-        toast({
-          title: "सूचना",
-          description: "सस्पेंड फीचर अभी विकसित किया जा रहा है।",
-        });
-        return;
+        // Update role to suspended
+        const promises = userIds.map(userId => 
+          supabase.from('user_roles').upsert({
+            user_id: userId,
+            role: 'suspended'
+          })
+        );
+        await Promise.all(promises);
       } else if (action === 'delete') {
         // Delete users
         const { error } = await supabase
@@ -208,10 +295,24 @@ export const useEnhancedUserManagement = () => {
           .delete()
           .in('id', userIds);
         if (error) throw error;
+      } else if (action === 'add_credits') {
+        // Add word credits to users
+        const creditsToAdd = parseInt(value) || 100;
+        const promises = userIds.map(userId => 
+          supabase.from('user_word_credits').insert({
+            user_id: userId,
+            words_available: creditsToAdd,
+            words_purchased: creditsToAdd,
+            is_free_credit: false,
+            purchase_date: new Date().toISOString(),
+            expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year expiry
+          })
+        );
+        await Promise.all(promises);
       }
     },
     onSuccess: (_, { action, userIds }) => {
-      queryClient.invalidateQueries({ queryKey: ['enhanced-users-simplified'] });
+      queryClient.invalidateQueries({ queryKey: ['enhanced-users-complete'] });
       setSelectedUsers([]);
       toast({
         title: "बल्क ऑपरेशन सफल",
@@ -228,7 +329,7 @@ export const useEnhancedUserManagement = () => {
     },
   });
 
-  // Simplified export function
+  // Enhanced export function
   const exportUsers = async (format: 'csv' | 'json' = 'csv') => {
     try {
       const exportData = users || [];
@@ -238,14 +339,14 @@ export const useEnhancedUserManagement = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `users-basic-export-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `users-complete-export-${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
       } else {
         const csvContent = [
-          'Name,Created At,Role,Profile Completion,Phone',
+          'Name,Email,Role,Profile Completion,Word Balance,Free Words,Purchased Words,Total Corrections,Words Used Today,Created At',
           ...exportData.map(user => 
-            `"${user.name}","${user.created_at}","${user.role}",${user.profile_completion}%,"${user.phone || 'N/A'}"`
+            `"${user.name}","${user.email}","${user.role}",${user.profile_completion}%,${user.word_balance.total_words_available},${user.word_balance.free_words},${user.word_balance.purchased_words},${user.usage_stats.total_corrections},${user.usage_stats.words_used_today},"${user.created_at}"`
           )
         ].join('\n');
 
@@ -253,7 +354,7 @@ export const useEnhancedUserManagement = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `users-basic-export-${new Date().toISOString().split('T')[0]}.csv`;
+        a.download = `users-complete-export-${new Date().toISOString().split('T')[0]}.csv`;
         a.click();
         URL.revokeObjectURL(url);
       }

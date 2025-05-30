@@ -21,7 +21,9 @@ import {
   Crown,
   User,
   Phone,
-  Mail
+  Mail,
+  Coins,
+  TrendingUp
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -102,6 +104,13 @@ const EnhancedUserTable = ({
     }
   };
 
+  const getWordBalanceColor = (balance: number) => {
+    if (balance === 0) return 'text-red-600';
+    if (balance <= 100) return 'text-yellow-600';
+    if (balance <= 1000) return 'text-blue-600';
+    return 'text-green-600';
+  };
+
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardContent className="p-0">
@@ -117,6 +126,7 @@ const EnhancedUserTable = ({
                 </TableHead>
                 <TableHead className="text-gray-700 font-semibold">उपयोगकर्ता</TableHead>
                 <TableHead className="text-gray-700 font-semibold">भूमिका और स्थिति</TableHead>
+                <TableHead className="text-gray-700 font-semibold">शब्द बैलेंस</TableHead>
                 <TableHead className="text-gray-700 font-semibold">प्रोफ़ाइल पूर्णता</TableHead>
                 <TableHead className="text-gray-700 font-semibold">निर्माण तिथि</TableHead>
                 <TableHead className="text-center text-gray-700 font-semibold">कार्य</TableHead>
@@ -176,6 +186,26 @@ const EnhancedUserTable = ({
                     </div>
                   </TableCell>
                   
+                  {/* Word Balance */}
+                  <TableCell>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Coins className="h-4 w-4 text-yellow-600" />
+                        <span className={`font-semibold ${getWordBalanceColor(user.word_balance.total_words_available)}`}>
+                          {user.word_balance.total_words_available.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500 space-y-1">
+                        <div>मुफ्त: {user.word_balance.free_words}</div>
+                        <div>खरीदे गए: {user.word_balance.purchased_words}</div>
+                      </div>
+                      <div className="flex items-center space-x-1 text-xs text-gray-500">
+                        <TrendingUp className="h-3 w-3" />
+                        <span>आज इस्तेमाल: {user.usage_stats.words_used_today}</span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  
                   {/* Profile Completion */}
                   <TableCell>
                     <div className="space-y-2">
@@ -215,6 +245,10 @@ const EnhancedUserTable = ({
                         <DropdownMenuItem onClick={() => onEditUser(user)}>
                           <Edit className="h-4 w-4 mr-2" />
                           संपादित करें
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onManageCredits(user)}>
+                          <Coins className="h-4 w-4 mr-2" />
+                          क्रेडिट प्रबंधन
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
