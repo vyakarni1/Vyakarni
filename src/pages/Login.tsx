@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import GoogleAuthButton from "@/components/GoogleAuthButton";
 import { cleanupAuthState } from "@/utils/authUtils";
 
 const Login = () => {
@@ -104,17 +103,6 @@ const Login = () => {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <GoogleAuthButton mode="login" />
-            
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">या</span>
-              </div>
-            </div>
-
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">ईमेल</Label>
