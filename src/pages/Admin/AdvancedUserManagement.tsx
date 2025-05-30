@@ -152,7 +152,12 @@ const AdvancedUserManagement = () => {
                 </SelectContent>
               </Select>
 
-              <Select value={filters.date_range} onValueChange={(value) => setFilters({ ...filters, date_range: value })}>
+              <Select 
+                value={filters.date_range} 
+                onValueChange={(value: 'all' | 'today' | 'week' | 'month') => 
+                  setFilters({ ...filters, date_range: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="दिनांक फ़िल्टर" />
                 </SelectTrigger>
