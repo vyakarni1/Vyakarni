@@ -11,14 +11,16 @@ export const useUserData = (filters: UserFilters) => {
       console.log('Fetching complete user data with filters:', filters);
       
       try {
-        // Get all profiles with email
+        // Get all profiles with email - this is now mandatory
         let profileQuery = supabase
           .from('profiles')
-          .select('id, name, email, created_at, avatar_url, phone, bio');
+          .select('id, name, email, created_at, avatar_url, phone, bio')
+          .not('email', 'is', null); // Ensure we only get profiles with email
 
         // Apply search filter if provided
-        if (filters.search) {
-          profileQuery = profileQuery.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,id.ilike.%${filters.search}%`);
+        if (filters.search && filters.search.trim()) {
+          const searchTerm = filters.search.trim();
+          profileQuery = profileQuery.or(`name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,id.ilike.%${searchTerm}%`);
         }
 
         // Apply date range filter
@@ -39,18 +41,25 @@ export const useUserData = (filters: UserFilters) => {
         }
 
         const { data: profilesData, error: profilesError } = await profileQuery
-          .order(filters.sort_by === 'name' ? 'name' : 'created_at', { ascending: filters.sort_order === 'asc' });
+          .order(filters.sort_by === 'name' ? 'name' : 'created_at', { 
+            ascending: filters.sort_order === 'asc',
+            nullsFirst: false 
+          });
 
         if (profilesError) {
           console.error('Error fetching profiles:', profilesError);
           throw profilesError;
         }
 
+        console.log('Fetched profiles:', profilesData);
+
         if (!profilesData || profilesData.length === 0) {
+          console.log('No profiles found');
           return [];
         }
 
         const userIds = profilesData.map(p => p.id);
+        console.log('User IDs:', userIds);
 
         // Get existing roles
         const { data: existingRoles, error: rolesError } = await supabase
@@ -60,7 +69,10 @@ export const useUserData = (filters: UserFilters) => {
 
         if (rolesError) {
           console.error('Error fetching roles:', rolesError);
+          // Don't throw here, continue with empty roles
         }
+
+        console.log('Existing roles:', existingRoles);
 
         // Find users without roles and create default 'user' role for them
         const usersWithRoles = existingRoles?.map(r => r.user_id) || [];
@@ -87,16 +99,31 @@ export const useUserData = (filters: UserFilters) => {
           }
         }
 
-        // Get all roles again
+        // Get all roles again after creating missing ones
         const { data: allRoles } = await supabase
           .from('user_roles')
           .select('user_id, role')
           .in('user_id', userIds);
 
+        console.log('All roles after creation:', allRoles);
+
         // Get word balances for all users
+        console.log('Fetching word balances...');
         const wordBalancePromises = userIds.map(async (userId) => {
           try {
-            const { data } = await supabase.rpc('get_user_word_balance', { user_uuid: userId });
+            const { data, error } = await supabase.rpc('get_user_word_balance', { user_uuid: userId });
+            if (error) {
+              console.error(`Error fetching word balance for user ${userId}:`, error);
+              return {
+                userId,
+                balance: {
+                  total_words_available: 0,
+                  free_words: 0,
+                  purchased_words: 0,
+                  next_expiry_date: null
+                }
+              };
+            }
             return {
               userId,
               balance: data?.[0] || {
@@ -121,15 +148,23 @@ export const useUserData = (filters: UserFilters) => {
         });
 
         const wordBalances = await Promise.all(wordBalancePromises);
+        console.log('Word balances:', wordBalances);
 
         // Get usage stats for all users
-        const { data: usageData } = await supabase
+        const { data: usageData, error: usageError } = await supabase
           .from('word_usage_history')
           .select('user_id, words_used, created_at')
           .in('user_id', userIds);
 
+        if (usageError) {
+          console.error('Error fetching usage data:', usageError);
+        }
+
+        console.log('Usage data:', usageData);
+
         // Process the complete user data
-        const processedUsers = processUserData(profilesData, allRoles, wordBalances, usageData || []);
+        const processedUsers = processUserData(profilesData, allRoles || [], wordBalances, usageData || []);
+        console.log('Processed users:', processedUsers);
 
         // Apply filters
         let filteredUsers = processedUsers;
@@ -167,6 +202,7 @@ export const useUserData = (filters: UserFilters) => {
           });
         }
 
+        console.log('Final filtered users:', filteredUsers);
         return filteredUsers;
         
       } catch (error) {
@@ -176,5 +212,6 @@ export const useUserData = (filters: UserFilters) => {
     },
     retry: 1,
     staleTime: 30000,
+    refetchOnWindowFocus: false,
   });
 };

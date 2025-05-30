@@ -6,7 +6,8 @@ import { useBulkUserOperations } from '@/hooks/useBulkUserOperations';
 import { useUserExport } from '@/utils/userExport';
 
 export const useEnhancedUserManagement = () => {
-  const [filters, setFilters] = useState<UserFilters>({
+  // Initialize filters with proper default values
+  const [filters, setFilters] = useState<UserFilters>(() => ({
     search: '',
     role: 'all',
     activity_status: 'all',
@@ -15,7 +16,8 @@ export const useEnhancedUserManagement = () => {
     date_range: 'all',
     sort_by: 'created_at',
     sort_order: 'desc',
-  });
+  }));
+  
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   const { data: users, isLoading, error } = useUserData(filters);
