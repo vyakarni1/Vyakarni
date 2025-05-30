@@ -17,11 +17,8 @@ const GoogleAuthButton = ({ mode }: GoogleAuthButtonProps) => {
     try {
       console.log('Starting Google OAuth flow for:', mode);
       
-      // Determine the correct redirect URL based on environment
-      const isProduction = window.location.hostname === 'vyakarni.com';
-      const redirectTo = isProduction 
-        ? 'https://vyakarni.com/dashboard'
-        : `${window.location.origin}/dashboard`;
+      // Always redirect to vyakarni.com for production
+      const redirectTo = 'https://vyakarni.com/dashboard';
       
       console.log('Redirect URL:', redirectTo);
       

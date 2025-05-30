@@ -24,16 +24,10 @@ export const cleanupAuthState = () => {
   console.log('Auth state cleanup complete');
 };
 
-export const handleAuthRedirect = () => {
-  const isProduction = window.location.hostname === 'vyakarni.com';
-  const targetDomain = isProduction ? 'https://vyakarni.com' : window.location.origin;
-  
-  // If we're on the wrong domain after auth, redirect to the correct one
-  if (!isProduction && window.location.hostname.includes('lovable.app')) {
-    console.log('Redirecting from preview domain to production');
-    window.location.href = 'https://vyakarni.com/dashboard';
-    return true;
-  }
-  
-  return false;
+export const isProductionDomain = () => {
+  return window.location.hostname === 'vyakarni.com';
+};
+
+export const getAppUrl = () => {
+  return isProductionDomain() ? 'https://vyakarni.com' : window.location.origin;
 };
