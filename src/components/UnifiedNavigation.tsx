@@ -1,11 +1,11 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
+import { useProfile } from "@/hooks/useProfile";
 import NavigationLogo from "@/components/Navigation/NavigationLogo";
 import DesktopNavigation from "@/components/Navigation/DesktopNavigation";
 import MobileNavigation from "@/components/Navigation/MobileNavigation";
@@ -16,24 +16,10 @@ interface UnifiedNavigationProps {
 }
 
 const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavigationProps) => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<any>(null);
+  const { profile } = useProfile(user?.id);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      const fetchProfile = async () => {
-        const { data } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        setProfile(data);
-      };
-      fetchProfile();
-    }
-  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -74,6 +60,7 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            aria-label={isMobileMenuOpen ? "मेनू बंद करें" : "मेनू खोलें"}
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
