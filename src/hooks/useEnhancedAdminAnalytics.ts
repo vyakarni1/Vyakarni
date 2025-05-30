@@ -49,7 +49,7 @@ export const useEnhancedAdminAnalytics = () => {
   const queryClient = useQueryClient();
   const { isAdmin } = useUserRole();
 
-  // Fetch enhanced analytics with caching - only for admins
+  // Fetch enhanced analytics using the properly secured view
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ['enhanced-admin-analytics'],
     queryFn: async () => {
@@ -57,41 +57,25 @@ export const useEnhancedAdminAnalytics = () => {
         throw new Error('Access denied: Admin privileges required');
       }
 
-      // Fetch analytics data using individual queries since we can't use the view with RLS
-      const [
-        usersResponse,
-        usersTodayResponse,
-        usersWeekResponse,
-        usersMonthResponse,
-        subscriptionsResponse,
-        revenueResponse,
-        revenueMonthResponse,
-        correctionsResponse
-      ] = await Promise.all([
-        supabase.from('profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', new Date().toISOString().split('T')[0]),
-        supabase.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
-        supabase.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
-        supabase.from('user_subscriptions').select('id', { count: 'exact', head: true }).eq('status', 'active'),
-        supabase.from('payment_transactions').select('amount').eq('status', 'completed'),
-        supabase.from('payment_transactions').select('amount').eq('status', 'completed').gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
-        supabase.from('user_usage').select('id', { count: 'exact', head: true })
-      ]);
+      // Use the recreated view with proper security settings
+      const { data, error } = await supabase
+        .from('admin_analytics_summary')
+        .select('*')
+        .single();
 
-      const totalRevenue = revenueResponse.data?.reduce((sum, tx) => sum + Number(tx.amount), 0) || 0;
-      const revenueThisMonth = revenueMonthResponse.data?.reduce((sum, tx) => sum + Number(tx.amount), 0) || 0;
+      if (error) throw error;
 
       return {
-        total_users: usersResponse.count || 0,
-        users_today: usersTodayResponse.count || 0,
-        users_this_week: usersWeekResponse.count || 0,
-        users_this_month: usersMonthResponse.count || 0,
-        active_subscriptions: subscriptionsResponse.count || 0,
-        total_revenue: totalRevenue,
-        revenue_this_month: revenueThisMonth,
-        corrections_today: Math.floor((correctionsResponse.count || 0) * 0.1), // Simulated daily corrections
-        corrections_this_week: Math.floor((correctionsResponse.count || 0) * 0.3), // Simulated weekly corrections
-        corrections_this_month: correctionsResponse.count || 0,
+        total_users: data?.total_users || 0,
+        users_today: data?.users_today || 0,
+        users_this_week: data?.users_this_week || 0,
+        users_this_month: data?.users_this_month || 0,
+        active_subscriptions: data?.active_subscriptions || 0,
+        total_revenue: Number(data?.total_revenue) || 0,
+        revenue_this_month: Number(data?.revenue_this_month) || 0,
+        corrections_today: data?.corrections_today || 0,
+        corrections_this_week: data?.corrections_this_week || 0,
+        corrections_this_month: data?.corrections_this_month || 0,
         user_growth_rate: 15.2, // Mock data
         revenue_growth_rate: 8.5, // Mock data
         churn_rate: 2.1, // Mock data
