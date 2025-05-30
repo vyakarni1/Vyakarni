@@ -2,6 +2,14 @@
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 import { 
   Table,
   TableBody,
@@ -12,11 +20,16 @@ import {
 } from "@/components/ui/table";
 import { 
   Users, 
+  Search, 
+  Filter, 
+  Download, 
   Plus,
   Edit,
   Trash2,
-  Shield
+  Shield,
+  ShieldOff
 } from "lucide-react";
+import { useState } from "react";
 import { useAdvancedUserManagement } from "@/hooks/useAdvancedUserManagement";
 import EnhancedUserFilters from "@/components/Admin/UserManagement/EnhancedUserFilters";
 import EnhancedBulkActions from "@/components/Admin/UserManagement/EnhancedBulkActions";
@@ -57,19 +70,6 @@ const AdminUsers = () => {
   const refreshData = () => {
     // Force refresh by updating filters
     setFilters({ ...filters });
-  };
-
-  const getRoleText = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'एडमिन';
-      case 'customer':
-        return 'ग्राहक';
-      case 'user':
-        return 'उपयोगकर्ता';
-      default:
-        return role;
-    }
   };
 
   if (isLoading) {
@@ -137,7 +137,7 @@ const AdminUsers = () => {
                       />
                     </TableHead>
                     <TableHead>उपयोगकर्ता</TableHead>
-                    <TableHead>भूमिका</TableHead>
+                    <TableHead>सब्स्क्रिप्शन</TableHead>
                     <TableHead>गतिविधि</TableHead>
                     <TableHead>शब्द बैलेंस</TableHead>
                     <TableHead>स्थिति</TableHead>
@@ -159,35 +159,35 @@ const AdminUsers = () => {
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                             <span className="text-sm font-medium text-blue-700">
-                              {user.name?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase()}
+                              {user.name?.charAt(0)?.toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <div className="font-medium">{user.name || 'नाम नहीं'}</div>
+                            <div className="font-medium">{user.name}</div>
                             <div className="text-sm text-gray-500">{user.email}</div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          user.role === 'admin' 
-                            ? 'bg-purple-100 text-purple-800'
-                            : user.role === 'customer'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {getRoleText(user.role)}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div>{user.usage_stats.total_corrections} सुधार</div>
-                          <div className="text-gray-500">{user.usage_stats.words_used_today} शब्द आज</div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            user.subscription_status === 'active' 
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {user.plan_name}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          <div className="font-medium">{user.word_balance.total_words_available} शब्द</div>
+                          <div>{user.total_corrections} सुधार</div>
+                          <div className="text-gray-500">{user.words_used} शब्द</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div className="font-medium">0 शब्द</div>
                           <div className="text-gray-500">उपलब्ध</div>
                         </div>
                       </TableCell>
@@ -217,14 +217,6 @@ const AdminUsers = () => {
                   ))}
                 </TableBody>
               </Table>
-              
-              {(!users || users.length === 0) && (
-                <div className="text-center py-12">
-                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">कोई उपयोगकर्ता नहीं मिला</h3>
-                  <p className="text-gray-600">खोज मानदंड बदलने का प्रयास करें या फिल्टर हटाएं</p>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
