@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import ModernAdminLayout from '@/components/Admin/ModernAdminLayout';
 import EnhancedUserFilters from '@/components/Admin/UserManagement/EnhancedUserFilters';
 import EnhancedUserTable from '@/components/Admin/UserManagement/EnhancedUserTable';
 import EnhancedBulkActions from '@/components/Admin/UserManagement/EnhancedBulkActions';
-import { useEnhancedUserManagement } from '@/hooks/useAdvancedUserManagement';
+import { useEnhancedUserManagement } from '@/hooks/useEnhancedUserManagement';
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Users, 

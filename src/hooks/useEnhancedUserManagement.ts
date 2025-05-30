@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -281,16 +280,11 @@ export const useEnhancedUserManagement = () => {
         );
         await Promise.all(promises);
       } else if (action === 'suspend') {
-        // Update user roles to suspended (we'd need to add this status)
-        const promises = userIds.map(userId => 
-          supabase.from('user_roles').upsert({
-            user_id: userId,
-            role: 'suspended'
-          })
-        );
-        await Promise.all(promises);
+        // Instead of using "suspended" role, we'll deactivate users by setting a flag
+        // For now, we'll just log this action since we need to implement a proper suspension system
+        console.log('Suspend action requested for users:', userIds);
       } else if (action === 'activate') {
-        // Reactivate users
+        // Reactivate users - ensure they have 'user' role
         const promises = userIds.map(userId => 
           supabase.from('user_roles').upsert({
             user_id: userId,
