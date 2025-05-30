@@ -70,9 +70,12 @@ const CorrectionsDropdown = ({ corrections }: CorrectionsDropdownProps) => {
     return null;
   }
 
-  // Group corrections by source
+  // Group corrections by source for better organization
   const dictionaryCorrections = corrections.filter(c => c.source === 'dictionary');
   const gptCorrections = corrections.filter(c => c.source === 'gpt' || !c.source);
+
+  console.log('Corrections dropdown - Dictionary corrections:', dictionaryCorrections);
+  console.log('Corrections dropdown - GPT corrections:', gptCorrections);
 
   return (
     <DropdownMenu>
@@ -87,7 +90,7 @@ const CorrectionsDropdown = ({ corrections }: CorrectionsDropdownProps) => {
           <ChevronDown className="h-4 w-4 ml-2" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96 max-h-96 overflow-y-auto bg-white border-0 shadow-2xl rounded-2xl p-2">
+      <DropdownMenuContent className="w-96 max-h-96 overflow-y-auto bg-white border-0 shadow-2xl rounded-2xl p-2 z-50">
         <DropdownMenuLabel className="text-base font-semibold text-slate-700 px-4 py-3">
           सभी सुधार ({corrections.length})
         </DropdownMenuLabel>

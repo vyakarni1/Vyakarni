@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
@@ -63,28 +62,38 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
+      console.log('=== 3-STEP GRAMMAR CORRECTION PROCESS ===');
+      console.log('Original input text:', inputText);
+      
       // Step 1: Apply dictionary corrections to input text
-      console.log('Step 1: Applying dictionary corrections to input');
+      console.log('STEP 1: Applying dictionary corrections to input text');
       const { correctedText: step1Text, corrections: step1Corrections } = applyDictionaryCorrections(inputText);
+      console.log('Step 1 result:', step1Text);
+      console.log('Step 1 corrections:', step1Corrections);
       
       // Step 2: Send dictionary-corrected text to GPT for grammar analysis
-      console.log('Step 2: Sending to GPT for grammar analysis');
+      console.log('STEP 2: Sending dictionary-corrected text to GPT');
       const gptResult = await callGrammarCheckAPI(step1Text);
+      console.log('GPT result:', gptResult.correctedText);
+      console.log('GPT corrections:', gptResult.corrections);
       
       // Step 3: Apply dictionary corrections again to GPT output
-      console.log('Step 3: Applying dictionary corrections to GPT output');
+      console.log('STEP 3: Applying dictionary corrections to GPT output');
       const { correctedText: finalText, corrections: step3Corrections } = applyDictionaryCorrections(gptResult.correctedText);
+      console.log('Final result:', finalText);
+      console.log('Step 3 corrections:', step3Corrections);
       
       completeProgress(setProgress, progressInterval);
       setCorrectedText(finalText);
       
-      // Combine all corrections: Step 1 + GPT + Step 3
+      // Combine all corrections with proper source attribution
       const allCorrections = [
-        ...step1Corrections,
+        ...step1Corrections.map(correction => ({ ...correction, source: 'dictionary' as const })),
         ...gptResult.corrections.map(correction => ({ ...correction, source: 'gpt' as const })),
-        ...step3Corrections
+        ...step3Corrections.map(correction => ({ ...correction, source: 'dictionary' as const }))
       ];
       
+      console.log('All corrections combined:', allCorrections);
       setCorrections(allCorrections);
       setIsLoading(false);
       

@@ -10,14 +10,8 @@ export const wordReplacements = [
     original: 'हुए',
     replacement: 'हुये'
   }, {
-    original: 'शभकामनाएं',
-    replacement: 'शभकामनायें'
-  }, {
-    original: 'शभकामनाएं',
-    replacement: 'शभकामनायें'
-  }, {
-    original: 'कामनाएं',
-    replacement: 'कामनायें'
+    original: 'शुभकामनाएं',
+    replacement: 'शुभकामनायें'
   }, {
     original: 'कामनाएं',
     replacement: 'कामनायें'
@@ -33,12 +27,6 @@ export const wordReplacements = [
   }, {
     original: 'समझाएं',
     replacement: 'समझायें'
-  }, {
-    original: 'समझाएं',
-    replacement: 'समझायें'
-  }, {
-    original: 'समझाए',
-    replacement: 'समझाये'
   }, {
     original: 'किए',
     replacement: 'किये'
@@ -63,9 +51,6 @@ export const wordReplacements = [
   }, {
     original: 'बरसाए',
     replacement: 'बरसाये'
-  }, {
-    original: 'पहुंचाए',
-    replacement: 'पहुंचाये'
   }, {
     original: 'पहुंचाए',
     replacement: 'पहुंचाये'
@@ -96,12 +81,6 @@ export const wordReplacements = [
   }, {
     original: 'पहुंचाई',
     replacement: 'पहुंचायी'
-  }, {
-    original: 'पहुंचाई',
-    replacement: 'पहुंचायी'
-  }, {
-    original: 'पहुंचवाई',
-    replacement: 'पहुंचवायी'
   }, {
     original: 'पहुंचवाई',
     replacement: 'पहुंचवायी'
@@ -138,12 +117,6 @@ export const wordReplacements = [
   }, {
     original: 'परम्पराएं',
     replacement: 'परम्परायें'
-  }, {
-    original: 'परम्पराएं',
-    replacement: 'परम्परायें'
-  }, {
-    original: 'परंपराएं',
-    replacement: 'परंपरायें'
   }, {
     original: 'परंपराएं',
     replacement: 'परंपरायें'

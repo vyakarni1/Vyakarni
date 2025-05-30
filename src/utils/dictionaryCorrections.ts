@@ -7,26 +7,26 @@ export const applyDictionaryCorrections = (text: string): { correctedText: strin
   const corrections: Correction[] = [];
 
   wordReplacements.forEach(({ original, replacement }) => {
+    // Use word boundary regex for precise matching
     const regex = new RegExp(`\\b${original}\\b`, 'g');
-    const matches = text.match(regex);
+    const matches = correctedText.match(regex);
     
     if (matches) {
+      console.log(`Dictionary correction found: "${original}" → "${replacement}" (${matches.length} occurrences)`);
       correctedText = correctedText.replace(regex, replacement);
       
-      // Track each unique correction
-      const existingCorrection = corrections.find(c => c.incorrect === original && c.correct === replacement);
-      if (!existingCorrection) {
-        corrections.push({
-          incorrect: original,
-          correct: replacement,
-          reason: "शब्दावली सुधार - मानक वर्तनी के अनुसार सुधार किया गया",
-          type: 'vocabulary',
-          source: 'dictionary'
-        });
-      }
+      // Track each occurrence as a separate correction
+      corrections.push({
+        incorrect: original,
+        correct: replacement,
+        reason: `शब्दावली सुधार - "${original}" को मानक वर्तनी "${replacement}" के अनुसार सुधार किया गया`,
+        type: 'vocabulary',
+        source: 'dictionary'
+      });
     }
   });
 
+  console.log(`Dictionary corrections applied: ${corrections.length} corrections found`);
   return { correctedText, corrections };
 };
 
@@ -41,7 +41,7 @@ export const trackDictionaryCorrections = (originalText: string, correctedText: 
       corrections.push({
         incorrect: original,
         correct: replacement,
-        reason: "शब्दावली सुधार - मानक वर्तनी के अनुसार सुधार किया गया",
+        reason: `शब्दावली सुधार - "${original}" को मानक वर्तनी "${replacement}" के अनुसार सुधार किया गया`,
         type: 'vocabulary',
         source: 'dictionary'
       });
