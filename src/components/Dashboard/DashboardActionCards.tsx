@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Sparkles, Coins, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -26,9 +27,12 @@ const DashboardActionCards = ({ profile, userEmail, balance }: DashboardActionCa
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-              {(profile?.name || userEmail?.[0] || 'U').toUpperCase()}
-            </div>
+            <Avatar className="h-12 w-12">
+              <AvatarImage src={profile?.avatar_url} alt="Profile" />
+              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg">
+                {(profile?.name || userEmail?.[0] || 'U').toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
             <div>
               <div className="text-xl font-bold text-gray-800">{profile?.name || "उपयोगकर्ता"}</div>
               <p className="text-sm text-gray-500">{userEmail}</p>
