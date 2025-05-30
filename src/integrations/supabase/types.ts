@@ -75,6 +75,41 @@ export type Database = {
         }
         Relationships: []
       }
+      password_reset_tokens: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          token: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          token: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "password_reset_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_transactions: {
         Row: {
           amount: number
@@ -127,21 +162,39 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          bio: string | null
           created_at: string | null
+          email_preferences: Json | null
           id: string
           name: string
+          phone: string | null
+          preferred_language: string | null
+          privacy_settings: Json | null
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
+          email_preferences?: Json | null
           id: string
           name: string
+          phone?: string | null
+          preferred_language?: string | null
+          privacy_settings?: Json | null
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
+          email_preferences?: Json | null
           id?: string
           name?: string
+          phone?: string | null
+          preferred_language?: string | null
+          privacy_settings?: Json | null
           updated_at?: string | null
         }
         Relationships: []
@@ -226,6 +279,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      user_login_activity: {
+        Row: {
+          created_at: string | null
+          device_info: Json | null
+          id: string
+          ip_address: unknown | null
+          location_info: Json | null
+          login_time: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          location_info?: Json | null
+          login_time?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          device_info?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          location_info?: Json | null
+          login_time?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_login_activity_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_notifications: {
         Row: {
@@ -538,6 +632,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_reset_tokens: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       deduct_words: {
         Args: {
           user_uuid: string
