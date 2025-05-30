@@ -38,24 +38,14 @@ export const useAdvancedUserManagement = () => {
   });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
-  // Fetch users with advanced filtering
+  // Fetch users with advanced filtering using separate queries to avoid relation issues
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['advanced-users', filters],
     queryFn: async () => {
-      let query = supabase
+      // Base profiles query
+      let profileQuery = supabase
         .from('profiles')
-        .select(`
-          id,
-          name,
-          created_at,
-          avatar_url,
-          user_subscriptions(
-            status,
-            subscription_plans(plan_name)
-          ),
-          word_usage_history(words_used),
-          user_login_activity(login_time)
-        `);
+        .select('id, name, created_at, avatar_url');
 
       // Apply date range filter
       if (filters.date_range !== 'all') {
@@ -71,24 +61,51 @@ export const useAdvancedUserManagement = () => {
             dateThreshold.setMonth(dateThreshold.getMonth() - 1);
             break;
         }
-        query = query.gte('created_at', dateThreshold.toISOString());
+        profileQuery = profileQuery.gte('created_at', dateThreshold.toISOString());
       }
 
       // Apply search filter
       if (filters.search) {
-        query = query.ilike('name', `%${filters.search}%`);
+        profileQuery = profileQuery.ilike('name', `%${filters.search}%`);
       }
 
-      const { data, error } = await query.order(filters.sort_by, { ascending: filters.sort_order === 'asc' });
+      const { data: profilesData, error: profilesError } = await profileQuery
+        .order(filters.sort_by, { ascending: filters.sort_order === 'asc' });
 
-      if (error) throw error;
+      if (profilesError) throw profilesError;
+
+      if (!profilesData || profilesData.length === 0) {
+        return [];
+      }
+
+      // Get subscription data separately
+      const { data: subscriptionsData, error: subError } = await supabase
+        .from('user_subscriptions')
+        .select(`
+          user_id,
+          status,
+          subscription_plans(plan_name)
+        `)
+        .in('user_id', profilesData.map(p => p.id));
+
+      if (subError) throw subError;
+
+      // Get usage data separately
+      const { data: usageData, error: usageError } = await supabase
+        .from('word_usage_history')
+        .select('user_id, words_used')
+        .in('user_id', profilesData.map(p => p.id));
+
+      if (usageError) throw usageError;
 
       // Process and transform the data
-      const processedUsers: UserWithDetails[] = data?.map(user => {
-        const subscription = user.user_subscriptions?.[0];
-        const totalCorrections = user.word_usage_history?.length || 0;
-        const wordsUsed = user.word_usage_history?.reduce((sum, usage) => sum + (usage.words_used || 0), 0) || 0;
-        const lastLogin = user.user_login_activity?.[0]?.login_time || user.created_at;
+      const processedUsers: UserWithDetails[] = profilesData.map(user => {
+        const userSubscriptions = subscriptionsData?.filter(s => s.user_id === user.id) || [];
+        const subscription = userSubscriptions[0];
+        const userUsage = usageData?.filter(u => u.user_id === user.id) || [];
+        const totalCorrections = userUsage.length;
+        const wordsUsed = userUsage.reduce((sum, usage) => sum + (usage.words_used || 0), 0);
+        const lastLogin = user.created_at;
 
         return {
           id: user.id,
@@ -96,13 +113,13 @@ export const useAdvancedUserManagement = () => {
           created_at: user.created_at,
           avatar_url: user.avatar_url,
           subscription_status: subscription?.status || 'free',
-          plan_name: subscription?.subscription_plans?.plan_name || 'Free',
+          plan_name: (subscription?.subscription_plans as any)?.plan_name || 'Free',
           total_corrections: totalCorrections,
           words_used: wordsUsed,
           last_login: lastLogin,
           is_active: new Date(lastLogin) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         };
-      }) || [];
+      });
 
       // Apply subscription status filter
       if (filters.subscription_status !== 'all') {

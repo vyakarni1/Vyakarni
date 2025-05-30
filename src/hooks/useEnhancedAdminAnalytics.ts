@@ -54,7 +54,12 @@ export const useEnhancedAdminAnalytics = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_cached_analytics');
       if (error) throw error;
-      return data as EnhancedAnalytics;
+      // Type assertion with proper validation
+      const result = data as unknown;
+      if (typeof result === 'object' && result !== null) {
+        return result as EnhancedAnalytics;
+      }
+      throw new Error('Invalid analytics data format');
     },
     refetchInterval: 30000, // Refresh every 30 seconds
   });
@@ -142,32 +147,48 @@ export const useEnhancedAdminAnalytics = () => {
     },
   });
 
-  // Fetch recent user activity
+  // Fetch recent user activity with separate queries to avoid relation issues
   const { data: userActivity, isLoading: activityLoading } = useQuery({
     queryKey: ['user-activity'],
     queryFn: async () => {
+      // Get profiles data
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          id,
-          name,
-          created_at,
-          user_subscriptions!inner(status),
-          word_usage_history(words_used)
-        `)
+        .select('id, name, created_at')
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (profilesError) throw profilesError;
 
-      return profiles?.map(profile => ({
-        user_id: profile.id,
-        user_name: profile.name,
-        last_login: profile.created_at,
-        corrections_count: profile.word_usage_history?.length || 0,
-        subscription_status: profile.user_subscriptions?.[0]?.status || 'free',
-        words_used: profile.word_usage_history?.reduce((sum, usage) => sum + (usage.words_used || 0), 0) || 0,
-      })) as UserActivity[];
+      // Get subscription data separately
+      const { data: subscriptions, error: subError } = await supabase
+        .from('user_subscriptions')
+        .select('user_id, status')
+        .in('user_id', profiles?.map(p => p.id) || []);
+
+      if (subError) throw subError;
+
+      // Get usage data separately
+      const { data: usageData, error: usageError } = await supabase
+        .from('word_usage_history')
+        .select('user_id, words_used')
+        .in('user_id', profiles?.map(p => p.id) || []);
+
+      if (usageError) throw usageError;
+
+      return profiles?.map(profile => {
+        const userSubscription = subscriptions?.find(s => s.user_id === profile.id);
+        const userUsage = usageData?.filter(u => u.user_id === profile.id) || [];
+        
+        return {
+          user_id: profile.id,
+          user_name: profile.name,
+          last_login: profile.created_at,
+          corrections_count: userUsage.length,
+          subscription_status: userSubscription?.status || 'free',
+          words_used: userUsage.reduce((sum, usage) => sum + (usage.words_used || 0), 0),
+        };
+      }) as UserActivity[];
     },
   });
 
