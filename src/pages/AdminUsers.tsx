@@ -59,6 +59,19 @@ const AdminUsers = () => {
     setFilters({ ...filters });
   };
 
+  const getRoleText = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'एडमिन';
+      case 'customer':
+        return 'ग्राहक';
+      case 'user':
+        return 'उपयोगकर्ता';
+      default:
+        return role;
+    }
+  };
+
   if (isLoading) {
     return (
       <AdminLayout>
@@ -159,9 +172,11 @@ const AdminUsers = () => {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           user.role === 'admin' 
                             ? 'bg-purple-100 text-purple-800'
+                            : user.role === 'customer'
+                            ? 'bg-blue-100 text-blue-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {user.role === 'admin' ? 'एडमिन' : 'उपयोगकर्ता'}
+                          {getRoleText(user.role)}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -202,6 +217,14 @@ const AdminUsers = () => {
                   ))}
                 </TableBody>
               </Table>
+              
+              {(!users || users.length === 0) && (
+                <div className="text-center py-12">
+                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">कोई उपयोगकर्ता नहीं मिला</h3>
+                  <p className="text-gray-600">खोज मानदंड बदलने का प्रयास करें या फिल्टर हटाएं</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -79,7 +79,7 @@ export const useUserData = (filters: UserFilters) => {
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
         const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
-        const userRole = userRoles[0]?.role || 'user';
+        const userRole = userRoles[0]?.role || 'customer'; // Default to customer instead of user
         
         // Calculate word balance
         const userWordCredits = wordCreditsData?.filter(w => w.user_id === user.id) || [];

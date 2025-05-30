@@ -10,20 +10,20 @@ export const useBulkOperations = () => {
   return useMutation({
     mutationFn: async ({ userIds, action, value }: { userIds: string[]; action: string; value?: any }) => {
       if (action === 'suspend') {
-        // Update user role to user (cannot use 'suspended' as it's not in the enum)
+        // Update user role to customer (cannot use 'suspended' as it's not in the enum)
         for (const userId of userIds) {
           const { error } = await supabase
             .from('user_roles')
-            .update({ role: 'user' })
+            .update({ role: 'customer' })
             .eq('user_id', userId);
           if (error) throw error;
         }
       } else if (action === 'activate') {
-        // Update user role to user
+        // Update user role to customer
         for (const userId of userIds) {
           const { error } = await supabase
             .from('user_roles')
-            .upsert({ user_id: userId, role: 'user' }, { onConflict: 'user_id' });
+            .upsert({ user_id: userId, role: 'customer' }, { onConflict: 'user_id' });
           if (error) throw error;
         }
       } else if (action === 'delete') {
