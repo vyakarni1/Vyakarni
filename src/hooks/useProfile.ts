@@ -24,7 +24,16 @@ export const useProfile = (userId?: string) => {
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Type the data properly to match our Profile interface
+      const profileData: Profile = {
+        ...data,
+        preferred_language: data.preferred_language as 'hindi' | 'english' || 'hindi',
+        email_preferences: data.email_preferences as Profile['email_preferences'],
+        privacy_settings: data.privacy_settings as Profile['privacy_settings']
+      };
+      
+      setProfile(profileData);
     } catch (err) {
       console.error('Error fetching profile:', err);
       setError("प्रोफाइल लोड करने में त्रुटि");
@@ -50,7 +59,15 @@ export const useProfile = (userId?: string) => {
 
       if (error) throw error;
 
-      setProfile(data);
+      // Type the response data properly
+      const profileData: Profile = {
+        ...data,
+        preferred_language: data.preferred_language as 'hindi' | 'english' || 'hindi',
+        email_preferences: data.email_preferences as Profile['email_preferences'],
+        privacy_settings: data.privacy_settings as Profile['privacy_settings']
+      };
+
+      setProfile(profileData);
       return true;
     } catch (err) {
       console.error('Error updating profile:', err);
