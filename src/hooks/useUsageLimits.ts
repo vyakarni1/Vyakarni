@@ -12,8 +12,8 @@ export const useUsageLimits = () => {
     
     if (!subscription) return false;
 
-    // Check if text exceeds per-correction word limit
-    if (!checkWordLimit(text)) {
+    // Check if text exceeds per-correction word limit - pass wordCount instead of text
+    if (!checkWordLimit(wordCount)) {
       return false;
     }
 
