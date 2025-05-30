@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_audit_logs: {
+        Row: {
+          action_type: string
+          admin_id: string | null
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          action_type: string
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       admin_logs: {
         Row: {
           action: string
@@ -36,6 +75,30 @@ export type Database = {
           id?: string
           target_id?: string | null
           target_type?: string | null
+        }
+        Relationships: []
+      }
+      analytics_cache: {
+        Row: {
+          cache_data: Json
+          cache_key: string
+          created_at: string | null
+          expires_at: string
+          id: string
+        }
+        Insert: {
+          cache_data: Json
+          cache_key: string
+          created_at?: string | null
+          expires_at: string
+          id?: string
+        }
+        Update: {
+          cache_data?: Json
+          cache_key?: string
+          created_at?: string | null
+          expires_at?: string
+          id?: string
         }
         Relationships: []
       }
@@ -72,6 +135,42 @@ export type Database = {
           name?: string
           status?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          body_html: string
+          body_text: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          subject: string
+          template_name: string
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          body_html: string
+          body_text?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          subject: string
+          template_name: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          body_html?: string
+          body_text?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          subject?: string
+          template_name?: string
+          updated_at?: string | null
+          variables?: Json | null
         }
         Relationships: []
       }
@@ -238,6 +337,42 @@ export type Database = {
           price_monthly?: number
           price_yearly?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      system_notifications: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          target_audience: string | null
+          title: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          target_audience?: string | null
+          title: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          target_audience?: string | null
+          title?: string
+          type?: string | null
         }
         Relationships: []
       }
@@ -593,7 +728,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_analytics_summary: {
+        Row: {
+          active_subscriptions: number | null
+          corrections_this_month: number | null
+          corrections_this_week: number | null
+          corrections_today: number | null
+          revenue_this_month: number | null
+          total_revenue: number | null
+          total_users: number | null
+          users_this_month: number | null
+          users_this_week: number | null
+          users_today: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       cleanup_expired_reset_tokens: {
@@ -608,6 +757,10 @@ export type Database = {
           text_content?: string
         }
         Returns: boolean
+      }
+      get_cached_analytics: {
+        Args: { cache_duration_minutes?: number }
+        Returns: Json
       }
       get_monthly_usage: {
         Args: { user_uuid: string }
@@ -671,6 +824,19 @@ export type Database = {
       is_admin: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          p_admin_id: string
+          p_action_type: string
+          p_resource_type: string
+          p_resource_id?: string
+          p_old_values?: Json
+          p_new_values?: Json
+          p_ip_address?: unknown
+          p_user_agent?: string
+        }
+        Returns: string
       }
       update_system_setting: {
         Args: { key_name: string; new_value: Json; updated_by?: string }
