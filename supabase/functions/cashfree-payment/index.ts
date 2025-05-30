@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -126,8 +125,8 @@ async function createOrder(req: Request, supabase: any, user: any) {
   // Generate unique order ID
   const orderId = `ORDER_${Date.now()}_${user.id.slice(0, 8)}`
 
-  // Get the origin from request headers for return URL
-  const origin = req.headers.get('origin') || 'https://lovableproject.com'
+  // Get the origin from request headers for return URL, fallback to vyakarni.com
+  const origin = req.headers.get('origin') || 'https://vyakarni.com'
   
   // Prepare Cashfree order data with flexible return URL
   const orderData = {
