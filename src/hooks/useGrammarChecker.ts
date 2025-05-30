@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useWordLimits } from "@/hooks/useWordLimits";
+import { useTextHighlighting } from "@/hooks/useTextHighlighting";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import { extractStyleEnhancements } from "@/utils/textProcessing";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from "@/services/grammarApi";
@@ -21,6 +22,9 @@ export const useGrammarChecker = () => {
   const [corrections, setCorrections] = useState<Correction[]>([]);
   const { trackUsage } = useUsageStats();
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
+  
+  // Add highlighting functionality
+  const highlighting = useTextHighlighting();
 
   const checkWordLimit = (text: string): boolean => {
     const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
@@ -44,12 +48,10 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check 1000 word limit first
     if (!checkWordLimit(inputText)) {
       return;
     }
 
-    // Check word limits before processing (existing word credit system)
     if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
@@ -59,6 +61,7 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setCorrectedText('');
     setCorrections([]);
+    highlighting.clearHighlight();
 
     const progressInterval = createProgressSimulator(setProgress);
 
@@ -67,14 +70,12 @@ export const useGrammarChecker = () => {
       console.log('Original input text:', inputText);
       console.log('Input text length:', inputText.length);
       
-      // Step 1: Apply dictionary corrections to input text
-      console.log('\n=== STEP 1: Dictionary corrections on input ===');
       const { correctedText: step1Text, corrections: step1Corrections } = applyDictionaryCorrections(inputText);
+      console.log('\n=== STEP 1: Dictionary corrections on input ===');
       console.log('Step 1 input:', inputText);
       console.log('Step 1 output:', step1Text);
       console.log('Step 1 corrections found:', step1Corrections.length);
       
-      // Step 2: Send dictionary-corrected text to GPT for grammar analysis
       console.log('\n=== STEP 2: GPT analysis on dictionary-corrected text ===');
       console.log('Sending to GPT:', step1Text);
       const gptResult = await callGrammarCheckAPI(step1Text);
@@ -82,30 +83,25 @@ export const useGrammarChecker = () => {
       console.log('GPT output:', gptResult.correctedText);
       console.log('GPT corrections found:', gptResult.corrections.length);
       
-      // Step 3: Apply dictionary corrections again to GPT output
       console.log('\n=== STEP 3: Dictionary corrections on GPT output ===');
       const { correctedText: step3Text, corrections: step3Corrections } = applyDictionaryCorrections(gptResult.correctedText);
       console.log('Step 3 input:', gptResult.correctedText);
       console.log('Step 3 output:', step3Text);
       console.log('Step 3 corrections found:', step3Corrections.length);
       
-      // Step 4: FINAL DICTIONARY PASS - New robust correction
       console.log('\n=== STEP 4: FINAL DICTIONARY PASS (NEW ROBUST METHOD) ===');
       const { correctedText: finalText, corrections: finalCorrections } = applyFinalDictionaryCorrections(step3Text);
       console.log('Step 4 input:', step3Text);
       console.log('Step 4 output:', finalText);
       console.log('Step 4 corrections found:', finalCorrections.length);
       
-      // Verify specific corrections are present
       console.log('\n=== FINAL TEXT VERIFICATION ===');
       verifyCorrections(finalText);
       
       completeProgress(setProgress, progressInterval);
       
-      // Set the final corrected text with ALL corrections applied
       setCorrectedText(finalText);
       
-      // Combine all corrections
       const allCorrections = [
         ...step1Corrections.map(correction => ({ 
           ...correction, 
@@ -139,7 +135,6 @@ export const useGrammarChecker = () => {
       setCorrections(allCorrections);
       setIsLoading(false);
       
-      // Track usage for both systems
       await trackUsage('grammar_check');
       await trackWordUsage(inputText, 'grammar_check');
       
@@ -159,12 +154,10 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    // Check 1000 word limit first
     if (!checkWordLimit(inputText)) {
       return;
     }
 
-    // Check word limits before processing (existing word credit system)
     if (!checkAndEnforceWordLimit(inputText)) {
       return;
     }
@@ -174,6 +167,7 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setEnhancedText('');
     setCorrections([]);
+    highlighting.clearHighlight();
 
     const progressInterval = createProgressSimulator(setProgress);
 
@@ -188,7 +182,6 @@ export const useGrammarChecker = () => {
       
       setIsLoading(false);
       
-      // Track usage for both systems
       await trackUsage('style_enhance');
       await trackWordUsage(inputText, 'style_enhance');
       
@@ -208,6 +201,7 @@ export const useGrammarChecker = () => {
     setProgress(0);
     setCorrections([]);
     setProcessingMode('grammar');
+    highlighting.clearHighlight();
   };
 
   const copyToClipboard = async () => {
@@ -235,6 +229,7 @@ export const useGrammarChecker = () => {
     enhanceStyle,
     resetText,
     copyToClipboard,
-    getCurrentProcessedText
+    getCurrentProcessedText,
+    highlighting
   };
 };

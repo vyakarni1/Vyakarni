@@ -7,7 +7,9 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CheckCircle, Copy, ArrowRight, Sparkles } from "lucide-react";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
+import { HighlightedSegment } from '@/hooks/useTextHighlighting';
 import CorrectionsDropdown from './CorrectionsDropdown';
+import HighlightedText from './HighlightedText';
 
 interface CorrectedTextPanelProps {
   correctedText: string;
@@ -17,6 +19,10 @@ interface CorrectedTextPanelProps {
   processingMode: ProcessingMode;
   progress: number;
   onCopyToClipboard: () => void;
+  highlightedSegments?: HighlightedSegment[];
+  onSegmentClick?: (correctionIndex: number) => void;
+  selectedCorrectionIndex?: number | null;
+  onCorrectionClick?: (index: number) => void;
 }
 
 const CorrectedTextPanel = ({ 
@@ -26,7 +32,11 @@ const CorrectedTextPanel = ({
   isLoading, 
   processingMode,
   progress, 
-  onCopyToClipboard 
+  onCopyToClipboard,
+  highlightedSegments = [],
+  onSegmentClick,
+  selectedCorrectionIndex,
+  onCorrectionClick
 }: CorrectedTextPanelProps) => {
   const currentText = processingMode === 'style' ? enhancedText : correctedText;
   const wordCount = currentText.trim() ? currentText.trim().split(/\s+/).length : 0;
@@ -54,7 +64,11 @@ const CorrectedTextPanel = ({
                 {wordCount} शब्द
               </Badge>
             )}
-            <CorrectionsDropdown corrections={corrections} />
+            <CorrectionsDropdown 
+              corrections={corrections} 
+              selectedCorrectionIndex={selectedCorrectionIndex}
+              onCorrectionClick={onCorrectionClick}
+            />
           </div>
         </div>
       </CardHeader>
@@ -63,9 +77,17 @@ const CorrectedTextPanel = ({
           {currentText ? (
             <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
               <div className="p-4 sm:p-6">
-                <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
-                  {currentText}
-                </p>
+                {highlightedSegments.length > 0 ? (
+                  <HighlightedText 
+                    segments={highlightedSegments}
+                    onSegmentClick={onSegmentClick}
+                    className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap"
+                  />
+                ) : (
+                  <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
+                    {currentText}
+                  </p>
+                )}
               </div>
             </ScrollArea>
           ) : (
@@ -85,7 +107,6 @@ const CorrectedTextPanel = ({
           )}
         </div>
         
-        {/* Progress Bar */}
         {isLoading && (
           <div className="mt-6 sm:mt-8 flex-shrink-0">
             <div className="flex items-center justify-between mb-3">
