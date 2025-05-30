@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Crown, Zap, Users, CheckCircle } from "lucide-react";
+import { Crown, Zap, Users, CheckCircle, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSubscription } from "@/hooks/useSubscription";
 
@@ -26,16 +26,15 @@ const PlanInfoCard = () => {
   const currentPlan = subscription || {
     plan_name: 'Free',
     plan_type: 'free',
-    max_words_per_correction: 100,
-    max_corrections_per_month: 5,
-    features: ['व्याकरण सुधार', 'वर्तनी जांच', 'मूल सुधार']
+    max_words_per_correction: 1000,
+    features: ['व्याकरण सुधार', 'वर्तनी जांच', '1000 शब्द प्रति सुधार']
   };
 
   const getPlanIcon = () => {
     switch (currentPlan.plan_type) {
       case 'pro':
         return <Zap className="h-5 w-5" />;
-      case 'team':
+      case 'premium':
         return <Crown className="h-5 w-5" />;
       default:
         return <Users className="h-5 w-5" />;
@@ -46,7 +45,7 @@ const PlanInfoCard = () => {
     switch (currentPlan.plan_type) {
       case 'pro':
         return 'from-blue-500 to-purple-600';
-      case 'team':
+      case 'premium':
         return 'from-purple-600 to-pink-600';
       default:
         return 'from-gray-500 to-gray-600';
@@ -57,7 +56,7 @@ const PlanInfoCard = () => {
     switch (currentPlan.plan_type) {
       case 'pro':
         return 'bg-blue-100 text-blue-800';
-      case 'team':
+      case 'premium':
         return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -89,12 +88,16 @@ const PlanInfoCard = () => {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-600">शब्द सीमा:</span>
-              <div className="font-semibold">{currentPlan.max_words_per_correction}</div>
+              <div className="font-semibold flex items-center">
+                <FileText className="h-4 w-4 mr-1 text-blue-500" />
+                {currentPlan.max_words_per_correction}
+              </div>
             </div>
             <div>
-              <span className="text-gray-600">मासिक सुधार:</span>
-              <div className="font-semibold">
-                {currentPlan.max_corrections_per_month === -1 ? 'असीमित' : currentPlan.max_corrections_per_month}
+              <span className="text-gray-600">टीम सदस्य:</span>
+              <div className="font-semibold flex items-center">
+                <Users className="h-4 w-4 mr-1 text-purple-500" />
+                {subscription?.max_team_members || 1}
               </div>
             </div>
           </div>

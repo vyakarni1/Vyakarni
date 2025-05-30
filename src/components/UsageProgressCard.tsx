@@ -3,14 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle, TrendingUp } from "lucide-react";
+import { Coins, CheckCircle, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useUsageLimits } from "@/hooks/useUsageLimits";
+import { useWordCredits } from "@/hooks/useWordCredits";
 
 const UsageProgressCard = () => {
-  const { subscription, usage, getRemainingCorrections, getUsagePercentage } = useUsageLimits();
+  const { balance, loading } = useWordCredits();
 
-  if (!usage) {
+  if (loading) {
     return (
       <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
         <CardHeader>
@@ -23,27 +23,21 @@ const UsageProgressCard = () => {
     );
   }
 
-  const remainingCorrections = getRemainingCorrections();
-  const usagePercentage = getUsagePercentage();
-  const isUnlimited = usage.max_corrections === -1;
-  const isNearLimit = usagePercentage > 80 && !isUnlimited;
-  const isAtLimit = usagePercentage >= 100 && !isUnlimited;
+  const isLowBalance = balance.total_words_available < 100;
+  const isGoodBalance = balance.total_words_available > 1000;
 
   const getStatusIcon = () => {
-    if (isAtLimit) return <AlertTriangle className="h-5 w-5 text-red-500" />;
-    if (isNearLimit) return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+    if (isLowBalance) return <Coins className="h-5 w-5 text-orange-500" />;
     return <CheckCircle className="h-5 w-5 text-green-500" />;
   };
 
   const getStatusColor = () => {
-    if (isAtLimit) return 'bg-red-100 text-red-800';
-    if (isNearLimit) return 'bg-yellow-100 text-yellow-800';
+    if (isLowBalance) return 'bg-orange-100 text-orange-800';
     return 'bg-green-100 text-green-800';
   };
 
   const getProgressColor = () => {
-    if (isAtLimit) return 'bg-red-100';
-    if (isNearLimit) return 'bg-yellow-100';
+    if (isLowBalance) return 'bg-orange-100';
     return 'bg-green-100';
   };
 
@@ -55,75 +49,68 @@ const UsageProgressCard = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl text-gray-800 flex items-center space-x-2">
             <TrendingUp className="h-5 w-5 text-blue-500" />
-            <span>इस महीने का उपयोग</span>
+            <span>शब्द बैलेंस</span>
           </CardTitle>
           {getStatusIcon()}
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Corrections Usage */}
+        {/* Word Balance */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-700">सुधार उपयोग</span>
+            <span className="text-sm font-medium text-gray-700">उपलब्ध शब्द</span>
             <Badge className={getStatusColor()}>
-              {isUnlimited ? 'असीमित' : `${usage.corrections_used}/${usage.max_corrections}`}
+              {balance.total_words_available.toLocaleString()} शब्द
             </Badge>
           </div>
           
-          {!isUnlimited && (
-            <Progress 
-              value={usagePercentage} 
-              className={`h-3 ${getProgressColor()}`}
-            />
-          )}
+          <Progress 
+            value={Math.min((balance.total_words_available / 2000) * 100, 100)} 
+            className={`h-3 ${getProgressColor()}`}
+          />
           
           <div className="flex justify-between text-xs text-gray-500">
             <span>
-              {isUnlimited ? 'असीमित सुधार' : `${remainingCorrections} सुधार शेष`}
+              {balance.free_words > 0 ? `${balance.free_words} फ्री शब्द` : 'सभी शब्द खरीदे गए'}
             </span>
-            <span>{isUnlimited ? '∞' : `${usagePercentage.toFixed(0)}%`}</span>
+            <span>{isGoodBalance ? 'बहुत अच्छा' : isLowBalance ? 'कम बैलेंस' : 'ठीक है'}</span>
           </div>
         </div>
 
-        {/* Words Usage */}
+        {/* Word Breakdown */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-700">शब्द प्रसंस्करण</span>
-            <span className="text-sm font-medium text-blue-600">{usage.words_processed}</span>
+            <span className="text-sm font-medium text-gray-700">खरीदे गए शब्द</span>
+            <span className="text-sm font-medium text-purple-600">{balance.purchased_words.toLocaleString()}</span>
           </div>
           <div className="text-xs text-gray-500">
-            प्रति सुधार अधिकतम: {usage.max_words_per_correction} शब्द
+            {balance.next_expiry_date 
+              ? `समाप्ति: ${new Date(balance.next_expiry_date).toLocaleDateString('hi-IN')}`
+              : 'कोई समाप्ति नहीं'
+            }
           </div>
         </div>
 
         {/* Status Messages */}
-        {isAtLimit && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-800 mb-2">
-              🚫 मासिक सीमा समाप्त! अधिक सुधार के लिए अपग्रेड करें।
+        {isLowBalance && (
+          <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+            <p className="text-sm text-orange-800 mb-2">
+              ⚠️ शब्द बैलेंस कम है! अधिक शब्द खरीदें।
             </p>
             <Link to="/pricing">
-              <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
-                अभी अपग्रेड करें
+              <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
+                शब्द खरीदें
               </Button>
             </Link>
           </div>
         )}
 
-        {isNearLimit && !isAtLimit && (
-          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              ⚠️ सीमा लगभग समाप्त! अधिक सुधार के लिए प्रो प्लान पर विचार करें।
-            </p>
-          </div>
-        )}
-
-        {isUnlimited && (
+        {isGoodBalance && (
           <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
             <p className="text-sm text-green-800 flex items-center">
               <CheckCircle className="h-4 w-4 mr-2" />
-              असीमित सुधार उपलब्ध! आपका {subscription?.plan_name || 'Pro'} प्लान सक्रिय है।
+              बहुत अच्छा! आपके पास पर्याप्त शब्द हैं।
             </p>
           </div>
         )}

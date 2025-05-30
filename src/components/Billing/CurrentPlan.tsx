@@ -111,12 +111,9 @@ const CurrentPlan = () => {
               <div className="flex items-center space-x-3">
                 <FileText className="h-5 w-5 text-green-500" />
                 <div>
-                  <p className="font-medium">मासिक सुधार सीमा</p>
+                  <p className="font-medium">शब्द सीमा प्रति सुधार</p>
                   <p className="text-sm text-gray-600">
-                    {subscription.max_corrections_per_month === -1 
-                      ? 'असीमित' 
-                      : subscription.max_corrections_per_month
-                    }
+                    {subscription.max_words_per_correction} शब्द
                   </p>
                 </div>
               </div>
@@ -160,22 +157,12 @@ const CurrentPlan = () => {
           <CardTitle>उपयोग सीमाएं</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <div className="text-2xl font-bold text-blue-600">
                 {subscription.max_words_per_correction}
               </div>
               <p className="text-sm text-blue-800">शब्द प्रति सुधार</p>
-            </div>
-            
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
-                {subscription.max_corrections_per_month === -1 
-                  ? '∞' 
-                  : subscription.max_corrections_per_month
-                }
-              </div>
-              <p className="text-sm text-green-800">मासिक सुधार</p>
             </div>
             
             <div className="text-center p-4 bg-purple-50 rounded-lg">
@@ -197,7 +184,7 @@ const CurrentPlan = () => {
                 प्रो प्लान में अपग्रेड करें
               </h3>
               <p className="text-orange-700 mb-4">
-                असीमित सुधार और एडवांस फीचर्स का लाभ उठाएं
+                अधिक शब्द सीमा और एडवांस फीचर्स का लाभ उठाएं
               </p>
               <Link to="/pricing">
                 <Button className="bg-orange-600 hover:bg-orange-700">

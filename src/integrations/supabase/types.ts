@@ -205,7 +205,6 @@ export type Database = {
           features: Json | null
           id: string
           is_active: boolean
-          max_corrections_per_month: number
           max_team_members: number
           max_words_per_correction: number
           plan_name: string
@@ -219,7 +218,6 @@ export type Database = {
           features?: Json | null
           id?: string
           is_active?: boolean
-          max_corrections_per_month?: number
           max_team_members?: number
           max_words_per_correction?: number
           plan_name: string
@@ -233,7 +231,6 @@ export type Database = {
           features?: Json | null
           id?: string
           is_active?: boolean
-          max_corrections_per_month?: number
           max_team_members?: number
           max_words_per_correction?: number
           plan_name?: string
@@ -450,39 +447,6 @@ export type Database = {
           created_at?: string
           id?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      user_usage_monthly: {
-        Row: {
-          corrections_used: number
-          created_at: string
-          id: string
-          month: number
-          updated_at: string
-          user_id: string
-          words_processed: number
-          year: number
-        }
-        Insert: {
-          corrections_used?: number
-          created_at?: string
-          id?: string
-          month: number
-          updated_at?: string
-          user_id: string
-          words_processed?: number
-          year: number
-        }
-        Update: {
-          corrections_used?: number
-          created_at?: string
-          id?: string
-          month?: number
-          updated_at?: string
-          user_id?: string
-          words_processed?: number
-          year?: number
         }
         Relationships: []
       }
