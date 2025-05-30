@@ -17,10 +17,18 @@ const GoogleAuthButton = ({ mode }: GoogleAuthButtonProps) => {
     try {
       console.log('Starting Google OAuth flow for:', mode);
       
+      // Determine the correct redirect URL based on environment
+      const isProduction = window.location.hostname === 'vyakarni.com';
+      const redirectTo = isProduction 
+        ? 'https://vyakarni.com/dashboard'
+        : `${window.location.origin}/dashboard`;
+      
+      console.log('Redirect URL:', redirectTo);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

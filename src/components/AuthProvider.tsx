@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { cleanupAuthState, handleAuthRedirect } from '@/utils/authUtils';
 
 interface AuthContextType {
   user: User | null;
@@ -32,9 +33,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      cleanupAuthState();
+      await supabase.auth.signOut({ scope: 'global' });
       setUser(null);
       setSession(null);
+      // Force redirect to home page
+      window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -42,6 +46,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let mounted = true;
+
+    // Check for auth redirect on mount
+    const shouldRedirect = handleAuthRedirect();
+    if (shouldRedirect) {
+      return;
+    }
 
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -56,6 +66,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           
           // For Google OAuth, ensure profile exists after successful login
           if (event === 'SIGNED_IN' && session.user.app_metadata?.provider === 'google') {
+            // Handle domain redirect for Google OAuth
+            const isProduction = window.location.hostname === 'vyakarni.com';
+            if (!isProduction && window.location.hostname.includes('lovable.app')) {
+              // Store session info and redirect to production
+              localStorage.setItem('auth_redirect_pending', 'true');
+              window.location.href = 'https://vyakarni.com/dashboard';
+              return;
+            }
+            
             setTimeout(async () => {
               try {
                 // Check if profile exists
@@ -96,6 +115,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
+          
+          // Clear any pending auth redirect flag
+          localStorage.removeItem('auth_redirect_pending');
         }
       } catch (error) {
         console.error('Error getting session:', error);

@@ -10,6 +10,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
+import { cleanupAuthState } from "@/utils/authUtils";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -38,7 +39,18 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // Clean up any existing auth state
+      cleanupAuthState();
+      
+      // Attempt global sign out first
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+        console.log('Global signout failed, continuing with login');
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -46,7 +58,9 @@ const Login = () => {
       if (error) throw error;
 
       toast.success("सफलतापूर्वक लॉग इन हो गए!");
-      navigate("/dashboard");
+      
+      // Force page reload to ensure clean state
+      window.location.href = "/dashboard";
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error(error.message || "लॉग इन में त्रुटि");
