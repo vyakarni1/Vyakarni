@@ -53,9 +53,9 @@ export const useCashfreePayment = () => {
         await loadCashfreeSDK();
       }
 
-      // Initialize Cashfree checkout
+      // Initialize Cashfree checkout in production mode
       const cashfree = window.Cashfree({
-        mode: "sandbox", // Change to "production" for live
+        mode: "production", // Changed from sandbox to production
       });
 
       const checkoutOptions = {
@@ -63,11 +63,14 @@ export const useCashfreePayment = () => {
         returnUrl: `${window.location.origin}/billing?payment=success&order_id=${data.order_id}`,
       };
 
+      console.log('Opening Cashfree checkout with options:', checkoutOptions);
+
       // Open Cashfree checkout
       cashfree.checkout(checkoutOptions).then((result: any) => {
         console.log('Payment result:', result);
         
         if (result.error) {
+          console.error('Payment error:', result.error);
           toast({
             title: "भुगतान त्रुटि",
             description: result.error.message || "भुगतान में त्रुटि हुई।",
@@ -75,6 +78,7 @@ export const useCashfreePayment = () => {
           });
         } else if (result.redirect) {
           // Payment completed, user will be redirected
+          console.log('Payment completed, redirecting...');
           toast({
             title: "भुगतान सफल",
             description: "आपका भुगतान सफलतापूर्वक पूरा हुआ।",
