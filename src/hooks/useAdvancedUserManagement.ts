@@ -20,10 +20,13 @@ interface UserWithDetails {
 
 interface UserFilters {
   search: string;
-  subscription_status: string;
-  date_range: 'all' | 'today' | 'week' | 'month';
-  sort_by: 'name' | 'created_at' | 'corrections' | 'words_used';
-  sort_order: 'asc' | 'desc';
+  role: string;
+  activity_status: string;
+  word_balance_range: string;
+  profile_completion: string;
+  date_range: string;
+  sort_by: string;
+  sort_order: string;
 }
 
 export const useAdvancedUserManagement = () => {
@@ -31,7 +34,10 @@ export const useAdvancedUserManagement = () => {
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
-    subscription_status: 'all',
+    role: 'all',
+    activity_status: 'all',
+    word_balance_range: 'all',
+    profile_completion: 'all',
     date_range: 'all',
     sort_by: 'created_at',
     sort_order: 'desc',
