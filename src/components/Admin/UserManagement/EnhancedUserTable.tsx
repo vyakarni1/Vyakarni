@@ -17,11 +17,7 @@ import {
   MoreHorizontal, 
   Edit, 
   Trash2, 
-  Shield, 
   Eye,
-  Coins,
-  Activity,
-  Calendar,
   Crown,
   User,
   Phone,
@@ -106,20 +102,6 @@ const EnhancedUserTable = ({
     }
   };
 
-  const getWordBalanceColor = (balance: number) => {
-    if (balance === 0) return 'text-red-600';
-    if (balance < 100) return 'text-orange-600';
-    if (balance < 1000) return 'text-blue-600';
-    return 'text-green-600';
-  };
-
-  const getWordBalanceIcon = (balance: number) => {
-    if (balance === 0) return '💸';
-    if (balance < 100) return '⚠️';
-    if (balance < 1000) return '💰';
-    return '💎';
-  };
-
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardContent className="p-0">
@@ -135,10 +117,8 @@ const EnhancedUserTable = ({
                 </TableHead>
                 <TableHead className="text-gray-700 font-semibold">उपयोगकर्ता</TableHead>
                 <TableHead className="text-gray-700 font-semibold">भूमिका और स्थिति</TableHead>
-                <TableHead className="text-gray-700 font-semibold">शब्द बैलेंस</TableHead>
                 <TableHead className="text-gray-700 font-semibold">प्रोफ़ाइल पूर्णता</TableHead>
-                <TableHead className="text-gray-700 font-semibold">उपयोग आंकड़े</TableHead>
-                <TableHead className="text-gray-700 font-semibold">अंतिम गतिविधि</TableHead>
+                <TableHead className="text-gray-700 font-semibold">निर्माण तिथि</TableHead>
                 <TableHead className="text-center text-gray-700 font-semibold">कार्य</TableHead>
               </TableRow>
             </TableHeader>
@@ -184,7 +164,6 @@ const EnhancedUserTable = ({
                         <Badge variant={getRoleBadgeVariant(user.role)} className="text-xs">
                           {user.role === 'admin' && <Crown className="h-3 w-3 mr-1" />}
                           {user.role === 'user' && <User className="h-3 w-3 mr-1" />}
-                          {user.role === 'suspended' && <Shield className="h-3 w-3 mr-1" />}
                           {getRoleText(user.role)}
                         </Badge>
                       </div>
@@ -193,28 +172,6 @@ const EnhancedUserTable = ({
                         <span className={`text-xs ${user.is_active ? 'text-green-700' : 'text-gray-500'}`}>
                           {user.is_active ? 'सक्रिय' : 'निष्क्रिय'}
                         </span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  
-                  {/* Word Balance */}
-                  <TableCell>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg">{getWordBalanceIcon(user.word_balance.total_words_available)}</span>
-                        <span className={`font-bold text-lg ${getWordBalanceColor(user.word_balance.total_words_available)}`}>
-                          {user.word_balance.total_words_available.toLocaleString()}
-                        </span>
-                        <Coins className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <div className="text-xs text-gray-500 space-y-1">
-                        <div>मुफ्त: {user.word_balance.free_words}</div>
-                        <div>खरीदे गए: {user.word_balance.purchased_words}</div>
-                        {user.word_balance.next_expiry_date && (
-                          <div className="text-orange-600">
-                            समाप्ति: {new Date(user.word_balance.next_expiry_date).toLocaleDateString('hi-IN')}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </TableCell>
@@ -232,34 +189,13 @@ const EnhancedUserTable = ({
                     </div>
                   </TableCell>
                   
-                  {/* Usage Stats */}
+                  {/* Created Date */}
                   <TableCell>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <Activity className="h-3 w-3 text-blue-500" />
-                        <span>{user.usage_stats.total_corrections} सुधार</span>
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        आज: {user.usage_stats.words_used_today} शब्द
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        इस महीने: {user.usage_stats.words_used_this_month} शब्द
-                      </div>
+                    <div className="text-sm text-gray-900">
+                      {new Date(user.created_at).toLocaleDateString('hi-IN')}
                     </div>
-                  </TableCell>
-                  
-                  {/* Last Activity */}
-                  <TableCell>
-                    <div className="flex items-center space-x-1 text-sm">
-                      <Calendar className="h-3 w-3 text-gray-400" />
-                      <div>
-                        <div className="text-gray-900">
-                          {user.last_login ? new Date(user.last_login).toLocaleDateString('hi-IN') : 'कभी नहीं'}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {user.last_login ? new Date(user.last_login).toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' }) : ''}
-                        </div>
-                      </div>
+                    <div className="text-xs text-gray-500">
+                      {new Date(user.created_at).toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </TableCell>
                   
@@ -279,11 +215,6 @@ const EnhancedUserTable = ({
                         <DropdownMenuItem onClick={() => onEditUser(user)}>
                           <Edit className="h-4 w-4 mr-2" />
                           संपादित करें
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => onManageCredits(user)}>
-                          <Coins className="h-4 w-4 mr-2" />
-                          शब्द क्रेडिट प्रबंधन
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
