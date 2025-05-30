@@ -62,38 +62,64 @@ export const useGrammarChecker = () => {
     const progressInterval = createProgressSimulator(setProgress);
 
     try {
-      console.log('=== 3-STEP GRAMMAR CORRECTION PROCESS ===');
+      console.log('=== 3-STEP GRAMMAR CORRECTION PROCESS START ===');
       console.log('Original input text:', inputText);
       
       // Step 1: Apply dictionary corrections to input text
-      console.log('STEP 1: Applying dictionary corrections to input text');
+      console.log('\n--- STEP 1: Dictionary corrections on input ---');
       const { correctedText: step1Text, corrections: step1Corrections } = applyDictionaryCorrections(inputText);
-      console.log('Step 1 result:', step1Text);
+      console.log('Step 1 input:', inputText);
+      console.log('Step 1 output:', step1Text);
+      console.log('Step 1 corrections found:', step1Corrections.length);
       console.log('Step 1 corrections:', step1Corrections);
       
       // Step 2: Send dictionary-corrected text to GPT for grammar analysis
-      console.log('STEP 2: Sending dictionary-corrected text to GPT');
+      console.log('\n--- STEP 2: GPT analysis on dictionary-corrected text ---');
+      console.log('Sending to GPT:', step1Text);
       const gptResult = await callGrammarCheckAPI(step1Text);
-      console.log('GPT result:', gptResult.correctedText);
+      console.log('GPT input:', step1Text);
+      console.log('GPT output:', gptResult.correctedText);
+      console.log('GPT corrections found:', gptResult.corrections.length);
       console.log('GPT corrections:', gptResult.corrections);
       
       // Step 3: Apply dictionary corrections again to GPT output
-      console.log('STEP 3: Applying dictionary corrections to GPT output');
-      const { correctedText: finalText, corrections: step3Corrections } = applyDictionaryCorrections(gptResult.correctedText);
-      console.log('Final result:', finalText);
+      console.log('\n--- STEP 3: Dictionary corrections on GPT output ---');
+      const { correctedText: step3Text, corrections: step3Corrections } = applyDictionaryCorrections(gptResult.correctedText);
+      console.log('Step 3 input:', gptResult.correctedText);
+      console.log('Step 3 output:', step3Text);
+      console.log('Step 3 corrections found:', step3Corrections.length);
       console.log('Step 3 corrections:', step3Corrections);
       
       completeProgress(setProgress, progressInterval);
-      setCorrectedText(finalText);
+      setCorrectedText(step3Text);
       
-      // Combine all corrections with proper source attribution
+      // Combine all corrections with proper source attribution and detailed logging
       const allCorrections = [
-        ...step1Corrections.map(correction => ({ ...correction, source: 'dictionary' as const })),
-        ...gptResult.corrections.map(correction => ({ ...correction, source: 'gpt' as const })),
-        ...step3Corrections.map(correction => ({ ...correction, source: 'dictionary' as const }))
+        ...step1Corrections.map(correction => ({ 
+          ...correction, 
+          source: 'dictionary' as const,
+          step: 'step1'
+        })),
+        ...gptResult.corrections.map(correction => ({ 
+          ...correction, 
+          source: 'gpt' as const,
+          step: 'step2'
+        })),
+        ...step3Corrections.map(correction => ({ 
+          ...correction, 
+          source: 'dictionary' as const,
+          step: 'step3'
+        }))
       ];
       
+      console.log('\n--- FINAL RESULTS ---');
+      console.log('Final text:', step3Text);
+      console.log('Total corrections:', allCorrections.length);
+      console.log('Step 1 (dict) corrections:', step1Corrections.length);
+      console.log('Step 2 (GPT) corrections:', gptResult.corrections.length);
+      console.log('Step 3 (dict) corrections:', step3Corrections.length);
       console.log('All corrections combined:', allCorrections);
+      
       setCorrections(allCorrections);
       setIsLoading(false);
       
@@ -101,7 +127,7 @@ export const useGrammarChecker = () => {
       await trackUsage('grammar_check');
       await trackWordUsage(inputText, 'grammar_check');
       
-      console.log(`Grammar correction completed with ${allCorrections.length} total corrections`);
+      console.log('=== 3-STEP GRAMMAR CORRECTION PROCESS COMPLETE ===');
       toast.success(`व्याकरण सुधार पूरा हो गया! ${allCorrections.length} सुधार मिले।`);
     } catch (error) {
       console.error('Error correcting grammar:', error);
