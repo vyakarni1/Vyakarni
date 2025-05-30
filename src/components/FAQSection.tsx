@@ -37,9 +37,9 @@ const FAQSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">अक्सर पूछे जाने वाले प्रश्न</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">प्रायः पूछे जाने वाले प्रश्न</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            व्याकरणी के बारे में आपके सवालों के जवाब
+            व्याकरणी के सन्दर्भ में प्रश्नोत्तरी
           </p>
         </div>
         

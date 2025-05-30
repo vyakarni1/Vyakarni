@@ -1,38 +1,49 @@
+
 import { Shield, Zap, Users, Award, Clock, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+
 const USPSection = () => {
-  const usps = [{
-    icon: Zap,
-    title: '5 सेकेंड में परिणाम',
-    description: 'दुनिया का सबसे तेज हिंदी व्याकरण चेकर। तुरंत सुधार पाएं।',
-    gradient: 'from-yellow-400 to-orange-500'
-  }, {
-    icon: Shield,
-    title: '100% सुरक्षित',
-    description: 'आपका डेटा एन्क्रिप्टेड है। हम आपका टेक्स्ट स्टोर नहीं करते।',
-    gradient: 'from-green-400 to-blue-500'
-  }, {
-    icon: Award,
-    title: '99.8% सटीकता',
-    description: 'AI की शक्ति से 99.8% सटीक व्याकरण सुधार की गारंटी।',
-    gradient: 'from-purple-400 to-pink-500'
-  }, {
-    icon: Users,
-    title: '25,000+ खुश उपयोगकर्ता',
-    description: 'हजारों लेखक, छात्र और पेशेवर हमारे टूल पर भरोसा करते हैं।',
-    gradient: 'from-blue-400 to-indigo-500'
-  }, {
-    icon: Clock,
-    title: '24/7 उपलब्ध',
-    description: 'कभी भी, कहीं भी उपयोग करें। हमारा टूल हमेशा उपलब्ध है।',
-    gradient: 'from-teal-400 to-cyan-500'
-  }, {
-    icon: CheckCircle,
-    title: 'मुफ्त में शुरुआत',
-    description: 'कोई क्रेडिट कार्ड नहीं चाहिए। आज ही मुफ्त में शुरू करें।',
-    gradient: 'from-emerald-400 to-teal-500'
-  }];
-  return <section className="py-20 bg-white relative overflow-hidden">
+  const usps = [
+    {
+      icon: Zap,
+      title: '5 से 10 सेकेंड में परिणाम',
+      description: 'विश्व में सबसे तीव्र भाषा सुधार एवं परिष्करण।',
+      gradient: 'from-yellow-400 to-orange-500'
+    },
+    {
+      icon: Shield,
+      title: '100% सुरक्षित डाटा',
+      description: 'पूर्णतः एन्क्रिप्टेड डेटा, कोई संग्रहण नहीं।',
+      gradient: 'from-green-400 to-blue-500'
+    },
+    {
+      icon: Award,
+      title: '99% सटीकता',
+      description: 'AI की शक्ति से 99% सटीक लेख एवं व्याकरण सुधार।',
+      gradient: 'from-purple-400 to-pink-500'
+    },
+    {
+      icon: Users,
+      title: '10,000+ संतुष्ट प्रयोगकर्ता',
+      description: 'छात्रों, शिक्षकों, लेखकों तथा व्यावसायिक उपयोगकर्ताओं के मध्य स्वीकृत।',
+      gradient: 'from-blue-400 to-indigo-500'
+    },
+    {
+      icon: Clock,
+      title: '24/7 उपलब्ध',
+      description: 'सदैव उपलब्ध भाषा सहायक, कहीं भी-कभी भी।',
+      gradient: 'from-teal-400 to-cyan-500'
+    },
+    {
+      icon: CheckCircle,
+      title: 'निःशुल्क प्रारंभ',
+      description: 'कोई क्रेडिट कार्ड नहीं, आज ही निःशुल्क प्रयोग आरम्भ करें।',
+      gradient: 'from-emerald-400 to-teal-500'
+    }
+  ];
+
+  return (
+    <section className="py-20 bg-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5">
         <div className="absolute top-20 left-10 w-32 h-32 bg-blue-300 rounded-full"></div>
@@ -45,11 +56,12 @@ const USPSection = () => {
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
             व्याकरणी को क्यों चुनें?
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">हमारे अनोखे लाभ जो हमें विशेष रूप से स्वीकार्य बनाते हैं</p>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">हमारे अनोखे लाभ जो हमें विशेष रूप से स्वीकार्य बनाते हैं।</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {usps.map((usp, index) => <Card key={index} className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border-0 bg-gradient-to-br from-white to-gray-50 overflow-hidden relative">
+          {usps.map((usp, index) => (
+            <Card key={index} className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border-0 bg-gradient-to-br from-white to-gray-50 overflow-hidden relative">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-gray-100 to-transparent opacity-50"></div>
               
               <CardContent className="p-8 relative">
@@ -71,9 +83,12 @@ const USPSection = () => {
                   <div className={`w-full h-1 bg-gradient-to-r ${usp.gradient} rounded-full`}></div>
                 </div>
               </CardContent>
-            </Card>)}
+            </Card>
+          ))}
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default USPSection;

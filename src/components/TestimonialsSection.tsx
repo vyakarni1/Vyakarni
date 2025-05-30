@@ -5,24 +5,24 @@ import { Card, CardContent } from '@/components/ui/card';
 const TestimonialsSection = () => {
   const testimonials = [
     {
-      name: 'राज कुमार',
-      role: 'पत्रकार',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-      content: 'व्याकरणी ने मेरी लेखन गुणवत्ता को काफी बेहतर बनाया है। अब मैं बिना किसी चिंता के हिंदी में लिख सकता हूं।',
-      rating: 5
-    },
-    {
-      name: 'प्रिया शर्मा',
-      role: 'शिक्षिका',
+      name: 'शिल्पा कायस्था',
+      role: 'अध्यापिका',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b047?w=100&h=100&fit=crop&crop=face',
-      content: 'मेरे छात्रों के लिए यह एक बेहतरीन टूल है। वे अपनी हिंदी व्याकरण की त्रुटियों को आसानी से सुधार सकते हैं।',
+      content: 'व्याकरणी ने मेरी लेखन गुणवत्ता को बहुत उन्नत बनाया है। अब मैं हिंदी में लिखने के पूर्व कुछ सोचती नहीं हूँ क्योंकि व्याकरणी मेरी सहायक है।',
       rating: 5
     },
     {
-      name: 'अमित वर्मा',
-      role: 'ब्लॉगर',
+      name: 'लिली',
+      role: 'छात्रा',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b047?w=100&h=100&fit=crop&crop=face',
+      content: 'एक छात्र के रूप में मुझे सबसे बड़ी सुविधा यह है कि यह मेरे लिये सदैव उपलब्ध और यही बात मेरे विश्वास में वृद्धि करती है।',
+      rating: 5
+    },
+    {
+      name: 'आदर्श निगम',
+      role: 'कंसलटेंट',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      content: 'AI की शक्ति से चलने वाला यह टूल अविश्वसनीय है। मेरे ब्लॉग पोस्ट अब पहले से कहीं ज्यादा बेहतर हैं।',
+      content: 'एक व्यवसायिक प्रयोगकर्ता हेतु व्याकरणी अत्यंत लाभदायी है। यह सुधार कार्य तो करता ही है, किन्तु मुख्य बात यह है कि इसे कहीं भी और कभी भी त्वरित आवश्योयकताओं हेतु प्रयोग कर सकते हैं।',
       rating: 5
     }
   ];
@@ -31,9 +31,9 @@ const TestimonialsSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">उपयोगकर्ता की राय</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">उपयोगकर्ताओं के विचार</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            देखें कि हमारे उपयोगकर्ता व्याकरणी के बारे में क्या कहते हैं
+            देखिये कि हमारे उपयोगकर्ता व्याकरणी के विषय में क्या कह रहे हैं।
           </p>
         </div>
         

@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -94,9 +95,9 @@ const PricingPreviewSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">सभी के लिए उपयुक्त प्लान</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">सभी के लिये उपयुक्त प्लान</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
-            अपनी जरूरतों के अनुसार सबसे अच्छा प्लान चुनें और आज ही शुरू करें
+            अपनी आवश्यकताओं के अनुसार सबसे बढ़िया प्लान चुनें और आज ही आरम्भ करें।
           </p>
           <div className="flex items-center justify-center space-x-2 text-sm bg-amber-50 text-amber-700 px-4 py-2 rounded-full border border-amber-200 inline-flex">
             <Clock className="h-4 w-4" />

@@ -21,13 +21,13 @@ const HeroSection = () => {
         </div>
         
         <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-fade-in leading-tight">
-          AI के साथ हिंदी व्याकरण
+          AI के साथ हिंदी लेखन
           <br />
           <span className="text-5xl">सुधारें</span>
         </h1>
         
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in delay-75">
-          आधुनिक AI तकनीक का उपयोग करके अपने हिंदी टेक्स्ट को तुरंत सुधारें।
+          आधुनिक AI तकनीक का उपयोग कर अपने हिंदी पाठ को तुरंत सुधारें।
           <br />
           व्याकरण की त्रुटियों को <span className="font-semibold text-purple-600">एक क्लिक</span> में ठीक करें।
         </p>
@@ -35,17 +35,17 @@ const HeroSection = () => {
         <div className="flex justify-center space-x-4 mb-8">
           <div className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
             <ConchShell className="h-4 w-4" />
-            <span className="text-sm text-gray-600">मुफ्त उपयोग</span>
+            <span className="text-sm text-gray-600">निःशुल्क परीक्षण</span>
           </div>
           <div className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
             <CheckCircle className="h-4 w-4 text-green-500" />
-            <span className="text-sm text-gray-600">तुरंत परिणाम</span>
+            <span className="text-sm text-gray-600">त्वरित परिणाम</span>
           </div>
         </div>
         
         <Link to="/register">
           <Button size="lg" className="text-lg px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-xl group">
-            मुफ्त में शुरू करें
+            प्रयोग करें एवं जाँचे
             <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
         </Link>

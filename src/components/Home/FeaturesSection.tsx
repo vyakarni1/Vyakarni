@@ -1,10 +1,13 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap, Shield, BookOpen, Globe } from "lucide-react";
+
 const FeaturesSection = () => {
-  return <section className="container mx-auto px-6 py-20">
+  return (
+    <section className="container mx-auto px-6 py-20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-gray-800 mb-4">विशेषतायें</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">हमारी AI-संचालित तकनीक के साथ अपनी हिंदी लेखन क्षमता को श्रेष्ठतर बनायें</p>
+        <h2 className="text-4xl font-bold text-gray-800 mb-4">व्याकरणी की विशेषतायें</h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">हमारी AI-संचालित तकनीक के साथ अपनी हिंदी लेखन क्षमता को श्रेष्ठतर बनायें।</p>
       </div>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -40,10 +43,10 @@ const FeaturesSection = () => {
             <div className="mb-4 p-3 bg-green-100 rounded-full w-fit group-hover:bg-green-200 transition-colors duration-300">
               <BookOpen className="h-8 w-8 text-green-600 group-hover:scale-110 transition-transform duration-300" />
             </div>
-            <CardTitle className="text-xl text-gray-800">हिंदी विशेषज्ञता</CardTitle>
+            <CardTitle className="text-xl text-gray-800">निपुण विशेषज्ञ</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 leading-relaxed">हिंदी व्याकरण में विशेष रूप से प्रशिक्षित। देवनागरी लिपि में पूर्णतः पारंगत।</p>
+            <p className="text-gray-600 leading-relaxed">हिंदी व्याकरण में विशेष रूप से प्रशिक्षित। देवनागरी लिपि में पूर्णतः पारंगत।</p>
           </CardContent>
         </Card>
 
@@ -53,7 +56,7 @@ const FeaturesSection = () => {
             <div className="mb-4 p-3 bg-pink-100 rounded-full w-fit group-hover:bg-pink-200 transition-colors duration-300">
               <Globe className="h-8 w-8 text-pink-600 group-hover:scale-110 transition-transform duration-300" />
             </div>
-            <CardTitle className="text-xl text-gray-800">सभी डिवाइस पर</CardTitle>
+            <CardTitle className="text-xl text-gray-800">सभी डिवाइस पर उपलब्ध</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 leading-relaxed">
@@ -62,6 +65,8 @@ const FeaturesSection = () => {
           </CardContent>
         </Card>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default FeaturesSection;
