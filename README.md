@@ -1,8 +1,8 @@
-# Hindi-V: Hindi Grammar Checker & Improver
+# Vyakarni: Hindi Grammar Checker & Improver
 
 ## 🧠 Overview
 
-**Hindi-V** is a modern AI-powered web application that helps users check and improve Hindi grammar in real-time. Built with a focus on simplicity and performance, it offers grammar corrections, suggestions, and explanations to empower users to write correct and confident Hindi.
+**Vyakarni** is a modern AI-powered web application that helps users check and improve Hindi grammar in real-time. Built with a focus on simplicity and performance, it offers grammar corrections, suggestions, and explanations to empower users to write correct and confident Hindi.
 
 ---
 
@@ -69,8 +69,8 @@
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/hindi-v.git
-cd hindi-v
+git clone https://github.com/yourusername/vyakarni.git
+cd vyakarni
 
 # Install dependencies
 npm install
@@ -90,7 +90,7 @@ Visit [http://localhost:5173](http://localhost:5173) in your browser.
 ## 🗂️ Project Structure
 
 ```
-hindi-v/
+vyakarni/
 ├── public/              # Static assets
 ├── src/
 │   ├── components/      # UI components
@@ -140,4 +140,4 @@ For feedback, feature requests, or support, please open an issue or reach out to
 
 ---
 
-Let me know if you’d like a version tailored for GitHub, a one-page website pitch, or if you’re ready to deploy this on Vercel or Netlify.
+Let me know if you'd like this exported as a `README.md` file or formatted for GitHub directly.
