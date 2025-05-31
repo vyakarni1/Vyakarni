@@ -29,5 +29,6 @@ export const isProductionDomain = () => {
 };
 
 export const getAppUrl = () => {
-  return isProductionDomain() ? 'https://vyakarni.com' : window.location.origin;
+  // Always use production URL for auth redirects to ensure consistency
+  return 'https://vyakarni.com';
 };
