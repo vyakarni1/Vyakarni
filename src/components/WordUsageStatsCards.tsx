@@ -27,12 +27,6 @@ const WordUsageStatsCards = () => {
     );
   }
 
-  // Calculate words used based on corrections (estimated)
-  const avgWordsPerCorrection = 50;
-  const wordsUsedToday = stats.corrections_today * avgWordsPerCorrection;
-  const wordsUsedThisMonth = stats.corrections_this_month * avgWordsPerCorrection;
-  const totalWordsProcessed = stats.total_corrections * avgWordsPerCorrection;
-
   const statCards = [
     {
       title: "उपलब्ध शब्द",
@@ -50,43 +44,43 @@ const WordUsageStatsCards = () => {
     },
     {
       title: "आज उपयोग",
-      value: wordsUsedToday,
+      value: stats.words_used_today,
       description: "आज प्रयोग किए गए शब्द",
       icon: Calendar,
       gradient: "from-blue-500 to-blue-600",
       bgGradient: "from-blue-50 to-blue-100",
       iconBg: "bg-gradient-to-r from-blue-500 to-blue-600",
       subtitle: `${stats.corrections_today} सुधार आज`,
-      trend: (stats.corrections_today > 0 ? 'up' : 'neutral') as 'up' | 'down' | 'neutral',
-      trendValue: stats.corrections_today > 5 ? 'सक्रिय' : stats.corrections_today > 0 ? 'अच्छा' : 'शुरुआत करें',
+      trend: (stats.words_used_today > 0 ? 'up' : 'neutral') as 'up' | 'down' | 'neutral',
+      trendValue: stats.words_used_today > 100 ? 'सक्रिय' : stats.words_used_today > 0 ? 'अच्छा' : 'शुरुआत करें',
       tooltip: "आज तक आपने कितने शब्दों का उपयोग किया है",
       onClick: () => console.log('Show today details')
     },
     {
       title: "मासिक उपयोग",
-      value: wordsUsedThisMonth,
+      value: stats.words_used_this_month,
       description: "इस महीने कुल उपयोग",
       icon: BarChart3,
       gradient: "from-purple-500 to-purple-600",
       bgGradient: "from-purple-50 to-purple-100",
       iconBg: "bg-gradient-to-r from-purple-500 to-purple-600",
       subtitle: `${stats.corrections_this_month} सुधार इस महीने`,
-      trend: (stats.corrections_this_month > 10 ? 'up' : stats.corrections_this_month > 3 ? 'neutral' : 'down') as 'up' | 'down' | 'neutral',
-      trendValue: stats.corrections_this_month > 10 ? 'बहुत अच्छा' : stats.corrections_this_month > 3 ? 'अच्छा' : 'और करें',
+      trend: (stats.words_used_this_month > 500 ? 'up' : stats.words_used_this_month > 100 ? 'neutral' : 'down') as 'up' | 'down' | 'neutral',
+      trendValue: stats.words_used_this_month > 500 ? 'बहुत अच्छा' : stats.words_used_this_month > 100 ? 'अच्छा' : 'और करें',
       tooltip: "इस महीने आपका कुल शब्द उपयोग",
       onClick: () => console.log('Show monthly details')
     },
     {
       title: "कुल प्रसंस्कृत",
-      value: totalWordsProcessed,
+      value: stats.total_words_used,
       description: "सभी समय में प्रयोग",
       icon: TrendingUp,
       gradient: "from-orange-500 to-orange-600",
       bgGradient: "from-orange-50 to-orange-100",
       iconBg: "bg-gradient-to-r from-orange-500 to-orange-600",
       subtitle: `${stats.total_corrections} कुल सुधार`,
-      trend: (totalWordsProcessed > 1000 ? 'up' : 'neutral') as 'up' | 'down' | 'neutral',
-      trendValue: totalWordsProcessed > 1000 ? 'अनुभवी' : 'प्रगति में',
+      trend: (stats.total_words_used > 1000 ? 'up' : 'neutral') as 'up' | 'down' | 'neutral',
+      trendValue: stats.total_words_used > 1000 ? 'अनुभवी' : 'प्रगति में',
       tooltip: "अब तक आपने कुल कितने शब्दों को सुधारा है",
       onClick: () => console.log('Show all-time stats')
     }
