@@ -16,7 +16,7 @@ const NavigationLogo = ({ variant }: NavigationLogoProps) => {
     <div className="flex items-center space-x-3">
       <Link to="/" className={logoClasses}>
         <img 
-          src="/lovable-uploads/ff01d226-6125-485c-8018-5807ce651d5e.png" 
+          src="/lovable-uploads/feb8e6c8-b871-4f30-9ddd-2c20bb223a84.png" 
           alt="व्याकरणी Logo" 
           className={logoImageClasses}
           onError={(e) => {
