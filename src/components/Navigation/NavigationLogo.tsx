@@ -16,11 +16,11 @@ const NavigationLogo = ({ variant }: NavigationLogoProps) => {
     <div className="flex items-center space-x-3">
       <Link to="/" className={logoClasses}>
         <img 
-          src="/lovable-uploads/9bf89b26-f748-402b-9503-f5284c8be5c3.png" 
+          src="/lovable-uploads/ff01d226-6125-485c-8018-5807ce651d5e.png" 
           alt="व्याकरणी Logo" 
           className={logoImageClasses}
           onError={(e) => {
-            console.log('Logo failed to load, falling back to text');
+            console.log('Navigation logo failed to load');
             e.currentTarget.style.display = 'none';
           }}
         />

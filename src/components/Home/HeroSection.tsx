@@ -16,9 +16,13 @@ const HeroSection = () => {
         <div className="mb-8 flex justify-center">
           <div className="w-24 h-24 rounded-full bg-gradient-blue-ocean p-3 shadow-2xl">
             <img 
-              src="/lovable-uploads/9bf89b26-f748-402b-9503-f5284c8be5c3.png" 
+              src="/lovable-uploads/ff01d226-6125-485c-8018-5807ce651d5e.png" 
               alt="व्याकरणी Logo" 
               className="w-full h-full object-contain"
+              onError={(e) => {
+                console.log('Hero logo failed to load');
+                e.currentTarget.style.display = 'none';
+              }}
             />
           </div>
         </div>
