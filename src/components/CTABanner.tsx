@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
-
 const CTABanner = () => {
-  return (
-    <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+  return <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
@@ -32,23 +30,14 @@ const CTABanner = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/register">
-              <Button 
-                size="lg" 
-                className="text-lg px-8 py-4 bg-white text-blue-600 hover:bg-gray-100 font-semibold transform hover:scale-105 transition-all duration-300 shadow-xl group"
-              >
+              <Button size="lg" className="text-lg px-8 py-4 bg-white text-blue-600 hover:bg-gray-100 font-semibold transform hover:scale-105 transition-all duration-300 shadow-xl group">
                 मुफ्त में शुरू करें
                 <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
             </Link>
             
             <Link to="/grammar-checker">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-blue-600 font-semibold transform hover:scale-105 transition-all duration-300"
-              >
-                डेमो देखें
-              </Button>
+              
             </Link>
           </div>
           
@@ -68,8 +57,6 @@ const CTABanner = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CTABanner;
