@@ -78,65 +78,84 @@ const HindiTextAnimation = () => {
         हिंदी पाठ सुधार डेमो
       </h3>
       
-      <div className={`
-        bg-gray-50 border-2 rounded-xl p-5 mb-5 min-h-[80px] 
-        flex items-center justify-center transition-all duration-300
-        ${isTyping ? 'border-blue-400 shadow-lg shadow-blue-100' : 'border-gray-200'}
-      `}>
-        <div className="text-lg text-gray-800 font-medium text-center leading-relaxed">
-          {typedText}
-          {showCursor && (
-            <span className="inline-block w-0.5 h-6 bg-blue-400 ml-1 animate-pulse"></span>
-          )}
+      {/* Fixed height container for consistent layout */}
+      <div className="relative h-[320px] mb-5">
+        
+        {/* Main text container with fixed dimensions */}
+        <div className={`
+          bg-gray-50 border-2 rounded-xl p-6 h-[120px] 
+          flex items-center justify-center
+          transition-all duration-500 ease-in-out
+          ${isTyping ? 'border-blue-400 shadow-lg shadow-blue-100 transform scale-[1.02]' : 'border-gray-200'}
+        `}>
+          <div className="text-lg text-gray-800 font-medium text-center leading-relaxed w-full">
+            {typedText}
+            {showCursor && (
+              <span className="inline-block w-0.5 h-6 bg-blue-400 ml-1 animate-pulse"></span>
+            )}
+          </div>
         </div>
-      </div>
-      
-      {showCorrectButton && (
-        <div className="text-center mb-5">
+        
+        {/* Button container with fixed positioning */}
+        <div className="absolute top-[140px] left-0 right-0 text-center h-[60px] flex items-center justify-center">
           <button 
             onClick={showCorrectionPanel}
             className={`
               bg-gradient-to-r from-green-500 to-green-600 text-white
               px-8 py-3 rounded-full text-lg font-semibold
-              transition-all duration-500 shadow-lg hover:shadow-xl
+              shadow-lg hover:shadow-xl
               hover:scale-105 active:scale-95
-              ${showCorrectButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}
+              transition-all duration-500 ease-in-out
+              ${showCorrectButton 
+                ? 'opacity-100 translate-y-0 pointer-events-auto' 
+                : 'opacity-0 translate-y-5 pointer-events-none'
+              }
             `}
           >
             सुधार करें
           </button>
         </div>
-      )}
-      
-      {showCorrection && (
+        
+        {/* Correction panel with fixed positioning */}
         <div className={`
+          absolute top-[220px] left-0 right-0
           bg-gradient-to-r from-blue-500 to-blue-600 text-white
-          rounded-xl p-5 transition-all duration-500
-          ${showCorrection ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+          rounded-xl p-5 h-[80px]
+          transition-all duration-700 ease-in-out
+          ${showCorrection 
+            ? 'opacity-100 scale-100 translate-y-0' 
+            : 'opacity-0 scale-95 translate-y-5'
+          }
         `}>
-          <div className="text-sm opacity-90 mb-2">सुधारा गया वाक्य:</div>
-          <div className="text-lg font-semibold">{correctedText}</div>
+          <div className="text-sm opacity-90 mb-2 transition-opacity duration-300">
+            सुधारा गया वाक्य:
+          </div>
+          <div className="text-lg font-semibold leading-tight">
+            {correctedText}
+          </div>
         </div>
-      )}
+      </div>
       
-      {showResetButton && (
-        <div className="text-center mt-5">
-          <button 
-            onClick={() => {
-              resetAnimation();
-              setTimeout(startTyping, 500);
-            }}
-            className={`
-              bg-gradient-to-r from-purple-500 to-purple-600 text-white
-              px-6 py-2 rounded-full text-sm font-medium
-              transition-all duration-300 hover:scale-105
-              ${showResetButton ? 'opacity-100' : 'opacity-0'}
-            `}
-          >
-            फिर से शुरू करें
-          </button>
-        </div>
-      )}
+      {/* Reset button with smooth transition */}
+      <div className="text-center h-[50px] flex items-center justify-center">
+        <button 
+          onClick={() => {
+            resetAnimation();
+            setTimeout(startTyping, 500);
+          }}
+          className={`
+            bg-gradient-to-r from-purple-500 to-purple-600 text-white
+            px-6 py-2 rounded-full text-sm font-medium
+            transition-all duration-500 ease-in-out hover:scale-105
+            ${showResetButton 
+              ? 'opacity-100 translate-y-0 pointer-events-auto' 
+              : 'opacity-0 translate-y-3 pointer-events-none'
+            }
+          `}
+        >
+          फिर से शुरू करें
+        </button>
+      </div>
     </div>
   );
 };
