@@ -21,48 +21,75 @@ const ResetPassword = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const verifyRecoveryToken = async () => {
-      // Check for recovery token from Supabase redirect
+    const handlePasswordResetAuth = async () => {
+      // Check for different URL parameter formats
+      const code = searchParams.get('code');
       const token = searchParams.get('token');
       const type = searchParams.get('type');
       
-      console.log('Recovery token check:', { token: token?.substring(0, 10) + '...', type });
-      
-      if (!token || type !== 'recovery') {
-        console.log('No valid recovery token found, redirecting to forgot-password');
-        toast.error("अवैध या समाप्त हो चुका रीसेट लिंक");
-        navigate('/forgot-password');
-        return;
-      }
+      console.log('Password reset URL check:', { 
+        hasCode: !!code, 
+        hasToken: !!token, 
+        type,
+        code: code?.substring(0, 10) + '...',
+        token: token?.substring(0, 10) + '...'
+      });
 
       try {
-        // Verify the recovery token with Supabase
-        const { data, error } = await supabase.auth.verifyOtp({
-          token_hash: token,
-          type: 'recovery'
-        });
+        // Handle Format 1: ?code=xyz (direct reset)
+        if (code) {
+          console.log('Handling code-based reset');
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+          
+          if (error) {
+            console.error('Code exchange failed:', error);
+            toast.error("रीसेट लिंक अमान्य या समाप्त हो गया है");
+            navigate('/forgot-password');
+            return;
+          }
 
-        if (error) {
-          console.error('Token verification failed:', error);
-          toast.error("रीसेट लिंक अमान्य या समाप्त हो गया है");
+          if (data.session) {
+            console.log('Code exchanged successfully, session established');
+            toast.success("रीसेट लिंक सत्यापित हो गया। अब नया पासवर्ड सेट करें।");
+          }
+        }
+        // Handle Format 2: ?token=xyz&type=recovery (Supabase verification flow)
+        else if (token && type === 'recovery') {
+          console.log('Handling token-based reset');
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: 'recovery'
+          });
+
+          if (error) {
+            console.error('Token verification failed:', error);
+            toast.error("रीसेट लिंक अमान्य या समाप्त हो गया है");
+            navigate('/forgot-password');
+            return;
+          }
+
+          if (data.session) {
+            console.log('Recovery token verified successfully');
+            toast.success("रीसेट लिंक सत्यापित हो गया। अब नया पासवर्ड सेट करें।");
+          }
+        }
+        // No valid parameters found
+        else {
+          console.log('No valid reset parameters found, redirecting to forgot-password');
+          toast.error("अवैध या समाप्त हो चुका रीसेट लिंक");
           navigate('/forgot-password');
           return;
         }
-
-        if (data.session) {
-          console.log('Recovery token verified successfully');
-          toast.success("रीसेट लिंक सत्यापित हो गया। अब नया पासवर्ड सेट करें।");
-        }
       } catch (error) {
-        console.error('Error verifying recovery token:', error);
-        toast.error("टोकन सत्यापन में त्रुटि");
+        console.error('Error during password reset authentication:', error);
+        toast.error("प्रमाणीकरण में त्रुटि");
         navigate('/forgot-password');
       } finally {
         setIsVerifyingToken(false);
       }
     };
 
-    verifyRecoveryToken();
+    handlePasswordResetAuth();
   }, [searchParams, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
