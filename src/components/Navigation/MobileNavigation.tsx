@@ -41,7 +41,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              व्याकरण जांच
+              व्याकरण जाँच
             </Link>
             <Link 
               to="/profile" 
