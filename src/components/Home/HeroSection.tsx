@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
-
 const HeroSection = () => {
-  return (
-    <section className="container mx-auto px-6 py-20 text-center relative min-h-screen flex items-center">
+  return <section className="container mx-auto px-6 py-20 text-center relative min-h-screen flex items-center">
       {/* Background decorative elements */}
       <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-32 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-30 animate-pulse delay-75"></div>
@@ -14,15 +12,10 @@ const HeroSection = () => {
         {/* Transparent Logo Container */}
         <div className="mb-8 flex justify-center">
           <div className="w-24 h-24">
-            <img 
-              src="/lovable-uploads/ff01d226-6125-485c-8018-5807ce651d5e.png" 
-              alt="व्याकरणी Logo" 
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                console.log('Hero logo failed to load');
-                e.currentTarget.style.display = 'none';
-              }}
-            />
+            <img alt="व्याकरणी Logo" onError={e => {
+            console.log('Hero logo failed to load');
+            e.currentTarget.style.display = 'none';
+          }} src="/lovable-uploads/9899ecd1-1a2c-404a-bfd9-83a555e6cfc4.png" className="w-full h-full object-contain" />
           </div>
         </div>
         
@@ -59,16 +52,10 @@ const HeroSection = () => {
         {/* Hero Image */}
         <div className="mt-16 relative">
           <div className="bg-white rounded-lg shadow-2xl p-8 max-w-4xl mx-auto transform hover:scale-105 transition-transform duration-500 border border-blue-100">
-            <img 
-              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop" 
-              alt="व्याकरणी का उपयोग करती महिला"
-              className="w-full h-64 object-cover rounded-lg"
-            />
+            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop" alt="व्याकरणी का उपयोग करती महिला" className="w-full h-64 object-cover rounded-lg" />
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
