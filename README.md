@@ -1,63 +1,73 @@
-Hindi-V: Hindi Grammar Checker & Improver
-🧠 Overview
-Hindi-V is a modern AI-powered web application that helps users check and improve Hindi grammar in real-time. Built with a focus on simplicity and performance, it offers grammar corrections, suggestions, and explanations to empower users to write correct and confident Hindi.
+# Hindi-V: Hindi Grammar Checker & Improver
 
-🚀 Features
-Instant Hindi Grammar Checking
-Paste or type Hindi text to get instant grammar corrections and improvement suggestions.
+## 🧠 Overview
 
-AI-Powered Corrections & Explanations
-Leverages cutting-edge AI models to detect and correct grammar issues with explanations.
+**Hindi-V** is a modern AI-powered web application that helps users check and improve Hindi grammar in real-time. Built with a focus on simplicity and performance, it offers grammar corrections, suggestions, and explanations to empower users to write correct and confident Hindi.
 
-Modern, Responsive UI
-Clean interface built with React, Tailwind CSS, and shadcn-ui for a smooth user experience.
+---
 
-Secure & Private
-No data is stored — all processing is secure and ephemeral.
+## 🚀 Features
 
-Free Trial Access
-Users can try it out immediately, no sign-up required.
+* **Instant Hindi Grammar Checking**
+  Paste or type Hindi text to get instant grammar corrections and improvement suggestions.
 
-🛠️ Tech Stack
-Frontend
-React
+* **AI-Powered Corrections & Explanations**
+  Leverages cutting-edge AI models to detect and correct grammar issues with explanations.
 
-TypeScript
+* **Modern, Responsive UI**
+  Clean interface built with React, Tailwind CSS, and shadcn-ui for a smooth user experience.
 
-Vite
+* **Secure & Private**
+  No data is stored — all processing is secure and ephemeral.
 
-Tailwind CSS
+* **Free Trial Access**
+  Users can try it out immediately, no sign-up required.
 
-shadcn-ui
+---
 
-Backend (Optional / Planned)
-Node.js or serverless (Express, Vercel, Netlify functions)
+## 🛠️ Tech Stack
 
-AI Integration via OpenAI, Hugging Face, or custom Hindi models
+### Frontend
 
-⚙️ How It Works
-Input:
-User enters Hindi text in the app.
+* [React](https://react.dev/)
+* [TypeScript](https://www.typescriptlang.org/)
+* [Vite](https://vitejs.dev/)
+* [Tailwind CSS](https://tailwindcss.com/)
+* [shadcn-ui](https://ui.shadcn.com/)
 
-Processing:
-Text is sent to a backend API that uses an AI/ML model to analyze and correct grammar.
+### Backend (Optional / Planned)
 
-Output:
-Corrected text with highlighted changes and grammar suggestions is returned.
+* Node.js or serverless (Express, Vercel, Netlify functions)
+* AI Integration via OpenAI, Hugging Face, or custom Hindi models
 
-Display:
-Users view improved text with guidance for better writing.
+---
 
-🧩 Getting Started
-Prerequisites
-Node.js v18+
+## ⚙️ How It Works
 
-npm or yarn
+1. **Input:**
+   User enters Hindi text in the app.
 
-Installation
-bash
-Copy
-Edit
+2. **Processing:**
+   Text is sent to a backend API that uses an AI/ML model to analyze and correct grammar.
+
+3. **Output:**
+   Corrected text with highlighted changes and grammar suggestions is returned.
+
+4. **Display:**
+   Users view improved text with guidance for better writing.
+
+---
+
+## 🧩 Getting Started
+
+### Prerequisites
+
+* Node.js v18+
+* npm or yarn
+
+### Installation
+
+```bash
 # Clone the repo
 git clone https://github.com/yourusername/hindi-v.git
 cd hindi-v
@@ -71,12 +81,15 @@ yarn install
 npm run dev
 # or
 yarn dev
-Visit http://localhost:5173 in your browser.
+```
 
-🗂️ Project Structure
-php
-Copy
-Edit
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## 🗂️ Project Structure
+
+```
 hindi-v/
 ├── public/              # Static assets
 ├── src/
@@ -90,26 +103,41 @@ hindi-v/
 ├── vite.config.ts       # Vite configuration
 ├── package.json
 └── README.md
-✨ Customization
-UI Changes:
-Tweak components in src/components/ and styles using Tailwind.
+```
 
-Model/API Integration:
-Update src/api/ to connect to your chosen grammar correction model.
+---
 
-🤝 Contributing
+## ✨ Customization
+
+* **UI Changes:**
+  Tweak components in `src/components/` and styles using Tailwind.
+
+* **Model/API Integration:**
+  Update `src/api/` to connect to your chosen grammar correction model.
+
+---
+
+## 🤝 Contributing
+
 We welcome contributions!
 
-Fork this repository
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit and push your changes
+4. Open a pull request
 
-Create a feature branch (git checkout -b feature/my-feature)
+---
 
-Commit and push your changes
+## 📄 License
 
-Open a pull request
+This project is licensed under the [MIT License](LICENSE).
 
-📄 License
-This project is licensed under the MIT License.
+---
 
-📬 Contact
+## 📬 Contact
+
 For feedback, feature requests, or support, please open an issue or reach out to the maintainer.
+
+---
+
+Let me know if you’d like a version tailored for GitHub, a one-page website pitch, or if you’re ready to deploy this on Vercel or Netlify.
