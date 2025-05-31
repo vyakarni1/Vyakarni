@@ -1,73 +1,115 @@
-# Welcome to your Lovable project
+Hindi-V: Hindi Grammar Checker & Improver
+🧠 Overview
+Hindi-V is a modern AI-powered web application that helps users check and improve Hindi grammar in real-time. Built with a focus on simplicity and performance, it offers grammar corrections, suggestions, and explanations to empower users to write correct and confident Hindi.
 
-## Project info
+🚀 Features
+Instant Hindi Grammar Checking
+Paste or type Hindi text to get instant grammar corrections and improvement suggestions.
 
-**URL**: https://lovable.dev/projects/3a3edb3e-f49a-4204-9c70-a965bbea36ed
+AI-Powered Corrections & Explanations
+Leverages cutting-edge AI models to detect and correct grammar issues with explanations.
 
-## How can I edit this code?
+Modern, Responsive UI
+Clean interface built with React, Tailwind CSS, and shadcn-ui for a smooth user experience.
 
-There are several ways of editing your application.
+Secure & Private
+No data is stored — all processing is secure and ephemeral.
 
-**Use Lovable**
+Free Trial Access
+Users can try it out immediately, no sign-up required.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3a3edb3e-f49a-4204-9c70-a965bbea36ed) and start prompting.
+🛠️ Tech Stack
+Frontend
+React
 
-Changes made via Lovable will be committed automatically to this repo.
+TypeScript
 
-**Use your preferred IDE**
+Vite
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Tailwind CSS
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+shadcn-ui
 
-Follow these steps:
+Backend (Optional / Planned)
+Node.js or serverless (Express, Vercel, Netlify functions)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+AI Integration via OpenAI, Hugging Face, or custom Hindi models
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+⚙️ How It Works
+Input:
+User enters Hindi text in the app.
 
-# Step 3: Install the necessary dependencies.
-npm i
+Processing:
+Text is sent to a backend API that uses an AI/ML model to analyze and correct grammar.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Output:
+Corrected text with highlighted changes and grammar suggestions is returned.
+
+Display:
+Users view improved text with guidance for better writing.
+
+🧩 Getting Started
+Prerequisites
+Node.js v18+
+
+npm or yarn
+
+Installation
+bash
+Copy
+Edit
+# Clone the repo
+git clone https://github.com/yourusername/hindi-v.git
+cd hindi-v
+
+# Install dependencies
+npm install
+# or
+yarn install
+
+# Start development server
 npm run dev
-```
+# or
+yarn dev
+Visit http://localhost:5173 in your browser.
 
-**Edit a file directly in GitHub**
+🗂️ Project Structure
+php
+Copy
+Edit
+hindi-v/
+├── public/              # Static assets
+├── src/
+│   ├── components/      # UI components
+│   ├── pages/           # Route-based pages
+│   ├── api/             # API utilities and model integration
+│   ├── App.tsx          # App shell
+│   ├── main.tsx         # App entry point
+│   └── ...
+├── tailwind.config.js   # Tailwind configuration
+├── vite.config.ts       # Vite configuration
+├── package.json
+└── README.md
+✨ Customization
+UI Changes:
+Tweak components in src/components/ and styles using Tailwind.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Model/API Integration:
+Update src/api/ to connect to your chosen grammar correction model.
 
-**Use GitHub Codespaces**
+🤝 Contributing
+We welcome contributions!
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Fork this repository
 
-## What technologies are used for this project?
+Create a feature branch (git checkout -b feature/my-feature)
 
-This project is built with:
+Commit and push your changes
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Open a pull request
 
-## How can I deploy this project?
+📄 License
+This project is licensed under the MIT License.
 
-Simply open [Lovable](https://lovable.dev/projects/3a3edb3e-f49a-4204-9c70-a965bbea36ed) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+📬 Contact
+For feedback, feature requests, or support, please open an issue or reach out to the maintainer.
