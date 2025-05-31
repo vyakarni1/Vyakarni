@@ -241,23 +241,23 @@ const Pricing = () => {
 
         {/* FAQ Section */}
         <div className="mt-16 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8">अक्सर पूछे जाने वाले प्रश्न</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-8">प्रश्नोत्तरी</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="p-6 bg-white rounded-lg shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-2">शब्द कैसे गिने जाते हैं?</h3>
-              <p className="text-gray-600 text-sm">आपके द्वारा जाँच के लिए भेजे गए टेक्स्ट में जितने शब्द होंगे, उतने ही आपके बैलेंस से काटे जाएंगे।</p>
+              <h3 className="font-semibold text-gray-800 mb-2">आप शब्दों को की प्रकार गिनते हैं?</h3>
+              <p className="text-gray-600 text-sm">आपके द्वारा परीक्षण के लिये भेजे गए लेख में जितने शब्द होंगे, उतने ही शब्द आपके शेष शब्दों से काटे जायेंगे।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-2">शब्द की वैधता कितनी है?</h3>
-              <p className="text-gray-600 text-sm">खरीदे गए सभी शब्द खरीदारी की तारीख से 30 दिन तक वैध रहते हैं।</p>
+              <h3 className="font-semibold text-gray-800 mb-2">शब्दों की वैधता अवधि क्या है?</h3>
+              <p className="text-gray-600 text-sm">आपके द्वारा क्रय किये गये सभी शब्दों की वैधता अवधि 30 दिनों तक की रहती है।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-2">भुगतान सुरक्षित है?</h3>
-              <p className="text-gray-600 text-sm">हाँ, हम Cashfree के सुरक्षित पेमेंट गेटवे का उपयोग करते हैं जो बैंक-ग्रेड सिक्योरिटी प्रदान करता है।</p>
+              <h3 className="font-semibold text-gray-800 mb-2">क्या किये गये भुगतान सुरक्षित हैं?</h3>
+              <p className="text-gray-600 text-sm">हम सुरक्षित गहरी साख वाले पेमेंट गेटवे का प्रयोग करते हैं जो कि उच्च सुरक्षा मानकों का अनुपालन करते हैं। अतः, आपके द्वारा किये गये सभी भुगतान सुरक्षित हैं।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-2">रिफंड की नीति क्या है?</h3>
-              <p className="text-gray-600 text-sm">तकनीकी समस्या की स्थिति में 7 दिन के अंदर रिफंड की सुविधा उपलब्ध है।</p>
+              <h3 className="font-semibold text-gray-800 mb-2">आपकी रिफंड की नीति क्या है?</h3>
+              <p className="text-gray-600 text-sm">आप हमारी डिजिटल सेवाओं का लाभ उठा रहे हैं। हमारी रिफंड नीति इसी के अनुरूप है। इस विषय में विस्तार से समझने हेतु आप इस लिंक पर इस विषय में अध्ययन कर सकते हैं: https://vyakarni.com/refund-policy।</p>
             </div>
           </div>
         </div>
