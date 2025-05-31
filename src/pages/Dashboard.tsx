@@ -58,10 +58,10 @@ const Dashboard = () => {
           <SmartRecommendationsCard />
         </div>
 
-        {/* Real-time Word Usage Statistics */}
+        {/* Simple Word Usage Statistics */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            📊 विस्तृत शब्द उपयोग की जानकारी
+            📊 शब्द उपयोग की जानकारी
           </h2>
           <WordUsageStatsCards />
         </div>
