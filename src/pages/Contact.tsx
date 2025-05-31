@@ -25,7 +25,7 @@ const Contact = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     if (!user) {
-      toast.error("संदेश भेजने के लिए कृपया लॉगिन करें");
+      toast.error("संदेश भेजने के लिये कृपया लॉगिन करें");
       return;
     }
 
@@ -65,7 +65,7 @@ const Contact = () => {
               हमसे संपर्क करें
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              हमारी टीम आपकी सहायता के लिए तैयार है। अपने प्रश्न या सुझाव साझा करें।
+              हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करें।
             </p>
           </div>
 
@@ -81,7 +81,7 @@ const Contact = () => {
               <CardContent>
                 {!user ? (
                   <div className="text-center py-8">
-                    <p className="text-gray-600 mb-4">संदेश भेजने के लिए कृपया लॉगिन करें</p>
+                    <p className="text-gray-600 mb-4">संदेश भेजने के लिये कृपया लॉगिन करें</p>
                     <Button asChild>
                       <a href="/login">लॉगिन करें</a>
                     </Button>
@@ -151,7 +151,7 @@ const Contact = () => {
             <div className="space-y-8">
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900">संपर्क जानकारी</CardTitle>
+                  <CardTitle className="text-2xl text-gray-900">संपर्क हेतु विवरण</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center space-x-4">
@@ -181,8 +181,7 @@ const Contact = () => {
                     <div>
                       <h3 className="font-semibold text-gray-900">पता</h3>
                       <p className="text-gray-600">
-                        व्याकरणी टेक्नोलॉजीज<br />
-                        नई दिल्ली, भारत
+                        व्याकरणी, सेक्टर 143, नॉएडा
                       </p>
                     </div>
                   </div>
@@ -197,15 +196,14 @@ const Contact = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-600">सोमवार - शुक्रवार</span>
-                      <span className="font-semibold">9:00 AM - 6:00 PM</span>
+                      <span className="font-semibold">10:00 AM - 6:00 PM</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">शनिवार</span>
-                      <span className="font-semibold">10:00 AM - 4:00 PM</span>
+                      <span className="text-gray-600">शनिवार एवं रविवार</span>
+                      <span className="font-semibold">अवकाश</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">रविवार</span>
-                      <span className="font-semibold">बंद</span>
+                    <div className="mt-4 text-sm text-gray-500">
+                      राजपत्रित अवकाशों पर सेवा उपलब्ध नहीं होंगी।
                     </div>
                   </div>
                 </CardContent>
