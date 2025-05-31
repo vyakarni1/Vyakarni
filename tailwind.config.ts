@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -126,6 +127,10 @@ export default {
 				'bounce-subtle': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-5px)' }
+				},
+				'gradient-shift': {
+					'0%, 100%': { 'background-position': '0% 50%' },
+					'50%': { 'background-position': '100% 50%' }
 				}
 			},
 			animation: {
@@ -136,7 +141,15 @@ export default {
 				'scale-in': 'scale-in 0.2s ease-out',
 				'slide-in-right': 'slide-in-right 0.3s ease-out',
 				'slide-out-right': 'slide-out-right 0.3s ease-out',
-				'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite'
+				'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
+				'gradient-shift': 'gradient-shift 3s ease-in-out infinite'
+			},
+			backgroundImage: {
+				'gradient-blue-primary': 'linear-gradient(135deg, #1e40af 0%, #3b82f6 25%, #06b6d4 50%, #0891b2 75%, #0e7490 100%)',
+				'gradient-blue-secondary': 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 25%, #0ea5e9 50%, #0284c7 75%, #0369a1 100%)',
+				'gradient-blue-accent': 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #1d4ed8 50%, #2563eb 75%, #3b82f6 100%)',
+				'gradient-blue-light': 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 25%, #38bdf8 50%, #0ea5e9 75%, #0284c7 100%)',
+				'gradient-blue-deep': 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)'
 			}
 		}
 	},

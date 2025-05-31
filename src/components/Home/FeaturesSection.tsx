@@ -24,11 +24,11 @@ const FeaturesSection = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-purple-50 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+        <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-cyan-50 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-cyan-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
           <CardHeader className="relative">
-            <div className="mb-4 p-3 bg-purple-100 rounded-full w-fit group-hover:bg-purple-200 transition-colors duration-300">
-              <Shield className="h-8 w-8 text-purple-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="mb-4 p-3 bg-cyan-100 rounded-full w-fit group-hover:bg-cyan-200 transition-colors duration-300">
+              <Shield className="h-8 w-8 text-cyan-600 group-hover:scale-110 transition-transform duration-300" />
             </div>
             <CardTitle className="text-xl text-gray-800">AI संचालित</CardTitle>
           </CardHeader>
@@ -37,11 +37,11 @@ const FeaturesSection = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-green-50 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-green-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+        <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-blue-50 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-blue-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
           <CardHeader className="relative">
-            <div className="mb-4 p-3 bg-green-100 rounded-full w-fit group-hover:bg-green-200 transition-colors duration-300">
-              <BookOpen className="h-8 w-8 text-green-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="mb-4 p-3 bg-blue-100 rounded-full w-fit group-hover:bg-blue-200 transition-colors duration-300">
+              <BookOpen className="h-8 w-8 text-blue-600 group-hover:scale-110 transition-transform duration-300" />
             </div>
             <CardTitle className="text-xl text-gray-800">निपुण विशेषज्ञ</CardTitle>
           </CardHeader>
@@ -50,11 +50,11 @@ const FeaturesSection = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-pink-50 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-pink-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+        <Card className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 bg-gradient-to-br from-white to-sky-50 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-sky-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
           <CardHeader className="relative">
-            <div className="mb-4 p-3 bg-pink-100 rounded-full w-fit group-hover:bg-pink-200 transition-colors duration-300">
-              <Globe className="h-8 w-8 text-pink-600 group-hover:scale-110 transition-transform duration-300" />
+            <div className="mb-4 p-3 bg-sky-100 rounded-full w-fit group-hover:bg-sky-200 transition-colors duration-300">
+              <Globe className="h-8 w-8 text-sky-600 group-hover:scale-110 transition-transform duration-300" />
             </div>
             <CardTitle className="text-xl text-gray-800">सभी डिवाइस पर उपलब्ध</CardTitle>
           </CardHeader>

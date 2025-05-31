@@ -62,7 +62,7 @@ const CounterSection = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-r from-blue-600 to-purple-600 py-16 text-white">
+    <section className="bg-gradient-blue-primary py-16 text-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">आँकड़े: एक दृष्टि में</h2>

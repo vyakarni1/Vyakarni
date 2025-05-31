@@ -17,14 +17,14 @@ const NavigationLogo = ({ variant }: NavigationLogoProps) => {
     : "h-8 w-8";
     
   const logoTextClasses = isHome 
-    ? "text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in"
-    : "text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent";
+    ? "text-2xl font-bold bg-gradient-blue-primary bg-clip-text text-transparent animate-fade-in"
+    : "text-xl font-bold bg-gradient-blue-primary bg-clip-text text-transparent";
 
   return (
     <div className="flex items-center space-x-3">
       <Link to="/" className={logoClasses}>
         <img 
-          src="/lovable-uploads/c81f0976-b2c6-455e-b2e4-f829a290148d.png" 
+          src="/lovable-uploads/9bf89b26-f748-402b-9503-f5284c8be5c3.png" 
           alt="व्याकरणी Logo" 
           className={logoImageClasses}
           onError={(e) => {
@@ -37,7 +37,7 @@ const NavigationLogo = ({ variant }: NavigationLogoProps) => {
         </span>
       </Link>
       {isHome && (
-        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
       )}
     </div>
   );
