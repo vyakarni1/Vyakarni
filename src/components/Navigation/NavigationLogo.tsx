@@ -10,16 +10,14 @@ const NavigationLogo = ({ variant }: NavigationLogoProps) => {
   const { isScrolled } = useScrollPosition();
   const isHome = variant === "home";
   
-  const logoClasses = isHome 
-    ? "flex items-center space-x-2"
-    : "flex items-center space-x-2 transition-all duration-200 hover:scale-105";
+  const logoClasses = "flex items-center space-x-2 transition-all duration-200 hover:scale-105";
     
   const logoImageClasses = isHome 
     ? `h-10 w-10 transition-all duration-700 ${isScrolled ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`
     : "h-8 w-8";
     
   const logoTextClasses = isHome 
-    ? "text-2xl font-bold bg-gradient-blue-ocean bg-clip-text text-transparent animate-fade-in"
+    ? "text-2xl font-bold bg-gradient-blue-ocean bg-clip-text text-transparent"
     : "text-xl font-bold bg-gradient-blue-ocean bg-clip-text text-transparent";
 
   return (

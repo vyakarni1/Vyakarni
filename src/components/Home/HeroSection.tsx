@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import FloatingLogo from "@/components/FloatingLogo";
 
 const HeroSection = () => {
   return (
@@ -11,10 +12,10 @@ const HeroSection = () => {
       <div className="absolute top-32 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-30 animate-pulse delay-75"></div>
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-cyan-200 rounded-full opacity-25 animate-pulse delay-150"></div>
       
-      <div className="relative z-10 w-full mt-20">
-        {/* Space for floating logo */}
-        <div className="h-32 mb-6"></div>
-        
+      {/* Floating Logo positioned in the center */}
+      <FloatingLogo />
+      
+      <div className="relative z-10 w-full">
         <h1 className="text-6xl font-bold mb-6 bg-gradient-blue-ocean bg-clip-text text-transparent animate-fade-in leading-tight">
           AI के साथ हिंदी लेखन
           <br />

@@ -33,13 +33,11 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
 
   const isHome = variant === "home";
   
-  // Dynamic classes based on variant
-  const headerClasses = isHome 
-    ? "bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-200/30 sticky top-0 z-50"
-    : "bg-white/80 backdrop-blur-md shadow-sm border-b fixed top-0 left-0 right-0 z-50 transition-all duration-300";
+  // Fixed positioning for both variants to prevent hiding
+  const headerClasses = "bg-white/90 backdrop-blur-lg shadow-sm border-b border-gray-200/30 fixed top-0 left-0 right-0 z-50 transition-all duration-300";
 
-  const containerClasses = isHome ? "container mx-auto px-6 py-4" : "container mx-auto px-6";
-  const navClasses = isHome ? "flex justify-between items-center" : "flex items-center justify-between h-16";
+  const containerClasses = "container mx-auto px-6";
+  const navClasses = "flex items-center justify-between h-16";
 
   return (
     <header className={`${headerClasses} ${className}`}>

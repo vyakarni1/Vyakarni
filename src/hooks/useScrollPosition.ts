@@ -9,7 +9,7 @@ export const useScrollPosition = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrollY(currentScrollY);
-      setIsScrolled(currentScrollY > 100); // Logo moves after 100px scroll
+      setIsScrolled(currentScrollY > 50); // Reduced threshold for better responsiveness
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

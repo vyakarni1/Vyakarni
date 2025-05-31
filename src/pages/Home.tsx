@@ -10,23 +10,23 @@ import PricingPreviewSection from "@/components/PricingPreviewSection";
 import FAQSection from "@/components/FAQSection";
 import USPSection from "@/components/USPSection";
 import CTABanner from "@/components/CTABanner";
-import FloatingLogo from "@/components/FloatingLogo";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 overflow-hidden">
-      <FloatingLogo />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <UnifiedNavigation variant="home" />
-      <HeroSection />
-      <FeaturesSection />
-      <USPSection />
-      <CounterSection />
-      <HowItWorksSection />
-      <PricingPreviewSection />
-      <TestimonialsSection />
-      <FAQSection />
-      <CTABanner />
-      <Footer />
+      <div className="pt-16">
+        <HeroSection />
+        <FeaturesSection />
+        <USPSection />
+        <CounterSection />
+        <HowItWorksSection />
+        <PricingPreviewSection />
+        <TestimonialsSection />
+        <FAQSection />
+        <CTABanner />
+        <Footer />
+      </div>
     </div>
   );
 };
