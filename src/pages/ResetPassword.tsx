@@ -16,25 +16,53 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifyingToken, setIsVerifyingToken] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Check if we have the required tokens
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    
-    if (!accessToken || !refreshToken) {
-      toast.error("अवैध या समाप्त हो चुका रीसेट लिंक");
-      navigate('/forgot-password');
-      return;
-    }
+    const verifyRecoveryToken = async () => {
+      // Check for recovery token from Supabase redirect
+      const token = searchParams.get('token');
+      const type = searchParams.get('type');
+      
+      console.log('Recovery token check:', { token: token?.substring(0, 10) + '...', type });
+      
+      if (!token || type !== 'recovery') {
+        console.log('No valid recovery token found, redirecting to forgot-password');
+        toast.error("अवैध या समाप्त हो चुका रीसेट लिंक");
+        navigate('/forgot-password');
+        return;
+      }
 
-    // Set the session with the tokens
-    supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    });
+      try {
+        // Verify the recovery token with Supabase
+        const { data, error } = await supabase.auth.verifyOtp({
+          token_hash: token,
+          type: 'recovery'
+        });
+
+        if (error) {
+          console.error('Token verification failed:', error);
+          toast.error("रीसेट लिंक अमान्य या समाप्त हो गया है");
+          navigate('/forgot-password');
+          return;
+        }
+
+        if (data.session) {
+          console.log('Recovery token verified successfully');
+          toast.success("रीसेट लिंक सत्यापित हो गया। अब नया पासवर्ड सेट करें।");
+        }
+      } catch (error) {
+        console.error('Error verifying recovery token:', error);
+        toast.error("टोकन सत्यापन में त्रुटि");
+        navigate('/forgot-password');
+      } finally {
+        setIsVerifyingToken(false);
+      }
+    };
+
+    verifyRecoveryToken();
   }, [searchParams, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,6 +96,25 @@ const ResetPassword = () => {
       setIsLoading(false);
     }
   };
+
+  if (isVerifyingToken) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md">
+            <Card className="shadow-xl">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600">रीसेट लिंक सत्यापित हो रहा है...</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
