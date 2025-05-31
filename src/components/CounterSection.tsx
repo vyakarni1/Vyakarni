@@ -11,9 +11,9 @@ const CounterSection = () => {
   });
 
   const finalValues = {
-    users: 25000,
+    users: 10000,
     texts: 100000,
-    corrections: 300000,
+    corrections: 99,
     saved: 15000
   };
 
@@ -38,7 +38,7 @@ const CounterSection = () => {
     {
       icon: Users,
       value: counters.users.toLocaleString('hi-IN'),
-      label: 'संतुष्ट उपयोगकर्ता',
+      label: 'संतुष्ट प्रयोगकर्ता',
       suffix: '+'
     },
     {
@@ -49,15 +49,15 @@ const CounterSection = () => {
     },
     {
       icon: CheckCircle,
-      value: counters.corrections.toLocaleString('hi-IN'),
-      label: 'त्रुटियाँ सुधारी गयीं',
-      suffix: '+'
+      value: counters.corrections,
+      label: 'सटीक सुधार',
+      suffix: '%'
     },
     {
       icon: Clock,
-      value: counters.saved.toLocaleString('hi-IN'),
-      label: 'घंटे बचाये गये',
-      suffix: '+'
+      value: '24/7',
+      label: 'सेवा उपलब्ध',
+      suffix: ''
     }
   ];
 
@@ -65,8 +65,8 @@ const CounterSection = () => {
     <section className="bg-gradient-blue-primary py-16 text-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">आँकड़े: एक दृष्टि में</h2>
-          <p className="text-xl opacity-90">ये हमारे उपयोगकर्ताओं के प्रयोग नहीं, अपितु उनके विश्वास के आँकड़े हैं।</p>
+          <h2 className="text-4xl font-bold mb-4">हमारी उपलब्धियाँ</h2>
+          <p className="text-xl opacity-90">आँकड़े जो हमारी उपलब्धियों को दर्शाते हैं।</p>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">

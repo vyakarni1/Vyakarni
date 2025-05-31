@@ -1,20 +1,22 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star } from "lucide-react";
+import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star, Mail } from "lucide-react";
 import Layout from "@/components/Layout";
+
 const About = () => {
-  return <Layout>
+  return (
+    <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="container mx-auto px-6 text-center">
             <h1 className="text-5xl font-bold mb-6 animate-fade-in">
-              हमारे बारे में
+              हमारे विषय में
             </h1>
             <p className="text-xl opacity-90 max-w-3xl mx-auto leading-relaxed">
-              हम आधुनिक AI तकनीक के साथ हिंदी भाषा को डिजिटल युग में आगे बढ़ाने के लिए प्रतिबद्ध हैं। 
-              हमारा लक्ष्य हर व्यक्ति को शुद्ध और प्रभावशाली हिंदी लिखने में मदद करना है।
+              हम आधुनिक AI तकनीक के साथ हिंदी भाषा को डिजिटल युग में आगे बढ़ाने के लिये प्रतिबद्ध हैं। हमारा लक्ष्य प्रत्येक व्यक्ति को शुद्ध और प्रभावशाली हिंदी लिखने में सहायता प्रदान करना है।
             </p>
           </div>
         </section>
@@ -26,13 +28,10 @@ const About = () => {
               <div>
                 <h2 className="text-4xl font-bold mb-6 text-gray-800">हमारी कहानी</h2>
                 <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                  व्याकरणी की शुरुआत एक साधारण विचार से हुई - हिंदी भाषा की शुद्धता को बनाए रखना और 
-                  डिजिटल माध्यमों में इसका सही उपयोग सुनिश्चित करना। हमने देखा कि आधुनिक युग में हिंदी 
-                  लेखन में कई त्रुटियां हो रही हैं।
+                  व्याकरणी की आवश्यकता लम्बे समय से अनुभव की जा रही थी। यूँ तो अनुवाद इत्यादि के तो अनेक प्लेटफॉर्म्स उपलब्ध हैं, किन्तु भाषा-शोधन का कोई समर्पित प्लेटफार्म उपलब्ध नही था। हिंदी भाषा के प्रति हमारा प्रेम हमें निरंतर ऐसे किसी प्लेटफार्म के निर्माण हेतु आंदोलित करता रहता था।
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed">
-                  हमारी टीम ने AI और मशीन लर्निंग का उपयोग करके एक ऐसा प्लेटफॉर्म बनाया जो न केवल 
-                  व्याकरण की त्रुटियों को पकड़ता है बल्कि भाषा को और भी बेहतर बनाने के सुझाव भी देता है।
+                  आज जब यह प्लेटफार्म साकार हो कर हमारे सम्मुख उपस्थित है तो यह हमें अत्यंत संतोष और गौरव का अनुभव देता है तथा इसे आपके साथ साझा करना हमारे इस अनुभव को बहुगुणित कर रहा है।
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -48,7 +47,7 @@ const About = () => {
                 <Card className="text-center transform hover:scale-105 transition-all duration-300">
                   <CardHeader>
                     <Zap className="h-12 w-12 text-purple-600 mx-auto mb-2" />
-                    <CardTitle className="text-lg">तकनीकी नवाचार</CardTitle>
+                    <CardTitle className="text-lg">AI की शक्ति से भाषा का संवर्धन</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600">AI की शक्ति से भाषा को बेहतर बनाना</p>
@@ -63,9 +62,9 @@ const About = () => {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-6">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारा मिशन और दृष्टिकोण</h2>
+              <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारा ध्येय और दृष्टिकोण</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                हिंदी भाषा को डिजिटल युग में उसका उचित स्थान दिलाना
+                हिंदी भाषा में लोगों की अभिव्यक्ति की क्षमता में वृद्धि करने वाला एक आधुनिक डिजिटल प्लेटफार्म निर्मित कर लोगो को उसे प्रयोग करने हेतु एक सशक्त विकल्प प्रस्तुत करना।
               </p>
             </div>
             
@@ -73,21 +72,21 @@ const About = () => {
               <Card className="border-blue-200 bg-blue-50">
                 <CardHeader>
                   <Target className="h-8 w-8 text-blue-600 mb-2" />
-                  <CardTitle className="text-2xl text-blue-800">हमारा मिशन</CardTitle>
+                  <CardTitle className="text-2xl text-blue-800">हमारा ध्येय</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3 text-gray-700">
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      हिंदी व्याकरण की त्रुटियों को तुरंत पहचानना और सुधारना
+                      डिजिटल युग की आवश्यकताओं के अनुरूप भाषा का शोधन एवं संवर्धन करना
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      भाषा की शुद्धता और स्पष्टता में सुधार करना
+                      लोगों को यह समझाना कि वे व्याकरणी के माध्यम से स्वयं को सहजता एवं सरलता के साथ हिंदी में अभिव्यक्त कर सकते हैं
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      डिजिटल माध्यमों में हिंदी के उपयोग को प्रोत्साहित करना
+                      हिंदी लेखन के विभिन्न पारंपरिक घटकों जैसे कि कथा-लेखन, उपन्यास लेखन इत्यादि तथा आधुनिक घटकों जैसे कि ब्लॉग-लेखन, तथा ऑडियो स्टोरी लेखन हेतु स्तरीय हिंदी के प्रयोग को प्रोत्साहित करना
                     </li>
                   </ul>
                 </CardContent>
@@ -102,15 +101,15 @@ const About = () => {
                   <ul className="space-y-3 text-gray-700">
                     <li className="flex items-start">
                       <Star className="h-5 w-5 text-purple-600 mr-2 mt-0.5" />
-                      हिंदी को विश्व की अग्रणी डिजिटल भाषाओं में शामिल करना
+                      व्यवसायिक क्षेत्र में हिंदी के बढ़ते उपयोग को संबल प्रदान कर इसके प्रयोग को बढ़ाना
                     </li>
                     <li className="flex items-start">
                       <Star className="h-5 w-5 text-purple-600 mr-2 mt-0.5" />
-                      AI-संचालित भाषा उपकरणों में हिंदी को प्राथमिकता दिलाना
+                      AI की शक्ति द्वारा हिंदी प्रयोग की त्रुटियों को दूर करते हुये इसके द्वारा प्राप्त परिणामों में उत्तरोत्तर सुधार करना
                     </li>
                     <li className="flex items-start">
                       <Star className="h-5 w-5 text-purple-600 mr-2 mt-0.5" />
-                      भावी पीढ़ियों के लिए शुद्ध हिंदी का संरक्षण करना
+                      जिन्हें हम जेन-जी और जेन-अल्फा कहते हैं, उनके लिये हिंदी भाषा में संवाद एवं अभिव्यक्ति का एक माध्यम निर्मित करना
                     </li>
                   </ul>
                 </CardContent>
@@ -124,7 +123,7 @@ const About = () => {
           <div className="container mx-auto px-6">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारे मूल्य</h2>
-              <p className="text-xl text-gray-600">जो सिद्धांत हमारे काम को दिशा देते हैं</p>
+              <p className="text-xl text-gray-600">जो सिद्धांत हमारे कार्यों को दिशा देते हैं</p>
             </div>
             
             <div className="grid md:grid-cols-4 gap-6">
@@ -134,7 +133,7 @@ const About = () => {
                   <CardTitle className="text-lg">सटीकता</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">99.5% सटीक व्याकरण सुधार और विश्वसनीय परिणाम</p>
+                  <p className="text-sm text-gray-600">99% सटीक व्याकरण सुधार और विश्वसनीय परिणाम</p>
                 </CardContent>
               </Card>
 
@@ -144,7 +143,7 @@ const About = () => {
                   <CardTitle className="text-lg">समुदाय</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">हिंदी भाषी समुदाय के साथ मिलकर भाषा को बेहतर बनाना</p>
+                  <p className="text-sm text-gray-600">हिंदी भाषा प्रेमी समुदाय के साथ मिलकर भाषा के प्रयोग को प्रोत्साहित करना</p>
                 </CardContent>
               </Card>
 
@@ -154,7 +153,7 @@ const About = () => {
                   <CardTitle className="text-lg">सुरक्षा</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">आपके डेटा की पूर्ण सुरक्षा और गोपनीयता का सम्मान</p>
+                  <p className="text-sm text-gray-600">आपके डेटा की पूर्ण सुरक्षा और आपकी गोपनीयता का सम्मान</p>
                 </CardContent>
               </Card>
 
@@ -164,7 +163,7 @@ const About = () => {
                   <CardTitle className="text-lg">सेवा भावना</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">भाषा सेवा के लिए प्रतिबद्धता और 24/7 सहायता</p>
+                  <p className="text-sm text-gray-600">अपने ग्राहकों के प्रति पूर्ण प्रतिबद्धता और 24/7 सहायता</p>
                 </CardContent>
               </Card>
             </div>
@@ -175,29 +174,29 @@ const About = () => {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-6">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारी उपलब्धियां</h2>
-              <p className="text-xl text-gray-600">आंकड़े जो हमारी सफलता को दर्शाते हैं</p>
+              <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारी उपलब्धियाँ</h2>
+              <p className="text-xl text-gray-600">आँकड़े जो हमारी उपलब्धियों को दर्शाते हैं</p>
             </div>
             
             <div className="grid md:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="text-4xl font-bold text-blue-600 mb-2">50,000+</div>
-                <div className="text-gray-600">खुश उपयोगकर्ता</div>
+                <div className="text-4xl font-bold text-blue-600 mb-2">10,000+</div>
+                <div className="text-gray-600">संतुष्ट प्रयोगकर्ता</div>
                 <TrendingUp className="h-8 w-8 text-blue-600 mx-auto mt-2" />
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-green-600 mb-2">1M+</div>
-                <div className="text-gray-600">जांचे गए दस्तावेज़</div>
+                <div className="text-4xl font-bold text-green-600 mb-2">1,00,000</div>
+                <div className="text-gray-600">पाठ जाँचे गये</div>
                 <BookOpen className="h-8 w-8 text-green-600 mx-auto mt-2" />
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-purple-600 mb-2">99.5%</div>
-                <div className="text-gray-600">सटीकता दर</div>
+                <div className="text-4xl font-bold text-purple-600 mb-2">99%</div>
+                <div className="text-gray-600">सटीक सुधार</div>
                 <Award className="h-8 w-8 text-purple-600 mx-auto mt-2" />
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-red-600 mb-2">24/7</div>
-                <div className="text-gray-600">उपलब्ध सेवा</div>
+                <div className="text-gray-600">सेवा उपलब्ध</div>
                 <Clock className="h-8 w-8 text-red-600 mx-auto mt-2" />
               </div>
             </div>
@@ -219,7 +218,7 @@ const About = () => {
                   <CardTitle className="text-xl">उन्नत AI मॉडल</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600">हिंदी भाषा के लिए विशेष रूप से प्रशिक्षित AI मॉडल जो संदर्भ को समझकर सुधार सुझाते हैं।</p>
+                  <p className="text-gray-600">हिंदी भाषा के लिये विशेष रूप से प्रशिक्षित AI मॉडल जो संदर्भ को समझकर सुधार सुझाते हैं।</p>
                 </CardContent>
               </Card>
 
@@ -229,7 +228,7 @@ const About = () => {
                   <CardTitle className="text-xl">वास्तविक समय प्रसंस्करण</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600">तुरंत व्याकरण जांच और सुधार के सुझाव, बिना किसी देरी के।</p>
+                  <p className="text-gray-600">त्वरित व्याकरण परीक्षण एवं सुधार के अनुकरणीय सुझाव।</p>
                 </CardContent>
               </Card>
 
@@ -250,25 +249,32 @@ const About = () => {
         <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-4xl font-bold mb-6">हमसे जुड़ें</h2>
-            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              हिंदी भाषा को बेहतर बनाने के हमारे मिशन में शामिल हों। आज ही रजिस्टर करें और 
-              अपने लेखन को नई ऊंचाइयों पर ले जाएं।
-            </p>
+            <div className="max-w-4xl mx-auto mb-8">
+              <p className="text-xl mb-6 opacity-90 leading-relaxed">
+                व्याकरणी हमारे लिये एक अभियान है। एक ऐसा अभियान जिसका आरम्भ हम हिंदी भाषा में दक्षता प्राप्त करने हेतु करेंगे। 'सर्वजन हिताय' की मूल भावना के साथ प्रारंभ किया गया यह अभियान सर्वजन के सहयोग की अनुपस्थिति में पूर्ण न हो सकेगा।
+              </p>
+              <p className="text-lg opacity-90">
+                व्याकरणी के इस महा-अभियान से किसी भी रूप में जुड़ने के लिये आप हमें हमारे ई-मेल support@vyakarni.com पर संपर्क कर सकते हैं।
+              </p>
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/register">
                 <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
-                  अभी शुरू करें
+                  तत्काल आरम्भ करें
                 </Button>
               </Link>
-              <Link to="/contact">
-                <Button variant="outline" size="lg" className="border-white text-blue hover:text-blue-600 px-8 py-3 text-lg font-semibold bg-slate-50">
-                  संपर्क करें
+              <a href="mailto:support@vyakarni.com">
+                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 text-lg font-semibold bg-transparent">
+                  व्याकरणी अभियान में जुड़ें
+                  <Mail className="h-5 w-5 ml-2" />
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </section>
       </div>
-    </Layout>;
+    </Layout>
+  );
 };
+
 export default About;

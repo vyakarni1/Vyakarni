@@ -8,7 +8,7 @@ const HowItWorksSection = () => {
     <section className="bg-gradient-to-r from-blue-50 to-cyan-50 py-20">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">व्याकरणी कैसे सुधार करता है?</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">व्याकरणी कैसे कार्य करता है?</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             मात्र तीन सरल चरणों में अपने हिंदी पाठ को सुधारें।
           </p>
@@ -23,7 +23,7 @@ const HowItWorksSection = () => {
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce"></div>
             </div>
             <h3 className="text-2xl font-semibold mb-3 text-gray-800">वेबसाइट पर रजिस्टर करें</h3>
-            <p className="text-gray-600 leading-relaxed">नि:शुल्क खाता बनायें एवं अविलम्ब कार्य आरम्भ करें। कोई गुप्त शुल्क नहीं।</p>
+            <p className="text-gray-600 leading-relaxed">निःशुल्क खाता बनायें एवं अविलम्ब कार्य आरम्भ करें। कोई गुप्त शुल्क नहीं।</p>
           </div>
           
           <div className="text-center group">
