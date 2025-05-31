@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
@@ -12,9 +11,9 @@ const HeroSection = () => {
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-cyan-200 rounded-full opacity-25 animate-pulse delay-150"></div>
       
       <div className="relative z-10 w-full">
-        {/* Static Logo */}
+        {/* Transparent Logo Container */}
         <div className="mb-8 flex justify-center">
-          <div className="w-24 h-24 rounded-full bg-gradient-blue-ocean p-3 shadow-2xl">
+          <div className="w-24 h-24">
             <img 
               src="/lovable-uploads/ff01d226-6125-485c-8018-5807ce651d5e.png" 
               alt="व्याकरणी Logo" 
