@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Github, Twitter, Mail, Heart } from "lucide-react";
 const Footer = () => {
@@ -10,7 +11,7 @@ const Footer = () => {
               व्याकरणी
             </div>
             <p className="text-gray-400 text-sm">
-              हिंदी भाषा के लिए एक उन्नत व्याकरण जांच उपकरण
+              हिंदी भाषा के सुधार हेतु एक उन्नत व्याकरण परीक्षण टूल
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-blue-400 transition-all duration-200 hover:scale-110" aria-label="Twitter">
@@ -30,15 +31,15 @@ const Footer = () => {
             <h3 className="text-lg font-semibold">त्वरित लिंक</h3>
             <div className="space-y-2">
               <Link to="/about" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
-                हमारे बारे में
+                हमारे विषय में
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link to="/contact" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
-                संपर्क
+                संपर्क करें
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link to="/grammar-checker" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
-                व्याकरण जांच
+                व्याकरण जाँच
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </div>
@@ -46,7 +47,7 @@ const Footer = () => {
 
           {/* Legal Policies */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">कानूनी नीतियाँ</h3>
+            <h3 className="text-lg font-semibold">व्यवसायिक नीतियाँ</h3>
             <div className="space-y-2">
               <Link to="/privacy" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
                 गोपनीयता नीति
@@ -76,7 +77,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold">अन्य नीतियाँ</h3>
             <div className="space-y-2">
               <Link to="/data-protection" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
-                डेटा संरक्षण
+                डेटा संरक्षण नीति
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link to="/shipping-policy" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
@@ -90,8 +91,6 @@ const Footer = () => {
             </div>
             <div className="mt-4 text-gray-400 text-sm">
               <p>ईमेल: support@vyakarni.com</p>
-              <p className="mt-1">समय: सोमवार - शुक्रवार</p>
-              <p>9:00 AM - 6:00 PM</p>
             </div>
           </div>
         </div>

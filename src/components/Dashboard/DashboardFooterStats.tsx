@@ -15,7 +15,7 @@ const DashboardFooterStats = ({ balance }: DashboardFooterStatsProps) => {
           {balance} शब्द
         </span>
         <span className="text-gray-400">|</span>
-        <span className="text-gray-600">हिंदी लेखन को बेहतर बनाने के लिए यहां हैं</span>
+        <span className="text-gray-600">परिमार्जित एवं परिष्कृत हिंदी लेखन</span>
       </div>
     </div>
   );

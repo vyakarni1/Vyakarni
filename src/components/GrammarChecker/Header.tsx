@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Target, Zap, Shield } from "lucide-react";
 const Header = () => {
@@ -14,7 +15,7 @@ const Header = () => {
         </h1>
       </div>
       <p className="text-sm sm:text-base lg:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed px-2 sm:px-4">
-        AI की शक्ति से अपने हिंदी टेक्स्ट को पूर्ण और शुद्ध बनाएं
+        AI की शक्ति से अपने हिंदी लेखन की गुणवत्ता को सुधारें
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 lg:gap-6 mt-4 sm:mt-6 lg:mt-8">
         <div className="flex items-center gap-2 text-slate-500">
