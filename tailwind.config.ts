@@ -149,7 +149,10 @@ export default {
 				'gradient-blue-secondary': 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 25%, #0ea5e9 50%, #0284c7 75%, #0369a1 100%)',
 				'gradient-blue-accent': 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #1d4ed8 50%, #2563eb 75%, #3b82f6 100%)',
 				'gradient-blue-light': 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 25%, #38bdf8 50%, #0ea5e9 75%, #0284c7 100%)',
-				'gradient-blue-deep': 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)'
+				'gradient-blue-deep': 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+				'gradient-blue-ocean': 'linear-gradient(135deg, #0891b2 0%, #0ea5e9 25%, #3b82f6 50%, #6366f1 75%, #8b5cf6 100%)',
+				'gradient-blue-sky': 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 25%, #3b82f6 50%, #6366f1 75%, #8b5cf6 100%)',
+				'gradient-blue-crystal': 'linear-gradient(135deg, #06b6d4 0%, #0891b2 25%, #0ea5e9 50%, #3b82f6 75%, #6366f1 100%)'
 			}
 		}
 	},

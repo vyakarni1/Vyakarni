@@ -1,26 +1,21 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, CheckCircle } from "lucide-react";
-import ConchShell from "@/components/ui/ConchShell";
+import { ArrowRight, CheckCircle } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section className="container mx-auto px-6 py-20 text-center relative">
+    <section className="container mx-auto px-6 py-20 text-center relative min-h-screen flex items-center">
       {/* Background decorative elements */}
       <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-32 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-30 animate-pulse delay-75"></div>
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-cyan-200 rounded-full opacity-25 animate-pulse delay-150"></div>
       
-      <div className="relative z-10">
-        <div className="flex justify-center mb-6">
-          <div className="relative">
-            <ConchShell className="h-16 w-16 animate-pulse text-blue-600" />
-            <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full animate-bounce"></div>
-          </div>
-        </div>
+      <div className="relative z-10 w-full mt-20">
+        {/* Space for floating logo */}
+        <div className="h-32 mb-6"></div>
         
-        <h1 className="text-6xl font-bold mb-6 bg-gradient-blue-primary bg-clip-text text-transparent animate-fade-in leading-tight">
+        <h1 className="text-6xl font-bold mb-6 bg-gradient-blue-ocean bg-clip-text text-transparent animate-fade-in leading-tight">
           AI के साथ हिंदी लेखन
           <br />
           <span className="text-5xl">सुधारें</span>
@@ -29,12 +24,12 @@ const HeroSection = () => {
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in delay-75">
           आधुनिक AI तकनीक का उपयोग कर अपने हिंदी पाठ को तुरंत सुधारें।
           <br />
-          व्याकरण की त्रुटियों को <span className="font-semibold bg-gradient-blue-secondary bg-clip-text text-transparent">एक क्लिक</span> में ठीक करें।
+          व्याकरण की त्रुटियों को <span className="font-semibold bg-gradient-blue-deep bg-clip-text text-transparent">एक क्लिक</span> में ठीक करें।
         </p>
         
         <div className="flex justify-center space-x-4 mb-8">
           <div className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
-            <ConchShell className="h-4 w-4 text-blue-600" />
+            <div className="h-4 w-4 bg-gradient-blue-ocean rounded-full"></div>
             <span className="text-sm text-gray-600">निःशुल्क परीक्षण</span>
           </div>
           <div className="flex items-center space-x-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
@@ -44,7 +39,7 @@ const HeroSection = () => {
         </div>
         
         <Link to="/register">
-          <Button size="lg" className="text-lg px-8 py-4 bg-gradient-blue-primary hover:bg-gradient-blue-secondary transform hover:scale-105 transition-all duration-300 shadow-xl group">
+          <Button size="lg" className="text-lg px-8 py-4 bg-gradient-blue-ocean hover:bg-gradient-blue-deep transform hover:scale-105 transition-all duration-300 shadow-xl group">
             प्रयोग करें एवं जाँचे
             <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
           </Button>

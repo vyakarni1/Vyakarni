@@ -10,10 +10,12 @@ import PricingPreviewSection from "@/components/PricingPreviewSection";
 import FAQSection from "@/components/FAQSection";
 import USPSection from "@/components/USPSection";
 import CTABanner from "@/components/CTABanner";
+import FloatingLogo from "@/components/FloatingLogo";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 overflow-hidden">
+      <FloatingLogo />
       <UnifiedNavigation variant="home" />
       <HeroSection />
       <FeaturesSection />
