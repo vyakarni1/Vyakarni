@@ -1,22 +1,14 @@
 
 import { Link } from "react-router-dom";
-import { useScrollPosition } from "@/hooks/useScrollPosition";
 
 interface NavigationLogoProps {
   variant: "home" | "default";
 }
 
 const NavigationLogo = ({ variant }: NavigationLogoProps) => {
-  const { isScrolled } = useScrollPosition();
-  const isHome = variant === "home";
-  
   const logoClasses = "flex items-center space-x-2 transition-all duration-200 hover:scale-105";
-    
-  const logoImageClasses = isHome 
-    ? `h-10 w-10 transition-all duration-700 ${isScrolled ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`
-    : "h-8 w-8";
-    
-  const logoTextClasses = isHome 
+  const logoImageClasses = "h-8 w-8";
+  const logoTextClasses = variant === "home" 
     ? "text-2xl font-bold bg-gradient-blue-ocean bg-clip-text text-transparent"
     : "text-xl font-bold bg-gradient-blue-ocean bg-clip-text text-transparent";
 
@@ -36,9 +28,6 @@ const NavigationLogo = ({ variant }: NavigationLogoProps) => {
           व्याकरणी
         </span>
       </Link>
-      {isHome && isScrolled && (
-        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-      )}
     </div>
   );
 };
