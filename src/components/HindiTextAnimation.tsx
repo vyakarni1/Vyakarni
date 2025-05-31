@@ -73,71 +73,90 @@ const HindiTextAnimation = () => {
   }, [startTyping]);
 
   return (
-    <div className="w-full max-w-lg mx-auto">
-      <h3 className="text-xl font-semibold text-gray-700 mb-6 text-center">
-        हिंदी पाठ सुधार डेमो
-      </h3>
+    <div className="w-full max-w-2xl mx-auto">
+      {/* Title - Centered and consistent */}
+      <div className="text-center mb-8">
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">
+          हिंदी पाठ सुधार डेमो
+        </h3>
+        <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto rounded-full"></div>
+      </div>
       
-      {/* Fixed height container for consistent layout */}
-      <div className="relative h-[320px] mb-5">
+      {/* Main container with fixed dimensions for consistent layout */}
+      <div className="relative bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         
-        {/* Main text container with fixed dimensions */}
-        <div className={`
-          bg-gray-50 border-2 rounded-xl p-6 h-[120px] 
-          flex items-center justify-center
-          transition-all duration-500 ease-in-out
-          ${isTyping ? 'border-blue-400 shadow-lg shadow-blue-100 transform scale-[1.02]' : 'border-gray-200'}
-        `}>
-          <div className="text-lg text-gray-800 font-medium text-center leading-relaxed w-full">
-            {typedText}
-            {showCursor && (
-              <span className="inline-block w-0.5 h-6 bg-blue-400 ml-1 animate-pulse"></span>
-            )}
+        {/* Text display area - Fixed height for consistency */}
+        <div className="relative h-40 flex items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-white">
+          <div className={`
+            w-full text-center transition-all duration-500 ease-out
+            ${isTyping ? 'transform scale-105' : ''}
+          `}>
+            <div className="text-xl text-gray-800 font-medium leading-relaxed min-h-[3rem] flex items-center justify-center">
+              <span className="inline-block">
+                {typedText}
+                {showCursor && (
+                  <span className="inline-block w-0.5 h-7 bg-blue-500 ml-1 animate-pulse"></span>
+                )}
+              </span>
+            </div>
           </div>
+          
+          {/* Subtle border animation */}
+          <div className={`
+            absolute inset-0 border-2 rounded-2xl transition-all duration-700 ease-out
+            ${isTyping 
+              ? 'border-blue-400 shadow-lg shadow-blue-100/50' 
+              : 'border-transparent'
+            }
+          `}></div>
         </div>
         
-        {/* Button container with fixed positioning */}
-        <div className="absolute top-[140px] left-0 right-0 text-center h-[60px] flex items-center justify-center">
+        {/* Action button area - Fixed height for no layout shift */}
+        <div className="h-20 flex items-center justify-center bg-gray-50/50 border-t border-gray-100">
           <button 
             onClick={showCorrectionPanel}
             className={`
-              bg-gradient-to-r from-green-500 to-green-600 text-white
-              px-8 py-3 rounded-full text-lg font-semibold
-              shadow-lg hover:shadow-xl
-              hover:scale-105 active:scale-95
-              transition-all duration-500 ease-in-out
+              relative bg-gradient-to-r from-green-500 to-green-600 text-white
+              px-8 py-3 rounded-full text-lg font-semibold shadow-lg
+              transform transition-all duration-500 ease-out
+              hover:scale-105 hover:shadow-xl active:scale-95
               ${showCorrectButton 
                 ? 'opacity-100 translate-y-0 pointer-events-auto' 
-                : 'opacity-0 translate-y-5 pointer-events-none'
+                : 'opacity-0 translate-y-4 pointer-events-none'
               }
             `}
           >
-            सुधार करें
+            <span className="relative z-10">सुधार करें</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
           </button>
         </div>
         
-        {/* Correction panel with fixed positioning */}
+        {/* Correction panel - Slides up from bottom */}
         <div className={`
-          absolute top-[220px] left-0 right-0
-          bg-gradient-to-r from-blue-500 to-blue-600 text-white
-          rounded-xl p-5 h-[80px]
-          transition-all duration-700 ease-in-out
+          absolute inset-x-0 bottom-0 h-32
+          bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
+          transform transition-all duration-700 ease-out
           ${showCorrection 
-            ? 'opacity-100 scale-100 translate-y-0' 
-            : 'opacity-0 scale-95 translate-y-5'
+            ? 'translate-y-0 opacity-100' 
+            : 'translate-y-full opacity-0'
           }
         `}>
-          <div className="text-sm opacity-90 mb-2 transition-opacity duration-300">
-            सुधारा गया वाक्य:
+          <div className="h-full flex flex-col justify-center px-8 text-white">
+            <div className="text-sm font-medium opacity-90 mb-3 text-center">
+              सुधारा गया वाक्य:
+            </div>
+            <div className="text-lg font-semibold text-center leading-relaxed">
+              {correctedText}
+            </div>
           </div>
-          <div className="text-lg font-semibold leading-tight">
-            {correctedText}
-          </div>
+          
+          {/* Decorative gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-blue-800/20 to-transparent pointer-events-none"></div>
         </div>
       </div>
       
-      {/* Reset button with smooth transition */}
-      <div className="text-center h-[50px] flex items-center justify-center">
+      {/* Reset button - Centered below the main container */}
+      <div className="mt-8 text-center">
         <button 
           onClick={() => {
             resetAnimation();
@@ -145,11 +164,12 @@ const HindiTextAnimation = () => {
           }}
           className={`
             bg-gradient-to-r from-purple-500 to-purple-600 text-white
-            px-6 py-2 rounded-full text-sm font-medium
-            transition-all duration-500 ease-in-out hover:scale-105
+            px-8 py-3 rounded-full text-sm font-semibold shadow-lg
+            transform transition-all duration-500 ease-out
+            hover:scale-105 hover:shadow-xl active:scale-95
             ${showResetButton 
               ? 'opacity-100 translate-y-0 pointer-events-auto' 
-              : 'opacity-0 translate-y-3 pointer-events-none'
+              : 'opacity-0 translate-y-4 pointer-events-none'
             }
           `}
         >
