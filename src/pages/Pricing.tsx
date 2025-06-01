@@ -88,9 +88,7 @@ const Pricing = () => {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4 my-[12px] py-[8px]">शब्द पैकेज क्रय करें</h1>
-            <p className="text-xl text-gray-600 mb-4">
-              अपनी आवश्यकताओं के अनुसार शब्द पैकेज का चुनाव करयें
-            </p>
+            <p className="text-xl text-gray-600 mb-4">अपनी आवश्यकताओं के अनुसार अपना शब्द पैकेज चुनें </p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
               <Calculator className="h-4 w-4" />
               <span>सभी पैकेज 30 दिनों तक वैध • बचत ऑफर का लाभ उठायें</span>
