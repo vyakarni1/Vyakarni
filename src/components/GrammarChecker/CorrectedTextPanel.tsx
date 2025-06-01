@@ -97,7 +97,7 @@ const CorrectedTextPanel = ({
                   <ArrowRight className="h-6 w-6 sm:h-8 sm:w-8 text-slate-400" />
                 </div>
                 <p className="text-slate-400 text-base sm:text-lg font-medium">
-                  {isGrammarMode ? "सुधारा गया टेक्स्ट यहाँ दिखेगा..." : "शैली सुधारा गया टेक्स्ट यहाँ दिखेगा..."}
+                  {isGrammarMode ? "सुधारा गया पाठ यहाँ दिखेगा..." : "शैली सुधारा गया पाठ यहाँ दिखेगा..."}
                 </p>
                 <p className="text-xs sm:text-sm text-slate-300 mt-2">
                   {isGrammarMode ? "पहले व्याकरण सुधार बटन दबाएं" : "पहले शैली सुधार बटन दबाएं"}
