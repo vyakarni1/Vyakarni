@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import UnifiedNavigation from "@/components/UnifiedNavigation";
-import MarqueeBar from "@/components/MarqueeBar";
 import HeroSection from "@/components/Home/HeroSection";
 import FeaturesSection from "@/components/Home/FeaturesSection";
 import HowItWorksSection from "@/components/Home/HowItWorksSection";
@@ -14,6 +13,7 @@ import PricingPreviewSection from "@/components/PricingPreviewSection";
 import FAQSection from "@/components/FAQSection";
 import USPSection from "@/components/USPSection";
 import CTABanner from "@/components/CTABanner";
+import MarqueeBar from "@/components/MarqueeBar";
 
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,7 +68,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <UnifiedNavigation variant="home" />
-      <div className="pt-16">
+      <MarqueeBar />
+      <div className="pt-24">
         <HeroSection />
         <FeaturesSection />
         <USPSection />
