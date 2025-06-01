@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock, AlertCircle, CheckCircle } from "lucide-react";
 import Layout from "@/components/Layout";
+import { parseResetPasswordParams, validateResetPasswordAccess } from "@/utils/authUtils";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -16,81 +17,93 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isVerifyingToken, setIsVerifyingToken] = useState(true);
+  const [isVerifyingAccess, setIsVerifyingAccess] = useState(true);
+  const [hasValidAccess, setHasValidAccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const handlePasswordResetAuth = async () => {
-      // Check for different URL parameter formats
-      const code = searchParams.get('code');
-      const token = searchParams.get('token');
-      const type = searchParams.get('type');
+    const verifyResetAccess = async () => {
+      setIsVerifyingAccess(true);
       
-      console.log('Password reset URL check:', { 
-        hasCode: !!code, 
-        hasToken: !!token, 
-        type,
-        code: code?.substring(0, 10) + '...',
-        token: token?.substring(0, 10) + '...'
-      });
-
       try {
-        // Handle Format 1: ?code=xyz (direct reset)
-        if (code) {
-          console.log('Handling code-based reset');
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+        const params = parseResetPasswordParams(searchParams);
+        const validation = validateResetPasswordAccess(params);
+        
+        console.log('Reset password access validation:', validation);
+        
+        if (!validation.isValid) {
+          console.error('Invalid reset password access:', validation.error);
           
-          if (error) {
-            console.error('Code exchange failed:', error);
-            toast.error("रीसेट लिंक अमान्य या समाप्त हो गया है");
+          let errorMsg = "अवैध या समाप्त हो चुका रीसेट लिंक";
+          
+          if (validation.error === 'access_denied') {
+            errorMsg = "रीसेट लिंक की अनुमति नहीं दी गई";
+          } else if (validation.error === 'otp_expired') {
+            errorMsg = "रीसेट लिंक समाप्त हो गया है";
+          } else if (params.errorDescription) {
+            errorMsg = "रीसेट लिंक अमान्य या समाप्त हो गया है";
+          }
+          
+          setErrorMessage(errorMsg);
+          setHasValidAccess(false);
+          toast.error(errorMsg);
+          
+          // Redirect after showing error
+          setTimeout(() => {
             navigate('/forgot-password');
-            return;
-          }
-
-          if (data.session) {
-            console.log('Code exchanged successfully, session established');
-            toast.success("रीसेट लिंक सत्यापित हो गया। अब नया पासवर्ड सेट करें।");
-          }
-        }
-        // Handle Format 2: ?token=xyz&type=recovery (Supabase verification flow)
-        else if (token && type === 'recovery') {
-          console.log('Handling token-based reset');
-          const { data, error } = await supabase.auth.verifyOtp({
-            token_hash: token,
-            type: 'recovery'
-          });
-
-          if (error) {
-            console.error('Token verification failed:', error);
-            toast.error("रीसेट लिंक अमान्य या समाप्त हो गया है");
-            navigate('/forgot-password');
-            return;
-          }
-
-          if (data.session) {
-            console.log('Recovery token verified successfully');
-            toast.success("रीसेट लिंक सत्यापित हो गया। अब नया पासवर्ड सेट करें।");
-          }
-        }
-        // No valid parameters found
-        else {
-          console.log('No valid reset parameters found, redirecting to forgot-password');
-          toast.error("अवैध या समाप्त हो चुका रीसेट लिंक");
-          navigate('/forgot-password');
+          }, 3000);
           return;
         }
+
+        // If we have access token and refresh token, set the session
+        if (params.accessToken && params.refreshToken) {
+          console.log('Setting session with tokens');
+          const { error } = await supabase.auth.setSession({
+            access_token: params.accessToken,
+            refresh_token: params.refreshToken
+          });
+          
+          if (error) {
+            console.error('Error setting session:', error);
+            setErrorMessage("प्रमाणीकरण में त्रुटि");
+            setHasValidAccess(false);
+            toast.error("प्रमाणीकरण में त्रुटि");
+            setTimeout(() => navigate('/forgot-password'), 3000);
+            return;
+          }
+        }
+
+        setHasValidAccess(true);
+        toast.success("रीसेट लिंक सत्यापित हो गया। अब नया पासवर्ड सेट करें।");
+        
       } catch (error) {
-        console.error('Error during password reset authentication:', error);
+        console.error('Error during reset password verification:', error);
+        setErrorMessage("प्रमाणीकरण में त्रुटि");
+        setHasValidAccess(false);
         toast.error("प्रमाणीकरण में त्रुटि");
-        navigate('/forgot-password');
+        setTimeout(() => navigate('/forgot-password'), 3000);
       } finally {
-        setIsVerifyingToken(false);
+        setIsVerifyingAccess(false);
       }
     };
 
-    handlePasswordResetAuth();
+    verifyResetAccess();
   }, [searchParams, navigate]);
+
+  const validatePassword = (pwd: string) => {
+    const minLength = pwd.length >= 6;
+    const hasUpperCase = /[A-Z]/.test(pwd);
+    const hasNumber = /[0-9]/.test(pwd);
+    
+    return {
+      minLength,
+      hasUpperCase,
+      hasNumber,
+      isValid: minLength && hasUpperCase && hasNumber
+    };
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,31 +113,52 @@ const ResetPassword = () => {
       return;
     }
 
-    if (password.length < 6) {
-      toast.error("पासवर्ड कम से कम 6 अक्षर का होना चाहिए");
+    const validation = validatePassword(password);
+    if (!validation.isValid) {
+      toast.error("पासवर्ड आवश्यकताओं को पूरा नहीं करता");
       return;
     }
 
     setIsLoading(true);
 
     try {
+      console.log('Updating password...');
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Password update error:', error);
+        throw error;
+      }
 
+      console.log('Password updated successfully');
       toast.success("पासवर्ड सफलतापूर्वक रीसेट हो गया!");
-      navigate('/login');
+      
+      // Clear the form
+      setPassword('');
+      setConfirmPassword('');
+      
+      // Redirect to login
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+      
     } catch (error: any) {
       console.error('Error resetting password:', error);
-      toast.error(error.message || "पासवर्ड रीसेट करने में त्रुटि");
+      
+      if (error.message?.includes('session_not_found')) {
+        toast.error("सत्र समाप्त हो गया। कृपया नया रीसेट लिंक मांगें।");
+        setTimeout(() => navigate('/forgot-password'), 2000);
+      } else {
+        toast.error(error.message || "पासवर्ड रीसेट करने में त्रुटि");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isVerifyingToken) {
+  if (isVerifyingAccess) {
     return (
       <Layout>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -142,6 +176,38 @@ const ResetPassword = () => {
       </Layout>
     );
   }
+
+  if (!hasValidAccess) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md">
+            <Card className="shadow-xl">
+              <CardHeader className="text-center">
+                <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="h-8 w-8 text-red-600" />
+                </div>
+                <CardTitle className="text-xl font-bold text-red-600">
+                  रीसेट लिंक अमान्य
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center space-y-4">
+                <p className="text-gray-600">{errorMessage}</p>
+                <Button 
+                  onClick={() => navigate('/forgot-password')}
+                  className="w-full"
+                >
+                  नया रीसेट लिंक मांगें
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  const passwordValidation = validatePassword(password);
 
   return (
     <Layout>
@@ -188,6 +254,26 @@ const ResetPassword = () => {
                   </div>
                 </div>
 
+                {password && (
+                  <div className="space-y-2">
+                    <Label className="text-xs text-gray-600">पासवर्ड की आवश्यकतायें:</Label>
+                    <div className="space-y-1">
+                      <div className={`flex items-center text-xs ${passwordValidation.minLength ? 'text-green-600' : 'text-gray-400'}`}>
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        कम से कम 6 अक्षर
+                      </div>
+                      <div className={`flex items-center text-xs ${passwordValidation.hasUpperCase ? 'text-green-600' : 'text-gray-400'}`}>
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        कम से कम एक बड़ा अक्षर
+                      </div>
+                      <div className={`flex items-center text-xs ${passwordValidation.hasNumber ? 'text-green-600' : 'text-gray-400'}`}>
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        कम से कम एक संख्या
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">पासवर्ड की पुष्टि करें</Label>
                   <div className="relative">
@@ -199,6 +285,7 @@ const ResetPassword = () => {
                       placeholder="पासवर्ड की पुष्टि करें"
                       required
                       minLength={6}
+                      className={confirmPassword && password !== confirmPassword ? "border-red-500" : ""}
                     />
                     <Button
                       type="button"
@@ -210,9 +297,16 @@ const ResetPassword = () => {
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
+                  {confirmPassword && password !== confirmPassword && (
+                    <p className="text-xs text-red-500">पासवर्ड मेल नहीं खाते</p>
+                  )}
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isLoading || !passwordValidation.isValid || password !== confirmPassword}
+                >
                   {isLoading ? "अपडेट हो रहा है..." : "पासवर्ड अपडेट करें"}
                 </Button>
               </form>
