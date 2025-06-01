@@ -26,9 +26,9 @@ const SmartRecommendationsCard = () => {
   if (isVeryLowBalance) {
     recommendations.push({
       icon: <ShoppingBag className="h-4 w-4" />,
-      title: "तुरंत शब्द खरीदयें!",
-      description: `केवल ${balance.total_words_available} शब्द बचे हैं। व्याकरण चेकर का निरंतर उपयोग करने के लिये अभी शब्द खरीदयें।`,
-      action: "अभी खरीदयें",
+      title: "तुरंत शब्द खरीदें!",
+      description: `केवल ${balance.total_words_available} शब्द बचे हैं। व्याकरण जाँच का निरंतर उपयोग करने के लिये अभी शब्द खरीदें।`,
+      action: "अभी खरीदें",
       link: "/pricing",
       color: "bg-red-100 text-red-800",
       priority: "high"
@@ -39,8 +39,8 @@ const SmartRecommendationsCard = () => {
     recommendations.push({
       icon: <Target className="h-4 w-4" />,
       title: "शब्द बैलेंस कम है",
-      description: `${balance.total_words_available} शब्द बचे हैं। आपके उपयोग के अनुसार यह जल्दी समाप्त हो सकता है।`,
-      action: "शब्द पैकेज देखयें",
+      description: `${balance.total_words_available} शब्द बचे हैं। आपके उपयोग के अनुसार यह शीघ्र समाप्त हो सकता है।`,
+      action: "शब्द पैकेज देखें",
       link: "/pricing",
       color: "bg-orange-100 text-orange-800",
       priority: "medium"
@@ -53,9 +53,9 @@ const SmartRecommendationsCard = () => {
     if (recommendedPlan) {
       recommendations.push({
         icon: <TrendingUp className="h-4 w-4" />,
-        title: "बड़ा पैकेज लयें",
-        description: `आप माह में ~${monthlyWordUsage.toLocaleString()} शब्द उपयोग करते हैं। ${recommendedPlan.plan_name} पैकेज अधिक किफायती होगा।`,
-        action: "पैकेज देखयें",
+        title: "बड़ा पैकेज लें",
+        description: `आप माह में ~${monthlyWordUsage.toLocaleString()} शब्द उपयोग करते हैं। ${recommendedPlan.plan_name} पैकेज अधिक होगा।`,
+        action: "पैकेज देखें",
         link: "/pricing",
         color: "bg-blue-100 text-blue-800",
         priority: "medium"
@@ -67,9 +67,9 @@ const SmartRecommendationsCard = () => {
   if (isFrequentUser && dailyWordUsage < 200) {
     recommendations.push({
       icon: <Zap className="h-4 w-4" />,
-      title: "उपयोग को अनुकूलित करयें",
-      description: "छोटे टेक्स्ट की बजाय लंबे पैराग्राफ एक साथ जाँचयें। इससे बेहतर परिणाम और कम शब्द खर्च होंगे।",
-      action: "टिप्स देखयें",
+      title: "उपयोग को अनुकूलित करें",
+      description: "छोटे टेक्स्ट के स्थान पर लंबे पैराग्राफ एक साथ जाँचें। इससे बढ़िया परिणाम मिलेंगे और शब्द भी कम खर्च होंगे।",
+      action: "टिप्स देखें",
       link: "/grammar-checker",
       color: "bg-purple-100 text-purple-800",
       priority: "low"
@@ -84,9 +84,9 @@ const SmartRecommendationsCard = () => {
     if (daysUntilExpiry <= 7 && daysUntilExpiry > 0) {
       recommendations.push({
         icon: <Clock className="h-4 w-4" />,
-        title: "शब्द जल्दी समाप्त होंगे",
-        description: `आपके ${balance.purchased_words} खरीदे गये शब्द ${daysUntilExpiry} दिन में समाप्त हो जायेंगे। नये शब्द खरीदने पर विचार करयें।`,
-        action: "नवीनीकरण करयें",
+        title: "शब्द शीघ्र समाप्त होंगे",
+        description: `आपके ${balance.purchased_words} खरीदे गये शब्द ${daysUntilExpiry} दिन में समाप्त हो जायेंगे। नये शब्द खरीदने पर विचार करें।`,
+        action: "नवीनीकरण करें",
         link: "/pricing",
         color: "bg-yellow-100 text-yellow-800",
         priority: "medium"
@@ -98,9 +98,9 @@ const SmartRecommendationsCard = () => {
   if (!isLowBalance && !isHighUsage && stats.total_corrections > 10) {
     recommendations.push({
       icon: <Lightbulb className="h-4 w-4" />,
-      title: "बेहतरीन उपयोग!",
-      description: "आप अपने शब्दों का संतुलित उपयोग कर रहे हैं। व्याकरण की गुणवत्ता में सुधार जारी रखयें।",
-      action: "और सुधार करयें",
+      title: "बढ़िया उपयोग!",
+      description: "आप अपने शब्दों का संतुलित उपयोग कर रहे हैं। व्याकरण की गुणवत्ता में सुधार जारी रखें।",
+      action: "और सुधार करें",
       link: "/grammar-checker",
       color: "bg-green-100 text-green-800",
       priority: "low"
@@ -121,7 +121,7 @@ const SmartRecommendationsCard = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600">आपका शब्द बैलेंस और उपयोग पैटर्न पूर्ण रूप से संतुलित है। व्याकरण सुधार जारी रखयें!</p>
+          <p className="text-gray-600">आपका शब्द बैलेंस और उपयोग पैटर्न पूर्ण रूप से संतुलित है। व्याकरण सुधार जारी रखें!</p>
         </CardContent>
       </Card>
     );
