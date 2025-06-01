@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,17 +10,21 @@ import BillingHistory from "@/components/Billing/BillingHistory";
 import UsageAnalytics from "@/components/Billing/UsageAnalytics";
 import CurrentPlan from "@/components/Billing/CurrentPlan";
 import PaymentSuccessHandler from "@/components/Payment/PaymentSuccessHandler";
-
 const Billing = () => {
-  const { user, loading: authLoading } = useAuth();
-  const { balance, loading: balanceLoading } = useWordCredits();
+  const {
+    user,
+    loading: authLoading
+  } = useAuth();
+  const {
+    balance,
+    loading: balanceLoading
+  } = useWordCredits();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   // Check if this is a payment success redirect
   const paymentStatus = searchParams.get('payment');
   const orderId = searchParams.get('order_id');
-
   if (!authLoading && !user) {
     navigate("/login");
     return null;
@@ -31,17 +34,12 @@ const Billing = () => {
   if (paymentStatus === 'success') {
     return <PaymentSuccessHandler />;
   }
-
   if (authLoading || balanceLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
       <nav className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-6 py-4">
@@ -70,41 +68,11 @@ const Billing = () => {
 
         {/* Quick Stats */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">कुल शब्द</p>
-                  <p className="text-2xl font-bold text-blue-600">{balance.total_words_available}</p>
-                </div>
-                <CreditCard className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
+          
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">फ्री शब्द</p>
-                  <p className="text-2xl font-bold text-green-600">{balance.free_words}</p>
-                </div>
-                <Badge variant="outline" className="text-green-600 border-green-600">फ्री</Badge>
-              </div>
-            </CardContent>
-          </Card>
+          
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">खरीदे गए</p>
-                  <p className="text-2xl font-bold text-purple-600">{balance.purchased_words}</p>
-                </div>
-                <Calendar className="h-8 w-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
+          
 
           <Card>
             <CardContent className="p-6">
@@ -159,8 +127,6 @@ const Billing = () => {
           <BillingHistory />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Billing;
