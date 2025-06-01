@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const MarqueeBar = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const message = "☆ श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆";
+  const message = "☆ श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆ Beta Version V-1.0";
   
   return (
     <div className="fixed top-16 left-0 right-0 z-40 bg-blue-600 text-white py-2 px-2 transition-all duration-300 hover:bg-blue-700 hover:shadow-lg">
