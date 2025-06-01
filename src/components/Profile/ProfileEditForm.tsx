@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, User, Settings, Lock, Trash2, AlertCircle } from "lucide-react";
+import { Save, User, Settings, Trash2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import PasswordChangeForm from "./PasswordChangeForm";
 import AvatarUpload from "./AvatarUpload";
@@ -63,7 +63,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
 
   return (
     <Tabs defaultValue="basic" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="basic" className="flex items-center space-x-2">
           <User className="h-4 w-4" />
           <span>मूल जानकारी</span>
@@ -71,10 +71,6 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
         <TabsTrigger value="preferences" className="flex items-center space-x-2">
           <Settings className="h-4 w-4" />
           <span>प्राथमिकताएं</span>
-        </TabsTrigger>
-        <TabsTrigger value="security" className="flex items-center space-x-2">
-          <Lock className="h-4 w-4" />
-          <span>सुरक्षा</span>
         </TabsTrigger>
         <TabsTrigger value="danger" className="flex items-center space-x-2">
           <Trash2 className="h-4 w-4" />
@@ -172,32 +168,38 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
         />
       </TabsContent>
 
-      <TabsContent value="security" className="space-y-6">
+      <TabsContent value="danger" className="space-y-6">
+        <AccountDeletion />
+        
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Lock className="h-5 w-5 mr-2" />
-              पासवर्ड बदलें
+            <CardTitle className="flex items-center text-amber-600">
+              <AlertCircle className="h-5 w-5 mr-2" />
+              पासवर्ड परिवर्तन
             </CardTitle>
           </CardHeader>
           <CardContent>
             {!showPasswordForm ? (
-              <Button 
-                variant="outline" 
-                onClick={() => setShowPasswordForm(true)}
-                className="w-full md:w-auto"
-              >
-                पासवर्ड बदलें
-              </Button>
+              <div className="space-y-4">
+                <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-800">
+                    पासवर्ड बदलने की सुविधा अस्थायी रूप से अक्षम है। कृपया समर्थन से संपर्क करें।
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowPasswordForm(true)}
+                  className="w-full md:w-auto"
+                  disabled
+                >
+                  पासवर्ड बदलें (अक्षम)
+                </Button>
+              </div>
             ) : (
               <PasswordChangeForm onClose={() => setShowPasswordForm(false)} />
             )}
           </CardContent>
         </Card>
-      </TabsContent>
-
-      <TabsContent value="danger" className="space-y-6">
-        <AccountDeletion />
       </TabsContent>
     </Tabs>
   );
