@@ -1,11 +1,8 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, CheckCircle, Mail } from 'lucide-react';
-
 const CTABanner = () => {
-  return (
-    <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+  return <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
@@ -39,7 +36,7 @@ const CTABanner = () => {
             </Link>
             
             <a href="mailto:support@vyakarni.com">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-blue-600 font-semibold transform hover:scale-105 transition-all duration-300 shadow-xl group">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-white text-blue hover:bg-white hover:text-blue-600 font-semibold transform hover:scale-105 transition-all duration-300 shadow-xl group">
                 व्याकरणी अभियान में जुड़ें
                 <Mail className="h-5 w-5 ml-2 group-hover:scale-110 transition-transform duration-300" />
               </Button>
@@ -68,8 +65,6 @@ const CTABanner = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CTABanner;
