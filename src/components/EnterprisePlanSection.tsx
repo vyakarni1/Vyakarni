@@ -96,9 +96,7 @@ const EnterprisePlanSection = () => {
           {/* Expandable Form */}
           <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isFormOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
             {isFormOpen && <div className="border-t pt-6 mt-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-                  एंटरप्राइज़ समाधान के लिए संपर्क करें
-                </h3>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">एंटरप्राइज़ समाधान के लिये संपर्क करें</h3>
                 
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -216,7 +214,7 @@ const EnterprisePlanSection = () => {
                     <FormField control={form.control} name="requirements" render={({
                   field
                 }) => <FormItem>
-                          <FormLabel>विशिष्ट आवश्यकताएं</FormLabel>
+                          <FormLabel>विशिष्ट आवश्यकतायें</FormLabel>
                           <FormControl>
                             <Textarea placeholder="आपकी कंपनी की विशिष्ट आवश्यकताओं के बारे में बताएं..." className="min-h-[80px]" {...field} />
                           </FormControl>
