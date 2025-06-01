@@ -266,6 +266,54 @@ export type Database = {
         }
         Relationships: []
       }
+      enterprise_inquiries: {
+        Row: {
+          company_name: string
+          company_size: string | null
+          contact_person: string
+          created_at: string
+          email: string
+          estimated_users: number | null
+          id: string
+          industry: string | null
+          message: string | null
+          phone: string | null
+          requirements: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_name: string
+          company_size?: string | null
+          contact_person: string
+          created_at?: string
+          email: string
+          estimated_users?: number | null
+          id?: string
+          industry?: string | null
+          message?: string | null
+          phone?: string | null
+          requirements?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          company_size?: string | null
+          contact_person?: string
+          created_at?: string
+          email?: string
+          estimated_users?: number | null
+          id?: string
+          industry?: string | null
+          message?: string | null
+          phone?: string | null
+          requirements?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       password_reset_tokens: {
         Row: {
           created_at: string | null

@@ -8,7 +8,9 @@ import { toast } from "sonner";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import DiscountBadge from "@/components/DiscountBadge";
 import CashfreePaymentButton from "@/components/Payment/CashfreePaymentButton";
+import EnterprisePlanSection from "@/components/EnterprisePlanSection";
 import Layout from "@/components/Layout";
+
 const Pricing = () => {
   const {
     user,
@@ -19,6 +21,7 @@ const Pricing = () => {
     loading: plansLoading
   } = useWordCredits();
   const navigate = useNavigate();
+  
   const handleSelectPlan = async (plan: any) => {
     if (!user) {
       navigate("/login");
@@ -29,6 +32,7 @@ const Pricing = () => {
       return;
     }
   };
+
   const getPlanIcon = (planType: string) => {
     switch (planType) {
       case 'free':
@@ -41,6 +45,7 @@ const Pricing = () => {
         return <Zap className="h-6 w-6" />;
     }
   };
+
   const getPlanColor = (planType: string) => {
     switch (planType) {
       case 'free':
@@ -53,6 +58,7 @@ const Pricing = () => {
         return 'from-gray-500 to-gray-600';
     }
   };
+
   const getDiscountInfo = (planType: string) => {
     switch (planType) {
       case 'basic':
@@ -75,6 +81,7 @@ const Pricing = () => {
         };
     }
   };
+
   if (authLoading || plansLoading) {
     return <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -82,6 +89,7 @@ const Pricing = () => {
         </div>
       </Layout>;
   }
+
   return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="container mx-auto px-6 py-12">
@@ -183,6 +191,9 @@ const Pricing = () => {
           })}
           </div>
 
+          {/* Enterprise Plan Section */}
+          <EnterprisePlanSection />
+
           {/* FAQ Section */}
           <div className="mt-16 text-center">
             <h2 className="text-3xl font-bold text-gray-800 mb-8">अक्सर पूछे जाने वाले प्रश्न</h2>
@@ -201,7 +212,7 @@ const Pricing = () => {
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">आपकी रिफंड की नीति क्या है?</h3>
-                <p className="text-gray-600 text-sm">आप हमारी डिजिटल सेवाओं का लाभ उठा रहे हैं। हमारी रिफंड नीति इसी के अनुरूप है। इस विषय में विस्तार से समझने हेतु आप इस लिंक पर क्लिक कर अधिक विवरण प्राप्त कर सकते हैं: https://vyakarni.com/refund-policy।</p>
+                <p className="text-gray-600 text-sm">आप हमारी डिजिटल सेवाओं का लाभ उठा रहे हैं। हमारी रिफंड नीति इसी के अनुरूप है। इस विषय में विस्तार से समझने हेतु आप इस लिंक पर क्लिक कर अधिक विवरण प्राप्त कर सकते हैं: https://vyakarni.com/refund-policy.</p>
               </div>
             </div>
           </div>
@@ -209,4 +220,5 @@ const Pricing = () => {
       </div>
     </Layout>;
 };
+
 export default Pricing;
