@@ -100,7 +100,7 @@ const CorrectedTextPanel = ({
                   {isGrammarMode ? "सुधारा गया पाठ यहाँ दिखेगा..." : "शैली सुधारा गया पाठ यहाँ दिखेगा..."}
                 </p>
                 <p className="text-xs sm:text-sm text-slate-300 mt-2">
-                  {isGrammarMode ? "पहले व्याकरण सुधार बटन दबाएं" : "पहले शैली सुधार बटन दबाएं"}
+                  {isGrammarMode ? "पहले व्याकरण सुधार बटन दबायें" : "पहले शैली सुधार बटन दबायें"}
                 </p>
               </div>
             </div>
