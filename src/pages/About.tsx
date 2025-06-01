@@ -117,8 +117,8 @@ const About = () => {
         <section className="py-16 bg-gradient-to-r from-gray-50 to-blue-50">
           <div className="container mx-auto px-6">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारे मूल्य</h2>
-              <p className="text-xl text-gray-600">हमारे नीति-निर्देशक तत्व</p>
+              <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारे नीति-निर्देशक तत्व</h2>
+              <p className="text-xl text-gray-600">हिंदी भाषा के प्रति हमारी प्रतिबद्धता को व्यक्त करने वाले कुछ कारक</p>
             </div>
             
             <div className="grid md:grid-cols-4 gap-6">
