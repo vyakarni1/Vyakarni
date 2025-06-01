@@ -10,7 +10,7 @@ const MarqueeBar = () => {
     <div className="fixed top-16 left-0 right-0 z-40 bg-blue-600 text-white py-2 overflow-hidden">
       <div className="relative whitespace-nowrap">
         <div className="inline-block animate-marquee text-sm font-medium">
-          {message} {message} {message} {message} {message} {message} {message} {message}
+          {message} {  } {message} {  } {message} {  } {message} {  } {message} {  } {message} {  } {message} {  } {message}
         </div>
       </div>
     </div>
