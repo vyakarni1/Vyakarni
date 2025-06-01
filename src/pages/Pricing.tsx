@@ -19,7 +19,7 @@ const Pricing = () => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      toast.success("सफलतापूर्वक लॉग आउट हो गए!");
+      toast.success("सफलतापूर्वक लॉग आउट हो गये!");
       navigate("/");
     } catch (error) {
       toast.error("लॉग आउट में त्रुटि");
@@ -115,10 +115,10 @@ const Pricing = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4">
-            शब्द पैकेज क्रय करें
+            शब्द पैकेज क्रय करयें
           </h1>
           <p className="text-xl text-gray-600 mb-4">
-            अपनी आवश्यकताओं के अनुसार शब्द पैकेज का चुनाव करें
+            अपनी आवश्यकताओं के अनुसार शब्द पैकेज का चुनाव करयें
           </p>
           <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
             <Calculator className="h-4 w-4" />
@@ -233,7 +233,7 @@ const Pricing = () => {
                       <CashfreePaymentButton 
                         wordPlan={plan}
                         onPaymentSuccess={() => {
-                          toast.success("भुगतान सफल! शब्द आपके खाते में जोड़ दिए गए हैं।");
+                          toast.success("भुगतान सफल! शब्द आपके खाते में जोड़ दिये गये हैं।");
                           navigate("/billing");
                         }}
                       />
@@ -247,11 +247,11 @@ const Pricing = () => {
 
         {/* FAQ Section */}
         <div className="mt-16 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8">प्रश्नोत्तरी</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-8">अक्सर पूछे जाने वाले प्रश्न</h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="p-6 bg-white rounded-lg shadow-sm">
               <h3 className="font-semibold text-gray-800 mb-2">आप शब्दों को किस प्रकार गिनते हैं?</h3>
-              <p className="text-gray-600 text-sm">आपके द्वारा परीक्षण के लिये भेजे गए लेख में जितने शब्द होंगे, उतने ही शब्द आपके शेष शब्दों से काटे जायेंगे।</p>
+              <p className="text-gray-600 text-sm">आपके द्वारा परीक्षण के लिये भेजे गये लेख में जितने शब्द होंगे, उतने ही शब्द आपके शेष शब्दों से काटे जायेंगे।</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-sm">
               <h3 className="font-semibold text-gray-800 mb-2">शब्दों की वैधता अवधि क्या है?</h3>

@@ -25,7 +25,7 @@ const Contact = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     if (!user) {
-      toast.error("संदेश भेजने के लिये कृपया लॉगिन करें");
+      toast.error("संदेश भेजने के लिये कृपया लॉगिन करयें");
       return;
     }
 
@@ -42,15 +42,15 @@ const Contact = () => {
 
       if (error) {
         console.error('Error submitting contact form:', error);
-        toast.error("संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करें।");
+        toast.error("संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करयें।");
         return;
       }
 
-      toast.success("आपका संदेश सफलतापूर्वक भेज दिया गया है! हम जल्द ही आपसे संपर्क करेंगे।");
+      toast.success("आपका संदेश सफलतापूर्वक भेज दिया गया है! हम जल्द ही आपसे संपर्क करयेंगे।");
       reset();
     } catch (error) {
       console.error('Error in contact form submission:', error);
-      toast.error("कुछ गलत हुआ है। कृपया पुनः प्रयास करें।");
+      toast.error("कुछ गलत हुआ है। कृपया पुनः प्रयास करयें।");
     } finally {
       setIsSubmitting(false);
     }
@@ -62,10 +62,10 @@ const Contact = () => {
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              हमसे संपर्क करें
+              हमसे संपर्क करयें
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करें।
+              हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करयें।
             </p>
           </div>
 
@@ -81,9 +81,9 @@ const Contact = () => {
               <CardContent>
                 {!user ? (
                   <div className="text-center py-8">
-                    <p className="text-gray-600 mb-4">संदेश भेजने के लिये कृपया लॉगिन करें</p>
+                    <p className="text-gray-600 mb-4">संदेश भेजने के लिये कृपया लॉगिन करयें</p>
                     <Button asChild>
-                      <a href="/login">लॉगिन करें</a>
+                      <a href="/login">लॉगिन करयें</a>
                     </Button>
                   </div>
                 ) : (
@@ -110,7 +110,7 @@ const Contact = () => {
                           required: "ईमेल आवश्यक है",
                           pattern: {
                             value: /^\S+@\S+$/i,
-                            message: "वैध ईमेल दर्ज करें"
+                            message: "वैध ईमेल दर्ज करयें"
                           }
                         })}
                         placeholder="आपका ईमेल"
