@@ -173,7 +173,7 @@ const HindiTextAnimation = () => {
             }
           `}
         >
-          फिर से शुरू करें
+          पुनः प्रारंभ करें
         </button>
       </div>
     </div>
