@@ -24,10 +24,10 @@ const About = () => {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-4xl font-bold mb-6 text-gray-800">हमारी कहानी</h2>
-                <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                <p className="text-gray-600 text-lg leading-relaxed mb-6 text-justify">
                   व्याकरणी की आवश्यकता लम्बे समय से अनुभव की जा रही थी। यूँ तो अनुवाद इत्यादि के तो अनेक प्लेटफॉर्म्स उपलब्ध हैं, किन्तु भाषा-शोधन का कोई समर्पित प्लेटफार्म उपलब्ध नही था। हिंदी भाषा के प्रति हमारा प्रेम हमें निरंतर ऐसे किसी प्लेटफार्म के निर्माण हेतु आंदोलित करता रहता था।
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-lg leading-relaxed text-justify">
                   आज जब यह प्लेटफार्म साकार हो कर हमारे सम्मुख उपस्थित है तो यह हमें अत्यंत संतोष और गौरव का अनुभव देता है तथा इसे आपके साथ साझा करना हमारे इस अनुभव को बहुगुणित कर रहा है।
                 </p>
               </div>
