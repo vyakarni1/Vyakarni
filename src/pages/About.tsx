@@ -1,13 +1,10 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star, Mail } from "lucide-react";
 import Layout from "@/components/Layout";
-
 const About = () => {
-  return (
-    <Layout>
+  return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
@@ -50,7 +47,7 @@ const About = () => {
                     <CardTitle className="text-lg">AI की शक्ति से भाषा का संवर्धन</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600">AI की शक्ति से भाषा को बेहतर बनाना</p>
+                    <p className="text-sm text-gray-600">AI के प्रयोग से अभिव्यक्ति का संवर्धन</p>
                   </CardContent>
                 </Card>
               </div>
@@ -63,9 +60,7 @@ const About = () => {
           <div className="container mx-auto px-6">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold mb-4 text-gray-800">हमारा ध्येय और दृष्टिकोण</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                हिंदी भाषा में लोगों की अभिव्यक्ति की क्षमता में वृद्धि करने वाला एक आधुनिक डिजिटल प्लेटफार्म निर्मित कर लोगो को उसे प्रयोग करने हेतु एक सशक्त विकल्प प्रस्तुत करना।
-              </p>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">हिंदी भाषा में लोगों की अभिव्यक्ति की क्षमता में वृद्धि करने वाला एक आधुनिक डिजिटल प्लेटफार्म निर्मित कर उसे लोगों के प्रयोग हेतु एक सशक्त विकल्प के रूप में प्रस्तुत करना।</p>
             </div>
             
             <div className="grid md:grid-cols-2 gap-8">
@@ -273,8 +268,6 @@ const About = () => {
           </div>
         </section>
       </div>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default About;
