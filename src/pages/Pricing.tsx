@@ -126,7 +126,7 @@ const Pricing = () => {
                             </span>
                           </div>
                           <Badge variant="outline" className="text-xs">
-                            30 दिन की वैधता
+                            30 दिन की वैधता | 18% GST 
                           </Badge>
                         </div>}
                     </div>
