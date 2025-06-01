@@ -46,7 +46,7 @@ const CorrectedTextPanel = ({
     ? "bg-gradient-to-r from-emerald-600 to-teal-600" 
     : "bg-gradient-to-r from-purple-600 to-pink-600";
   
-  const headerTitle = isGrammarMode ? "सुधारा गया लेख" : "शैली सुधारा गया लेख";
+  const headerTitle = isGrammarMode ? "सुधारा गया पाठ" : "शैली सुधारा गया पाठ";
   const headerIcon = isGrammarMode ? CheckCircle : Sparkles;
 
   return (
