@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, ChevronDown, ChevronUp, Building2, Users, Phone, Mail, Industry, MessageSquare } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Building2, Users, Phone, Mail, Factory, MessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -240,7 +239,7 @@ const EnterprisePlanSection = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="flex items-center space-x-2">
-                              <Industry className="h-4 w-4" />
+                              <Factory className="h-4 w-4" />
                               <span>उद्योग</span>
                             </FormLabel>
                             <FormControl>
