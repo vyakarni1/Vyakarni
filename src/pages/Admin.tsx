@@ -21,7 +21,7 @@ const Admin = () => {
       color: "text-green-600"
     },
     {
-      title: "व्याकरण जांच",
+      title: "व्याकरण जाँच",
       value: "8,456",
       change: "+15%",
       icon: TrendingUp,
@@ -58,7 +58,7 @@ const Admin = () => {
               <CardContent>
                 <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
                 <p className="text-xs text-green-600 mt-1">
-                  {stat.change} पिछले महीने से
+                  {stat.change} पिछले माह से
                 </p>
               </CardContent>
             </Card>
@@ -80,7 +80,7 @@ const Admin = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm text-gray-600">व्याकरण जांच पूर्ण</span>
+                  <span className="text-sm text-gray-600">व्याकरण जाँच पूर्ण</span>
                   <span className="text-xs text-gray-400 ml-auto">5 मिनट पहले</span>
                 </div>
                 <div className="flex items-center space-x-3">

@@ -141,5 +141,35 @@ export const wordReplacements = [
   }, {
     original: 'करवाएगा',
     replacement: 'करवायेगा'
+  }, {
+    original: 'जाएगा',
+    replacement: 'जायेगा'
+  }, {
+    original: 'त्रुटियां',
+    replacement: 'त्रुटियाँ'
+  }, {
+    original: 'जांच',
+    replacement: 'जाँच'
+  }, {
+    original: 'पसंदीदा भाषा',
+    replacement: 'चयनित भाषा'
+  }, {
+    original: 'मुफ्त में प्राप्त',
+    replacement: 'नि:शुल्क प्राप्त'
+  }, {
+    original: 'कार्रवाई',
+    replacement: 'कार्यवाही'
+  }, {
+    original: 'सभी समय में प्रयोग',
+    replacement: 'सर्वकालिक कुल प्रयोग'
+  }, {
+    original: 'शुरुआत',
+    replacement: 'प्रारंभ'
+  }, {
+    original: 'महीने',
+    replacement: 'माह'
+  }, {
+    original: 'सब कुछ बेहतरीन!',
+    replacement: 'सब कुछ बढ़िया है!'
   }
 ];

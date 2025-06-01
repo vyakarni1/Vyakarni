@@ -58,15 +58,15 @@ const DashboardActionCards = ({ profile, userEmail, balance }: DashboardActionCa
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-gray-600 leading-relaxed">
-            अपने हिंदी पाठ को AI की शक्ति से तुरंत सुधारें और त्रुटिरहित बनाएं
+            अपने हिंदी पाठ को AI की शक्ति से तुरंत सुधारें और त्रुटिरहित बनायें
           </p>
           <div className="flex items-center space-x-2 text-sm text-blue-600">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span>व्याकरण की त्रुटियां</span>
+            <span>व्याकरण की त्रुटियाँ</span>
           </div>
           <div className="flex items-center space-x-2 text-sm text-purple-600">
             <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-            <span>वर्तनी की जांच</span>
+            <span>वर्तनी की जाँच</span>
           </div>
           <div className="flex items-center space-x-2 text-sm text-green-600">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
