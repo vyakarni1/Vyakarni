@@ -85,7 +85,7 @@ const Login = () => {
             <div className="text-center">
               <div className="flex items-center justify-center space-x-2 mb-4">
                 <img 
-                  src="/lovable-uploads/c81f0976-b2c6-455e-b2e4-f829a290148d.png" 
+                  src="/lovable-uploads/feb8e6c8-b871-4f30-9ddd-2c20bb223a84.png" 
                   alt="व्याकरणी Logo" 
                   className="h-10 w-10"
                 />
