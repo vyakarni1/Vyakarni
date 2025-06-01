@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -44,7 +43,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <UnifiedNavigation variant="default" />
 
-      <div className="container mx-auto px-6 py-8 pt-24">
+      <div className="container mx-auto px-6 py-8 pt-32">
         <DashboardWelcome 
           profile={profile} 
           userEmail={user.email || ''} 

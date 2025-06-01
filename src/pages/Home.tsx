@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import UnifiedNavigation from "@/components/UnifiedNavigation";
+import MarqueeBar from "@/components/MarqueeBar";
 import HeroSection from "@/components/Home/HeroSection";
 import FeaturesSection from "@/components/Home/FeaturesSection";
 import HowItWorksSection from "@/components/Home/HowItWorksSection";

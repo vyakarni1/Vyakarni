@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import GrammarChecker from "@/components/GrammarChecker";
