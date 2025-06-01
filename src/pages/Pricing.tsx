@@ -88,8 +88,8 @@ const Pricing = () => {
         <div className="container mx-auto px-6 py-12">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4 my-[12px] py-[8px]">शब्द पैकेज क्रय करें</h1>
-            <p className="text-xl text-gray-600 mb-4">अपनी आवश्यकताओं के अनुसार अपना शब्द पैकेज चुनें </p>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4 my-[12px] py-[8px]">अपना शब्द पैकेज चुनें</h1>
+            <p className="text-xl text-gray-600 mb-4">अपनी आवश्यकताओं के अनुसार अपने शब्द पैकेज का चयन करें</p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
               <Calculator className="h-4 w-4" />
               <span>सभी पैकेज 30 दिनों तक वैध • बचत ऑफर का लाभ उठायें</span>
@@ -204,7 +204,7 @@ const Pricing = () => {
                 <p className="text-gray-600 text-sm">हम सुरक्षित एवं गहरी साख वाले पेमेंट गेटवे का प्रयोग करते हैं जो कि उच्च सुरक्षा मानकों का अनुपालन करते हैं। अतः, आपके द्वारा किये गये सभी भुगतान सुरक्षित हैं।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">आपकी रिफंड की नीति क्या है?</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">आपकी रिफंड नीति क्या है?</h3>
                 <p className="text-gray-600 text-sm">आप हमारी डिजिटल सेवाओं का लाभ उठा रहे हैं। हमारी रिफंड नीति इसी के अनुरूप है। इस विषय में विस्तार से समझने हेतु आप इस लिंक पर क्लिक कर अधिक विवरण प्राप्त कर सकते हैं: https://vyakarni.com/refund-policy.</p>
               </div>
             </div>
