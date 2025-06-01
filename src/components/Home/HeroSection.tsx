@@ -1,12 +1,9 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import HindiTextAnimation from "@/components/HindiTextAnimation";
-
 const HeroSection = () => {
-  return (
-    <section className="container mx-auto px-6 py-20 text-center relative min-h-screen flex items-center">
+  return <section className="container mx-auto px-6 py-20 text-center relative min-h-screen flex items-center">
       {/* Background decorative elements */}
       <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-32 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-30 animate-pulse delay-75"></div>
@@ -16,22 +13,17 @@ const HeroSection = () => {
         {/* Transparent Logo Container */}
         <div className="mb-8 flex justify-center">
           <div className="w-24 h-24 bg-transparent">
-            <img 
-              alt="व्याकरणी Logo" 
-              onError={e => {
-                console.log('Hero logo failed to load');
-                e.currentTarget.style.display = 'none';
-              }} 
-              src="/lovable-uploads/9899ecd1-1a2c-404a-bfd9-83a555e6cfc4.png" 
-              className="w-full h-full object-contain" 
-            />
+            <img alt="व्याकरणी Logo" onError={e => {
+            console.log('Hero logo failed to load');
+            e.currentTarget.style.display = 'none';
+          }} src="/lovable-uploads/9899ecd1-1a2c-404a-bfd9-83a555e6cfc4.png" className="w-full h-full object-contain" />
           </div>
         </div>
         
         <h1 className="text-6xl font-bold mb-6 bg-gradient-blue-ocean bg-clip-text text-transparent animate-fade-in leading-tight">
           AI के साथ हिंदी लेखन
           <br />
-          <span className="text-5xl">सुधारें</span>
+          <span className="text-6xl">सुधारें</span>
         </h1>
         
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in delay-75">
@@ -65,8 +57,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
