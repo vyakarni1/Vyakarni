@@ -10,7 +10,6 @@ import DiscountBadge from "@/components/DiscountBadge";
 import CashfreePaymentButton from "@/components/Payment/CashfreePaymentButton";
 import EnterprisePlanSection from "@/components/EnterprisePlanSection";
 import Layout from "@/components/Layout";
-
 const Pricing = () => {
   const {
     user,
@@ -21,7 +20,6 @@ const Pricing = () => {
     loading: plansLoading
   } = useWordCredits();
   const navigate = useNavigate();
-  
   const handleSelectPlan = async (plan: any) => {
     if (!user) {
       navigate("/login");
@@ -32,7 +30,6 @@ const Pricing = () => {
       return;
     }
   };
-
   const getPlanIcon = (planType: string) => {
     switch (planType) {
       case 'free':
@@ -45,7 +42,6 @@ const Pricing = () => {
         return <Zap className="h-6 w-6" />;
     }
   };
-
   const getPlanColor = (planType: string) => {
     switch (planType) {
       case 'free':
@@ -58,7 +54,6 @@ const Pricing = () => {
         return 'from-gray-500 to-gray-600';
     }
   };
-
   const getDiscountInfo = (planType: string) => {
     switch (planType) {
       case 'basic':
@@ -81,7 +76,6 @@ const Pricing = () => {
         };
     }
   };
-
   if (authLoading || plansLoading) {
     return <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -89,7 +83,6 @@ const Pricing = () => {
         </div>
       </Layout>;
   }
-
   return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="container mx-auto px-6 py-12">
@@ -196,7 +189,7 @@ const Pricing = () => {
 
           {/* FAQ Section */}
           <div className="mt-16 text-center">
-            <h2 className="text-3xl font-bold text-gray-800 mb-8">अक्सर पूछे जाने वाले प्रश्न</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-8">प्रायः पूछे जाने वाले प्रश्न</h2>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">आप शब्दों को किस प्रकार गिनते हैं?</h3>
@@ -220,5 +213,4 @@ const Pricing = () => {
       </div>
     </Layout>;
 };
-
 export default Pricing;
