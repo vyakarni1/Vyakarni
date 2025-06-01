@@ -41,7 +41,7 @@ const PrivacySettings = ({ privacySettings, onPrivacySettingChange }: PrivacySet
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <Label>गतिविधि स्थिति</Label>
-            <p className="text-sm text-gray-500">अपनी ऑनलाइन स्थिति दिखाएं</p>
+            <p className="text-sm text-gray-500">अपनी ऑनलाइन स्थिति दिखायें</p>
           </div>
           <Switch
             checked={privacySettings.activity_status}

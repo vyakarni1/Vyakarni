@@ -15,18 +15,18 @@ const LanguagePreferences = ({ preferredLanguage, onLanguageChange }: LanguagePr
       <CardHeader>
         <CardTitle className="flex items-center">
           <Globe className="h-5 w-5 mr-2 text-blue-500" />
-          भाषा की प्राथमिकताएं
+          भाषा की प्राथमिकतायें
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="language">पसंदीदा भाषा</Label>
+          <Label htmlFor="language">चयनित भाषा</Label>
           <Select
             value={preferredLanguage}
             onValueChange={onLanguageChange}
           >
             <SelectTrigger>
-              <SelectValue placeholder="भाषा चुनें" />
+              <SelectValue placeholder="भाषा चुनयें" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="hindi">हिंदी</SelectItem>

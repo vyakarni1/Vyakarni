@@ -78,10 +78,10 @@ export const usePreferences = (profile: any, onProfileUpdate: (profile: any) => 
       if (error) throw error;
 
       onProfileUpdate(data);
-      toast.success("प्राथमिकताएं सफलतापूर्वक सहेजी गईं!");
+      toast.success("प्राथमिकतायें सफलतापूर्वक सहेजी गयीं!");
     } catch (error) {
       console.error('Error updating preferences:', error);
-      toast.error("प्राथमिकताएं सहेजने में त्रुटि");
+      toast.error("प्राथमिकतायें सहेजने में त्रुटि");
     } finally {
       setIsLoading(false);
     }

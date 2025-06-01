@@ -171,5 +171,38 @@ export const wordReplacements = [
   }, {
     original: 'सब कुछ बेहतरीन!',
     replacement: 'सब कुछ बढ़िया है!'
+  }, {
+    original: 'एं',
+    replacement: 'यें'
+  }, {
+    original: 'करें',
+    replacement: 'करयें'
+  }, {
+    original: 'लें',
+    replacement: 'लयें'
+  }, {
+    original: 'देखें',
+    replacement: 'देखयें'
+  }, {
+    original: 'खरीदें',
+    replacement: 'खरीदयें'
+  }, {
+    original: 'चुनें',
+    replacement: 'चुनयें'
+  }, {
+    original: 'दिखाएं',
+    replacement: 'दिखायें'
+  }, {
+    original: 'सहेजें',
+    replacement: 'सहेजयें'
+  }, {
+    original: 'रखें',
+    replacement: 'रखयें'
+  }, {
+    original: 'जाएं',
+    replacement: 'जायें'
+  }, {
+    original: 'आएं',
+    replacement: 'आयें'
   }
 ];
