@@ -76,7 +76,7 @@ const TextInputPanel = ({
             <Textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="यहाँ अपना हिंदी टेक्स्ट लिखें..."
+              placeholder="यहाँ अपना हिंदी पाठ लिखें..."
               className="flex-1 h-[400px] sm:h-[500px] lg:h-[600px] text-base sm:text-lg border-0 resize-none focus-visible:ring-0 p-4 sm:p-6 bg-transparent rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
               disabled={isLoading}
             />
