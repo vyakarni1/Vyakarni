@@ -52,7 +52,7 @@ const TextInputPanel = ({
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg sm:text-2xl font-bold flex items-center gap-2 sm:gap-3">
             <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
-            मूल टेक्स्ट
+            मूल पाठ
           </CardTitle>
           <Badge 
             variant="secondary" 
