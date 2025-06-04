@@ -41,13 +41,14 @@ export const useWordCredits = () => {
     if (!user) return;
 
     try {
+      // Try the new detailed function first
       const { data, error } = await supabase.rpc('get_user_word_balance_detailed', {
         user_uuid: user.id,
       });
 
       if (error) {
         console.error('Error fetching detailed word balance:', error);
-        // Fallback to original function if new one doesn't exist yet
+        // Fallback to original function
         const { data: fallbackData, error: fallbackError } = await supabase.rpc('get_user_word_balance', {
           user_uuid: user.id,
         });
@@ -57,7 +58,7 @@ export const useWordCredits = () => {
           return;
         }
 
-        if (fallbackData && fallbackData.length > 0) {
+        if (fallbackData && Array.isArray(fallbackData) && fallbackData.length > 0) {
           setBalance({
             ...fallbackData[0],
             topup_words: 0,
@@ -68,7 +69,7 @@ export const useWordCredits = () => {
         return;
       }
 
-      if (data && data.length > 0) {
+      if (data && Array.isArray(data) && data.length > 0) {
         setBalance(data[0]);
       }
     } catch (error) {
