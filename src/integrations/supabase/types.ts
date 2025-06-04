@@ -973,6 +973,10 @@ export type Database = {
       }
     }
     Functions: {
+      check_user_has_active_subscription: {
+        Args: { user_uuid: string }
+        Returns: boolean
+      }
       cleanup_expired_reset_tokens: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1039,7 +1043,10 @@ export type Database = {
           total_words_available: number
           free_words: number
           purchased_words: number
+          topup_words: number
+          subscription_words: number
           next_expiry_date: string
+          has_active_subscription: boolean
         }[]
       }
       has_role: {

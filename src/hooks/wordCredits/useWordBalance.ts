@@ -29,7 +29,7 @@ export const useWordBalance = () => {
     if (!user) return;
 
     try {
-      // Use the existing typed function
+      // Use the enhanced function that returns subscription status
       const { data, error } = await supabase.rpc('get_user_word_balance', {
         user_uuid: user.id,
       });
@@ -43,12 +43,12 @@ export const useWordBalance = () => {
         const balanceData = data[0];
         setBalance({
           total_words_available: balanceData.total_words_available || 0,
-          topup_words: 0, // Will be enhanced later
-          subscription_words: balanceData.total_words_available || 0,
+          topup_words: balanceData.topup_words || 0,
+          subscription_words: balanceData.subscription_words || 0,
           free_words: balanceData.free_words || 0,
           purchased_words: balanceData.purchased_words || 0,
           next_expiry_date: balanceData.next_expiry_date,
-          has_active_subscription: false, // Will be enhanced later
+          has_active_subscription: balanceData.has_active_subscription || false,
         });
       }
     } catch (error) {
