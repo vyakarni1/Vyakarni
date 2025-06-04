@@ -9,10 +9,14 @@ interface SubscriptionData {
   plan_name: string;
   plan_type: string;
   max_words_per_correction: number;
+  max_corrections_per_month: number;
   max_team_members: number;
   features: string[];
   status: string;
   expires_at: string | null;
+  next_billing_date: string | null;
+  auto_renewal: boolean;
+  billing_cycle: string;
 }
 
 // Helper function to convert Json to string array
@@ -44,13 +48,18 @@ export const useSubscription = () => {
         return;
       }
 
-      // Create subscription for the user
+      // Create subscription for the user with next billing date (1 month from now for free plan)
+      const nextBillingDate = new Date();
+      nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+
       const { error: subscriptionError } = await supabase
         .from('user_subscriptions')
         .insert({
           user_id: user.id,
           plan_id: freePlan.id,
-          status: 'active'
+          status: 'active',
+          next_billing_date: nextBillingDate.toISOString(),
+          auto_renewal: false, // Free plan doesn't auto-renew
         });
 
       if (subscriptionError) {
@@ -69,9 +78,29 @@ export const useSubscription = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase.rpc('get_user_subscription', {
-        user_uuid: user.id,
-      });
+      // Get subscription with additional billing info
+      const { data, error } = await supabase
+        .from('user_subscriptions')
+        .select(`
+          id,
+          status,
+          expires_at,
+          next_billing_date,
+          auto_renewal,
+          billing_cycle,
+          subscription_plans (
+            plan_name,
+            plan_type,
+            max_words_per_correction,
+            max_corrections_per_month,
+            max_team_members,
+            features
+          )
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1);
 
       if (error) {
         console.error('Error fetching subscription:', error);
@@ -80,10 +109,24 @@ export const useSubscription = () => {
 
       if (data && data.length > 0) {
         const subscriptionData = data[0];
-        setSubscription({
-          ...subscriptionData,
-          features: parseFeatures(subscriptionData.features)
-        });
+        const planData = subscriptionData.subscription_plans;
+        
+        if (planData) {
+          setSubscription({
+            subscription_id: subscriptionData.id,
+            plan_name: planData.plan_name,
+            plan_type: planData.plan_type,
+            max_words_per_correction: planData.max_words_per_correction,
+            max_corrections_per_month: planData.max_corrections_per_month,
+            max_team_members: planData.max_team_members,
+            features: parseFeatures(planData.features),
+            status: subscriptionData.status,
+            expires_at: subscriptionData.expires_at,
+            next_billing_date: subscriptionData.next_billing_date,
+            auto_renewal: subscriptionData.auto_renewal,
+            billing_cycle: subscriptionData.billing_cycle,
+          });
+        }
       } else {
         // No subscription found, create default free subscription
         console.log('No subscription found, creating default free subscription');
@@ -101,6 +144,65 @@ export const useSubscription = () => {
     return textLength <= subscription.max_words_per_correction;
   };
 
+  const upgradeSubscription = async (newPlanId: string) => {
+    if (!user || !subscription) return false;
+
+    try {
+      // Calculate next billing date (1 month from now)
+      const nextBillingDate = new Date();
+      nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+
+      const { error } = await supabase
+        .from('user_subscriptions')
+        .update({
+          plan_id: newPlanId,
+          next_billing_date: nextBillingDate.toISOString(),
+          auto_renewal: true,
+        })
+        .eq('id', subscription.subscription_id);
+
+      if (error) {
+        console.error('Error upgrading subscription:', error);
+        return false;
+      }
+
+      await fetchSubscription();
+      return true;
+    } catch (error) {
+      console.error('Error in upgradeSubscription:', error);
+      return false;
+    }
+  };
+
+  const cancelSubscription = async () => {
+    if (!user || !subscription) return false;
+
+    try {
+      const { error } = await supabase
+        .from('user_subscriptions')
+        .update({
+          auto_renewal: false,
+        })
+        .eq('id', subscription.subscription_id);
+
+      if (error) {
+        console.error('Error canceling subscription:', error);
+        return false;
+      }
+
+      await fetchSubscription();
+      return true;
+    } catch (error) {
+      console.error('Error in cancelSubscription:', error);
+      return false;
+    }
+  };
+
+  const isSubscriptionActive = (): boolean => {
+    return subscription?.status === 'active' && 
+           (subscription.plan_type === 'basic' || subscription.plan_type === 'premium');
+  };
+
   useEffect(() => {
     if (user) {
       fetchSubscription();
@@ -114,6 +216,9 @@ export const useSubscription = () => {
     subscription,
     loading,
     checkWordLimit,
+    upgradeSubscription,
+    cancelSubscription,
+    isSubscriptionActive,
     refetch: fetchSubscription
   };
 };

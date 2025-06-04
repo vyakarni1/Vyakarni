@@ -694,10 +694,12 @@ export type Database = {
       }
       user_subscriptions: {
         Row: {
+          auto_renewal: boolean | null
           billing_cycle: string
           created_at: string
           expires_at: string | null
           id: string
+          next_billing_date: string | null
           plan_id: string
           razorpay_subscription_id: string | null
           started_at: string
@@ -706,10 +708,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auto_renewal?: boolean | null
           billing_cycle?: string
           created_at?: string
           expires_at?: string | null
           id?: string
+          next_billing_date?: string | null
           plan_id: string
           razorpay_subscription_id?: string | null
           started_at?: string
@@ -718,10 +722,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auto_renewal?: boolean | null
           billing_cycle?: string
           created_at?: string
           expires_at?: string | null
           id?: string
+          next_billing_date?: string | null
           plan_id?: string
           razorpay_subscription_id?: string | null
           started_at?: string
@@ -778,10 +784,12 @@ export type Database = {
       user_word_credits: {
         Row: {
           created_at: string
+          credit_type: string | null
           expiry_date: string | null
           id: string
           is_free_credit: boolean | null
           purchase_date: string | null
+          related_subscription_id: string | null
           updated_at: string
           user_id: string
           words_available: number
@@ -789,10 +797,12 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          credit_type?: string | null
           expiry_date?: string | null
           id?: string
           is_free_credit?: boolean | null
           purchase_date?: string | null
+          related_subscription_id?: string | null
           updated_at?: string
           user_id: string
           words_available?: number
@@ -800,10 +810,12 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          credit_type?: string | null
           expiry_date?: string | null
           id?: string
           is_free_credit?: boolean | null
           purchase_date?: string | null
+          related_subscription_id?: string | null
           updated_at?: string
           user_id?: string
           words_available?: number
@@ -817,6 +829,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_word_credits_related_subscription_id_fkey"
+            columns: ["related_subscription_id"]
+            isOneToOne: false
+            referencedRelation: "user_subscriptions"
+            referencedColumns: ["id"]
+          },
         ]
       }
       word_plans: {
@@ -825,6 +844,7 @@ export type Database = {
           gst_percentage: number
           id: string
           is_active: boolean
+          plan_category: string | null
           plan_name: string
           plan_type: string
           price_before_gst: number
@@ -835,6 +855,7 @@ export type Database = {
           gst_percentage?: number
           id?: string
           is_active?: boolean
+          plan_category?: string | null
           plan_name: string
           plan_type: string
           price_before_gst?: number
@@ -845,6 +866,7 @@ export type Database = {
           gst_percentage?: number
           id?: string
           is_active?: boolean
+          plan_category?: string | null
           plan_name?: string
           plan_type?: string
           price_before_gst?: number
