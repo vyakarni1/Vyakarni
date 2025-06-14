@@ -6,7 +6,7 @@ import { LogOut } from "lucide-react";
 interface MobileNavigationProps {
   user: any;
   profile: any;
-  variant: "home" | "default";
+  variant: "home" | "default" | "transparent";
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
@@ -14,6 +14,7 @@ interface MobileNavigationProps {
 
 const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }: MobileNavigationProps) => {
   const isHome = variant === "home";
+  const isTransparent = variant === "transparent";
 
   if (!isOpen) return null;
 
@@ -74,7 +75,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
           </>
         ) : (
           <>
-            {!isHome && (
+            {!isHome && !isTransparent && (
               <>
                 <Link 
                   to="/about" 
@@ -107,7 +108,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
               </Link>
               <Link to="/register" onClick={handleLinkClick}>
                 <Button size="sm" className="w-full transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600">
-                  रजिस्टर करयें
+                  रजिस्टर करें
                 </Button>
               </Link>
             </div>

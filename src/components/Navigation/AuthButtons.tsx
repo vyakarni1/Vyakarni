@@ -7,13 +7,14 @@ import { useUserRole } from "@/hooks/useUserRole";
 interface AuthButtonsProps {
   user: any;
   profile: any;
-  variant: "home" | "default";
+  variant: "home" | "default" | "transparent";
   onLogout: () => void;
 }
 
 const AuthButtons = ({ user, profile, variant, onLogout }: AuthButtonsProps) => {
   const { isAdmin } = useUserRole();
   const isHome = variant === "home";
+  const isTransparent = variant === "transparent";
 
   if (user) {
     return (
@@ -37,13 +38,30 @@ const AuthButtons = ({ user, profile, variant, onLogout }: AuthButtonsProps) => 
     );
   }
 
+  const getButtonClasses = () => {
+    if (isHome) {
+      return 'hover:bg-blue-50 hover:border-blue-300 transition-all duration-300';
+    }
+    if (isTransparent) {
+      return 'hover:scale-105 transition-all duration-200';
+    }
+    return 'hover:scale-105 transition-all duration-200';
+  };
+
+  const getRegisterButtonClasses = () => {
+    if (isHome) {
+      return 'transform hover:scale-105 transition-all duration-300 shadow-lg';
+    }
+    return 'hover:scale-105';
+  };
+
   return (
     <div className="flex space-x-3">
       <Link to="/login">
         <Button 
           variant="outline" 
           size="sm" 
-          className={`transition-all duration-200 ${isHome ? 'hover:bg-blue-50 hover:border-blue-300 transition-all duration-300' : 'hover:scale-105'}`}
+          className={`transition-all duration-200 ${getButtonClasses()}`}
         >
           लॉगिन
         </Button>
@@ -51,7 +69,7 @@ const AuthButtons = ({ user, profile, variant, onLogout }: AuthButtonsProps) => 
       <Link to="/register">
         <Button 
           size="sm" 
-          className={`transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 ${isHome ? 'transform hover:scale-105 transition-all duration-300 shadow-lg' : 'hover:scale-105'}`}
+          className={`transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 ${getRegisterButtonClasses()}`}
         >
           रजिस्टर करें
         </Button>
