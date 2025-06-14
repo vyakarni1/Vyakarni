@@ -10,7 +10,7 @@ import { errorLogger } from '@/services/ErrorLogger';
 interface LazyComponentWrapperProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
-  errorFallback?: React.ReactNode;
+  errorFallback?: React.ComponentType<{ error: Error; resetErrorBoundary: () => void }>;
   componentName: string;
   enableIntersectionObserver?: boolean;
   threshold?: number;
@@ -145,11 +145,11 @@ const LazyComponentWrapper: React.FC<LazyComponentWrapperProps> = memo(({
     });
   }, [componentName]);
 
-  const CustomErrorFallback = errorFallback || DefaultErrorFallback;
+  const ErrorFallbackComponent = errorFallback || DefaultErrorFallback;
 
   const WrappedComponent = (
     <ErrorBoundary
-      FallbackComponent={CustomErrorFallback}
+      FallbackComponent={ErrorFallbackComponent}
       onError={handleError}
       resetKeys={[componentName]}
     >
