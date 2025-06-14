@@ -205,7 +205,8 @@ export const useSubscription = () => {
     // Check if it's a paid plan (basic or premium) or if it's the हॉबी प्लान (Basic)
     const isPaidPlan = subscription.plan_type === 'basic' || 
                       subscription.plan_type === 'premium' ||
-                      subscription.plan_name === 'हॉबी प्लान (Basic)';
+                      subscription.plan_name === 'हॉबी प्लान (Basic)' ||
+                      subscription.plan_type === 'free' && subscription.plan_name === 'हॉबी प्लान (Basic)';
     
     return subscription.status === 'active' && isPaidPlan;
   };

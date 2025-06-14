@@ -31,6 +31,11 @@ const PlanInfoCard = () => {
   };
 
   const getPlanIcon = () => {
+    // Special handling for हॉबी प्लान (Basic)
+    if (currentPlan.plan_name === 'हॉबी प्लान (Basic)') {
+      return <Zap className="h-5 w-5" />;
+    }
+    
     switch (currentPlan.plan_type) {
       case 'pro':
         return <Zap className="h-5 w-5" />;
@@ -42,6 +47,11 @@ const PlanInfoCard = () => {
   };
 
   const getPlanColor = () => {
+    // Special handling for हॉबी प्लान (Basic)
+    if (currentPlan.plan_name === 'हॉबी प्लान (Basic)') {
+      return 'from-blue-500 to-purple-600';
+    }
+    
     switch (currentPlan.plan_type) {
       case 'pro':
         return 'from-blue-500 to-purple-600';
@@ -53,6 +63,11 @@ const PlanInfoCard = () => {
   };
 
   const getBadgeColor = () => {
+    // Special handling for हॉबी प्लान (Basic)
+    if (currentPlan.plan_name === 'हॉबी प्लान (Basic)') {
+      return 'bg-blue-100 text-blue-800';
+    }
+    
     switch (currentPlan.plan_type) {
       case 'pro':
         return 'bg-blue-100 text-blue-800';
@@ -61,6 +76,12 @@ const PlanInfoCard = () => {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const isPaidPlan = () => {
+    return currentPlan.plan_name === 'हॉबी प्लान (Basic)' || 
+           currentPlan.plan_type === 'pro' || 
+           currentPlan.plan_type === 'premium';
   };
 
   return (
@@ -119,7 +140,7 @@ const PlanInfoCard = () => {
           </div>
         </div>
 
-        {currentPlan.plan_type === 'free' && (
+        {!isPaidPlan() && (
           <div className="pt-2">
             <Link to="/pricing">
               <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
@@ -129,7 +150,7 @@ const PlanInfoCard = () => {
           </div>
         )}
 
-        {currentPlan.plan_type !== 'free' && (
+        {isPaidPlan() && (
           <div className="pt-2">
             <Link to="/pricing">
               <Button variant="outline" className="w-full">
