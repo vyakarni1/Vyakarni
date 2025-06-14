@@ -21,7 +21,7 @@ const Login = () => {
 
   useEffect(() => {
     if (!loading && user) {
-      navigate("/dashboard");
+      navigate("/app");
     }
   }, [user, loading, navigate]);
 
@@ -59,7 +59,7 @@ const Login = () => {
       toast.success("सफलतापूर्वक लॉग इन हो गए!");
       
       // Force page reload to ensure clean state
-      window.location.href = "/dashboard";
+      window.location.href = "/app";
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error(error.message || "लॉग इन में त्रुटि");
@@ -137,15 +137,6 @@ const Login = () => {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
-              </div>
-
-              <div className="flex justify-end">
-                <Link 
-                  to="/forgot-password" 
-                  className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
-                >
-                  पासवर्ड भूल गए?
-                </Link>
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
