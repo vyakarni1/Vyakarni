@@ -67,6 +67,7 @@ function App() {
               
               {/* Protected routes */}
               <Route path="/app" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              <Route path="/grammar-checker" element={<ProtectedRoute><Index /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/security" element={<ProtectedRoute><SecuritySettings /></ProtectedRoute>} />
