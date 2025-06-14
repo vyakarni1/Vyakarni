@@ -8,8 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { cleanupAuthState } from "@/utils/authUtils";
+import { Eye, EyeOff, ArrowLeft, Shield } from "lucide-react";
+import { 
+  enhancedCleanupAuthState, 
+  checkLoginRateLimit, 
+  recordLoginAttempt,
+  getSessionInfo 
+} from "@/utils/securityUtils";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 const Login = () => {
@@ -17,6 +22,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [rateLimitInfo, setRateLimitInfo] = useState<{ blocked: boolean; remainingTime: number }>({ 
+    blocked: false, 
+    remainingTime: 0 
+  });
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -25,6 +34,33 @@ const Login = () => {
       navigate("/app");
     }
   }, [user, loading, navigate]);
+
+  useEffect(() => {
+    // Check rate limit on email change
+    if (email) {
+      const rateLimit = checkLoginRateLimit(email);
+      if (!rateLimit.allowed && rateLimit.remainingTime) {
+        const remainingMinutes = Math.ceil(rateLimit.remainingTime / 60000);
+        setRateLimitInfo({ blocked: true, remainingTime: remainingMinutes });
+        
+        // Set up countdown timer
+        const timer = setInterval(() => {
+          const currentRateLimit = checkLoginRateLimit(email);
+          if (currentRateLimit.allowed) {
+            setRateLimitInfo({ blocked: false, remainingTime: 0 });
+            clearInterval(timer);
+          } else if (currentRateLimit.remainingTime) {
+            const minutes = Math.ceil(currentRateLimit.remainingTime / 60000);
+            setRateLimitInfo({ blocked: true, remainingTime: minutes });
+          }
+        }, 60000); // Update every minute
+
+        return () => clearInterval(timer);
+      } else {
+        setRateLimitInfo({ blocked: false, remainingTime: 0 });
+      }
+    }
+  }, [email]);
 
   if (loading) {
     return (
@@ -36,11 +72,20 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check rate limiting
+    const rateLimit = checkLoginRateLimit(email);
+    if (!rateLimit.allowed) {
+      const remainingMinutes = rateLimit.remainingTime ? Math.ceil(rateLimit.remainingTime / 60000) : 0;
+      toast.error(`बहुत अधिक प्रयास। ${remainingMinutes} मिनट बाद कोशिश करें।`);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       // Clean up any existing auth state
-      cleanupAuthState();
+      enhancedCleanupAuthState();
       
       // Attempt global sign out first
       try {
@@ -50,20 +95,41 @@ const Login = () => {
         console.log('Global signout failed, continuing with login');
       }
 
+      // Get session info for security logging
+      const sessionInfo = getSessionInfo();
+      console.log('Login attempt with session info:', sessionInfo);
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        recordLoginAttempt(email, false);
+        throw error;
+      }
 
+      // Record successful login
+      recordLoginAttempt(email, true);
+      
       toast.success("सफलतापूर्वक लॉग इन हो गए!");
       
       // Force page reload to ensure clean state
       window.location.href = "/app";
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error.message || "लॉग इन में त्रुटि");
+      
+      // Provide user-friendly error messages
+      let errorMessage = "लॉग इन में त्रुटि";
+      if (error.message.includes('Invalid login credentials')) {
+        errorMessage = "गलत ईमेल या पासवर्ड";
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage = "कृपया पहले अपना ईमेल सत्यापित करें";
+      } else if (error.message.includes('Too many requests')) {
+        errorMessage = "बहुत अधिक प्रयास। कुछ समय बाद कोशिश करें।";
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -104,6 +170,20 @@ const Login = () => {
           </CardHeader>
 
           <CardContent className="space-y-6">
+            {rateLimitInfo.blocked && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center space-x-2">
+                  <Shield className="h-5 w-5 text-red-600" />
+                  <div>
+                    <p className="text-red-800 font-medium">सुरक्षा प्रतीक्षा</p>
+                    <p className="text-red-700 text-sm">
+                      बहुत अधिक प्रयास के कारण {rateLimitInfo.remainingTime} मिनट प्रतीक्षा करें।
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">ईमेल</Label>
@@ -114,6 +194,7 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="आपका ईमेल पता"
                   required
+                  disabled={rateLimitInfo.blocked}
                 />
               </div>
 
@@ -127,6 +208,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="आपका पासवर्ड"
                     required
+                    disabled={rateLimitInfo.blocked}
                   />
                   <Button
                     type="button"
@@ -134,6 +216,7 @@ const Login = () => {
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={rateLimitInfo.blocked}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
@@ -146,7 +229,11 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || rateLimitInfo.blocked}
+              >
                 {isLoading ? "लॉग इन हो रहे हैं..." : "लॉग इन करें"}
               </Button>
             </form>

@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, X, AlertCircle } from "lucide-react";
 import { usePasswordChange } from "@/hooks/usePasswordChange";
+import PasswordStrengthMeter from "@/components/Security/PasswordStrengthMeter";
+import { validatePasswordStrength } from "@/utils/securityUtils";
 
 interface PasswordChangeFormProps {
   onClose: () => void;
@@ -24,6 +26,13 @@ const PasswordChangeForm = ({ onClose }: PasswordChangeFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate password strength
+    const passwordStrength = validatePasswordStrength(passwords.new);
+    if (!passwordStrength.isValid) {
+      return; // Error will be shown by the password strength meter
+    }
+    
     const success = await changePassword();
     if (success) {
       reset();
@@ -92,6 +101,9 @@ const PasswordChangeForm = ({ onClose }: PasswordChangeFormProps) => {
             </Button>
           </div>
           {errors.new && <p className="text-xs text-red-500">{errors.new}</p>}
+          {passwords.new && (
+            <PasswordStrengthMeter password={passwords.new} />
+          )}
         </div>
 
         <div className="space-y-2">
@@ -122,11 +134,14 @@ const PasswordChangeForm = ({ onClose }: PasswordChangeFormProps) => {
           <div className="flex items-start space-x-2">
             <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
             <div className="text-sm text-blue-800">
-              <p className="font-medium mb-1">पासवर्ड आवश्यकताएं:</p>
+              <p className="font-medium mb-1">मजबूत पासवर्ड आवश्यकताएं:</p>
               <ul className="text-xs space-y-1">
-                <li>• कम से कम 6 अक्षर लंबा</li>
+                <li>• कम से कम 8 अक्षर लंबा</li>
+                <li>• बड़े अक्षर (A-Z)</li>
+                <li>• छोटे अक्षर (a-z)</li>
+                <li>• संख्या (0-9)</li>
+                <li>• विशेष चिह्न (!@#$%^&*)</li>
                 <li>• वर्तमान पासवर्ड से अलग</li>
-                <li>• मजबूत पासवर्ड के लिए अक्षर, अंक और विशेष चिह्न शामिल करें</li>
               </ul>
             </div>
           </div>

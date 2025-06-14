@@ -13,6 +13,7 @@ import { Shield, Key, Smartphone, AlertTriangle, Clock, Globe } from "lucide-rea
 import Layout from "@/components/Layout";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import SecurityDashboard from "@/components/Security/SecurityDashboard";
 
 const SecuritySettings = () => {
   const { user, loading } = useAuth();
@@ -80,91 +81,100 @@ const SecuritySettings = () => {
             <p className="text-gray-600 mt-2">अपने खाते की सुरक्षा और गोपनीयता प्रबंधित करें</p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Two-Factor Authentication */}
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Key className="h-5 w-5 mr-2 text-green-500" />
-                  द्विकारक प्रमाणीकरण (2FA)
-                  <Badge variant={twoFactorEnabled ? "default" : "secondary"} className="ml-2">
-                    {twoFactorEnabled ? "सक्रिय" : "निष्क्रिय"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">2FA सक्षम करें</p>
-                    <p className="text-sm text-gray-600">अतिरिक्त सुरक्षा के लिए</p>
-                  </div>
-                  <Switch
-                    checked={twoFactorEnabled}
-                    onCheckedChange={setTwoFactorEnabled}
-                  />
-                </div>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left column: Security Dashboard */}
+            <div className="lg:col-span-2">
+              <SecurityDashboard />
+            </div>
 
-                {twoFactorEnabled && (
-                  <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
-                    <div className="flex items-center text-green-800">
-                      <Smartphone className="h-4 w-4 mr-2" />
-                      <span className="font-medium">Authenticator App</span>
+            {/* Right column: Settings */}
+            <div className="space-y-6">
+              {/* Two-Factor Authentication */}
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Key className="h-5 w-5 mr-2 text-green-500" />
+                    द्विकारक प्रमाणीकरण (2FA)
+                    <Badge variant={twoFactorEnabled ? "default" : "secondary"} className="ml-2">
+                      {twoFactorEnabled ? "सक्रिय" : "निष्क्रिय"}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">2FA सक्षम करें</p>
+                      <p className="text-sm text-gray-600">अतिरिक्त सुरक्षा के लिए</p>
                     </div>
-                    <p className="text-sm text-green-700">
-                      Google Authenticator या समान ऐप का उपयोग करके सेटअप किया गया
-                    </p>
-                    <Button variant="outline" size="sm">
-                      बैकअप कोड देखें
+                    <Switch
+                      checked={twoFactorEnabled}
+                      onCheckedChange={setTwoFactorEnabled}
+                      disabled
+                    />
+                  </div>
+
+                  {twoFactorEnabled && (
+                    <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex items-center text-green-800">
+                        <Smartphone className="h-4 w-4 mr-2" />
+                        <span className="font-medium">Authenticator App</span>
+                      </div>
+                      <p className="text-sm text-green-700">
+                        Google Authenticator या समान ऐप का उपयोग करके सेटअप किया गया
+                      </p>
+                      <Button variant="outline" size="sm" disabled>
+                        बैकअप कोड देखें
+                      </Button>
+                    </div>
+                  )}
+
+                  {!twoFactorEnabled && (
+                    <Button className="w-full" disabled>
+                      2FA सेटअप करें (जल्द आएगा)
                     </Button>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Login & Security Notifications */}
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
+                    सुरक्षा अलर्ट
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">लॉगिन अधिसूचना</p>
+                      <p className="text-sm text-gray-600">नए डिवाइस से लॉगिन पर अलर्ट</p>
+                    </div>
+                    <Switch
+                      checked={loginNotifications}
+                      onCheckedChange={setLoginNotifications}
+                    />
                   </div>
-                )}
 
-                {!twoFactorEnabled && (
-                  <Button className="w-full">
-                    2FA सेटअप करें
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Login & Security Notifications */}
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
-                  सुरक्षा अलर्ट
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">लॉगिन अधिसूचना</p>
-                    <p className="text-sm text-gray-600">नए डिवाइस से लॉगिन पर अलर्ट</p>
+                  <div className="space-y-2">
+                    <Label>सत्र टाइमआउट (मिनट)</Label>
+                    <Input
+                      type="number"
+                      value={sessionTimeout}
+                      onChange={(e) => setSessionTimeout(Number(e.target.value))}
+                      min="5"
+                      max="480"
+                    />
+                    <p className="text-xs text-gray-500">
+                      निष्क्रियता के बाद कितनी देर में लॉग आउट करें
+                    </p>
                   </div>
-                  <Switch
-                    checked={loginNotifications}
-                    onCheckedChange={setLoginNotifications}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>सत्र टाइमआउट (मिनट)</Label>
-                  <Input
-                    type="number"
-                    value={sessionTimeout}
-                    onChange={(e) => setSessionTimeout(Number(e.target.value))}
-                    min="5"
-                    max="480"
-                  />
-                  <p className="text-xs text-gray-500">
-                    निष्क्रियता के बाद कितनी देर में लॉग आउट करें
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Active Sessions */}
-            <Card className="shadow-lg lg:col-span-2">
+            <Card className="shadow-lg lg:col-span-3">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -204,7 +214,7 @@ const SecuritySettings = () => {
                         </div>
                       </div>
                       {!session.current && (
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" disabled>
                           समाप्त करें
                         </Button>
                       )}
@@ -215,7 +225,7 @@ const SecuritySettings = () => {
             </Card>
 
             {/* Security Recommendations */}
-            <Card className="shadow-lg lg:col-span-2 border-orange-200 bg-orange-50">
+            <Card className="shadow-lg lg:col-span-3 border-orange-200 bg-orange-50">
               <CardHeader>
                 <CardTitle className="flex items-center text-orange-800">
                   <Shield className="h-5 w-5 mr-2" />
@@ -227,7 +237,7 @@ const SecuritySettings = () => {
                   <div className="space-y-2">
                     <p className="font-medium text-orange-800">मजबूत पासवर्ड</p>
                     <p className="text-sm text-orange-700">
-                      कम से कम 12 अक्षर, अंक और विशेष चिह्न शामिल करें
+                      कम से कम 8 अक्षर, अंक और विशेष चिह्न शामिल करें
                     </p>
                   </div>
                   <div className="space-y-2">

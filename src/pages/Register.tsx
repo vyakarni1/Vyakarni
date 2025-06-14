@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft } from "lucide-react";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
+import PasswordStrengthMeter from "@/components/Security/PasswordStrengthMeter";
+import { validatePasswordStrength } from "@/utils/securityUtils";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -30,14 +32,21 @@ const Register = () => {
       toast.error("पासवर्ड आवश्यक है");
       return;
     }
+
+    // Validate password strength
+    const passwordStrength = validatePasswordStrength(password);
+    if (!passwordStrength.isValid) {
+      toast.error("पासवर्ड पर्याप्त मजबूत नहीं है। कृपया सभी आवश्यकताएं पूरी करें।");
+      return;
+    }
     
     if (password !== confirmPassword) {
       toast.error("पासवर्ड मैच नहीं कर रहे");
       return;
     }
     
-    if (password.length < 6) {
-      toast.error("पासवर्ड कम से कम 6 अक्षर का होना चाहिए");
+    if (password.length < 8) {
+      toast.error("पासवर्ड कम से कम 8 अक्षर का होना चाहिए");
       return;
     }
 
@@ -58,6 +67,8 @@ const Register = () => {
       if (error) {
         if (error.message.includes("already registered")) {
           toast.error("यह ईमेल पहले से पंजीकृत है। कृपया लॉगिन करें।");
+        } else if (error.message.includes("Password should be")) {
+          toast.error("पासवर्ड बहुत कमजोर है। कृपया मजबूत पासवर्ड चुनें।");
         } else {
           toast.error("रजिस्ट्रेशन में त्रुटि: " + error.message);
         }
@@ -131,13 +142,16 @@ const Register = () => {
               <Input 
                 id="password" 
                 type="password" 
-                placeholder="कम से कम 6 अक्षर" 
+                placeholder="मजबूत पासवर्ड चुनें" 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
-                minLength={6} 
+                minLength={8} 
                 className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500" 
               />
+              {password && (
+                <PasswordStrengthMeter password={password} />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -153,6 +167,9 @@ const Register = () => {
                 required 
                 className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500" 
               />
+              {confirmPassword && password !== confirmPassword && (
+                <p className="text-xs text-red-500">पासवर्ड मैच नहीं कर रहे</p>
+              )}
             </div>
 
             <Button 
