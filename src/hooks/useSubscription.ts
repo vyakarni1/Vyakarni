@@ -41,6 +41,7 @@ export const useSubscription = () => {
         .from('subscription_plans')
         .select('*')
         .eq('plan_type', 'free')
+        .eq('plan_name', 'फ्री प्लान') // Get the actual free plan, not the basic one
         .single();
 
       if (planError || !freePlan) {
@@ -199,8 +200,14 @@ export const useSubscription = () => {
   };
 
   const isSubscriptionActive = (): boolean => {
-    return subscription?.status === 'active' && 
-           (subscription.plan_type === 'basic' || subscription.plan_type === 'premium');
+    if (!subscription) return false;
+    
+    // Check if it's a paid plan (basic or premium) or if it's the हॉबी प्लान (Basic)
+    const isPaidPlan = subscription.plan_type === 'basic' || 
+                      subscription.plan_type === 'premium' ||
+                      subscription.plan_name === 'हॉबी प्लान (Basic)';
+    
+    return subscription.status === 'active' && isPaidPlan;
   };
 
   // Set up real-time subscription for subscription changes

@@ -83,6 +83,21 @@ export async function handleManualProcess(req: Request, supabase: any) {
       console.error('Error creating payment transaction:', transactionError)
     }
 
+    // Get the basic subscription plan (the one we just created)
+    const { data: basicPlan, error: basicPlanError } = await supabase
+      .from('subscription_plans')
+      .select('*')
+      .eq('plan_name', 'हॉबी प्लान (Basic)')
+      .single()
+
+    if (basicPlanError || !basicPlan) {
+      console.error('Basic plan not found:', basicPlanError)
+      return new Response(
+        JSON.stringify({ error: 'Basic subscription plan not found' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Handle subscription purchase
     console.log('Processing subscription purchase')
     
@@ -90,31 +105,31 @@ export async function handleManualProcess(req: Request, supabase: any) {
     const { data: subscriptionData, error: subscriptionError } = await supabase
       .rpc('create_subscription_for_user', {
         user_uuid: order.user_id,
-        plan_uuid: order.word_plan_id
+        plan_uuid: basicPlan.id
       })
 
     if (subscriptionError || !subscriptionData?.success) {
       console.error('Error creating subscription:', subscriptionError, subscriptionData)
+      return new Response(
+        JSON.stringify({ error: 'Error creating subscription' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     } else {
       console.log('Successfully created subscription:', subscriptionData)
     }
 
-    // Add subscription word credits (10,000 words for basic plan)
-    const wordsToAdd = 10000;
+    // Add subscription word credits using the new function
+    const wordsToAdd = wordPlan.words_included || 10000;
     
-    const { error: creditError } = await supabase
-      .from('user_word_credits')
-      .insert({
-        user_id: order.user_id,
-        words_available: wordsToAdd,
-        words_purchased: wordsToAdd,
-        is_free_credit: false,
-        credit_type: 'subscription',
-        purchase_date: new Date().toISOString(),
-        expiry_date: null, // Subscription words don't expire
+    const { data: creditResult, error: creditError } = await supabase
+      .rpc('add_user_word_credits', {
+        p_user_id: order.user_id,
+        p_words_to_add: wordsToAdd,
+        p_credit_type: 'subscription',
+        p_expiry_date: null // Subscription words don't expire
       })
 
-    if (creditError) {
+    if (creditError || !creditResult) {
       console.error('Error adding subscription word credits:', creditError)
       return new Response(
         JSON.stringify({ error: 'Error adding word credits' }),

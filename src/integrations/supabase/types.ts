@@ -903,7 +903,7 @@ export type Database = {
           {
             foreignKeyName: "fk_user_word_credits_profiles"
             columns: ["user_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1051,6 +1051,15 @@ export type Database = {
       }
     }
     Functions: {
+      add_user_word_credits: {
+        Args: {
+          p_user_id: string
+          p_words_to_add: number
+          p_credit_type?: string
+          p_expiry_date?: string
+        }
+        Returns: boolean
+      }
       check_user_has_active_subscription: {
         Args: { user_uuid: string }
         Returns: boolean
