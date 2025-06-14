@@ -2,7 +2,7 @@
 import { corsHeaders } from './types.ts'
 
 // Function to verify Razorpay webhook signature
-function verifyWebhookSignature(body: string, signature: string, secret: string): boolean {
+async function verifyWebhookSignature(body: string, signature: string, secret: string): Promise<boolean> {
   if (!signature || !secret) {
     return false;
   }
@@ -14,24 +14,136 @@ function verifyWebhookSignature(body: string, signature: string, secret: string)
     const data = encoder.encode(body);
     
     // Create HMAC-SHA256 hash
-    return crypto.subtle.importKey(
+    const cryptoKey = await crypto.subtle.importKey(
       'raw',
       key,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign']
-    ).then(cryptoKey => {
-      return crypto.subtle.sign('HMAC', cryptoKey, data);
-    }).then(signature_buffer => {
-      const hash = Array.from(new Uint8Array(signature_buffer))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-      
-      const expectedSignature = `sha256=${hash}`;
-      return expectedSignature === signature;
-    }).catch(() => false);
+    );
+    
+    const signature_buffer = await crypto.subtle.sign('HMAC', cryptoKey, data);
+    const hash = Array.from(new Uint8Array(signature_buffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    
+    const expectedSignature = `sha256=${hash}`;
+    return expectedSignature === signature;
   } catch (error) {
     console.error('Error verifying webhook signature:', error);
+    return false;
+  }
+}
+
+// Function to manually process a failed payment
+async function processFailedPayment(supabase: any, orderId: string) {
+  console.log('Manually processing failed payment for order:', orderId);
+  
+  try {
+    // Get order from database
+    const { data: order, error: orderError } = await supabase
+      .from('razorpay_orders')
+      .select('*')
+      .eq('order_id', orderId)
+      .single();
+
+    if (orderError || !order) {
+      console.error('Order not found:', orderId, orderError);
+      return false;
+    }
+
+    console.log('Found order:', order);
+
+    // Update order status to PAID
+    const { error: updateError } = await supabase
+      .from('razorpay_orders')
+      .update({ 
+        order_status: 'PAID',
+        updated_at: new Date().toISOString()
+      })
+      .eq('order_id', orderId);
+
+    if (updateError) {
+      console.error('Error updating order:', updateError);
+      return false;
+    }
+
+    // Get the word plan
+    const { data: wordPlan, error: planError } = await supabase
+      .from('word_plans')
+      .select('*')
+      .eq('id', order.word_plan_id)
+      .single();
+
+    if (planError) {
+      console.error('Error fetching word plan:', planError);
+      return false;
+    }
+
+    console.log('Processing payment for plan:', wordPlan);
+
+    // Create payment transaction record
+    const { error: transactionError } = await supabase
+      .from('payment_transactions')
+      .insert({
+        user_id: order.user_id,
+        amount: order.order_amount,
+        status: 'completed',
+        payment_gateway: 'razorpay',
+        razorpay_order_id: orderId,
+        razorpay_payment_id: 'pay_Qh7zV9MIAQGmVK', // From the webhook logs
+        currency: 'INR',
+      });
+
+    if (transactionError) {
+      console.error('Error creating payment transaction:', transactionError);
+    }
+
+    if (wordPlan.plan_category === 'subscription') {
+      // Handle subscription purchase
+      console.log('Processing subscription purchase');
+      
+      // Create subscription using the database function
+      const { data: subscriptionData, error: subscriptionError } = await supabase
+        .rpc('create_subscription_for_user', {
+          user_uuid: order.user_id,
+          plan_uuid: order.word_plan_id
+        });
+
+      if (subscriptionError || !subscriptionData?.success) {
+        console.error('Error creating subscription:', subscriptionError, subscriptionData);
+        // Continue to add word credits even if subscription creation fails
+      } else {
+        console.log('Successfully created subscription:', subscriptionData);
+      }
+
+      // Add subscription word credits (no expiry for subscription words)
+      // For basic subscription plan, add 10,000 words as per typical subscription
+      const wordsToAdd = wordPlan.words_included || 10000;
+      
+      const { error: creditError } = await supabase
+        .from('user_word_credits')
+        .insert({
+          user_id: order.user_id,
+          words_available: wordsToAdd,
+          words_purchased: wordsToAdd,
+          is_free_credit: false,
+          credit_type: 'subscription',
+          purchase_date: new Date().toISOString(),
+          expiry_date: null, // Subscription words don't expire
+        });
+
+      if (creditError) {
+        console.error('Error adding subscription word credits:', creditError);
+        return false;
+      } else {
+        console.log(`Successfully added ${wordsToAdd} subscription words to user ${order.user_id}`);
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error processing failed payment:', error);
     return false;
   }
 }
@@ -161,12 +273,15 @@ export async function handleWebhook(req: Request, supabase: any) {
           }
 
           // Add subscription word credits (no expiry for subscription words)
+          // For basic subscription, add 10,000 words as standard
+          const wordsToAdd = order.words_to_credit || 10000;
+          
           const { error: creditError } = await supabase
             .from('user_word_credits')
             .insert({
               user_id: order.user_id,
-              words_available: order.words_to_credit,
-              words_purchased: order.words_to_credit,
+              words_available: wordsToAdd,
+              words_purchased: wordsToAdd,
               is_free_credit: false,
               credit_type: 'subscription',
               purchase_date: new Date().toISOString(),
@@ -176,7 +291,7 @@ export async function handleWebhook(req: Request, supabase: any) {
           if (creditError) {
             console.error('Error adding subscription word credits:', creditError)
           } else {
-            console.log(`Successfully added ${order.words_to_credit} subscription words to user ${order.user_id}`)
+            console.log(`Successfully added ${wordsToAdd} subscription words to user ${order.user_id}`)
           }
 
         } else if (wordPlan.plan_category === 'topup') {
@@ -235,6 +350,17 @@ export async function handleWebhook(req: Request, supabase: any) {
       } catch (error) {
         console.error('Error processing payment:', error)
         return new Response('Error processing payment', { status: 500, headers: corsHeaders })
+      }
+    }
+
+    // Manual processing for failed order (specific case)
+    if (req.url.includes('manual-process')) {
+      const success = await processFailedPayment(supabase, 'order_Qh7xtuignamMB6')
+      if (success) {
+        console.log('Successfully processed failed payment manually')
+        return new Response('Payment processed successfully', { status: 200, headers: corsHeaders })
+      } else {
+        return new Response('Failed to process payment', { status: 500, headers: corsHeaders })
       }
     }
 

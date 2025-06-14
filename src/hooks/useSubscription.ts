@@ -203,9 +203,49 @@ export const useSubscription = () => {
            (subscription.plan_type === 'basic' || subscription.plan_type === 'premium');
   };
 
+  // Set up real-time subscription for subscription changes
   useEffect(() => {
     if (user) {
       fetchSubscription();
+
+      // Subscribe to changes in user subscriptions
+      const subscription_channel = supabase
+        .channel('user_subscriptions_changes')
+        .on('postgres_changes', 
+          { 
+            event: '*', 
+            schema: 'public', 
+            table: 'user_subscriptions',
+            filter: `user_id=eq.${user.id}`
+          }, 
+          () => {
+            console.log('Subscription changed, refetching...');
+            fetchSubscription();
+          }
+        )
+        .subscribe();
+
+      // Subscribe to changes in word credits
+      const credits_channel = supabase
+        .channel('user_word_credits_changes')
+        .on('postgres_changes', 
+          { 
+            event: '*', 
+            schema: 'public', 
+            table: 'user_word_credits',
+            filter: `user_id=eq.${user.id}`
+          }, 
+          () => {
+            console.log('Word credits changed, refetching subscription...');
+            fetchSubscription();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        subscription_channel.unsubscribe();
+        credits_channel.unsubscribe();
+      };
     } else {
       setSubscription(null);
       setLoading(false);

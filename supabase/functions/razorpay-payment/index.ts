@@ -4,6 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from './types.ts'
 import { handleCreateOrder } from './order-handler.ts'
 import { handleWebhook } from './webhook-handler.ts'
+import { handleManualProcess } from './manual-process.ts'
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
@@ -27,6 +28,8 @@ serve(async (req) => {
         return await handleCreateOrder(req, supabase)
       case 'webhook':
         return await handleWebhook(req, supabase)
+      case 'manual-process':
+        return await handleManualProcess(req, supabase)
       default:
         return new Response(
           JSON.stringify({ error: 'Invalid endpoint' }),
