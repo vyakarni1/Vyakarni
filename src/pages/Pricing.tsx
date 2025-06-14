@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { Check, Star, Zap, Crown, Calculator, Plus, AlertTriangle } from "lucide
 import { toast } from "sonner";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import DiscountBadge from "@/components/DiscountBadge";
-import CashfreePaymentButton from "@/components/Payment/CashfreePaymentButton";
+import PaymentGatewaySelector from "@/components/Payment/PaymentGatewaySelector";
 import EnterprisePlanSection from "@/components/EnterprisePlanSection";
 import Layout from "@/components/Layout";
 
@@ -144,7 +143,7 @@ const Pricing = () => {
                       <div className="space-y-2">
                         {plan.plan_type !== 'free' ? (
                           <div className="space-y-1">
-                            <div className="flex items-center justify-center space-x-2">
+                            <div className="flex items-center space-x-2">
                               {discountInfo.hasDiscount && (
                                 <span className="text-lg text-gray-500 line-through">
                                   ₹{discountInfo.originalPrice.toLocaleString('hi-IN')}
@@ -220,7 +219,7 @@ const Pricing = () => {
                             साइनअप पर मिलता है
                           </Button>
                         ) : (
-                          <CashfreePaymentButton 
+                          <PaymentGatewaySelector 
                             wordPlan={plan} 
                             onPaymentSuccess={() => {
                               toast.success("भुगतान सफल! सब्स्क्रिप्शन सक्रिय कर दिया गया है।");
@@ -287,7 +286,7 @@ const Pricing = () => {
                             </Button>
                           </div>
                         ) : (
-                          <CashfreePaymentButton 
+                          <PaymentGatewaySelector 
                             wordPlan={plan} 
                             onPaymentSuccess={() => {
                               toast.success("भुगतान सफल! शब्द आपके खाते में जोड़ दिये गये हैं।");
