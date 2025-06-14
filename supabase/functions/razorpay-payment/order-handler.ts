@@ -2,196 +2,118 @@
 import { corsHeaders } from './types.ts'
 
 export async function handleCreateOrder(req: Request, supabase: any) {
-  console.log('Creating Razorpay order')
-  
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405, headers: corsHeaders })
-  }
-
   try {
     const { word_plan_id, customer_name, customer_email, customer_phone } = await req.json()
 
-    if (!word_plan_id || !customer_name || !customer_email || !customer_phone) {
-      return new Response(
-        JSON.stringify({ error: 'Missing required fields: word_plan_id, customer_name, customer_email, customer_phone' }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
+    console.log('Creating Razorpay order for plan:', word_plan_id)
 
-    // Get user from request
-    const authHeader = req.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '')
-    
-    if (!token) {
-      return new Response(
-        JSON.stringify({ error: 'Missing authorization token' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-
-    if (userError || !user) {
-      console.error('Auth error:', userError)
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    console.log('Authenticated user:', user.id)
-
-    // Get word plan details
+    // Get the word plan details
     const { data: wordPlan, error: planError } = await supabase
       .from('word_plans')
       .select('*')
       .eq('id', word_plan_id)
-      .eq('is_active', true)
       .single()
 
     if (planError || !wordPlan) {
-      console.error('Word plan error:', planError)
-      return new Response(
-        JSON.stringify({ error: 'Word plan not found or inactive' }),
-        { 
-          status: 404, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
+      throw new Error('Plan not found')
     }
 
-    console.log('Found word plan:', wordPlan)
+    // Calculate total amount with GST
+    const totalAmount = Math.round((wordPlan.price_before_gst * (1 + wordPlan.gst_percentage / 100)) * 100) // Convert to paise
 
-    // Calculate total amount (price + GST)
-    const amountBeforeGst = parseFloat(wordPlan.price_before_gst)
-    const gstPercentage = parseFloat(wordPlan.gst_percentage) || 18
-    const gstAmount = (amountBeforeGst * gstPercentage) / 100
-    const totalAmount = amountBeforeGst + gstAmount
-
-    // Create order in Razorpay
-    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID')
-    const razorpaySecret = Deno.env.get('RAZORPAY_SECRET_KEY')
-
-    if (!razorpayKeyId || !razorpaySecret) {
-      console.error('Missing Razorpay credentials')
-      return new Response(
-        JSON.stringify({ error: 'Payment gateway configuration error' }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
+    // Create order data
     const orderData = {
-      amount: Math.round(totalAmount * 100), // Convert to paise
+      amount: totalAmount,
       currency: 'INR',
-      receipt: `receipt_${Date.now()}_${user.id.slice(-8)}`,
+      receipt: `receipt_${Date.now()}`,
       notes: {
-        word_plan_id,
-        user_id: user.id,
-        customer_name,
-        customer_email,
-        customer_phone,
-        words_to_credit: wordPlan.words_included,
-        plan_category: wordPlan.plan_category,
-        plan_type: wordPlan.plan_type
+        word_plan_id: word_plan_id,
+        customer_name: customer_name,
+        customer_email: customer_email,
+        customer_phone: customer_phone
       }
     }
 
-    console.log('Creating Razorpay order with data:', orderData)
-
-    const auth = btoa(`${razorpayKeyId}:${razorpaySecret}`)
-    const response = await fetch('https://api.razorpay.com/v1/orders', {
+    // Create Razorpay order
+    const orderResponse = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${auth}`,
+        'Authorization': `Basic ${btoa(`${Deno.env.get('RAZORPAY_KEY_ID')}:${Deno.env.get('RAZORPAY_SECRET_KEY')}`)}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(orderData),
+      body: JSON.stringify(orderData)
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Razorpay API error:', response.status, errorText)
-      throw new Error(`Razorpay API error: ${response.status} - ${errorText}`)
+    const razorpayOrder = await orderResponse.json()
+    
+    if (!orderResponse.ok) {
+      console.error('Razorpay order creation failed:', razorpayOrder)
+      throw new Error(`Order creation failed: ${razorpayOrder.error?.description || 'Unknown error'}`)
     }
 
-    const razorpayOrder = await response.json()
-    console.log('Razorpay order created successfully:', razorpayOrder.id)
+    console.log('Razorpay order created:', razorpayOrder.id)
 
-    // Store order in database
-    const { data: dbOrder, error: dbError } = await supabase
+    // Get authenticated user
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('Authorization header missing')
+    }
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    )
+
+    if (userError || !user) {
+      throw new Error('User authentication failed')
+    }
+
+    // Store in our database
+    const { data: dbOrder, error: orderError } = await supabase
       .from('razorpay_orders')
       .insert({
         user_id: user.id,
-        word_plan_id,
         order_id: razorpayOrder.id,
-        order_amount: totalAmount,
+        order_amount: totalAmount / 100, // Convert back to rupees
         order_currency: 'INR',
         order_status: 'CREATED',
+        word_plan_id: word_plan_id,
         words_to_credit: wordPlan.words_included,
-        customer_details: {
-          name: customer_name,
-          email: customer_email,
-          phone: customer_phone
-        },
-        order_meta: razorpayOrder
-      })
-      .select()
-      .single()
-
-    if (dbError) {
-      console.error('Database error storing order:', dbError)
-      return new Response(
-        JSON.stringify({ error: 'Failed to store order' }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    console.log('Order stored in database:', dbOrder.id)
-
-    return new Response(
-      JSON.stringify({
-        order_id: razorpayOrder.id,
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency,
-        key_id: razorpayKeyId,
         customer_details: {
           name: customer_name,
           email: customer_email,
           contact: customer_phone
         }
-      }),
-      { 
-        status: 200, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      })
+      .select()
+      .single()
+
+    if (orderError) {
+      console.error('Database order creation failed:', orderError)
+      throw new Error('Failed to store order in database')
+    }
+
+    return new Response(JSON.stringify({
+      key_id: Deno.env.get('RAZORPAY_KEY_ID'),
+      order_id: razorpayOrder.id,
+      amount: totalAmount,
+      currency: 'INR',
+      customer_details: {
+        name: customer_name,
+        email: customer_email,
+        contact: customer_phone
       }
-    )
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
 
   } catch (error) {
-    console.error('Error creating Razorpay order:', error)
-    return new Response(
-      JSON.stringify({ 
-        error: 'Failed to create order',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
-    )
+    console.error('Error in handleCreateOrder:', error)
+    return new Response(JSON.stringify({ 
+      error: error.message || 'Failed to create order'
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    })
   }
 }
