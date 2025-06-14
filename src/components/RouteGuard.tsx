@@ -16,7 +16,7 @@ interface RouteGuardProps {
 
 const RouteGuard = ({ children }: RouteGuardProps) => {
   const { user, loading: authLoading } = useAuth();
-  const { userRole, loading: roleLoading } = useUserRole();
+  const { role: userRole, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
   const location = useLocation();
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
@@ -52,7 +52,7 @@ const RouteGuard = ({ children }: RouteGuardProps) => {
         if (roleLoading) return; // Wait for role to load
         
         const hasRequiredRole = metadata.requiredRoles.some(role => 
-          userRole?.role === role
+          userRole === role
         );
         
         if (!hasRequiredRole) {

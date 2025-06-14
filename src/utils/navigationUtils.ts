@@ -95,3 +95,6 @@ export const shouldRedirect = (path: string): string | null => {
   }
   return null;
 };
+
+// Export ROUTE_METADATA for use in other components
+export { ROUTE_METADATA };
