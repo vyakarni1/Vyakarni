@@ -7,6 +7,7 @@ import { usePerformanceTracking } from './usePerformanceTracking';
 import { apiCache } from '@/services/cacheManager';
 import { performanceMonitor } from '@/utils/performanceMonitor';
 import { errorLogger } from '@/services/ErrorLogger';
+import { logger } from '@/utils/logger';
 import type { Correction, ProcessingMode } from '@/types/grammarChecker';
 
 export const useOptimizedGrammarChecker = () => {
@@ -35,6 +36,7 @@ export const useOptimizedGrammarChecker = () => {
       const cachedResult = apiCache.get(cacheKey);
       if (cachedResult) {
         trackInteraction('cache-hit', { mode, textLength: text.length });
+        logger.debug('Cache hit for text processing', { mode, textLength: text.length }, 'useOptimizedGrammarChecker');
         return cachedResult;
       }
 
@@ -48,6 +50,8 @@ export const useOptimizedGrammarChecker = () => {
       try {
         const startTime = performance.now();
         let result;
+
+        logger.debug('Starting API call', { mode, textLength: text.length }, 'useOptimizedGrammarChecker');
 
         if (mode === 'grammar') {
           result = await callGrammarCheckAPI(text);
@@ -74,6 +78,7 @@ export const useOptimizedGrammarChecker = () => {
         });
 
         trackInteraction('api-success', { mode, duration, textLength: text.length });
+        logger.info('API call successful', { mode, duration, textLength: text.length }, 'useOptimizedGrammarChecker');
         
         return result;
       } catch (error) {
@@ -89,6 +94,7 @@ export const useOptimizedGrammarChecker = () => {
         });
 
         trackInteraction('api-error', { mode, error: (error as Error).message });
+        logger.error('API call failed', { mode, error: (error as Error).message }, 'useOptimizedGrammarChecker');
         throw error;
       }
     });
@@ -123,17 +129,21 @@ export const useOptimizedGrammarChecker = () => {
   const processTextOptimized = useCallback(async (mode: ProcessingMode) => {
     if (!inputText.trim()) {
       trackInteraction('empty-text-submit', { mode });
+      logger.warn('Empty text submitted for processing', { mode }, 'useOptimizedGrammarChecker');
       return;
     }
 
     if (!checkAndEnforceWordLimit(inputText)) {
       trackInteraction('word-limit-exceeded', { mode, textLength: inputText.length });
+      logger.warn('Word limit exceeded', { mode, textLength: inputText.length }, 'useOptimizedGrammarChecker');
       return;
     }
 
     try {
       setProcessingMode(mode);
       setProgress(0);
+
+      logger.debug('Starting text processing', { mode, textLength: inputText.length }, 'useOptimizedGrammarChecker');
 
       // Simulate progress for better UX
       const progressInterval = setInterval(() => {
@@ -166,6 +176,12 @@ export const useOptimizedGrammarChecker = () => {
           textLength: inputText.length,
         });
 
+        logger.info('Text processing completed successfully', { 
+          mode, 
+          correctionCount: result.data.corrections?.length || 0,
+          textLength: inputText.length,
+        }, 'useOptimizedGrammarChecker');
+
         // Reset progress after showing completion
         setTimeout(() => setProgress(0), 1000);
       }
@@ -180,6 +196,11 @@ export const useOptimizedGrammarChecker = () => {
         mode, 
         error: error instanceof Error ? error.message : 'Unknown error',
       });
+
+      logger.error('Text processing failed', { 
+        mode, 
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }, 'useOptimizedGrammarChecker');
     }
   }, [inputText, checkAndEnforceWordLimit, trackWordUsage, grammarQuery, trackInteraction]);
 
@@ -198,6 +219,10 @@ export const useOptimizedGrammarChecker = () => {
         oldLength: inputText.length, 
         newLength: text.length,
       });
+      logger.debug('Text reset due to significant change', { 
+        oldLength: inputText.length, 
+        newLength: text.length,
+      }, 'useOptimizedGrammarChecker');
     }
   }, [inputText, trackInteraction]);
 
@@ -209,6 +234,7 @@ export const useOptimizedGrammarChecker = () => {
     if (processingTimeoutRef.current) {
       clearTimeout(processingTimeoutRef.current);
     }
+    logger.debug('Cleanup completed', undefined, 'useOptimizedGrammarChecker');
   }, []);
 
   return {
@@ -228,10 +254,12 @@ export const useOptimizedGrammarChecker = () => {
       setCorrections([]);
       setProgress(0);
       trackInteraction('reset-all');
+      logger.debug('All text and state reset', undefined, 'useOptimizedGrammarChecker');
     }, [cleanup, trackInteraction]),
     copyToClipboard: useCallback((text: string) => {
       navigator.clipboard.writeText(text);
       trackInteraction('copy-text', { textLength: text.length });
+      logger.debug('Text copied to clipboard', { textLength: text.length }, 'useOptimizedGrammarChecker');
     }, [trackInteraction]),
     cleanup,
   };

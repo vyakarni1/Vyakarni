@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useOptimizedGrammarChecker } from "@/hooks/useOptimizedGrammarChecker";
 import { useTextHighlighting } from "@/hooks/useTextHighlighting";
 import { usePerformanceTracking } from "@/hooks/usePerformanceTracking";
+import { logger } from '@/utils/logger';
 import Header from './GrammarChecker/Header';
 import TextInputPanel from './GrammarChecker/TextInputPanel';
 import CorrectedTextPanel from './GrammarChecker/CorrectedTextPanel';
@@ -16,19 +17,19 @@ const GrammarChecker = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { trackInteraction } = usePerformanceTracking('GrammarChecker');
 
-  console.log('[GrammarChecker] Component mounting with optimizations');
+  logger.debug('Component mounting with optimizations', undefined, 'GrammarChecker');
 
   const grammarCheckerData = useOptimizedGrammarChecker();
   const highlighting = useTextHighlighting();
 
   useEffect(() => {
     try {
-      console.log('[GrammarChecker] Optimized hook loaded successfully');
+      logger.debug('Optimized hook loaded successfully', undefined, 'GrammarChecker');
       setIsLoading(false);
       setError(null);
       trackInteraction('component-mounted');
     } catch (err) {
-      console.error('[GrammarChecker] Error in useEffect:', err);
+      logger.error('Error in useEffect', err, 'GrammarChecker');
       setError(err instanceof Error ? err.message : 'Unknown error in GrammarChecker');
       setIsLoading(false);
       trackInteraction('component-mount-error', { error: err instanceof Error ? err.message : 'Unknown' });
@@ -43,7 +44,7 @@ const GrammarChecker = () => {
   }, [grammarCheckerData]);
 
   if (error) {
-    console.log('[GrammarChecker] Showing error state:', error);
+    logger.debug('Showing error state', { error }, 'GrammarChecker');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
@@ -64,7 +65,7 @@ const GrammarChecker = () => {
   }
 
   if (isLoading) {
-    console.log('[GrammarChecker] Showing loading state');
+    logger.debug('Showing loading state', undefined, 'GrammarChecker');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 flex items-center justify-center">
         <div className="text-center">
@@ -75,7 +76,7 @@ const GrammarChecker = () => {
     );
   }
 
-  console.log('[GrammarChecker] Rendering optimized interface');
+  logger.debug('Rendering optimized interface', undefined, 'GrammarChecker');
 
   const {
     inputText,
