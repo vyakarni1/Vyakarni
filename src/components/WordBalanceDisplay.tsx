@@ -4,11 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useWordCredits } from "@/hooks/useWordCredits";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Coins, Clock, ShoppingBag, AlertTriangle, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const WordBalanceDisplay = () => {
   const { balance, loading } = useWordCredits();
+  const { subscription } = useSubscription();
 
   if (loading) {
     return (
@@ -39,6 +41,14 @@ const WordBalanceDisplay = () => {
   const isLowBalance = balance.total_words_available < 100;
   const hasTopupWords = balance.topup_words > 0;
 
+  // Check if user has a paid subscription including हॉबी प्लान (Basic)
+  const hasPaidSubscription = subscription && (
+    subscription.plan_name === 'हॉबी प्लान (Basic)' ||
+    subscription.plan_type === 'basic' ||
+    subscription.plan_type === 'premium' ||
+    subscription.plan_type === 'pro'
+  );
+
   return (
     <Card className={`w-full mb-6 ${isLowBalance ? 'border-orange-200 bg-orange-50' : 'border-green-200 bg-green-50'}`}>
       <CardContent className="p-4">
@@ -53,7 +63,7 @@ const WordBalanceDisplay = () => {
                 <Badge variant={isLowBalance ? "destructive" : "secondary"}>
                   {balance.total_words_available} शब्द
                 </Badge>
-                {balance.has_active_subscription && (
+                {hasPaidSubscription && (
                   <Badge variant="outline" className="text-blue-600 border-blue-200">
                     सक्रिय सब्स्क्रिप्शन
                   </Badge>
@@ -89,7 +99,7 @@ const WordBalanceDisplay = () => {
           </div>
           
           <div className="flex items-center space-x-2">
-            {balance.has_active_subscription && (
+            {hasPaidSubscription && (
               <Link to="/pricing">
                 <Button size="sm" variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50">
                   <Plus className="h-4 w-4 mr-2" />
@@ -102,7 +112,7 @@ const WordBalanceDisplay = () => {
               <Link to="/pricing">
                 <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
                   <ShoppingBag className="h-4 w-4 mr-2" />
-                  {balance.has_active_subscription ? 'टॉप-अप खरीदें' : 'प्लान अपग्रेड करें'}
+                  {hasPaidSubscription ? 'टॉप-अप खरीदें' : 'प्लान अपग्रेड करें'}
                 </Button>
               </Link>
             )}
@@ -115,7 +125,7 @@ const WordBalanceDisplay = () => {
               <AlertTriangle className="h-4 w-4 text-orange-600 flex-shrink-0" />
               <p className="text-sm text-orange-800">
                 आपके शब्द कम हो रहे हैं! 
-                {balance.has_active_subscription ? (
+                {hasPaidSubscription ? (
                   <>
                     अधिक शब्द टॉप-अप करने के लिए 
                     <Link to="/pricing" className="font-semibold underline ml-1">
@@ -135,7 +145,7 @@ const WordBalanceDisplay = () => {
           </div>
         )}
 
-        {!balance.has_active_subscription && balance.total_words_available > 100 && (
+        {!hasPaidSubscription && balance.total_words_available > 100 && (
           <div className="mt-3 p-3 bg-blue-100 rounded-lg border border-blue-200">
             <div className="flex items-center space-x-2">
               <Coins className="h-4 w-4 text-blue-600 flex-shrink-0" />
