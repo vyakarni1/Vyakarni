@@ -2,7 +2,7 @@
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import GrammarChecker from "@/components/GrammarChecker";
-import WordBalanceDisplay from "@/components/WordBalanceDisplay";
+import WordBalanceDisplayEnhanced from "@/components/WordBalanceDisplayEnhanced";
 import { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -100,7 +100,7 @@ const Index = () => {
                 <p>शब्द बैलेंस डिस्प्ले लोड नहीं हो सका</p>
               </Card>
             }>
-              <WordBalanceDisplay />
+              <WordBalanceDisplayEnhanced />
             </ErrorBoundary>
             
             <ErrorBoundary fallback={

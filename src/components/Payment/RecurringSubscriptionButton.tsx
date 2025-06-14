@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, CreditCard, AlertCircle, RefreshCw, Calendar } from 'lucide-react';
 import { useRecurringSubscription } from '@/hooks/useRecurringSubscription';
 import { useAuth } from '@/components/AuthProvider';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -28,6 +29,7 @@ const RecurringSubscriptionButton: React.FC<RecurringSubscriptionButtonProps> = 
   onSubscriptionSuccess
 }) => {
   const { user } = useAuth();
+  const { subscription } = useSubscription();
   const { createRecurringSubscription, isLoading } = useRecurringSubscription();
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +41,9 @@ const RecurringSubscriptionButton: React.FC<RecurringSubscriptionButtonProps> = 
   });
 
   const totalAmount = wordPlan.price_before_gst + (wordPlan.price_before_gst * wordPlan.gst_percentage / 100);
+
+  // Check if user already has an active subscription
+  const hasActiveSubscription = subscription && subscription.status === 'active';
 
   const validateForm = () => {
     if (!customerDetails.name.trim()) {
@@ -85,11 +90,38 @@ const RecurringSubscriptionButton: React.FC<RecurringSubscriptionButtonProps> = 
       if (onSubscriptionSuccess) {
         onSubscriptionSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Subscription error:', error);
-      setError('सब्स्क्रिप्शन प्रक्रिया में त्रुटि हुई। कृपया पुनः प्रयास करें।');
+      
+      // Handle specific error cases
+      if (error.message?.includes('already has an active subscription')) {
+        setError('आपके पास पहले से एक सक्रिय सब्स्क्रिप्शन है। कृपया पहले मौजूदा सब्स्क्रिप्शन को रद्द करें।');
+      } else {
+        setError('सब्स्क्रिप्शन प्रक्रिया में त्रुटि हुई। कृपया पुनः प्रयास करें।');
+      }
     }
   };
+
+  if (hasActiveSubscription && !showForm) {
+    return (
+      <div className="w-full">
+        <Alert className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            आपके पास पहले से एक सक्रिय सब्स्क्रिप्शन है। नया सब्स्क्रिप्शन शुरू करने के लिए पहले मौजूदा को रद्द करें।
+          </AlertDescription>
+        </Alert>
+        <Button
+          variant="outline"
+          className="w-full"
+          disabled
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          सक्रिय सब्स्क्रिप्शन मौजूद है
+        </Button>
+      </div>
+    );
+  }
 
   if (!showForm) {
     return (

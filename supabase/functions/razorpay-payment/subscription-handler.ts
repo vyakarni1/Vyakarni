@@ -1,4 +1,3 @@
-
 import { corsHeaders } from './types.ts'
 
 export const handleCreateSubscription = async (req: Request, supabase: any) => {
@@ -18,71 +17,161 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
       throw new Error('Plan not found')
     }
 
+    // Get authenticated user
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('Authorization header missing')
+    }
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    )
+
+    if (userError || !user) {
+      throw new Error('User authentication failed')
+    }
+
+    // Check for existing active subscription
+    const { data: existingSubscription, error: subError } = await supabase
+      .from('user_subscriptions')
+      .select('*, subscription_mandates(*)')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single()
+
+    if (existingSubscription && !subError) {
+      console.log('User already has active subscription:', existingSubscription.id)
+      return new Response(JSON.stringify({
+        error: 'User already has an active subscription. Please cancel the current subscription first.',
+        existing_subscription: {
+          id: existingSubscription.id,
+          plan_name: existingSubscription.plan_name,
+          status: existingSubscription.status,
+          next_billing_date: existingSubscription.next_billing_date
+        }
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      })
+    }
+
     // Calculate total amount with GST
     const totalAmount = Math.round((wordPlan.price_before_gst * (1 + wordPlan.gst_percentage / 100)) * 100) // Convert to paise
 
-    // Create Razorpay plan if it doesn't exist (this should be done once per plan)
-    const planData = {
-      period: 'monthly',
-      interval: 1,
-      item: {
-        name: wordPlan.plan_name,
-        amount: totalAmount,
-        currency: 'INR',
-        description: `${wordPlan.words_included} words monthly subscription`
-      },
-      notes: {
-        plan_id: word_plan_id,
-        plan_type: wordPlan.plan_type
+    // Try to find existing customer by email
+    let razorpayCustomer;
+    try {
+      const customerListResponse = await fetch(`https://api.razorpay.com/v1/customers?email=${encodeURIComponent(customer_email)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Basic ${btoa(`${Deno.env.get('RAZORPAY_KEY_ID')}:${Deno.env.get('RAZORPAY_SECRET_KEY')}`)}`,
+          'Content-Type': 'application/json',
+        }
+      })
+
+      const customerList = await customerListResponse.json()
+      
+      if (customerList.items && customerList.items.length > 0) {
+        razorpayCustomer = customerList.items[0]
+        console.log('Found existing Razorpay customer:', razorpayCustomer.id)
       }
+    } catch (error) {
+      console.log('Error checking existing customer, will create new:', error)
     }
 
-    // Create Razorpay plan
-    const planResponse = await fetch('https://api.razorpay.com/v1/plans', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${btoa(`${Deno.env.get('RAZORPAY_KEY_ID')}:${Deno.env.get('RAZORPAY_SECRET_KEY')}`)}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(planData)
-    })
-
-    const razorpayPlan = await planResponse.json()
-    
-    if (!planResponse.ok) {
-      console.error('Razorpay plan creation failed:', razorpayPlan)
-      throw new Error(`Plan creation failed: ${razorpayPlan.error?.description || 'Unknown error'}`)
-    }
-
-    console.log('Razorpay plan created:', razorpayPlan.id)
-
-    // Create customer
-    const customerData = {
-      name: customer_name,
-      email: customer_email,
-      contact: customer_phone,
-      notes: {
-        source: 'vyakarani_subscription'
+    // Create customer if not found
+    if (!razorpayCustomer) {
+      const customerData = {
+        name: customer_name,
+        email: customer_email,
+        contact: customer_phone,
+        notes: {
+          source: 'vyakarani_subscription'
+        }
       }
+
+      const customerResponse = await fetch('https://api.razorpay.com/v1/customers', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(`${Deno.env.get('RAZORPAY_KEY_ID')}:${Deno.env.get('RAZORPAY_SECRET_KEY')}`)}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(customerData)
+      })
+
+      razorpayCustomer = await customerResponse.json()
+      
+      if (!customerResponse.ok) {
+        console.error('Razorpay customer creation failed:', razorpayCustomer)
+        throw new Error(`Customer creation failed: ${razorpayCustomer.error?.description || 'Unknown error'}`)
+      }
+
+      console.log('Razorpay customer created:', razorpayCustomer.id)
     }
 
-    const customerResponse = await fetch('https://api.razorpay.com/v1/customers', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${btoa(`${Deno.env.get('RAZORPAY_KEY_ID')}:${Deno.env.get('RAZORPAY_SECRET_KEY')}`)}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(customerData)
-    })
+    // Try to find existing plan with same amount and interval
+    let razorpayPlan;
+    try {
+      const planListResponse = await fetch(`https://api.razorpay.com/v1/plans`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Basic ${btoa(`${Deno.env.get('RAZORPAY_KEY_ID')}:${Deno.env.get('RAZORPAY_SECRET_KEY')}`)}`,
+          'Content-Type': 'application/json',
+        }
+      })
 
-    const razorpayCustomer = await customerResponse.json()
-    
-    if (!customerResponse.ok) {
-      console.error('Razorpay customer creation failed:', razorpayCustomer)
-      throw new Error(`Customer creation failed: ${razorpayCustomer.error?.description || 'Unknown error'}`)
+      const planList = await planListResponse.json()
+      
+      if (planList.items) {
+        razorpayPlan = planList.items.find(plan => 
+          plan.item.amount === totalAmount && 
+          plan.period === 'monthly' && 
+          plan.interval === 1
+        )
+        
+        if (razorpayPlan) {
+          console.log('Found existing Razorpay plan:', razorpayPlan.id)
+        }
+      }
+    } catch (error) {
+      console.log('Error checking existing plan, will create new:', error)
     }
 
-    console.log('Razorpay customer created:', razorpayCustomer.id)
+    // Create plan if not found
+    if (!razorpayPlan) {
+      const planData = {
+        period: 'monthly',
+        interval: 1,
+        item: {
+          name: wordPlan.plan_name,
+          amount: totalAmount,
+          currency: 'INR',
+          description: `${wordPlan.words_included} words monthly subscription`
+        },
+        notes: {
+          plan_id: word_plan_id,
+          plan_type: wordPlan.plan_type
+        }
+      }
+
+      const planResponse = await fetch('https://api.razorpay.com/v1/plans', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(`${Deno.env.get('RAZORPAY_KEY_ID')}:${Deno.env.get('RAZORPAY_SECRET_KEY')}`)}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(planData)
+      })
+
+      razorpayPlan = await planResponse.json()
+      
+      if (!planResponse.ok) {
+        console.error('Razorpay plan creation failed:', razorpayPlan)
+        throw new Error(`Plan creation failed: ${razorpayPlan.error?.description || 'Unknown error'}`)
+      }
+
+      console.log('Razorpay plan created:', razorpayPlan.id)
+    }
 
     // Create subscription
     const subscriptionData = {
@@ -97,7 +186,8 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
       notes: {
         word_plan_id: word_plan_id,
         user_email: customer_email,
-        source: 'vyakarani'
+        source: 'vyakarani',
+        user_id: user.id
       },
       notify_info: {
         notify_phone: customer_phone,
@@ -122,20 +212,6 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
     }
 
     console.log('Razorpay subscription created:', razorpaySubscription.id)
-
-    // Get authenticated user
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      throw new Error('Authorization header missing')
-    }
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    )
-
-    if (userError || !user) {
-      throw new Error('User authentication failed')
-    }
 
     // Store in our database
     const { data: razorpayOrder, error: orderError } = await supabase

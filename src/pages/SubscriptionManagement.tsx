@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Settings } from "lucide-react";
 import Layout from "@/components/Layout";
-import SubscriptionManagement from "@/components/Subscription/SubscriptionManagement";
+import EnhancedSubscriptionManagement from "@/components/Subscription/EnhancedSubscriptionManagement";
 import SubscriptionChargeHistory from "@/components/Subscription/SubscriptionChargeHistory";
 
 const SubscriptionManagementPage = () => {
@@ -56,8 +56,8 @@ const SubscriptionManagementPage = () => {
 
           {/* Main Content */}
           <div className="space-y-8">
-            {/* Subscription Management */}
-            <SubscriptionManagement />
+            {/* Enhanced Subscription Management */}
+            <EnhancedSubscriptionManagement />
             
             {/* Charge History */}
             <SubscriptionChargeHistory />
