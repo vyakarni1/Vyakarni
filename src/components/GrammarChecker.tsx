@@ -1,32 +1,46 @@
 
 import React, { useState, useEffect } from 'react';
-import { useGrammarChecker } from "@/hooks/useGrammarChecker";
+import { useOptimizedGrammarChecker } from "@/hooks/useOptimizedGrammarChecker";
+import { useTextHighlighting } from "@/hooks/useTextHighlighting";
+import { usePerformanceTracking } from "@/hooks/usePerformanceTracking";
 import Header from './GrammarChecker/Header';
 import TextInputPanel from './GrammarChecker/TextInputPanel';
 import CorrectedTextPanel from './GrammarChecker/CorrectedTextPanel';
 import FeaturesSection from './GrammarChecker/FeaturesSection';
+import LazyComponentWrapper from './Performance/LazyComponentWrapper';
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertTriangle, Loader2 } from "lucide-react";
 
 const GrammarChecker = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { trackInteraction } = usePerformanceTracking('GrammarChecker');
 
-  console.log('[GrammarChecker] Component mounting');
+  console.log('[GrammarChecker] Component mounting with optimizations');
 
-  const grammarCheckerData = useGrammarChecker();
+  const grammarCheckerData = useOptimizedGrammarChecker();
+  const highlighting = useTextHighlighting();
 
   useEffect(() => {
     try {
-      console.log('[GrammarChecker] Hook loaded successfully');
+      console.log('[GrammarChecker] Optimized hook loaded successfully');
       setIsLoading(false);
-      setError(null); // Clear any previous errors
+      setError(null);
+      trackInteraction('component-mounted');
     } catch (err) {
       console.error('[GrammarChecker] Error in useEffect:', err);
       setError(err instanceof Error ? err.message : 'Unknown error in GrammarChecker');
       setIsLoading(false);
+      trackInteraction('component-mount-error', { error: err instanceof Error ? err.message : 'Unknown' });
     }
-  }, []);
+  }, [trackInteraction]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      grammarCheckerData.cleanup();
+    };
+  }, [grammarCheckerData]);
 
   if (error) {
     console.log('[GrammarChecker] Showing error state:', error);
@@ -61,7 +75,7 @@ const GrammarChecker = () => {
     );
   }
 
-  console.log('[GrammarChecker] Rendering main interface');
+  console.log('[GrammarChecker] Rendering optimized interface');
 
   const {
     inputText,
@@ -76,7 +90,6 @@ const GrammarChecker = () => {
     enhanceStyle,
     resetText,
     copyToClipboard,
-    highlighting
   } = grammarCheckerData;
 
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
@@ -101,51 +114,66 @@ const GrammarChecker = () => {
 
   const handleSegmentClick = (correctionIndex: number) => {
     highlighting.highlightCorrection(correctionIndex);
+    trackInteraction('highlight-click', { correctionIndex });
   };
 
   const handleCorrectionClick = (index: number) => {
     highlighting.highlightCorrection(index);
+    trackInteraction('correction-click', { correctionIndex: index });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      <Header />
+      <LazyComponentWrapper componentName="GrammarChecker-Header">
+        <Header />
+      </LazyComponentWrapper>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-12 sm:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 items-stretch">
-          <TextInputPanel
-            inputText={inputText}
-            setInputText={setInputText}
-            isLoading={processingLoading}
-            wordCount={wordCount}
-            charCount={charCount}
-            onCorrectGrammar={correctGrammar}
-            onEnhanceStyle={enhanceStyle}
-            onResetText={resetText}
-            highlightedSegments={inputHighlightedSegments}
-            onSegmentClick={handleSegmentClick}
-            showHighlights={showHighlights}
-          />
+          <LazyComponentWrapper componentName="TextInputPanel">
+            <TextInputPanel
+              inputText={inputText}
+              setInputText={setInputText}
+              isLoading={processingLoading}
+              wordCount={wordCount}
+              charCount={charCount}
+              onCorrectGrammar={correctGrammar}
+              onEnhanceStyle={enhanceStyle}
+              onResetText={resetText}
+              highlightedSegments={inputHighlightedSegments}
+              onSegmentClick={handleSegmentClick}
+              showHighlights={showHighlights}
+            />
+          </LazyComponentWrapper>
 
-          <CorrectedTextPanel
-            correctedText={correctedText}
-            enhancedText={enhancedText}
-            corrections={corrections}
-            isLoading={processingLoading}
-            processingMode={processingMode}
-            progress={progress}
-            onCopyToClipboard={copyToClipboard}
-            highlightedSegments={outputHighlightedSegments}
-            onSegmentClick={handleSegmentClick}
-            selectedCorrectionIndex={highlighting.selectedCorrectionIndex}
-            onCorrectionClick={handleCorrectionClick}
-          />
+          <LazyComponentWrapper componentName="CorrectedTextPanel">
+            <CorrectedTextPanel
+              correctedText={correctedText}
+              enhancedText={enhancedText}
+              corrections={corrections}
+              isLoading={processingLoading}
+              processingMode={processingMode}
+              progress={progress}
+              onCopyToClipboard={copyToClipboard}
+              highlightedSegments={outputHighlightedSegments}
+              onSegmentClick={handleSegmentClick}
+              selectedCorrectionIndex={highlighting.selectedCorrectionIndex}
+              onCorrectionClick={handleCorrectionClick}
+            />
+          </LazyComponentWrapper>
         </div>
 
-        <FeaturesSection />
+        <LazyComponentWrapper 
+          componentName="FeaturesSection"
+          enableIntersectionObserver={true}
+          threshold={0.2}
+          rootMargin="100px"
+        >
+          <FeaturesSection />
+        </LazyComponentWrapper>
       </div>
     </div>
   );
 };
 
-export default GrammarChecker;
+export default React.memo(GrammarChecker);
