@@ -57,11 +57,11 @@ const RazorpayPaymentButton: React.FC<RazorpayPaymentButtonProps> = ({
     return (
       <Button
         onClick={() => setShowForm(true)}
-        className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-medium py-3 rounded-lg transition-all duration-300"
+        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all duration-300"
         disabled={isLoading}
       >
         <CreditCard className="h-4 w-4 mr-2" />
-        Razorpay से ₹{totalAmount.toFixed(2)} में खरीदें
+        ₹{totalAmount.toFixed(2)} में खरीदें
       </Button>
     );
   }
@@ -126,7 +126,7 @@ const RazorpayPaymentButton: React.FC<RazorpayPaymentButtonProps> = ({
             ) : (
               <>
                 <CreditCard className="h-4 w-4 mr-2" />
-                Razorpay से ₹{totalAmount.toFixed(2)} का भुगतान करें
+                ₹{totalAmount.toFixed(2)} का भुगतान करें
               </>
             )}
           </Button>

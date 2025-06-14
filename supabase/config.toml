@@ -1,8 +1,5 @@
 
 project_id = "yvgrgystclritaigvnmh"
 
-[functions.cashfree-payment]
-verify_jwt = false
-
 [functions.razorpay-payment]
 verify_jwt = false
