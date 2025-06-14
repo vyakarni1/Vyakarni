@@ -7,16 +7,13 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Link } from 'react-router-dom';
 
 const SubscriptionStatusAlert: React.FC = () => {
-  const { subscription, mandate, isRecurringSubscription } = useSubscription();
+  const { subscription, isRecurringSubscription } = useSubscription();
 
   if (!subscription) return null;
 
   // Check for problematic subscription states
   const hasActiveSubscriptionWithoutMandate = subscription.status === 'active' && 
-    isRecurringSubscription() && !mandate;
-
-  const hasMandateIssues = mandate && 
-    (mandate.status === 'halted' || mandate.status === 'failed');
+    isRecurringSubscription() && !subscription.mandate_id;
 
   const isSubscriptionExpiring = subscription.expires_at && 
     new Date(subscription.expires_at) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
@@ -41,30 +38,6 @@ const SubscriptionStatusAlert: React.FC = () => {
               <Link to="/pricing">
                 <Button size="sm" variant="outline">
                   नया सब्स्क्रिप्शन शुरू करें
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (hasMandateIssues) {
-    return (
-      <Alert className="border-red-200 bg-red-50 mb-6">
-        <XCircle className="h-4 w-4 text-red-600" />
-        <AlertDescription className="text-red-800">
-          <div className="space-y-2">
-            <p className="font-medium">AutoPay में समस्या</p>
-            <p className="text-sm">
-              आपके AutoPay mandate में समस्या है (स्थिति: {mandate?.status})। 
-              कृपया अपने भुगतान विधि की जांच करें या नया mandate सेटअप करें।
-            </p>
-            <div className="flex space-x-2 mt-3">
-              <Link to="/subscription-management">
-                <Button size="sm" className="bg-red-600 hover:bg-red-700">
-                  समस्या हल करें
                 </Button>
               </Link>
             </div>
@@ -101,7 +74,7 @@ const SubscriptionStatusAlert: React.FC = () => {
   }
 
   // Show success state for healthy subscriptions
-  if (subscription.status === 'active' && (!isRecurringSubscription() || mandate?.status === 'active')) {
+  if (subscription.status === 'active') {
     return (
       <Alert className="border-green-200 bg-green-50 mb-6">
         <CheckCircle className="h-4 w-4 text-green-600" />

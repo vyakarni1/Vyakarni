@@ -10,6 +10,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { cleanupAuthState } from "@/utils/authUtils";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -139,10 +140,27 @@ const Login = () => {
                 </div>
               </div>
 
+              <div className="text-right">
+                <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">
+                  पासवर्ड भूल गए?
+                </Link>
+              </div>
+
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "लॉग इन हो रहे हैं..." : "लॉग इन करें"}
               </Button>
             </form>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-gray-500">या</span>
+              </div>
+            </div>
+
+            <GoogleAuthButton mode="login" />
 
             <div className="text-center">
               <span className="text-gray-600">खाता नहीं है? </span>
