@@ -461,6 +461,84 @@ export type Database = {
         }
         Relationships: []
       }
+      razorpay_orders: {
+        Row: {
+          created_at: string | null
+          customer_details: Json
+          id: string
+          order_amount: number
+          order_currency: string | null
+          order_id: string
+          order_meta: Json | null
+          order_status: string | null
+          updated_at: string | null
+          user_id: string
+          word_plan_id: string | null
+          words_to_credit: number
+        }
+        Insert: {
+          created_at?: string | null
+          customer_details: Json
+          id?: string
+          order_amount: number
+          order_currency?: string | null
+          order_id: string
+          order_meta?: Json | null
+          order_status?: string | null
+          updated_at?: string | null
+          user_id: string
+          word_plan_id?: string | null
+          words_to_credit: number
+        }
+        Update: {
+          created_at?: string | null
+          customer_details?: Json
+          id?: string
+          order_amount?: number
+          order_currency?: string | null
+          order_id?: string
+          order_meta?: Json | null
+          order_status?: string | null
+          updated_at?: string | null
+          user_id?: string
+          word_plan_id?: string | null
+          words_to_credit?: number
+        }
+        Relationships: []
+      }
+      razorpay_webhook_logs: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          order_id: string | null
+          payment_id: string | null
+          processed: boolean | null
+          signature: string | null
+          webhook_data: Json
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          processed?: boolean | null
+          signature?: string | null
+          webhook_data: Json
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          processed?: boolean | null
+          signature?: string | null
+          webhook_data?: Json
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           created_at: string
@@ -980,6 +1058,10 @@ export type Database = {
       cleanup_expired_reset_tokens: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      create_subscription_for_user: {
+        Args: { user_uuid: string; plan_uuid: string }
+        Returns: Json
       }
       deduct_words: {
         Args: {

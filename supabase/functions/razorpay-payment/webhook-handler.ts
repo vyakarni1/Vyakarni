@@ -1,6 +1,41 @@
 
 import { corsHeaders } from './types.ts'
 
+// Function to verify Razorpay webhook signature
+function verifyWebhookSignature(body: string, signature: string, secret: string): boolean {
+  if (!signature || !secret) {
+    return false;
+  }
+  
+  try {
+    const crypto = globalThis.crypto;
+    const encoder = new TextEncoder();
+    const key = encoder.encode(secret);
+    const data = encoder.encode(body);
+    
+    // Create HMAC-SHA256 hash
+    return crypto.subtle.importKey(
+      'raw',
+      key,
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    ).then(cryptoKey => {
+      return crypto.subtle.sign('HMAC', cryptoKey, data);
+    }).then(signature_buffer => {
+      const hash = Array.from(new Uint8Array(signature_buffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+      
+      const expectedSignature = `sha256=${hash}`;
+      return expectedSignature === signature;
+    }).catch(() => false);
+  } catch (error) {
+    console.error('Error verifying webhook signature:', error);
+    return false;
+  }
+}
+
 export async function handleWebhook(req: Request, supabase: any) {
   console.log('Razorpay webhook received:', req.method, req.url)
   
@@ -11,12 +46,24 @@ export async function handleWebhook(req: Request, supabase: any) {
   }
 
   try {
-    const webhookData = await req.json()
+    const bodyText = await req.text()
+    const webhookData = JSON.parse(bodyText)
     console.log('Received Razorpay webhook:', webhookData)
 
     // Verify webhook signature
     const signature = req.headers.get('x-razorpay-signature')
     const webhookSecret = Deno.env.get('RAZORPAY_WEBHOOK_SECRET')
+    
+    if (webhookSecret && signature) {
+      const isValidSignature = await verifyWebhookSignature(bodyText, signature, webhookSecret)
+      if (!isValidSignature) {
+        console.error('Invalid webhook signature')
+        return new Response('Invalid signature', { status: 401, headers: corsHeaders })
+      }
+      console.log('Webhook signature verified successfully')
+    } else {
+      console.warn('Webhook signature verification skipped - missing secret or signature')
+    }
     
     // Log webhook for debugging
     await supabase
@@ -78,7 +125,7 @@ export async function handleWebhook(req: Request, supabase: any) {
       console.log('Processing payment for plan:', wordPlan)
 
       // Create payment transaction record
-      await supabase
+      const { error: transactionError } = await supabase
         .from('payment_transactions')
         .insert({
           user_id: order.user_id,
@@ -89,6 +136,10 @@ export async function handleWebhook(req: Request, supabase: any) {
           razorpay_payment_id: paymentId,
           currency: 'INR',
         })
+
+      if (transactionError) {
+        console.error('Error creating payment transaction:', transactionError)
+      }
 
       try {
         if (wordPlan.plan_category === 'subscription') {
@@ -102,8 +153,8 @@ export async function handleWebhook(req: Request, supabase: any) {
               plan_uuid: order.word_plan_id
             })
 
-          if (subscriptionError) {
-            console.error('Error creating subscription:', subscriptionError)
+          if (subscriptionError || !subscriptionData?.success) {
+            console.error('Error creating subscription:', subscriptionError, subscriptionData)
             // Continue to add word credits even if subscription creation fails
           } else {
             console.log('Successfully created subscription:', subscriptionData)
@@ -175,16 +226,16 @@ export async function handleWebhook(req: Request, supabase: any) {
           return new Response('Unknown plan category', { status: 400, headers: corsHeaders })
         }
 
+        // Mark webhook as processed
+        await supabase
+          .from('razorpay_webhook_logs')
+          .update({ processed: true })
+          .eq('order_id', orderId)
+
       } catch (error) {
         console.error('Error processing payment:', error)
         return new Response('Error processing payment', { status: 500, headers: corsHeaders })
       }
-
-      // Mark webhook as processed
-      await supabase
-        .from('razorpay_webhook_logs')
-        .update({ processed: true })
-        .eq('order_id', orderId)
     }
 
     return new Response('OK', { status: 200, headers: corsHeaders })
