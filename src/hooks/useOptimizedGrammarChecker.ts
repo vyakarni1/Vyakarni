@@ -1,10 +1,9 @@
-
 import { useState, useCallback, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from "sonner";
 import { callGrammarCheckAPI, callStyleEnhanceAPI } from '@/services/grammarApi';
 import { useWordLimits } from './useWordLimits';
-import { useUsageStats } from "./hooks/useUsageStats";
+import { useUsageStats } from "./useUsageStats";
 import { useTextHighlighting } from "./useTextHighlighting";
 import { usePerformanceTracking } from './usePerformanceTracking';
 import { apiCache } from '@/services/cacheManager';
