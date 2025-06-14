@@ -15,12 +15,12 @@ const Index = () => {
   const [componentError, setComponentError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
 
-  const addDebugInfo = (info: string) => {
-    console.log(`[Index Debug]: ${info}`);
-    setDebugInfo(prev => [...prev, `${new Date().toISOString()}: ${info}`]);
-  };
-
   useEffect(() => {
+    const addDebugInfo = (info: string) => {
+      console.log(`[Index Debug]: ${info}`);
+      setDebugInfo(prev => [...prev, `${new Date().toISOString()}: ${info}`]);
+    };
+
     addDebugInfo("Index component mounted");
     addDebugInfo(`Auth loading: ${loading}, User: ${user ? 'exists' : 'null'}`);
     
@@ -33,11 +33,16 @@ const Index = () => {
     if (user) {
       addDebugInfo(`User authenticated: ${user.email}`);
     }
+
+    if (loading) {
+      addDebugInfo("Showing loading state");
+    } else {
+      addDebugInfo("Rendering main content");
+    }
   }, [user, loading, navigate]);
 
   // Show loading state
   if (loading) {
-    addDebugInfo("Showing loading state");
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
@@ -84,40 +89,33 @@ const Index = () => {
     );
   }
 
-  try {
-    addDebugInfo("Rendering main content");
-    return (
-      <ErrorBoundary>
-        <Layout>
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-            <div className="container mx-auto py-4 sm:py-8">
-              <ErrorBoundary fallback={
-                <Card className="p-6 text-center">
-                  <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                  <p>शब्द बैलेंस डिस्प्ले लोड नहीं हो सका</p>
-                </Card>
-              }>
-                <WordBalanceDisplay />
-              </ErrorBoundary>
-              
-              <ErrorBoundary fallback={
-                <Card className="p-6 text-center">
-                  <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                  <p>व्याकरण चेकर लोड नहीं हो सका</p>
-                </Card>
-              }>
-                <GrammarChecker />
-              </ErrorBoundary>
-            </div>
+  return (
+    <ErrorBoundary>
+      <Layout>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <div className="container mx-auto py-4 sm:py-8">
+            <ErrorBoundary fallback={
+              <Card className="p-6 text-center">
+                <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                <p>शब्द बैलेंस डिस्प्ले लोड नहीं हो सका</p>
+              </Card>
+            }>
+              <WordBalanceDisplay />
+            </ErrorBoundary>
+            
+            <ErrorBoundary fallback={
+              <Card className="p-6 text-center">
+                <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                <p>व्याकरण चेकर लोड नहीं हो सका</p>
+              </Card>
+            }>
+              <GrammarChecker />
+            </ErrorBoundary>
           </div>
-        </Layout>
-      </ErrorBoundary>
-    );
-  } catch (error) {
-    console.error('Error in Index render:', error);
-    setComponentError(error instanceof Error ? error.message : 'Unknown error occurred');
-    return null;
-  }
+        </div>
+      </Layout>
+    </ErrorBoundary>
+  );
 };
 
 export default Index;
