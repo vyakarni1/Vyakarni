@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useOptimizedGrammarChecker } from "@/hooks/useOptimizedGrammarChecker";
-import { useTextHighlighting } from "@/hooks/useTextHighlighting";
 import { usePerformanceTracking } from "@/hooks/usePerformanceTracking";
 import { logger } from '@/utils/logger';
 import Header from './GrammarChecker/Header';
@@ -14,24 +13,23 @@ import { AlertTriangle, Loader2 } from "lucide-react";
 
 const GrammarChecker = () => {
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const { trackInteraction } = usePerformanceTracking('GrammarChecker');
 
   logger.debug('Component mounting with optimizations', undefined, 'GrammarChecker');
 
   const grammarCheckerData = useOptimizedGrammarChecker();
-  const highlighting = useTextHighlighting();
 
   useEffect(() => {
     try {
       logger.debug('Optimized hook loaded successfully', undefined, 'GrammarChecker');
-      setIsLoading(false);
+      setIsInitialLoading(false);
       setError(null);
       trackInteraction('component-mounted');
     } catch (err) {
       logger.error('Error in useEffect', err, 'GrammarChecker');
       setError(err instanceof Error ? err.message : 'Unknown error in GrammarChecker');
-      setIsLoading(false);
+      setIsInitialLoading(false);
       trackInteraction('component-mount-error', { error: err instanceof Error ? err.message : 'Unknown' });
     }
   }, [trackInteraction]);
@@ -64,7 +62,7 @@ const GrammarChecker = () => {
     );
   }
 
-  if (isLoading) {
+  if (isInitialLoading) {
     logger.debug('Showing loading state', undefined, 'GrammarChecker');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 flex items-center justify-center">
@@ -91,6 +89,7 @@ const GrammarChecker = () => {
     enhanceStyle,
     resetText,
     copyToClipboard,
+    highlighting,
   } = grammarCheckerData;
 
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
