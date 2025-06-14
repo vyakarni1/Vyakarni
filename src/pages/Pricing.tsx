@@ -3,11 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Zap, Crown, Calculator, Plus, AlertTriangle } from "lucide-react";
+import { Check, Star, Zap, Crown, Calculator, Plus, AlertTriangle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import DiscountBadge from "@/components/DiscountBadge";
 import PaymentGatewaySelector from "@/components/Payment/PaymentGatewaySelector";
+import RecurringSubscriptionButton from "@/components/Payment/RecurringSubscriptionButton";
 import EnterprisePlanSection from "@/components/EnterprisePlanSection";
 import Layout from "@/components/Layout";
 
@@ -103,17 +104,17 @@ const Pricing = () => {
               मासिक सब्स्क्रिप्शन प्लान
             </h1>
             <p className="text-xl text-gray-600 mb-4">
-              मासिक सब्स्क्रिप्शन लें और असीमित टॉप-अप की सुविधा पाएं
+              AutoPay के साथ मासिक सब्स्क्रिप्शन लें - अब कभी भुगतान भूलने की चिंता नहीं
             </p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
-              <Calculator className="h-4 w-4" />
-              <span>मासिक बिलिंग • असीमित टॉप-अप सुविधा • कभी भी रद्द करें</span>
+              <RefreshCw className="h-4 w-4" />
+              <span>AutoPay सक्रिय • मासिक बिलिंग • असीमित टॉप-अप सुविधा</span>
             </div>
           </div>
 
           {/* Subscription Plans */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">मासिक सब्स्क्रिप्शन</h2>
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">AutoPay सब्स्क्रिप्शन</h2>
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto p-6">
               {subscriptionPlans.map((plan) => {
                 const discountInfo = getDiscountInfo(plan.plan_type);
@@ -143,7 +144,7 @@ const Pricing = () => {
                       <div className="space-y-2">
                         {plan.plan_type !== 'free' ? (
                           <div className="space-y-1">
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center justify-center space-x-2">
                               {discountInfo.hasDiscount && (
                                 <span className="text-lg text-gray-500 line-through">
                                   ₹{discountInfo.originalPrice.toLocaleString('hi-IN')}
@@ -156,6 +157,10 @@ const Pricing = () => {
                             <Badge variant="outline" className="text-xs">
                               प्रति माह | 18% GST अतिरिक्त
                             </Badge>
+                            <div className="flex items-center justify-center space-x-1 text-xs text-green-600">
+                              <RefreshCw className="h-3 w-3" />
+                              <span>AutoPay सक्रिय</span>
+                            </div>
                           </div>
                         ) : (
                           <div className="text-2xl font-bold text-green-600">निःशुल्क</div>
@@ -184,6 +189,10 @@ const Pricing = () => {
                         </div>
                         {plan.plan_type !== 'free' && (
                           <>
+                            <div className="flex items-center space-x-3">
+                              <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                              <span className="text-sm text-gray-700">AutoPay सुविधा</span>
+                            </div>
                             <div className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                               <span className="text-sm text-gray-700">समर्पित सहायता</span>
@@ -219,10 +228,10 @@ const Pricing = () => {
                             साइनअप पर मिलता है
                           </Button>
                         ) : (
-                          <PaymentGatewaySelector 
+                          <RecurringSubscriptionButton 
                             wordPlan={plan} 
-                            onPaymentSuccess={() => {
-                              toast.success("भुगतान सफल! सब्स्क्रिप्शन सक्रिय कर दिया गया है।");
+                            onSubscriptionSuccess={() => {
+                              toast.success("AutoPay सब्स्क्रिप्शन सफल! मासिक बिलिंग सक्रिय हो गई है।");
                               navigate("/billing");
                             }} 
                           />
@@ -310,9 +319,15 @@ const Pricing = () => {
             <h2 className="text-3xl font-bold text-gray-800 mb-8">प्रायः पूछे जाने वाले प्रश्न</h2>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">मासिक सब्स्क्रिप्शन कैसे काम करता है?</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">AutoPay कैसे काम करता है?</h3>
                 <p className="text-gray-600 text-sm">
-                  सब्स्क्रिप्शन लेने के बाद आप वर्ड टॉप-अप खरीद सकते हैं। यह हर महीने अपने आप रिन्यू हो जाता है।
+                  AutoPay एक बार सेटअप करने के बाद हर महीने अपने आप भुगतान हो जाता है। आपको मैन्युअल रूप से भुगतान करने की जरूरत नहीं।
+                </p>
+              </div>
+              <div className="p-6 bg-white rounded-lg shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-2">क्या मैं AutoPay रद्द कर सकता हूं?</h3>
+                <p className="text-gray-600 text-sm">
+                  हां, आप किसी भी समय AutoPay mandate को रद्द कर सकते हैं। यह अगले बिलिंग साइकल से बंद हो जाएगा।
                 </p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
@@ -322,15 +337,9 @@ const Pricing = () => {
                 </p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">क्या मैं कभी भी सब्स्क्रिप्शन रद्द कर सकता हूं?</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">AutoPay सुरक्षित है?</h3>
                 <p className="text-gray-600 text-sm">
-                  हां, आप किसी भी समय अपना सब्स्क्रिप्शन रद्द कर सकते हैं। वर्तमान महीने का एक्सेस बना रहेगा।
-                </p>
-              </div>
-              <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">टॉप-अप कब खरीद सकते हैं?</h3>
-                <p className="text-gray-600 text-sm">
-                  केवल एक्टिव सब्स्क्रिप्शन वाले यूजर्स ही वर्ड टॉप-अप खरीद सकते हैं।
+                  हां, Razorpay का AutoPay RBI द्वारा अनुमोदित e-NACH/UPI mandate का उपयोग करता है। यह पूर्णतः सुरक्षित है।
                 </p>
               </div>
             </div>

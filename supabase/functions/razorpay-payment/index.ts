@@ -5,6 +5,7 @@ import { corsHeaders } from './types.ts'
 import { handleCreateOrder } from './order-handler.ts'
 import { handleWebhook } from './webhook-handler.ts'
 import { handleManualProcess } from './manual-process.ts'
+import { handleCreateSubscription, handleSubscriptionWebhook } from './subscription-handler.ts'
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
@@ -26,8 +27,12 @@ serve(async (req) => {
     switch (path) {
       case 'create-order':
         return await handleCreateOrder(req, supabase)
+      case 'create-subscription':
+        return await handleCreateSubscription(req, supabase)
       case 'webhook':
         return await handleWebhook(req, supabase)
+      case 'subscription-webhook':
+        return await handleSubscriptionWebhook(req, supabase)
       case 'manual-process':
         return await handleManualProcess(req, supabase)
       default:

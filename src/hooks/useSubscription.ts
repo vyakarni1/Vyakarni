@@ -17,6 +17,10 @@ interface SubscriptionData {
   next_billing_date: string | null;
   auto_renewal: boolean;
   billing_cycle: string;
+  is_recurring: boolean;
+  mandate_id: string | null;
+  mandate_status: string | null;
+  razorpay_subscription_id: string | null;
 }
 
 // Helper function to convert Json to string array
@@ -61,6 +65,7 @@ export const useSubscription = () => {
           status: 'active',
           next_billing_date: nextBillingDate.toISOString(),
           auto_renewal: false, // Free plan doesn't auto-renew
+          is_recurring: false, // Free plan is not recurring
         });
 
       if (subscriptionError) {
@@ -79,7 +84,7 @@ export const useSubscription = () => {
     if (!user) return;
 
     try {
-      // Get subscription with additional billing info
+      // Get subscription with additional billing info and mandate details
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select(`
@@ -89,6 +94,9 @@ export const useSubscription = () => {
           next_billing_date,
           auto_renewal,
           billing_cycle,
+          is_recurring,
+          mandate_id,
+          razorpay_subscription_id,
           subscription_plans (
             plan_name,
             plan_type,
@@ -96,6 +104,11 @@ export const useSubscription = () => {
             max_corrections_per_month,
             max_team_members,
             features
+          ),
+          subscription_mandates (
+            status,
+            next_charge_at,
+            remaining_count
           )
         `)
         .eq('user_id', user.id)
@@ -111,6 +124,7 @@ export const useSubscription = () => {
       if (data && data.length > 0) {
         const subscriptionData = data[0];
         const planData = subscriptionData.subscription_plans;
+        const mandateData = subscriptionData.subscription_mandates;
         
         if (planData) {
           setSubscription({
@@ -126,6 +140,10 @@ export const useSubscription = () => {
             next_billing_date: subscriptionData.next_billing_date,
             auto_renewal: subscriptionData.auto_renewal,
             billing_cycle: subscriptionData.billing_cycle,
+            is_recurring: subscriptionData.is_recurring || false,
+            mandate_id: subscriptionData.mandate_id,
+            mandate_status: mandateData?.status || null,
+            razorpay_subscription_id: subscriptionData.razorpay_subscription_id,
           });
         }
       } else {
@@ -211,6 +229,14 @@ export const useSubscription = () => {
     return subscription.status === 'active' && isPaidPlan;
   };
 
+  const isRecurringSubscription = (): boolean => {
+    return subscription?.is_recurring || false;
+  };
+
+  const getMandateStatus = (): string | null => {
+    return subscription?.mandate_status || null;
+  };
+
   // Set up real-time subscription for subscription changes
   useEffect(() => {
     if (user) {
@@ -228,6 +254,23 @@ export const useSubscription = () => {
           }, 
           () => {
             console.log('Subscription changed, refetching...');
+            fetchSubscription();
+          }
+        )
+        .subscribe();
+
+      // Subscribe to changes in subscription mandates
+      const mandates_channel = supabase
+        .channel('subscription_mandates_changes')
+        .on('postgres_changes', 
+          { 
+            event: '*', 
+            schema: 'public', 
+            table: 'subscription_mandates',
+            filter: `user_id=eq.${user.id}`
+          }, 
+          () => {
+            console.log('Subscription mandate changed, refetching...');
             fetchSubscription();
           }
         )
@@ -252,6 +295,7 @@ export const useSubscription = () => {
 
       return () => {
         subscription_channel.unsubscribe();
+        mandates_channel.unsubscribe();
         credits_channel.unsubscribe();
       };
     } else {
@@ -267,6 +311,8 @@ export const useSubscription = () => {
     upgradeSubscription,
     cancelSubscription,
     isSubscriptionActive,
+    isRecurringSubscription,
+    getMandateStatus,
     refetch: fetchSubscription
   };
 };
