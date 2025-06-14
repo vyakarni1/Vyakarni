@@ -122,6 +122,14 @@ const GrammarChecker = () => {
     trackInteraction('correction-click', { correctionIndex: index });
   };
 
+  // Create a wrapper function for copyToClipboard that matches the expected signature
+  const handleCopyToClipboard = () => {
+    const textToCopy = processingMode === 'style' ? enhancedText : correctedText;
+    if (textToCopy) {
+      copyToClipboard(textToCopy);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       <LazyComponentWrapper componentName="GrammarChecker-Header">
@@ -154,7 +162,7 @@ const GrammarChecker = () => {
               isLoading={processingLoading}
               processingMode={processingMode}
               progress={progress}
-              onCopyToClipboard={copyToClipboard}
+              onCopyToClipboard={handleCopyToClipboard}
               highlightedSegments={outputHighlightedSegments}
               onSegmentClick={handleSegmentClick}
               selectedCorrectionIndex={highlighting.selectedCorrectionIndex}
