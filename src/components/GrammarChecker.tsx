@@ -13,35 +13,28 @@ import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 
 const GrammarChecker = () => {
   const [error, setError] = useState<string | null>(null);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const { trackInteraction } = usePerformanceTracking('GrammarChecker');
 
   logger.debug('Component mounting with optimizations', undefined, 'GrammarChecker');
 
-  // Safe initialization of grammar checker data
-  const [grammarCheckerData, setGrammarCheckerData] = useState<any>(null);
+  // Initialize grammar checker hook at top level
+  let grammarCheckerData;
+  try {
+    grammarCheckerData = useOptimizedGrammarChecker();
+    logger.debug('Optimized hook loaded successfully', undefined, 'GrammarChecker');
+  } catch (err) {
+    logger.error('Error initializing grammar checker', err, 'GrammarChecker');
+    setError(err instanceof Error ? err.message : 'Failed to initialize grammar checker');
+    trackInteraction('component-mount-error', { error: err instanceof Error ? err.message : 'Unknown' });
+  }
 
-  // Initialize grammar checker hook with error handling
+  // Track successful mount
   useEffect(() => {
-    const initializeGrammarChecker = () => {
-      try {
-        const data = useOptimizedGrammarChecker();
-        setGrammarCheckerData(data);
-        setIsInitialLoading(false);
-        setError(null);
-        trackInteraction('component-mounted');
-        logger.debug('Optimized hook loaded successfully', undefined, 'GrammarChecker');
-      } catch (err) {
-        logger.error('Error initializing grammar checker', err, 'GrammarChecker');
-        setError(err instanceof Error ? err.message : 'Failed to initialize grammar checker');
-        setIsInitialLoading(false);
-        trackInteraction('component-mount-error', { error: err instanceof Error ? err.message : 'Unknown' });
-      }
-    };
-
-    initializeGrammarChecker();
-  }, [trackInteraction, retryCount]);
+    if (grammarCheckerData && !error) {
+      trackInteraction('component-mounted');
+    }
+  }, [grammarCheckerData, error, trackInteraction]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -55,12 +48,13 @@ const GrammarChecker = () => {
   const handleRetry = () => {
     setRetryCount(prev => prev + 1);
     setError(null);
-    setIsInitialLoading(true);
     trackInteraction('retry-initialization');
     logger.debug('Retrying grammar checker initialization', { retryCount: retryCount + 1 }, 'GrammarChecker');
+    // Force component re-render to retry hook initialization
+    window.location.reload();
   };
 
-  if (error) {
+  if (error || !grammarCheckerData) {
     logger.debug('Showing error state', { error }, 'GrammarChecker');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 flex items-center justify-center p-4">
@@ -68,7 +62,7 @@ const GrammarChecker = () => {
           <CardContent className="p-6 text-center">
             <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">व्याकरण चेकर लोड नहीं हो सका</h2>
-            <p className="text-gray-600 mb-4">{error}</p>
+            <p className="text-gray-600 mb-4">{error || 'Failed to initialize grammar checker'}</p>
             <div className="flex gap-3 justify-center">
               <button 
                 onClick={handleRetry}
@@ -86,21 +80,6 @@ const GrammarChecker = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
-    );
-  }
-
-  if (isInitialLoading || !grammarCheckerData) {
-    logger.debug('Showing loading state', undefined, 'GrammarChecker');
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-16 w-16 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-lg text-gray-600">व्याकरण चेकर लोड हो रहा है...</p>
-          {retryCount > 0 && (
-            <p className="text-sm text-gray-500 mt-2">पुनः प्रयास #{retryCount}</p>
-          )}
-        </div>
       </div>
     );
   }
