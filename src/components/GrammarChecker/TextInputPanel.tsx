@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, RotateCcw, Zap, Sparkles, AlertTriangle } from "lucide-react";
+import { FileText, RotateCcw, Zap, Sparkles, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import HighlightedText from './HighlightedText';
 import { HighlightedSegment } from '@/hooks/useTextHighlighting';
 
@@ -45,6 +46,7 @@ const TextInputPanel = ({
 
   const isOverLimit = wordCount > MAX_WORD_LIMIT;
   const shouldDisableButtons = isLoading || !inputText.trim() || isOverLimit;
+  const hasCorrections = highlightedSegments.some(segment => segment.type !== 'normal');
 
   return (
     <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col">
@@ -54,22 +56,34 @@ const TextInputPanel = ({
             <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
             मूल पाठ
           </CardTitle>
-          <Badge 
-            variant="secondary" 
-            className={`border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm font-semibold ${getWordCountColor()}`}
-          >
-            {wordCount} / {MAX_WORD_LIMIT} शब्द
-          </Badge>
+          <div className="flex items-center space-x-2">
+            {hasCorrections && (
+              <Badge 
+                variant="secondary" 
+                className="bg-blue-100 text-blue-700 border-0 px-2 py-1 text-xs flex items-center gap-1"
+              >
+                {showHighlights ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                {showHighlights ? 'हाइलाइट ऑन' : 'हाइलाइट ऑफ'}
+              </Badge>
+            )}
+            <Badge 
+              variant="secondary" 
+              className={`border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm font-semibold ${getWordCountColor()}`}
+            >
+              {wordCount} / {MAX_WORD_LIMIT} शब्द
+            </Badge>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-4 sm:p-8 flex-1 flex flex-col">
         <div className="flex-1 bg-slate-50 rounded-2xl overflow-hidden relative">
-          {showHighlights && inputText && highlightedSegments.length > 0 ? (
+          {showHighlights && inputText && hasCorrections ? (
             <div className="h-[400px] sm:h-[500px] lg:h-[600px] overflow-y-auto p-4 sm:p-6">
               <HighlightedText 
                 segments={highlightedSegments}
                 onSegmentClick={onSegmentClick}
                 className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap"
+                showAllHighlights={true}
               />
             </div>
           ) : (
@@ -103,7 +117,14 @@ const TextInputPanel = ({
         )}
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 sm:mt-8 gap-4 sm:gap-0 flex-shrink-0">
-          <span className="text-sm text-slate-500 font-medium">{charCount} अक्षर</span>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-slate-500 font-medium">{charCount} अक्षर</span>
+            {hasCorrections && (
+              <span className="text-xs text-blue-600 font-medium">
+                {highlightedSegments.filter(s => s.type !== 'normal').length} सुधार मिले
+              </span>
+            )}
+          </div>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
             <Button
               onClick={onResetText}
