@@ -20,16 +20,46 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Helper: checks if the given email is already registered
+  const checkEmailAlreadyRegistered = async (emailToCheck: string): Promise<boolean> => {
+    // Query the profiles table; if found, user exists.
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("email", emailToCheck.trim().toLowerCase())
+      .maybeSingle();
+
+    return !!data; // true if a row is found for this email
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email.trim()) {
       toast.error("ईमेल आवश्यक है");
       return;
     }
-    
+
+    // Step 1: Pre-check if email is already registered
+    setIsLoading(true);
+    const alreadyRegistered = await checkEmailAlreadyRegistered(email);
+    if (alreadyRegistered) {
+      setIsLoading(false);
+      toast.error(
+        <div>
+          <span>यह ईमेल पहले से पंजीकृत है। </span>
+          <div className="mt-2 flex gap-2">
+            <Link to="/login" className="text-blue-600 underline hover:text-blue-700">लॉगिन करें</Link>
+            <Link to="/forgot-password" className="text-purple-600 underline hover:text-purple-700">पासवर्ड रीसेट करें</Link>
+          </div>
+        </div>
+      );
+      return;
+    }
+
     if (!password) {
       toast.error("पासवर्ड आवश्यक है");
+      setIsLoading(false);
       return;
     }
 
@@ -37,22 +67,24 @@ const Register = () => {
     const passwordStrength = validatePasswordStrength(password);
     if (!passwordStrength.isValid) {
       toast.error("पासवर्ड पर्याप्त मजबूत नहीं है। कृपया सभी आवश्यकताएं पूरी करें।");
+      setIsLoading(false);
       return;
     }
-    
+
     if (password !== confirmPassword) {
       toast.error("पासवर्ड मैच नहीं कर रहे");
+      setIsLoading(false);
       return;
     }
-    
+
     if (password.length < 8) {
       toast.error("पासवर्ड कम से कम 8 अक्षर का होना चाहिए");
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
-
     try {
+      // Step 2: Attempt supabase registration as usual
       const { error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
@@ -65,10 +97,27 @@ const Register = () => {
       });
 
       if (error) {
-        if (error.message.includes("already registered")) {
-          toast.error("यह ईमेल पहले से पंजीकृत है। कृपया लॉगिन करें।");
+        // Map various error messages to user-friendly text
+        if (
+          error.message.includes("already registered") ||
+          error.message.includes("User already registered") ||
+          error.message.includes("User already exists") ||
+          error.message.includes("duplicate key value") ||
+          error.message.includes("Database error saving new user")
+        ) {
+          toast.error(
+            <div>
+              <span>यह ईमेल पहले से पंजीकृत है। </span>
+              <div className="mt-2 flex gap-2">
+                <Link to="/login" className="text-blue-600 underline hover:text-blue-700">लॉगिन करें</Link>
+                <Link to="/forgot-password" className="text-purple-600 underline hover:text-purple-700">पासवर्ड रीसेट करें</Link>
+              </div>
+            </div>
+          );
         } else if (error.message.includes("Password should be")) {
           toast.error("पासवर्ड बहुत कमजोर है। कृपया मजबूत पासवर्ड चुनें।");
+        } else if (error.message.toLowerCase().includes("invalid email")) {
+          toast.error("मान्य ईमेल दर्ज करें।");
         } else {
           toast.error("रजिस्ट्रेशन में त्रुटि: " + error.message);
         }
@@ -103,21 +152,21 @@ const Register = () => {
             नया खाता बनायें और व्याकरण एवं लेखन सुधार का आरंभ करें
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-700 font-medium">
                 ईमेल पता <span className="text-red-500">*</span>
               </Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="your.email@example.com" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                required 
-                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500" 
+              <Input
+                id="email"
+                type="email"
+                placeholder="your.email@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
               />
             </div>
 
@@ -125,13 +174,13 @@ const Register = () => {
               <Label htmlFor="name" className="text-gray-700 font-medium">
                 नाम <span className="text-gray-400">(वैकल्पिक)</span>
               </Label>
-              <Input 
-                id="name" 
-                type="text" 
-                placeholder="आपका नाम" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500" 
+              <Input
+                id="name"
+                type="text"
+                placeholder="आपका नाम"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
               />
             </div>
 
@@ -139,42 +188,40 @@ const Register = () => {
               <Label htmlFor="password" className="text-gray-700 font-medium">
                 पासवर्ड <span className="text-red-500">*</span>
               </Label>
-              <Input 
-                id="password" 
-                type="password" 
-                placeholder="मजबूत पासवर्ड चुनें" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                required 
-                minLength={8} 
-                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500" 
+              <Input
+                id="password"
+                type="password"
+                placeholder="मजबूत पासवर्ड चुनें"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
               />
-              {password && (
-                <PasswordStrengthMeter password={password} />
-              )}
+              {password && <PasswordStrengthMeter password={password} />}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">
                 पासवर्ड की पुष्टि करें <span className="text-red-500">*</span>
               </Label>
-              <Input 
-                id="confirmPassword" 
-                type="password" 
-                placeholder="पासवर्ड दोबारा डालें" 
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)} 
-                required 
-                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500" 
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="पासवर्ड दोबारा डालें"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="transition-all duration-200 focus:scale-105 border-gray-300 focus:border-blue-500"
               />
               {confirmPassword && password !== confirmPassword && (
                 <p className="text-xs text-red-500">पासवर्ड मैच नहीं कर रहे</p>
               )}
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg" 
+            <Button
+              type="submit"
+              className="w-full transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg"
               disabled={isLoading}
             >
               {isLoading ? (
