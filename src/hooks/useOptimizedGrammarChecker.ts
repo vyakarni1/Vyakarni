@@ -13,8 +13,7 @@ import { logger } from '@/utils/logger';
 import { Correction, ProcessingMode } from '@/types/grammarChecker';
 import { extractStyleEnhancements } from "@/utils/textProcessing";
 import { createProgressSimulator, completeProgress, resetProgress } from "@/utils/progressUtils";
-import { applyDictionaryCorrections } from "@/utils/dictionaryCorrections";
-import { applyFinalDictionaryCorrections, verifyCorrections } from "@/utils/finalDictionaryCorrections";
+import { applyInitialDictionaryCorrections, applyFinalDictionaryCorrections, verifyCorrections } from "@/utils/dictionaryProcessor";
 
 const MAX_WORD_LIMIT = 1000;
 
@@ -63,7 +62,7 @@ export const useOptimizedGrammarChecker = () => {
       logger.info('4-STEP GRAMMAR CORRECTION PROCESS START', { inputLength: text.length }, 'useOptimizedGrammarChecker');
       logger.debug('Original input text', { text: text }, 'useOptimizedGrammarChecker');
       
-      const { correctedText: step1Text, corrections: step1Corrections } = applyDictionaryCorrections(text);
+      const { correctedText: step1Text, corrections: step1Corrections } = applyInitialDictionaryCorrections(text);
       logger.debug('STEP 1: Dictionary corrections on input', { 
         inputText: text, 
         outputText: step1Text, 
@@ -79,7 +78,7 @@ export const useOptimizedGrammarChecker = () => {
       }, 'useOptimizedGrammarChecker');
       
       logger.debug('STEP 3: Dictionary corrections on GPT output', undefined, 'useOptimizedGrammarChecker');
-      const { correctedText: step3Text, corrections: step3Corrections } = applyDictionaryCorrections(gptResult.correctedText);
+      const { correctedText: step3Text, corrections: step3Corrections } = applyInitialDictionaryCorrections(gptResult.correctedText);
       logger.debug('Step 3 completed', { 
         inputText: gptResult.correctedText, 
         outputText: step3Text, 
