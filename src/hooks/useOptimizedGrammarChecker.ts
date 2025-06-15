@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from "sonner";
@@ -25,19 +26,78 @@ export const useOptimizedGrammarChecker = () => {
   const [processingMode, setProcessingMode] = useState<ProcessingMode>('grammar');
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [hookError, setHookError] = useState<string | null>(null);
   
-  const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
-  const { trackUsage } = useUsageStats();
-  const highlighting = useTextHighlighting();
-  const { trackInteraction, measureOperation } = usePerformanceTracking('GrammarChecker');
+  // Safe hook initialization with error boundaries
+  const wordLimitsHook = (() => {
+    try {
+      return useWordLimits();
+    } catch (error) {
+      logger.error('Failed to initialize useWordLimits hook', error, 'useOptimizedGrammarChecker');
+      setHookError('Word limits functionality unavailable');
+      return {
+        checkAndEnforceWordLimit: () => true,
+        trackWordUsage: async () => {}
+      };
+    }
+  })();
+
+  const usageStatsHook = (() => {
+    try {
+      return useUsageStats();
+    } catch (error) {
+      logger.error('Failed to initialize useUsageStats hook', error, 'useOptimizedGrammarChecker');
+      return {
+        trackUsage: async () => {}
+      };
+    }
+  })();
+
+  const highlightingHook = (() => {
+    try {
+      return useTextHighlighting();
+    } catch (error) {
+      logger.error('Failed to initialize useTextHighlighting hook', error, 'useOptimizedGrammarChecker');
+      setHookError('Text highlighting functionality unavailable');
+      return {
+        selectedCorrectionIndex: null,
+        parseTextWithHighlights: () => [],
+        highlightCorrection: () => {},
+        clearHighlight: () => {},
+        hasHighlights: () => false
+      };
+    }
+  })();
+
+  const performanceHook = (() => {
+    try {
+      return usePerformanceTracking('GrammarChecker');
+    } catch (error) {
+      logger.error('Failed to initialize usePerformanceTracking hook', error, 'useOptimizedGrammarChecker');
+      return {
+        trackInteraction: () => {},
+        measureOperation: (name: string, operation: () => any) => operation()
+      };
+    }
+  })();
+
+  const { checkAndEnforceWordLimit, trackWordUsage } = wordLimitsHook;
+  const { trackUsage } = usageStatsHook;
+  const highlighting = highlightingHook;
+  const { trackInteraction, measureOperation } = performanceHook;
   
   const abortControllerRef = useRef<AbortController>();
   const processingTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Generate cache key for API requests
   const generateCacheKey = useCallback((text: string, mode: ProcessingMode): string => {
-    const textHash = btoa(encodeURIComponent(text.slice(0, 100))); // Use first 100 chars for hash
-    return `${mode}-${textHash}-${text.length}`;
+    try {
+      const textHash = btoa(encodeURIComponent(text.slice(0, 100))); // Use first 100 chars for hash
+      return `${mode}-${textHash}-${text.length}`;
+    } catch (error) {
+      logger.warn('Failed to generate cache key, using fallback', error, 'useOptimizedGrammarChecker');
+      return `${mode}-fallback-${text.length}-${Date.now()}`;
+    }
   }, []);
 
   const checkWordLimit = (text: string): boolean => {
@@ -206,7 +266,7 @@ export const useOptimizedGrammarChecker = () => {
     });
   }, [generateCacheKey, measureOperation, trackInteraction, processGrammarCorrection]);
 
-  // Grammar correction query with optimizations
+  // Grammar correction query with optimizations and safe enablement
   const grammarQuery = useQuery({
     queryKey: ['grammar-check', inputText, processingMode],
     queryFn: () => processText(inputText, processingMode),
@@ -373,6 +433,7 @@ export const useOptimizedGrammarChecker = () => {
       setCorrections([]);
       setProgress(0);
       setProcessingMode('grammar');
+      setHookError(null);
       highlighting.clearHighlight();
       trackInteraction('reset-all');
       logger.debug('All text and state reset', undefined, 'useOptimizedGrammarChecker');
@@ -386,5 +447,6 @@ export const useOptimizedGrammarChecker = () => {
     getCurrentProcessedText,
     highlighting,
     cleanup,
+    hookError,
   };
 };

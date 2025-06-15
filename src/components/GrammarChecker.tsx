@@ -9,37 +9,56 @@ import CorrectedTextPanel from './GrammarChecker/CorrectedTextPanel';
 import FeaturesSection from './GrammarChecker/FeaturesSection';
 import LazyComponentWrapper from './Performance/LazyComponentWrapper';
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 
 const GrammarChecker = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
   const { trackInteraction } = usePerformanceTracking('GrammarChecker');
 
   logger.debug('Component mounting with optimizations', undefined, 'GrammarChecker');
 
-  const grammarCheckerData = useOptimizedGrammarChecker();
+  // Safe initialization of grammar checker data
+  const [grammarCheckerData, setGrammarCheckerData] = useState<any>(null);
 
+  // Initialize grammar checker hook with error handling
   useEffect(() => {
-    try {
-      logger.debug('Optimized hook loaded successfully', undefined, 'GrammarChecker');
-      setIsInitialLoading(false);
-      setError(null);
-      trackInteraction('component-mounted');
-    } catch (err) {
-      logger.error('Error in useEffect', err, 'GrammarChecker');
-      setError(err instanceof Error ? err.message : 'Unknown error in GrammarChecker');
-      setIsInitialLoading(false);
-      trackInteraction('component-mount-error', { error: err instanceof Error ? err.message : 'Unknown' });
-    }
-  }, [trackInteraction]);
+    const initializeGrammarChecker = () => {
+      try {
+        const data = useOptimizedGrammarChecker();
+        setGrammarCheckerData(data);
+        setIsInitialLoading(false);
+        setError(null);
+        trackInteraction('component-mounted');
+        logger.debug('Optimized hook loaded successfully', undefined, 'GrammarChecker');
+      } catch (err) {
+        logger.error('Error initializing grammar checker', err, 'GrammarChecker');
+        setError(err instanceof Error ? err.message : 'Failed to initialize grammar checker');
+        setIsInitialLoading(false);
+        trackInteraction('component-mount-error', { error: err instanceof Error ? err.message : 'Unknown' });
+      }
+    };
+
+    initializeGrammarChecker();
+  }, [trackInteraction, retryCount]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      grammarCheckerData.cleanup();
+      if (grammarCheckerData?.cleanup) {
+        grammarCheckerData.cleanup();
+      }
     };
   }, [grammarCheckerData]);
+
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    setError(null);
+    setIsInitialLoading(true);
+    trackInteraction('retry-initialization');
+    logger.debug('Retrying grammar checker initialization', { retryCount: retryCount + 1 }, 'GrammarChecker');
+  };
 
   if (error) {
     logger.debug('Showing error state', { error }, 'GrammarChecker');
@@ -50,25 +69,37 @@ const GrammarChecker = () => {
             <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">व्याकरण चेकर लोड नहीं हो सका</h2>
             <p className="text-gray-600 mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              पेज रीफ्रेश करें
-            </button>
+            <div className="flex gap-3 justify-center">
+              <button 
+                onClick={handleRetry}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                पुनः प्रयास करें
+              </button>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              >
+                पेज रीफ्रेश करें
+              </button>
+            </div>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  if (isInitialLoading) {
+  if (isInitialLoading || !grammarCheckerData) {
     logger.debug('Showing loading state', undefined, 'GrammarChecker');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-16 w-16 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-lg text-gray-600">व्याकरण चेकर लोड हो रहा है...</p>
+          {retryCount > 0 && (
+            <p className="text-sm text-gray-500 mt-2">पुनः प्रयास #{retryCount}</p>
+          )}
         </div>
       </div>
     );
@@ -90,6 +121,7 @@ const GrammarChecker = () => {
     resetText,
     copyToClipboard,
     highlighting,
+    hookError,
   } = grammarCheckerData;
 
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
@@ -132,6 +164,18 @@ const GrammarChecker = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+      {/* Show hook error if present */}
+      {hookError && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+          <div className="flex">
+            <AlertTriangle className="h-5 w-5 text-yellow-400 mr-3 flex-shrink-0" />
+            <p className="text-sm text-yellow-700">
+              चेतावनी: {hookError} - मूल कार्यक्षमता अभी भी उपलब्ध है।
+            </p>
+          </div>
+        </div>
+      )}
+
       <LazyComponentWrapper componentName="GrammarChecker-Header">
         <Header />
       </LazyComponentWrapper>
