@@ -275,19 +275,15 @@ const Pricing = () => {
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">क्या मैं AutoPay निरस्त कर सकता हूँ?</h3>
-                <p className="text-gray-600 text-sm">जी हाँ, आप किसी भी समय AutoPay mandate को निरस्त कर सकते हैं। यह अगले बिलिंग साइकल से बंद हो जाएगा।</p>
+                <p className="text-gray-600 text-sm">जी हाँ, आप किसी भी समय AutoPay Mandate को स्वेच्छा से निरस्त कर सकते हैं। यह आपके अगले बिलिंग साइकल से स्वतः बंद हो जायेगा।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">वर्ड टॉप-अप क्या है?</h3>
-                <p className="text-gray-600 text-sm">
-                  यह अतिरिक्त शब्द हैं जो आप अपने सब्स्क्रिप्शन के साथ खरीद सकते हैं। ये 30 दिनों तक वैध रहते हैं।
-                </p>
+                <p className="text-gray-600 text-sm">यह वे अतिरिक्त शब्द हैं, जो आप अपने सब्स्क्रिप्शन के साथ खरीद सकते हैं। ये 120 दिनों तक वैध रहते हैं।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">AutoPay सुरक्षित है?</h3>
-                <p className="text-gray-600 text-sm">
-                  हां, Razorpay का AutoPay RBI द्वारा अनुमोदित e-NACH/UPI mandate का उपयोग करता है। यह पूर्णतः सुरक्षित है।
-                </p>
+                <p className="text-gray-600 text-sm">जी हाँ, Razorpay का AutoPay RBI द्वारा अनुमोदित e-NACH/UPI Mandate का उपयोग करता है। यह पूर्णतः सुरक्षित है।</p>
               </div>
             </div>
           </div>
