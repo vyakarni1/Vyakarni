@@ -97,9 +97,9 @@ const BillingHistory = () => {
     const labels: {
       [key: string]: string;
     } = {
-      'grammar_check': 'व्याकरण जांच',
+      'grammar_check': 'व्याकरण जाँच',
       'style_enhance': 'शैली सुधार',
-      'spelling_check': 'वर्तनी जांच',
+      'spelling_check': 'वर्तनी जाँच',
       'text_correction': 'पाठ सुधार'
     };
     return labels[actionType] || actionType;
@@ -173,7 +173,7 @@ const BillingHistory = () => {
                 </div> : <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>तारीख</TableHead>
+                      <TableHead>तिथि</TableHead>
                       <TableHead>शब्द</TableHead>
                       <TableHead>राशि</TableHead>
                       <TableHead>स्थिति</TableHead>

@@ -109,7 +109,7 @@ const WordCreditsOverview = () => {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>फ्री शब्द</span>
+              <span>नि:शुल्क शब्द</span>
               <span>{balance.free_words} / {balance.total_words_available}</span>
             </div>
             <Progress value={freeWordsPercentage} className="h-2" />
@@ -117,7 +117,7 @@ const WordCreditsOverview = () => {
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>खरीदे गए शब्द</span>
+              <span>खरीदे गये शब्द</span>
               <span>{balance.purchased_words} / {balance.total_words_available}</span>
             </div>
             <Progress value={balance.total_words_available > 0 ? balance.purchased_words / balance.total_words_available * 100 : 0} className="h-2" />
@@ -125,7 +125,7 @@ const WordCreditsOverview = () => {
 
           {isLowBalance && <div className="mt-4 p-4 bg-orange-100 rounded-lg border border-orange-200">
               <p className="text-sm text-orange-800 mb-3">
-                ⚠️ आपके शब्द कम हो रहे हैं! अधिक शब्द खरीदने के लिए नीचे दिए गए बटन पर क्लिक करें।
+                ⚠️ आपके शब्द समाप्त हो रहे हैं! अधिक शब्द खरीदने के लिये नीचे दिये गये बटन पर क्लिक करें।
               </p>
               <Link to="/pricing">
                 <Button className="bg-orange-600 hover:bg-orange-700">

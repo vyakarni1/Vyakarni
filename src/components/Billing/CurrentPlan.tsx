@@ -168,7 +168,7 @@ const CurrentPlan = () => {
       {/* Plan Limits */}
       <Card>
         <CardHeader>
-          <CardTitle>उपयोग सीमाएं</CardTitle>
+          <CardTitle>उपयोग सीमायें</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -198,7 +198,7 @@ const CurrentPlan = () => {
                 प्रो प्लान में अपग्रेड करें
               </h3>
               <p className="text-orange-700 mb-4">
-                अधिक शब्द सीमा और एडवांस फीचर्स का लाभ उठाएं
+                अधिक शब्द सीमा और एडवांस फीचर्स का लाभ उठायें
               </p>
               <Link to="/pricing">
                 <Button className="bg-orange-600 hover:bg-orange-700">
@@ -219,7 +219,7 @@ const CurrentPlan = () => {
                 प्लान प्रबंधन
               </h3>
               <p className="text-green-700 mb-4">
-                आपका प्लान सक्रिय है। अधिक शब्द या अपग्रेड के लिए यहाँ क्लिक करें।
+                आपका प्लान सक्रिय है। अधिक शब्द या अपग्रेड के लिये यहाँ क्लिक करें।
               </p>
               <Link to="/pricing">
                 <Button className="bg-green-600 hover:bg-green-700">

@@ -37,7 +37,7 @@ const RecurringSubscriptionInfo: React.FC = () => {
       case 'paused':
         return 'रुका हुआ';
       case 'cancelled':
-        return 'रद्द';
+        return 'निरस्त';
       case 'created':
         return 'बनाया गया';
       default:
@@ -60,7 +60,7 @@ const RecurringSubscriptionInfo: React.FC = () => {
             <AlertDescription>
               आपके पास कोई AutoPay सब्स्क्रिप्शन नहीं है। 
               <Link to="/pricing" className="text-blue-600 hover:underline ml-1">
-                यहां क्लिक करके शुरू करें
+                यहाँ क्लिक करें और आरम्भ करें
               </Link>
             </AlertDescription>
           </Alert>
