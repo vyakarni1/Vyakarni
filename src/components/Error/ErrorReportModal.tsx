@@ -102,7 +102,7 @@ const ErrorReportModal: React.FC<ErrorReportModalProps> = ({
       });
 
       setIsSubmitted(true);
-      toast.success('त्रुटि रिपोर्ट सफलतापूर्वक भेजी गई!');
+      toast.success('त्रुटि रिपोर्ट सफलतापूर्वक भेजी गयी!');
       
       setTimeout(() => {
         onClose();
@@ -117,7 +117,7 @@ const ErrorReportModal: React.FC<ErrorReportModalProps> = ({
       }, 2000);
     } catch (submitError) {
       console.error('Failed to submit error report:', submitError);
-      toast.error('रिपोर्ट भेजने में समस्या हुई। कृपया बाद में कोशिश करें।');
+      toast.error('रिपोर्ट भेजने में समस्या हुयी। कृपया कुछ समय के उपरांत प्रयास करें।');
     } finally {
       setIsSubmitting(false);
     }
@@ -138,7 +138,7 @@ const ErrorReportModal: React.FC<ErrorReportModalProps> = ({
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">रिपोर्ट भेजी गई!</h3>
             <p className="text-gray-600">
-              आपकी त्रुटि रिपोर्ट सफलतापूर्वक भेजी गई है। हम जल्दी ही इसकी जांच करेंगे।
+              आपकी त्रुटि रिपोर्ट सफलतापूर्वक भेजी गयी है। हम शीघ्र ही इसकी जाँच करेंगे।
             </p>
           </div>
         </DialogContent>
@@ -155,7 +155,7 @@ const ErrorReportModal: React.FC<ErrorReportModalProps> = ({
             त्रुटि रिपोर्ट भेजें
           </DialogTitle>
           <DialogDescription>
-            कृपया त्रुटि के बारे में विस्तार से बताएं ताकि हम इसे ठीक कर सकें।
+            कृपया त्रुटि के विषय में विस्तार से बतायें जिससे हम इसे शीघ्र सुधार सकें।
           </DialogDescription>
         </DialogHeader>
 
@@ -166,7 +166,7 @@ const ErrorReportModal: React.FC<ErrorReportModalProps> = ({
               id="userDescription"
               value={report.userDescription}
               onChange={(e) => setReport(prev => ({ ...prev, userDescription: e.target.value }))}
-              placeholder="कृपया बताएं कि क्या समस्या हुई और आप क्या करने की कोशिश कर रहे थे..."
+              placeholder="कृपया बतायें कि क्या समस्या हुयी और आप क्या करने का प्रयत्न कर रहे थे..."
               className="min-h-[100px]"
               required
             />
@@ -242,7 +242,7 @@ const ErrorReportModal: React.FC<ErrorReportModalProps> = ({
               disabled={isSubmitting}
               className="flex-1"
             >
-              रद्द करें
+              निरस्त करें
             </Button>
             <Button
               type="submit"

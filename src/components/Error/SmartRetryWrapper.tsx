@@ -33,7 +33,7 @@ const SmartRetryWrapper: React.FC<SmartRetryWrapperProps> = ({
   children,
   onRetry,
   errorTitle = 'कुछ गलत हुआ है',
-  errorMessage = 'कृपया दोबारा कोशिश करें',
+  errorMessage = 'कृपया पुनः प्रयास करें',
   retryConfig = {},
   fallbackContent,
   showNetworkStatus = true,
@@ -169,12 +169,12 @@ const SmartRetryWrapper: React.FC<SmartRetryWrapperProps> = ({
                 {isRetrying ? (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    दोबारा कोशिश कर रहे हैं...
+                    पुनः प्रयास कर रहे हैं...
                   </>
                 ) : (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2" />
-                    दोबारा कोशिश करें
+                    पुनः प्रयास करें
                   </>
                 )}
               </Button>
@@ -182,14 +182,14 @@ const SmartRetryWrapper: React.FC<SmartRetryWrapperProps> = ({
 
             {retryCount > 0 && retryCount < config.maxRetries && (
               <p className="text-sm text-gray-500">
-                कोशिश {retryCount}/{config.maxRetries}
+                प्रयास {retryCount}/{config.maxRetries}
                 {!isRetrying && ` • अगली कोशिश ${Math.round(nextRetryDelay / 1000)} सेकंड में`}
               </p>
             )}
 
             {retryCount >= config.maxRetries && !isOnline && (
               <p className="text-sm text-red-600">
-                अधिकतम कोशिशें पूरी हो गईं। कृपया इंटरनेट कनेक्शन जांचें।
+                अधिकतम प्रयासों की संख्या पूर्ण हो चुकी है। कृपया इंटरनेट कनेक्शन जाँचें।
               </p>
             )}
           </div>

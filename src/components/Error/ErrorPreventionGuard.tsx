@@ -39,7 +39,7 @@ const ErrorPreventionGuard: React.FC<{ children: React.ReactNode }> = ({ childre
           severity: 'high',
           title: 'कोई इंटरनेट कनेक्शन नहीं',
           message: 'आप वर्तमान में ऑफलाइन हैं।',
-          suggestion: 'कृपया अपना इंटरनेट कनेक्शन जांचें और दोबारा कोशिश करें।',
+          suggestion: 'कृपया अपना इंटरनेट कनेक्शन जाँचे और पुनः कोशिश करें।',
           dismissible: false,
         });
       }
@@ -58,7 +58,7 @@ const ErrorPreventionGuard: React.FC<{ children: React.ReactNode }> = ({ childre
               severity: 'medium',
               title: 'स्टोरेज स्थान कम',
               message: `आपका डिवाइस स्टोरेज ${Math.round(usagePercentage)}% भरा है।`,
-              suggestion: 'कुछ फाइलें या ऐप्स डिलीट करके स्थान बनाएं।',
+              suggestion: 'कुछ फाइलें या ऐप्स डिलीट करके स्थान बनायें।',
               dismissible: true,
               autoHide: 10000,
             };
@@ -141,7 +141,7 @@ const ErrorPreventionGuard: React.FC<{ children: React.ReactNode }> = ({ childre
           severity: 'medium',
           title: 'ब्राउज़र अपडेट की आवश्यकता',
           message: 'आपका ब्राउज़र पुराना है।',
-          suggestion: 'बेहतर अनुभव के लिए ब्राउज़र को अपडेट करें।',
+          suggestion: 'उत्तम अनुभव के लिये ब्राउज़र को अपडेट करें।',
           dismissible: true,
         });
       }
@@ -160,7 +160,7 @@ const ErrorPreventionGuard: React.FC<{ children: React.ReactNode }> = ({ childre
             id: `error-pattern-${errorMessage.slice(0, 20)}`,
             type: 'compatibility',
             severity: 'high',
-            title: 'दोहराई जाने वाली त्रुटि',
+            title: 'दोहरायी जाने वाली त्रुटि',
             message: `एक ही त्रुटि ${count} बार हुई है।`,
             suggestion: 'पेज रीफ्रेश करें या सपोर्ट से संपर्क करें।',
             dismissible: true,
