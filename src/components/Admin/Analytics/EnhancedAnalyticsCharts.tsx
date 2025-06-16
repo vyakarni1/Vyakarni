@@ -88,7 +88,7 @@ const EnhancedUserGrowthChart = () => {
               labelFormatter={(value) => new Date(value).toLocaleDateString('hi-IN')}
               formatter={(value, name) => [
                 value,
-                name === 'new_users' ? 'नए उपयोगकर्ता' : 
+                name === 'new_users' ? 'नये उपयोगकर्ता' : 
                 name === 'total_users' ? 'कुल उपयोगकर्ता' : 'सक्रिय उपयोगकर्ता'
               ]}
             />
@@ -211,7 +211,7 @@ const UserActivityChart = () => {
   }, {} as Record<string, number>);
 
   const pieData = Object.entries(subscriptionData || {}).map(([key, value], index) => ({
-    name: key === 'active' ? 'सक्रिय' : key === 'free' ? 'मुफ्त' : key,
+    name: key === 'active' ? 'सक्रिय' : key === 'free' ? 'नि:शुल्क' : key,
     value,
     color: COLORS[index % COLORS.length]
   }));
