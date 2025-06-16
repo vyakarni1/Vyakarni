@@ -19,17 +19,34 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
+      console.log('Sending password reset email to:', email);
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Password reset error:', error);
+        throw error;
+      }
 
+      console.log('Password reset email sent successfully');
       setEmailSent(true);
       toast.success("पासवर्ड रीसेट लिंक आपके ईमेल पर भेजा गया है!");
     } catch (error: any) {
       console.error("Password reset error:", error);
-      toast.error(error.message || "पासवर्ड रीसेट में त्रुटि");
+      
+      // Handle specific error messages
+      if (error.message?.includes('For security purposes')) {
+        toast.error("सुरक्षा कारणों से, हम आपको बताएंगे नहीं कि यह ईमेल पंजीकृत है या नहीं। यदि यह ईमेल पंजीकृत है तो आपको रीसेट लिंक मिलेगा।");
+        setEmailSent(true);
+      } else if (error.message?.includes('Email not confirmed')) {
+        toast.error("कृपया पहले अपना ईमेल सत्यापित करें।");
+      } else if (error.message?.includes('Invalid email')) {
+        toast.error("कृपया मान्य ईमेल पता दर्ज करें।");
+      } else {
+        toast.error(error.message || "पासवर्ड रीसेट में त्रुटि");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -56,12 +73,26 @@ const ForgotPassword = () => {
               <div className="text-center text-sm text-gray-600">
                 <p>कृपया अपना ईमेल चेक करें और लिंक पर क्लिक करके पासवर्ड रीसेट करें।</p>
                 <p className="mt-2">अगर ईमेल नहीं मिला तो स्पैम फोल्डर भी चेक करें।</p>
+                <p className="mt-2 text-xs text-gray-500">लिंक 24 घंटे के लिए वैध है।</p>
               </div>
 
-              <div className="text-center">
-                <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-                  लॉगिन पेज पर वापस जाएं
-                </Link>
+              <div className="flex flex-col gap-2">
+                <Button 
+                  onClick={() => {
+                    setEmailSent(false);
+                    setEmail("");
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  दूसरा ईमेल भेजें
+                </Button>
+                
+                <div className="text-center">
+                  <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                    लॉगिन पेज पर वापस जाएं
+                  </Link>
+                </div>
               </div>
             </CardContent>
           </Card>
