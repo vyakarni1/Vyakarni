@@ -50,7 +50,7 @@ const Index = () => {
             <Loader2 className="h-16 w-16 animate-spin mx-auto mb-4 text-blue-600" />
             <p className="text-lg text-gray-600">लोड हो रहा है...</p>
             <div className="mt-4 text-xs text-gray-400">
-              <p>प्रमाणीकरण की जांच की जा रही है...</p>
+              <p>प्रमाणीकरण की जाँच की जा रही है...</p>
             </div>
           </div>
         </div>
