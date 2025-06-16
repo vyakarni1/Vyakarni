@@ -185,11 +185,11 @@ const SystemHealthIndicator: React.FC = () => {
       case 'healthy':
         return 'सभी सिस्टम सामान्य';
       case 'degraded':
-        return 'कुछ सेवाएं धीमी';
+        return 'कुछ सेवायें धीमी';
       case 'critical':
         return 'सिस्टम समस्या';
       default:
-        return 'स्थिति जांची जा रही है';
+        return 'स्थिति जाँची जा रही है';
     }
   };
 
