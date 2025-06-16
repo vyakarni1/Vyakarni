@@ -226,7 +226,7 @@ const Pricing = () => {
                           <div>
                             <h4 className="text-xl font-bold text-gray-800">{plan.plan_name}</h4>
                             <p className="text-gray-600">{plan.words_included.toLocaleString('hi-IN')} अतिरिक्त शब्द</p>
-                            <p className="text-sm text-purple-600">30 दिन की वैधता</p>
+                            <p className="text-sm text-purple-600">120 दिन की वैधता</p>
                           </div>
                         </div>
                         <div className="text-right">
@@ -245,9 +245,7 @@ const Pricing = () => {
                           </Button> : !canPurchaseTopup() ? <div className="space-y-3">
                             <div className="flex items-center space-x-2 p-3 bg-orange-100 rounded-lg">
                               <AlertTriangle className="h-4 w-4 text-orange-600" />
-                              <p className="text-sm text-orange-800">
-                                टॉप-अप खरीदने के लिए पहले कोई सब्स्क्रिप्शन प्लान लें
-                              </p>
+                              <p className="text-sm text-orange-800">टॉप-अप खरीदने के लिये पहले कोई एक सब्स्क्रिप्शन प्लान लें*</p>
                             </div>
                             <Button className="w-full bg-blue-600 hover:bg-blue-700" disabled>
                               पहले सब्स्क्रिप्शन लें
