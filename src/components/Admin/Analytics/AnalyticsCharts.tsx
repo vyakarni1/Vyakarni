@@ -27,7 +27,7 @@ export const UserGrowthChart = () => {
   const chartData = useMemo(() => {
     return userGrowth.map(item => ({
       date: new Date(item.date).toLocaleDateString('hi-IN', { month: 'short', day: 'numeric' }),
-      'नए उपयोगकर्ता': item.new_users,
+      'नये उपयोगकर्ता': item.new_users,
       'कुल उपयोगकर्ता': item.total_users,
     }));
   }, [userGrowth]);
@@ -55,7 +55,7 @@ export const UserGrowthChart = () => {
             />
             <Area 
               type="monotone" 
-              dataKey="नए उपयोगकर्ता" 
+              dataKey="नये उपयोगकर्ता" 
               stackId="1" 
               stroke="#3B82F6" 
               fill="url(#blueGradient)" 
@@ -189,7 +189,7 @@ export const UsageAnalyticsChart = () => {
   const usageData = [
     { name: 'आज', corrections: analytics?.corrections_today || 0 },
     { name: 'इस सप्ताह', corrections: analytics?.corrections_this_week || 0 },
-    { name: 'इस महीने', corrections: analytics?.corrections_this_month || 0 },
+    { name: 'इस माह', corrections: analytics?.corrections_this_month || 0 },
   ];
 
   return (
