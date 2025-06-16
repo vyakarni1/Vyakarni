@@ -269,11 +269,11 @@ const Pricing = () => {
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">AutoPay कैसे काम करता है?</h3>
-                <p className="text-gray-600 text-sm">AutoPay को एक बार सेटअप करने के उपरांत प्रत्येक माह स्वतः भुगतान होता रहता है। आपको मैन्युअल रूप से भुगतान करने की आवश्यकता  नहीं पड़ती है।</p>
+                <p className="text-gray-600 text-sm">AutoPay को एक बार सेटअप करने के उपरांत प्रत्येक माह स्वतः भुगतान होता रहता है। आपको मैन्युअल रूप से भुगतान करने की आवश्यकता नहीं पड़ती है।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">क्या मैं AutoPay निरस्त कर सकता हूँ?</h3>
-                <p className="text-gray-600 text-sm">जी हाँ, आप किसी भी समय AutoPay Mandate को स्वेच्छा से निरस्त कर सकते हैं। यह आपके अगले बिलिंग साइकल से स्वतः बंद हो जायेगा।</p>
+                <p className="text-gray-600 text-sm">जी हाँ, आप किसी भी समय AutoPay Mandate को स्वेच्छा से निरस्त कर सकते हैं। यह आपके अगले बिलिंग साइकल से स्वतः समाप्त हो जायेगा।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">वर्ड टॉप-अप क्या है?</h3>
