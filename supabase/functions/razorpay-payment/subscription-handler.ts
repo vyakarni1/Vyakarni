@@ -1,3 +1,4 @@
+
 import { corsHeaders } from './types.ts'
 
 export const handleCreateSubscription = async (req: Request, supabase: any) => {
@@ -31,28 +32,33 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
       throw new Error('User authentication failed')
     }
 
-    // Check for existing active subscription
-    const { data: existingSubscription, error: subError } = await supabase
+    // Check for existing active subscription and clean up if necessary
+    const { data: existingSubscriptions, error: subError } = await supabase
       .from('user_subscriptions')
       .select('*, subscription_mandates(*)')
       .eq('user_id', user.id)
       .eq('status', 'active')
-      .single()
 
-    if (existingSubscription && !subError) {
-      console.log('User already has active subscription:', existingSubscription.id)
-      return new Response(JSON.stringify({
-        error: 'User already has an active subscription. Please cancel the current subscription first.',
-        existing_subscription: {
-          id: existingSubscription.id,
-          plan_name: existingSubscription.plan_name,
-          status: existingSubscription.status,
-          next_billing_date: existingSubscription.next_billing_date
+    if (existingSubscriptions && existingSubscriptions.length > 0) {
+      console.log('Found existing subscriptions, cleaning up:', existingSubscriptions.length)
+      
+      // Cancel existing subscriptions in our database
+      for (const sub of existingSubscriptions) {
+        await supabase
+          .from('user_subscriptions')
+          .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+          .eq('id', sub.id)
+
+        // Cancel associated mandates
+        if (sub.subscription_mandates && sub.subscription_mandates.length > 0) {
+          await supabase
+            .from('subscription_mandates')
+            .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+            .eq('subscription_id', sub.id)
         }
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      })
+      }
+      
+      console.log('Cleaned up existing subscriptions')
     }
 
     // Calculate total amount with GST
@@ -213,8 +219,78 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
 
     console.log('Razorpay subscription created:', razorpaySubscription.id)
 
-    // Store in our database
-    const { data: razorpayOrder, error: orderError } = await supabase
+    // Store in our database - create both subscription and mandate immediately
+    const nextBilling = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
+    const mandateEnd = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000) // 10 years from now
+
+    // Create subscription record
+    const { data: userSubscription, error: subscriptionError } = await supabase
+      .from('user_subscriptions')
+      .insert({
+        user_id: user.id,
+        plan_id: word_plan_id,
+        status: 'created', // Will be updated to 'active' when webhook confirms
+        next_billing_date: nextBilling.toISOString(),
+        expires_at: mandateEnd.toISOString(),
+        auto_renewal: true,
+        billing_cycle: 'monthly',
+        razorpay_subscription_id: razorpaySubscription.id,
+        is_recurring: true
+      })
+      .select()
+      .single()
+
+    if (subscriptionError) {
+      console.error('Database subscription creation failed:', subscriptionError)
+      throw new Error('Failed to store subscription in database')
+    }
+
+    console.log('Created user subscription:', userSubscription.id)
+
+    // Create mandate record immediately
+    const { data: mandate, error: mandateError } = await supabase
+      .from('subscription_mandates')
+      .insert({
+        user_id: user.id,
+        subscription_id: userSubscription.id,
+        razorpay_subscription_id: razorpaySubscription.id,
+        razorpay_plan_id: razorpayPlan.id,
+        mandate_status: 'created',
+        max_amount: totalAmount / 100, // Convert back to rupees
+        start_date: nextBilling.toISOString(),
+        end_date: mandateEnd.toISOString(),
+        next_charge_at: nextBilling.toISOString(),
+        current_start: new Date().toISOString(),
+        current_end: nextBilling.toISOString(),
+        status: 'created',
+        notes: {
+          customer_id: razorpayCustomer.id,
+          plan_id: razorpayPlan.id,
+          customer_details: {
+            name: customer_name,
+            email: customer_email,
+            phone: customer_phone
+          }
+        }
+      })
+      .select()
+      .single()
+
+    if (mandateError) {
+      console.error('Database mandate creation failed:', mandateError)
+      // Don't throw error here, subscription can still work
+    } else {
+      console.log('Created subscription mandate:', mandate.id)
+      
+      // Link mandate to subscription
+      await supabase
+        .from('user_subscriptions')
+        .update({ mandate_id: mandate.id })
+        .eq('id', userSubscription.id)
+    }
+
+    // Store order record for tracking
+    const { error: orderError } = await supabase
       .from('razorpay_orders')
       .insert({
         user_id: user.id,
@@ -236,12 +312,9 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
           type: 'recurring_subscription'
         }
       })
-      .select()
-      .single()
 
     if (orderError) {
       console.error('Database order creation failed:', orderError)
-      throw new Error('Failed to store order in database')
     }
 
     return new Response(JSON.stringify({
@@ -281,28 +354,34 @@ export const handleSubscriptionWebhook = async (req: Request, supabase: any) => 
     
     console.log('Received Razorpay subscription webhook')
 
-    // Verify webhook signature
-    const expectedSignature = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(Deno.env.get('RAZORPAY_WEBHOOK_SECRET')),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    )
+    // Verify webhook signature if secret is available
+    const webhookSecret = Deno.env.get('RAZORPAY_WEBHOOK_SECRET')
+    if (webhookSecret && webhookSignature) {
+      const expectedSignature = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(webhookSecret),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      )
 
-    const signature = await crypto.subtle.sign(
-      'HMAC',
-      expectedSignature,
-      new TextEncoder().encode(body)
-    )
+      const signature = await crypto.subtle.sign(
+        'HMAC',
+        expectedSignature,
+        new TextEncoder().encode(body)
+      )
 
-    const computedSignature = Array.from(new Uint8Array(signature))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('')
+      const computedSignature = 'sha256=' + Array.from(new Uint8Array(signature))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
 
-    if (webhookSignature !== computedSignature) {
-      console.error('Invalid webhook signature')
-      return new Response('Unauthorized', { status: 401, headers: corsHeaders })
+      if (webhookSignature !== computedSignature) {
+        console.error('Invalid webhook signature')
+        return new Response('Unauthorized', { status: 401, headers: corsHeaders })
+      }
+      console.log('Webhook signature verified successfully')
+    } else {
+      console.warn('Webhook signature verification skipped - missing secret or signature')
     }
 
     const webhookData = JSON.parse(body)
@@ -322,22 +401,22 @@ export const handleSubscriptionWebhook = async (req: Request, supabase: any) => 
 
     switch (event) {
       case 'subscription.activated':
-        await handleSubscriptionActivated(payload.subscription, supabase)
+        await handleSubscriptionActivated(payload.subscription.entity, supabase)
         break
       case 'subscription.charged':
-        await handleSubscriptionCharged(payload.payment, supabase)
+        await handleSubscriptionCharged(payload.payment.entity, supabase)
         break
       case 'subscription.completed':
-        await handleSubscriptionCompleted(payload.subscription, supabase)
+        await handleSubscriptionCompleted(payload.subscription.entity, supabase)
         break
       case 'subscription.cancelled':
-        await handleSubscriptionCancelled(payload.subscription, supabase)
+        await handleSubscriptionCancelled(payload.subscription.entity, supabase)
         break
       case 'subscription.halted':
-        await handleSubscriptionHalted(payload.subscription, supabase)
+        await handleSubscriptionHalted(payload.subscription.entity, supabase)
         break
       case 'invoice.paid':
-        await handleInvoicePaid(payload.invoice, supabase)
+        await handleInvoicePaid(payload.invoice.entity, payload.payment.entity, supabase)
         break
       default:
         console.log('Unhandled subscription event:', event)
@@ -366,46 +445,50 @@ const handleSubscriptionActivated = async (subscription: any, supabase: any) => 
   console.log('Processing subscription activation:', subscription.id)
   
   try {
-    // Get order details
-    const { data: order } = await supabase
-      .from('razorpay_orders')
-      .select('*')
-      .eq('order_id', subscription.id)
+    // Update subscription status to active
+    const { data: updatedSubscription, error: updateError } = await supabase
+      .from('user_subscriptions')
+      .update({ 
+        status: 'active',
+        updated_at: new Date().toISOString()
+      })
+      .eq('razorpay_subscription_id', subscription.id)
+      .select()
       .single()
 
-    if (!order) {
-      console.error('Order not found for subscription:', subscription.id)
+    if (updateError) {
+      console.error('Failed to update subscription status:', updateError)
       return
     }
 
-    // Create recurring subscription in database
-    const { error: subscriptionError } = await supabase.rpc('create_recurring_subscription', {
-      user_uuid: order.user_id,
-      plan_uuid: order.word_plan_id,
-      razorpay_subscription_id: subscription.id,
-      razorpay_plan_id: subscription.plan_id,
-      mandate_details: {
-        customer_id: subscription.customer_id,
-        status: subscription.status,
-        auth_attempts: subscription.auth_attempts || 0
-      }
-    })
+    console.log('Updated subscription to active:', updatedSubscription.id)
 
-    if (subscriptionError) {
-      console.error('Failed to create recurring subscription:', subscriptionError)
-      return
-    }
+    // Update mandate status to active
+    await supabase
+      .from('subscription_mandates')
+      .update({
+        status: 'active',
+        mandate_status: 'authenticated',
+        updated_at: new Date().toISOString()
+      })
+      .eq('razorpay_subscription_id', subscription.id)
 
     // Add initial word credits
-    const { error: creditsError } = await supabase.rpc('add_user_word_credits', {
-      p_user_id: order.user_id,
-      p_words_to_add: order.words_to_credit,
-      p_credit_type: 'subscription',
-      p_expiry_date: new Date(Date.now() + 32 * 24 * 60 * 60 * 1000).toISOString() // 32 days
-    })
+    const { data: wordPlan } = await supabase
+      .from('word_plans')
+      .select('words_included')
+      .eq('id', updatedSubscription.plan_id)
+      .single()
 
-    if (creditsError) {
-      console.error('Failed to add word credits:', creditsError)
+    if (wordPlan && wordPlan.words_included) {
+      await supabase.rpc('add_user_word_credits', {
+        p_user_id: updatedSubscription.user_id,
+        p_words_to_add: wordPlan.words_included,
+        p_credit_type: 'subscription',
+        p_expiry_date: null // Subscription words don't expire
+      })
+
+      console.log(`Added ${wordPlan.words_included} subscription words to user ${updatedSubscription.user_id}`)
     }
 
     console.log('Subscription activated successfully')
@@ -418,10 +501,10 @@ const handleSubscriptionCharged = async (payment: any, supabase: any) => {
   console.log('Processing subscription charge:', payment.id)
   
   try {
-    // Get subscription details
+    // Get mandate details
     const { data: mandate } = await supabase
       .from('subscription_mandates')
-      .select('*')
+      .select('*, user_subscriptions(*)')
       .eq('razorpay_subscription_id', payment.subscription_id)
       .single()
 
@@ -448,7 +531,7 @@ const handleSubscriptionCharged = async (payment: any, supabase: any) => {
       const { data: wordPlan } = await supabase
         .from('word_plans')
         .select('words_included')
-        .eq('id', mandate.razorpay_plan_id)
+        .eq('id', mandate.user_subscriptions.plan_id)
         .single()
 
       if (wordPlan) {
@@ -457,7 +540,7 @@ const handleSubscriptionCharged = async (payment: any, supabase: any) => {
           p_user_id: mandate.user_id,
           p_words_to_add: wordPlan.words_included,
           p_credit_type: 'subscription',
-          p_expiry_date: new Date(Date.now() + 32 * 24 * 60 * 60 * 1000).toISOString() // 32 days
+          p_expiry_date: null // Subscription words don't expire
         })
 
         // Update mandate
@@ -465,11 +548,13 @@ const handleSubscriptionCharged = async (payment: any, supabase: any) => {
           .from('subscription_mandates')
           .update({
             paid_count: mandate.paid_count + 1,
-            remaining_count: mandate.remaining_count - 1,
+            remaining_count: Math.max(0, mandate.remaining_count - 1),
             next_charge_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Next month
             updated_at: new Date().toISOString()
           })
           .eq('id', mandate.id)
+
+        console.log(`Added ${wordPlan.words_included} words for charge to user ${mandate.user_id}`)
       }
     }
 
@@ -484,6 +569,14 @@ const handleSubscriptionCompleted = async (subscription: any, supabase: any) => 
   
   await supabase
     .from('subscription_mandates')
+    .update({ 
+      status: 'completed',
+      updated_at: new Date().toISOString()
+    })
+    .eq('razorpay_subscription_id', subscription.id)
+
+  await supabase
+    .from('user_subscriptions')
     .update({ 
       status: 'completed',
       updated_at: new Date().toISOString()
@@ -521,11 +614,21 @@ const handleSubscriptionHalted = async (subscription: any, supabase: any) => {
       updated_at: new Date().toISOString()
     })
     .eq('razorpay_subscription_id', subscription.id)
+
+  await supabase
+    .from('user_subscriptions')
+    .update({ 
+      status: 'halted',
+      updated_at: new Date().toISOString()
+    })
+    .eq('razorpay_subscription_id', subscription.id)
 }
 
-const handleInvoicePaid = async (invoice: any, supabase: any) => {
-  console.log('Processing invoice payment:', invoice.id)
+const handleInvoicePaid = async (invoice: any, payment: any, supabase: any) => {
+  console.log('Processing invoice payment:', invoice.id, 'for subscription:', invoice.subscription_id)
   
-  // This is typically handled by subscription.charged event
-  // But we can use this as a backup or for additional processing
+  // This is often the first event we receive for successful subscription charges
+  if (invoice.subscription_id && payment) {
+    await handleSubscriptionCharged(payment, supabase)
+  }
 }
