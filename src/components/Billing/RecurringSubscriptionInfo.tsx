@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useRecurringSubscription } from '@/hooks/useRecurringSubscription';
 import { useSubscription } from '@/hooks/useSubscription';
-import { RefreshCw, Calendar, CreditCard, Settings, AlertTriangle } from 'lucide-react';
+import { RefreshCw, Calendar, CreditCard, Settings, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -21,10 +21,14 @@ const RecurringSubscriptionInfo: React.FC = () => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800';
+      case 'authenticated':
+        return 'bg-green-100 text-green-800';
       case 'paused':
         return 'bg-yellow-100 text-yellow-800';
       case 'cancelled':
         return 'bg-red-100 text-red-800';
+      case 'created':
+        return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -34,6 +38,8 @@ const RecurringSubscriptionInfo: React.FC = () => {
     switch (status) {
       case 'active':
         return 'सक्रिय';
+      case 'authenticated':
+        return 'प्रमाणित';
       case 'paused':
         return 'रुका हुआ';
       case 'cancelled':
@@ -148,6 +154,25 @@ const RecurringSubscriptionInfo: React.FC = () => {
                   </div>
                 )}
               </div>
+            )}
+
+            {/* Show status-specific messages */}
+            {subscription.status === 'active' && mandate?.status === 'active' && (
+              <Alert className="border-green-200 bg-green-50">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">
+                  आपका AutoPay सब्स्क्रिप्शन सफलतापूर्वक सक्रिय है।
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {subscription.status === 'created' && (
+              <Alert className="border-blue-200 bg-blue-50">
+                <AlertTriangle className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-800">
+                  आपका सब्स्क्रिप्शन बनाया गया है। AutoPay सक्रियण की प्रतीक्षा में है।
+                </AlertDescription>
+              </Alert>
             )}
 
             <div className="pt-3 border-t">

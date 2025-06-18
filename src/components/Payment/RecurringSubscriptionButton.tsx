@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, CreditCard, AlertCircle, RefreshCw, Calendar } from 'lucide-react';
+import { Loader2, RefreshCw, AlertCircle, Calendar } from 'lucide-react';
 import { useRecurringSubscription } from '@/hooks/useRecurringSubscription';
 import { useAuth } from '@/components/AuthProvider';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -92,13 +92,7 @@ const RecurringSubscriptionButton: React.FC<RecurringSubscriptionButtonProps> = 
       }
     } catch (error: any) {
       console.error('Subscription error:', error);
-      
-      // Handle specific error cases
-      if (error.message?.includes('already has an active subscription')) {
-        setError('आपके पास पहले से एक सक्रिय सब्स्क्रिप्शन है। कृपया पहले मौजूदा सब्स्क्रिप्शन को रद्द करें।');
-      } else {
-        setError('सब्स्क्रिप्शन प्रक्रिया में त्रुटि हुई। कृपया पुनः प्रयास करें।');
-      }
+      // Error is already handled in the hook with toast messages
     }
   };
 
@@ -108,16 +102,15 @@ const RecurringSubscriptionButton: React.FC<RecurringSubscriptionButtonProps> = 
         <Alert className="mb-4">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            आपके पास पहले से एक सक्रिय सब्स्क्रिप्शन है। नया सब्स्क्रिप्शन शुरू करने के लिए पहले मौजूदा को रद्द करें।
+            आपके पास पहले से एक सक्रिय सब्स्क्रिप्शन है। नया सब्स्क्रिप्शन शुरू करने से पुराना रद्द हो जाएगा।
           </AlertDescription>
         </Alert>
         <Button
-          variant="outline"
-          className="w-full"
-          disabled
+          onClick={() => setShowForm(true)}
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
         >
           <RefreshCw className="h-4 w-4 mr-2" />
-          सक्रिय सब्स्क्रिप्शन मौजूद है
+          ₹{totalAmount.toFixed(2)}/माह - नया AutoPay सब्स्क्रिप्शन
         </Button>
       </div>
     );

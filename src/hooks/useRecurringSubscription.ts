@@ -48,8 +48,11 @@ export const useRecurringSubscription = () => {
       console.log('Initiating recurring subscription:', subscriptionData);
 
       // Call our edge function to create subscription
-      const { data, error } = await supabase.functions.invoke('razorpay-payment/create-subscription', {
+      const { data, error } = await supabase.functions.invoke('razorpay-payment', {
         body: subscriptionData,
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
 
       if (error) {
@@ -103,7 +106,8 @@ export const useRecurringSubscription = () => {
             title: "सब्स्क्रिप्शन सफल",
             description: "आपका मासिक सब्स्क्रिप्शन सफलतापूर्वक सक्रिय हुआ। AutoPay सेटअप हो गया है।",
           });
-          // Redirect will be handled by callback_url
+          // Refresh the page to show updated subscription status
+          window.location.reload();
         },
       };
 
@@ -123,7 +127,19 @@ export const useRecurringSubscription = () => {
 
     } catch (error) {
       console.error('Subscription initiation error:', error);
-      const errorMessage = error instanceof Error ? error.message : "सब्स्क्रिप्शन शुरू करने में त्रुटि हुई।";
+      let errorMessage = "सब्स्क्रिप्शन शुरू करने में त्रुटि हुई।";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('already has an active subscription')) {
+          errorMessage = "आपके पास पहले से एक सक्रिय सब्स्क्रिप्शन है। कृपया उसे पहले रद्द करें।";
+        } else if (error.message.includes('Plan not found')) {
+          errorMessage = "चुना गया प्लान उपलब्ध नहीं है। कृपया दूसरा प्लान चुनें।";
+        } else if (error.message.includes('Customer creation failed')) {
+          errorMessage = "ग्राहक खाता बनाने में त्रुटि हुई। कृपया विवरण जांचें।";
+        } else {
+          errorMessage = error.message;
+        }
+      }
       
       toast({
         title: "सब्स्क्रिप्शन त्रुटि",
@@ -152,6 +168,8 @@ export const useRecurringSubscription = () => {
 
       if (data && data.length > 0) {
         setMandate(data[0]);
+      } else {
+        setMandate(null);
       }
     } catch (error) {
       console.error('Error in fetchActiveMandate:', error);
@@ -162,25 +180,12 @@ export const useRecurringSubscription = () => {
     if (!mandate?.razorpay_subscription_id) return false;
 
     try {
-      const response = await fetch(`https://api.razorpay.com/v1/subscriptions/${mandate.razorpay_subscription_id}/pause`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${btoa(`${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_SECRET_KEY}`)}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          pause_at: 'now'
-        })
+      // Note: This would require server-side implementation as API keys cannot be exposed
+      toast({
+        title: "सुविधा अनुपलब्ध",
+        description: "सब्स्क्रिप्शन रोकने के लिए कृपया सपोर्ट से संपर्क करें।",
+        variant: "destructive"
       });
-
-      if (response.ok) {
-        toast({
-          title: "सब्स्क्रिप्शन रोका गया",
-          description: "आपका सब्स्क्रिप्शन सफलतापूर्वक रोक दिया गया है।",
-        });
-        await fetchActiveMandate();
-        return true;
-      }
       return false;
     } catch (error) {
       console.error('Error pausing subscription:', error);
@@ -192,25 +197,12 @@ export const useRecurringSubscription = () => {
     if (!mandate?.razorpay_subscription_id) return false;
 
     try {
-      const response = await fetch(`https://api.razorpay.com/v1/subscriptions/${mandate.razorpay_subscription_id}/cancel`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${btoa(`${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_SECRET_KEY}`)}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          cancel_at_cycle_end: 1
-        })
+      // Note: This would require server-side implementation as API keys cannot be exposed
+      toast({
+        title: "सुविधा अनुपलब्ध",
+        description: "सब्स्क्रिप्शन रद्द करने के लिए कृपया सपोर्ट से संपर्क करें।",
+        variant: "destructive"
       });
-
-      if (response.ok) {
-        toast({
-          title: "सब्स्क्रिप्शन रद्द",
-          description: "आपका सब्स्क्रिप्शन अगले बिलिंग साइकल के अंत में रद्द हो जाएगा।",
-        });
-        await fetchActiveMandate();
-        return true;
-      }
       return false;
     } catch (error) {
       console.error('Error cancelling subscription:', error);

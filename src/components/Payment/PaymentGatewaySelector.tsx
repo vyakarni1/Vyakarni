@@ -1,6 +1,7 @@
 
 import React from 'react';
 import RazorpayPaymentButton from './RazorpayPaymentButton';
+import RecurringSubscriptionButton from './RecurringSubscriptionButton';
 
 interface WordPlan {
   id: string;
@@ -8,6 +9,7 @@ interface WordPlan {
   words_included: number;
   price_before_gst: number;
   gst_percentage: number;
+  plan_category?: string;
 }
 
 interface PaymentGatewaySelectorProps {
@@ -19,7 +21,23 @@ const PaymentGatewaySelector: React.FC<PaymentGatewaySelectorProps> = ({
   wordPlan,
   onPaymentSuccess
 }) => {
-  return <RazorpayPaymentButton wordPlan={wordPlan} onPaymentSuccess={onPaymentSuccess} />;
+  // Show recurring subscription button for subscription plans
+  if (wordPlan.plan_category === 'subscription') {
+    return (
+      <RecurringSubscriptionButton 
+        wordPlan={wordPlan} 
+        onPaymentSuccess={onPaymentSuccess} 
+      />
+    );
+  }
+
+  // Show regular payment button for top-up plans
+  return (
+    <RazorpayPaymentButton 
+      wordPlan={wordPlan} 
+      onPaymentSuccess={onPaymentSuccess} 
+    />
+  );
 };
 
 export default PaymentGatewaySelector;
