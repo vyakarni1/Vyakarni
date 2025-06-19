@@ -1,4 +1,3 @@
-
 import { corsHeaders } from './types.ts'
 
 export const handleCreateSubscription = async (req: Request, supabase: any) => {
@@ -32,12 +31,12 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
       throw new Error('User authentication failed')
     }
 
-    // Check for existing active subscription and clean up if necessary
+    // Check for existing active subscriptions and clean up if necessary
     const { data: existingSubscriptions, error: subError } = await supabase
       .from('user_subscriptions')
       .select('*, subscription_mandates(*)')
       .eq('user_id', user.id)
-      .eq('status', 'active')
+      .in('status', ['active', 'created'])
 
     if (existingSubscriptions && existingSubscriptions.length > 0) {
       console.log('Found existing subscriptions, cleaning up:', existingSubscriptions.length)
@@ -223,70 +222,83 @@ export const handleCreateSubscription = async (req: Request, supabase: any) => {
     const nextBilling = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
     const mandateEnd = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000) // 10 years from now
 
-    // Create subscription record
-    const { data: userSubscription, error: subscriptionError } = await supabase
-      .from('user_subscriptions')
-      .insert({
-        user_id: user.id,
-        plan_id: word_plan_id,
-        status: 'created', // Will be updated to 'active' when webhook confirms
-        next_billing_date: nextBilling.toISOString(),
-        expires_at: mandateEnd.toISOString(),
-        auto_renewal: true,
-        billing_cycle: 'monthly',
-        razorpay_subscription_id: razorpaySubscription.id,
-        is_recurring: true
-      })
-      .select()
-      .single()
+    // First, create subscription record with proper status that's allowed by constraint
+    let userSubscription;
+    try {
+      const { data: subData, error: subscriptionError } = await supabase
+        .from('user_subscriptions')
+        .insert({
+          user_id: user.id,
+          plan_id: word_plan_id,
+          status: 'active', // Changed from 'created' to 'active' to match constraint
+          next_billing_date: nextBilling.toISOString(),
+          expires_at: mandateEnd.toISOString(),
+          auto_renewal: true,
+          billing_cycle: 'monthly',
+          razorpay_subscription_id: razorpaySubscription.id,
+          is_recurring: true
+        })
+        .select()
+        .single()
 
-    if (subscriptionError) {
-      console.error('Database subscription creation failed:', subscriptionError)
-      throw new Error('Failed to store subscription in database')
+      if (subscriptionError) {
+        console.error('Database subscription creation failed:', subscriptionError)
+        throw new Error('Failed to store subscription in database')
+      }
+
+      userSubscription = subData
+      console.log('Created user subscription:', userSubscription.id)
+    } catch (error) {
+      console.error('Error creating user subscription:', error)
+      throw new Error('Failed to create subscription record')
     }
 
-    console.log('Created user subscription:', userSubscription.id)
-
     // Create mandate record immediately
-    const { data: mandate, error: mandateError } = await supabase
-      .from('subscription_mandates')
-      .insert({
-        user_id: user.id,
-        subscription_id: userSubscription.id,
-        razorpay_subscription_id: razorpaySubscription.id,
-        razorpay_plan_id: razorpayPlan.id,
-        mandate_status: 'created',
-        max_amount: totalAmount / 100, // Convert back to rupees
-        start_date: nextBilling.toISOString(),
-        end_date: mandateEnd.toISOString(),
-        next_charge_at: nextBilling.toISOString(),
-        current_start: new Date().toISOString(),
-        current_end: nextBilling.toISOString(),
-        status: 'created',
-        notes: {
-          customer_id: razorpayCustomer.id,
-          plan_id: razorpayPlan.id,
-          customer_details: {
-            name: customer_name,
-            email: customer_email,
-            phone: customer_phone
+    try {
+      const { data: mandate, error: mandateError } = await supabase
+        .from('subscription_mandates')
+        .insert({
+          user_id: user.id,
+          subscription_id: userSubscription.id,
+          razorpay_subscription_id: razorpaySubscription.id,
+          razorpay_plan_id: razorpayPlan.id,
+          mandate_status: 'created',
+          max_amount: totalAmount / 100, // Convert back to rupees
+          start_date: nextBilling.toISOString(),
+          end_date: mandateEnd.toISOString(),
+          next_charge_at: nextBilling.toISOString(),
+          current_start: new Date().toISOString(),
+          current_end: nextBilling.toISOString(),
+          status: 'created',
+          notes: {
+            customer_id: razorpayCustomer.id,
+            plan_id: razorpayPlan.id,
+            customer_details: {
+              name: customer_name,
+              email: customer_email,
+              phone: customer_phone
+            }
           }
-        }
-      })
-      .select()
-      .single()
+        })
+        .select()
+        .single()
 
-    if (mandateError) {
-      console.error('Database mandate creation failed:', mandateError)
-      // Don't throw error here, subscription can still work
-    } else {
-      console.log('Created subscription mandate:', mandate.id)
-      
-      // Link mandate to subscription
-      await supabase
-        .from('user_subscriptions')
-        .update({ mandate_id: mandate.id })
-        .eq('id', userSubscription.id)
+      if (mandateError) {
+        console.error('Database mandate creation failed:', mandateError)
+        // Don't throw error here, subscription can still work
+        console.log('Continuing without mandate record')
+      } else {
+        console.log('Created subscription mandate:', mandate.id)
+        
+        // Link mandate to subscription
+        await supabase
+          .from('user_subscriptions')
+          .update({ mandate_id: mandate.id })
+          .eq('id', userSubscription.id)
+      }
+    } catch (error) {
+      console.error('Error creating mandate:', error)
+      // Continue without throwing error
     }
 
     // Store order record for tracking

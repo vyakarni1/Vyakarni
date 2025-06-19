@@ -26,7 +26,7 @@ const PaymentGatewaySelector: React.FC<PaymentGatewaySelectorProps> = ({
     return (
       <RecurringSubscriptionButton 
         wordPlan={wordPlan} 
-        onPaymentSuccess={onPaymentSuccess} 
+        onSubscriptionSuccess={onPaymentSuccess} 
       />
     );
   }
