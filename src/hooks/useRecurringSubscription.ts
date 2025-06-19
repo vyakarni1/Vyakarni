@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,11 +46,22 @@ export const useRecurringSubscription = () => {
     try {
       console.log('Initiating recurring subscription:', subscriptionData);
 
-      // Call our edge function to create subscription
-      const { data, error } = await supabase.functions.invoke('razorpay-payment', {
+      // Get the current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        console.error('Session error:', sessionError);
+        throw new Error('Authentication session expired. Please login again.');
+      }
+
+      console.log('Using session token for edge function call');
+
+      // Call our edge function to create subscription - specify the create-subscription endpoint
+      const { data, error } = await supabase.functions.invoke('razorpay-payment/create-subscription', {
         body: subscriptionData,
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         }
       });
 
@@ -130,7 +140,9 @@ export const useRecurringSubscription = () => {
       let errorMessage = "सब्स्क्रिप्शन शुरू करने में त्रुटि हुई।";
       
       if (error instanceof Error) {
-        if (error.message.includes('already has an active subscription')) {
+        if (error.message.includes('Authentication session expired')) {
+          errorMessage = "आपका सेशन समाप्त हो गया है। कृपया पुनः लॉगिन करें।";
+        } else if (error.message.includes('already has an active subscription')) {
           errorMessage = "आपके पास पहले से एक सक्रिय सब्स्क्रिप्शन है। कृपया उसे पहले रद्द करें।";
         } else if (error.message.includes('Plan not found')) {
           errorMessage = "चुना गया प्लान उपलब्ध नहीं है। कृपया दूसरा प्लान चुनें।";
