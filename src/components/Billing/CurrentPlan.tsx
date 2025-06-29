@@ -63,17 +63,56 @@ const CurrentPlan = () => {
   }
 
   const getStatusBadge = () => {
+    // Enhanced logic to determine correct badge based on subscription type and purchased words
+    const hasPurchasedWords = balance.purchased_words > 0;
+    
     if (subscription.status === 'active') {
-      if (subscription.plan_type === 'free') {
+      if (subscription.plan_type === 'premium') {
+        return <Badge className="bg-purple-600 hover:bg-purple-700">प्रीमियम प्लान</Badge>;
+      } else if (subscription.plan_type === 'basic' || hasPurchasedWords) {
+        return <Badge className="bg-blue-600 hover:bg-blue-700">बेसिक प्लान</Badge>;
+      } else if (subscription.plan_type === 'free') {
         return <Badge variant="secondary">निःशुल्क प्लान</Badge>;
-      } else if (balance.has_active_subscription) {
-        return <Badge variant="default">सक्रिय प्लान</Badge>;
       } else {
-        return <Badge variant="outline">बेसिक प्लान</Badge>;
+        return <Badge variant="outline">सक्रिय प्लान</Badge>;
       }
     }
     return <Badge variant="destructive">निष्क्रिय</Badge>;
   };
+
+  // Determine effective plan name based on actual status
+  const getEffectivePlanName = () => {
+    const hasPurchasedWords = balance.purchased_words > 0;
+    
+    if (hasPurchasedWords && subscription.plan_type === 'free') {
+      // User has purchased words but subscription shows free - show based on purchase
+      if (balance.purchased_words >= 25000) {
+        return 'प्रो प्लान (Premium)';
+      } else if (balance.purchased_words >= 5000) {
+        return 'हॉबी प्लान (Basic)';
+      }
+    }
+    
+    return subscription.plan_name;
+  };
+
+  // Determine effective plan type
+  const getEffectivePlanType = () => {
+    const hasPurchasedWords = balance.purchased_words > 0;
+    
+    if (hasPurchasedWords && subscription.plan_type === 'free') {
+      if (balance.purchased_words >= 25000) {
+        return 'premium';
+      } else if (balance.purchased_words >= 5000) {
+        return 'basic';
+      }
+    }
+    
+    return subscription.plan_type;
+  };
+
+  const effectivePlanName = getEffectivePlanName();
+  const effectivePlanType = getEffectivePlanType();
 
   return (
     <div className="space-y-6">
@@ -91,8 +130,13 @@ const CurrentPlan = () => {
         <CardContent>
           <div className="space-y-6">
             <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{subscription.plan_name}</h3>
-              <p className="text-sm text-gray-600 capitalize">प्लान प्रकार: {subscription.plan_type}</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{effectivePlanName}</h3>
+              <p className="text-sm text-gray-600 capitalize">प्लान प्रकार: {effectivePlanType}</p>
+              {balance.purchased_words > 0 && (
+                <p className="text-xs text-green-600 mt-1">
+                  ✓ {balance.purchased_words.toLocaleString()} शब्द खरीदे गए
+                </p>
+              )}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -164,6 +208,30 @@ const CurrentPlan = () => {
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-sm">स्थायी शब्द क्रेडिट</span>
                 </div>
+                {effectivePlanType !== 'free' && (
+                  <>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm">समर्पित सहायता</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm">विस्तृत रिपोर्ट</span>
+                    </div>
+                  </>
+                )}
+                {effectivePlanType === 'premium' && (
+                  <>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm">एडवांस AI फीचर्स</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm">प्राथमिकता सपोर्ट</span>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -179,14 +247,14 @@ const CurrentPlan = () => {
           <Link to="/pricing" className="block">
             <Button className="w-full">
               <CreditCard className="h-4 w-4 mr-2" />
-              {subscription.plan_type === 'free' ? 'प्लान अपग्रेड करें' : 'अधिक शब्द खरीदें'}
+              {effectivePlanType === 'free' ? 'प्लान अपग्रेड करें' : 'अधिक शब्द खरीदें'}
             </Button>
           </Link>
         </CardContent>
       </Card>
 
       {/* Upgrade Prompt for Free Plan */}
-      {subscription.plan_type === 'free' && (
+      {effectivePlanType === 'free' && (
         <Card className="border-orange-200 bg-orange-50">
           <CardContent className="p-6">
             <div className="text-center">

@@ -22,7 +22,7 @@ interface SubscriptionData {
 // Helper function to convert Json to string array
 const parseFeatures = (features: Json): string[] => {
   if (Array.isArray(features)) {
-    return features as string[];
+    return features.map(feature => String(feature));
   }
   return [];
 };
@@ -95,9 +95,9 @@ export const useSubscription = () => {
           setSubscription(newSubscription);
         }
       } else {
-        // Try to create a default subscription if none exists
-        console.log('No active subscription found, checking if we need to create one');
-        await createDefaultSubscription();
+        // Enhanced logic to determine correct subscription based on purchased words
+        console.log('No active subscription found, determining correct plan based on purchases');
+        await determineAndCreateCorrectSubscription();
       }
     } catch (error) {
       console.error('Error in fetchSubscription:', error);
@@ -106,11 +106,11 @@ export const useSubscription = () => {
     }
   };
 
-  const createDefaultSubscription = async () => {
+  const determineAndCreateCorrectSubscription = async () => {
     if (!user) return;
 
     try {
-      // Check if user has purchased word credits but no active subscription
+      // Check if user has purchased word credits
       const { data: wordCredits } = await supabase
         .from('user_word_credits')
         .select('*')
@@ -118,55 +118,47 @@ export const useSubscription = () => {
         .eq('is_free_credit', false)
         .gt('words_available', 0);
 
+      let targetPlanType = 'free';
+      
       if (wordCredits && wordCredits.length > 0) {
-        // User has purchased credits, should have basic plan
-        const { data: basicPlan } = await supabase
-          .from('subscription_plans')
-          .select('*')
-          .eq('plan_type', 'basic')
-          .eq('is_active', true)
-          .single();
-
-        if (basicPlan) {
-          const { error } = await supabase
-            .from('user_subscriptions')
-            .insert({
-              user_id: user.id,
-              plan_id: basicPlan.id,
-              status: 'active',
-              auto_renewal: false,
-            });
-
-          if (!error) {
-            await fetchSubscription();
-          }
+        // Determine plan type based on word credits purchased
+        const totalPurchasedWords = wordCredits.reduce((sum, credit) => sum + credit.words_purchased, 0);
+        
+        if (totalPurchasedWords >= 25000) {
+          targetPlanType = 'premium';
+        } else if (totalPurchasedWords >= 5000) {
+          targetPlanType = 'basic';
         }
-      } else {
-        // Create free subscription
-        const { data: freePlan } = await supabase
-          .from('subscription_plans')
-          .select('*')
-          .eq('plan_type', 'free')
-          .eq('is_active', true)
-          .single();
+        
+        console.log(`User has ${totalPurchasedWords} purchased words, assigning ${targetPlanType} plan`);
+      }
 
-        if (freePlan) {
-          const { error } = await supabase
-            .from('user_subscriptions')
-            .insert({
-              user_id: user.id,
-              plan_id: freePlan.id,
-              status: 'active',
-              auto_renewal: false,
-            });
+      // Get the appropriate plan
+      const { data: targetPlan } = await supabase
+        .from('subscription_plans')
+        .select('*')
+        .eq('plan_type', targetPlanType)
+        .eq('is_active', true)
+        .single();
 
-          if (!error) {
-            await fetchSubscription();
-          }
+      if (targetPlan) {
+        // Create or update subscription
+        const { data: subscriptionResult, error: subscriptionError } = await supabase
+          .rpc('create_subscription_for_user', {
+            user_uuid: user.id,
+            plan_uuid: targetPlan.id
+          });
+
+        if (!subscriptionError && subscriptionResult?.success) {
+          console.log('Successfully created/updated subscription:', subscriptionResult);
+          // Refetch the subscription data
+          await fetchSubscription();
+        } else {
+          console.error('Error creating subscription:', subscriptionError);
         }
       }
     } catch (error) {
-      console.error('Error in createDefaultSubscription:', error);
+      console.error('Error in determineAndCreateCorrectSubscription:', error);
     }
   };
 

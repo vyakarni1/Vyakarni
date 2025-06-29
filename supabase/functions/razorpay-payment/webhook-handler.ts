@@ -163,8 +163,8 @@ export async function handleWebhook(req: Request, supabase: any) {
           // Continue processing even if transaction log fails
         }
 
-        // Process subscription purchase (all plans are now subscriptions)
-        console.log('Processing subscription purchase for plan:', wordPlan.plan_type)
+        // CRITICAL FIX: Process subscription upgrade based on word plan type
+        console.log('Processing subscription upgrade for plan type:', wordPlan.plan_type)
         
         // Find corresponding subscription plan
         const { data: subscriptionPlan, error: subPlanError } = await supabase
@@ -174,10 +174,9 @@ export async function handleWebhook(req: Request, supabase: any) {
           .eq('is_active', true)
           .single()
 
-        if (subPlanError || !subscriptionPlan) {
-          console.error('Subscription plan not found for type:', wordPlan.plan_type)
-          // Create subscription with basic logic even if plan not found
-        } else {
+        if (subscriptionPlan) {
+          console.log('Found subscription plan:', subscriptionPlan)
+          
           // Create or upgrade subscription using the database function
           const { data: subscriptionData, error: subscriptionError } = await supabase
             .rpc('create_subscription_for_user', {
@@ -190,6 +189,8 @@ export async function handleWebhook(req: Request, supabase: any) {
           } else {
             console.log('Successfully created/upgraded subscription:', subscriptionData)
           }
+        } else {
+          console.error('Subscription plan not found for type:', wordPlan.plan_type, 'Error:', subPlanError)
         }
 
         // Add word credits (no expiry for subscription words)
