@@ -46,8 +46,8 @@ export const useUsageLimits = () => {
     };
   };
 
-  const canUseTopupFeature = (): boolean => {
-    return canPurchaseTopup();
+  const canUseTopupFeature = async (): Promise<boolean> => {
+    return await canPurchaseTopup();
   };
 
   const needsSubscriptionForTopup = (): boolean => {
