@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Coins, Clock, ShoppingBag, TrendingUp, AlertTriangle } from "lucide-react";
+import { Coins, ShoppingBag, TrendingUp, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useWordCredits } from "@/hooks/useWordCredits";
 
@@ -24,16 +24,6 @@ const WordBalanceCard = () => {
 
   const isLowBalance = balance.total_words_available < 100;
   const isVeryLowBalance = balance.total_words_available < 50;
-
-  const formatExpiryDate = (dateString: string | null) => {
-    if (!dateString) return null;
-    const date = new Date(dateString);
-    return date.toLocaleDateString('hi-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
 
   const getBalanceColor = () => {
     if (isVeryLowBalance) return 'from-red-500 to-red-600';
@@ -97,13 +87,6 @@ const WordBalanceCard = () => {
             )}
           </div>
         </div>
-
-        {balance.next_expiry_date && (
-          <div className="flex items-center space-x-2 text-sm text-gray-600 p-2 bg-white/50 rounded-lg">
-            <Clock className="h-4 w-4" />
-            <span>अगली समाप्ति: {formatExpiryDate(balance.next_expiry_date)}</span>
-          </div>
-        )}
 
         {isLowBalance && (
           <div className={`p-3 rounded-lg border ${isVeryLowBalance ? 'bg-red-100 border-red-200' : 'bg-orange-100 border-orange-200'}`}>

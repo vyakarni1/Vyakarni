@@ -5,13 +5,10 @@ import { useAuth } from '@/components/AuthProvider';
 export const useWordCreditsManagement = () => {
   const { user } = useAuth();
 
-  const addWordCredits = async (planType: string, words: number, expiryDays: number = 30, creditType: string = 'topup') => {
+  const addWordCredits = async (planType: string, words: number, creditType: string = 'subscription') => {
     if (!user) return false;
 
     try {
-      const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + expiryDays);
-
       const { error } = await supabase
         .from('user_word_credits')
         .insert({
@@ -19,7 +16,7 @@ export const useWordCreditsManagement = () => {
           words_available: words,
           words_purchased: words,
           purchase_date: new Date().toISOString(),
-          expiry_date: expiryDate.toISOString(),
+          expiry_date: null, // No expiry date
           is_free_credit: false,
           credit_type: creditType,
         });
@@ -36,32 +33,7 @@ export const useWordCreditsManagement = () => {
     }
   };
 
-  // Enhanced logic for top-up purchase eligibility
-  const canPurchaseTopup = async (): Promise<boolean> => {
-    if (!user) return false;
-
-    try {
-      // Check if user has active subscription using the updated database function
-      const { data: hasActiveSubscription, error } = await supabase
-        .rpc('check_user_has_active_subscription', {
-          user_uuid: user.id
-        });
-
-      if (error) {
-        console.error('Error checking subscription status:', error);
-        return false;
-      }
-
-      console.log('Can purchase topup check:', hasActiveSubscription);
-      return hasActiveSubscription || false;
-    } catch (error) {
-      console.error('Error in canPurchaseTopup:', error);
-      return false;
-    }
-  };
-
   return {
     addWordCredits,
-    canPurchaseTopup,
   };
 };

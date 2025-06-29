@@ -10,8 +10,8 @@ export const useWordCredits = () => {
   const { user } = useAuth();
   const { balance, fetchBalance, checkWordLimit, setBalance } = useWordBalance();
   const { deductWords } = useWordDeduction();
-  const { plans, loading, getSubscriptionPlans, getTopupPlans } = useWordPlans();
-  const { addWordCredits, canPurchaseTopup } = useWordCreditsManagement();
+  const { plans, loading, getSubscriptionPlans } = useWordPlans();
+  const { addWordCredits } = useWordCreditsManagement();
 
   // Force refresh balance when user changes or component mounts
   useEffect(() => {
@@ -43,17 +43,13 @@ export const useWordCredits = () => {
     return result;
   };
 
-  const enhancedAddWordCredits = async (planType: string, words: number, expiryDays: number = 30, creditType: string = 'topup') => {
-    const result = await addWordCredits(planType, words, expiryDays, creditType);
+  const enhancedAddWordCredits = async (planType: string, words: number, creditType: string = 'subscription') => {
+    const result = await addWordCredits(planType, words, creditType);
     if (result) {
       // Refresh balance after adding credits
       await fetchBalance();
     }
     return result;
-  };
-
-  const canPurchaseTopupCredits = async (): Promise<boolean> => {
-    return await canPurchaseTopup();
   };
 
   // Enhanced refresh function that can be called externally
@@ -70,7 +66,5 @@ export const useWordCredits = () => {
     checkWordLimit,
     addWordCredits: enhancedAddWordCredits,
     getSubscriptionPlans,
-    getTopupPlans,
-    canPurchaseTopup: canPurchaseTopupCredits,
   };
 };

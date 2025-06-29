@@ -22,6 +22,7 @@ export const useWordPlans = () => {
         .from('word_plans')
         .select('*')
         .eq('is_active', true)
+        .eq('plan_category', 'subscription') // Only fetch subscription plans
         .order('price_before_gst', { ascending: true });
 
       if (error) {
@@ -43,10 +44,6 @@ export const useWordPlans = () => {
     return plans.filter(plan => plan.plan_category === 'subscription');
   };
 
-  const getTopupPlans = () => {
-    return plans.filter(plan => plan.plan_category === 'topup');
-  };
-
   useEffect(() => {
     fetchPlans();
   }, []);
@@ -56,6 +53,5 @@ export const useWordPlans = () => {
     loading,
     fetchPlans,
     getSubscriptionPlans,
-    getTopupPlans,
   };
 };
