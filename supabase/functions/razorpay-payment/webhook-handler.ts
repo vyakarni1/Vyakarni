@@ -32,7 +32,7 @@ export async function handleWebhook(req: Request, supabase: any) {
     console.log('Webhook signature present:', !!signature)
     console.log('Webhook secret configured:', !!webhookSecret)
 
-    // Log webhook for debugging - improved logging
+    // Enhanced webhook logging
     const logEntry = {
       event_type: webhookData.event || 'unknown',
       order_id: webhookData.payload?.order?.entity?.id || webhookData.payload?.payment?.entity?.order_id,
@@ -40,12 +40,18 @@ export async function handleWebhook(req: Request, supabase: any) {
       webhook_data: webhookData,
       signature: signature,
       processed: false,
+      processing_error: null,
       created_at: new Date().toISOString()
     };
 
-    await supabase
+    // Log webhook for debugging
+    const { error: logError } = await supabase
       .from('razorpay_webhook_logs')
       .insert(logEntry);
+
+    if (logError) {
+      console.error('Error logging webhook:', logError);
+    }
 
     // Handle payment.captured event
     if (webhookData.event === 'payment.captured') {
@@ -55,78 +61,113 @@ export async function handleWebhook(req: Request, supabase: any) {
 
       console.log('Processing payment.captured for order:', orderId, 'payment:', paymentId)
 
-      // Get order from database
-      const { data: order, error: orderError } = await supabase
-        .from('razorpay_orders')
-        .select('*')
-        .eq('order_id', orderId)
-        .single()
-
-      if (orderError || !order) {
-        console.error('Order not found:', orderId, orderError)
-        return new Response(JSON.stringify({ error: 'Order not found', order_id: orderId }), { 
-          status: 404, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        })
-      }
-
-      console.log('Found order for processing:', order)
-
-      // Update order status
-      const { error: updateError } = await supabase
-        .from('razorpay_orders')
-        .update({ 
-          order_status: 'PAID',
-          updated_at: new Date().toISOString()
-        })
-        .eq('order_id', orderId)
-
-      if (updateError) {
-        console.error('Error updating order:', updateError)
-        return new Response(JSON.stringify({ error: 'Error updating order', details: updateError }), { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        })
-      }
-
-      // Get the word plan
-      const { data: wordPlan, error: planError } = await supabase
-        .from('word_plans')
-        .select('*')
-        .eq('id', order.word_plan_id)
-        .single()
-
-      if (planError) {
-        console.error('Error fetching word plan:', planError)
-        return new Response(JSON.stringify({ error: 'Error fetching word plan', details: planError }), { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        })
-      }
-
-      console.log('Processing payment for plan:', wordPlan)
-
-      // Create payment transaction record first
-      const { error: transactionError } = await supabase
-        .from('payment_transactions')
-        .insert({
-          user_id: order.user_id,
-          amount: order.order_amount,
-          status: 'completed',
-          payment_gateway: 'razorpay',
-          razorpay_order_id: orderId,
-          razorpay_payment_id: paymentId,
-          currency: 'INR',
-        })
-
-      if (transactionError) {
-        console.error('Error creating transaction record:', transactionError)
-        // Continue processing even if transaction log fails
-      }
-
       try {
+        // Get order from database
+        const { data: order, error: orderError } = await supabase
+          .from('razorpay_orders')
+          .select('*')
+          .eq('order_id', orderId)
+          .single()
+
+        if (orderError || !order) {
+          const errorMsg = `Order not found: ${orderId}`;
+          console.error(errorMsg, orderError);
+          
+          // Update webhook log with error
+          await supabase
+            .from('razorpay_webhook_logs')
+            .update({ 
+              processing_error: errorMsg,
+              updated_at: new Date().toISOString()
+            })
+            .eq('order_id', orderId)
+            .eq('event_type', 'payment.captured');
+
+          return new Response(JSON.stringify({ error: errorMsg, order_id: orderId }), { 
+            status: 404, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          });
+        }
+
+        console.log('Found order for processing:', order)
+
+        // Update order status to PAID
+        const { error: updateError } = await supabase
+          .from('razorpay_orders')
+          .update({ 
+            order_status: 'PAID',
+            updated_at: new Date().toISOString()
+          })
+          .eq('order_id', orderId)
+
+        if (updateError) {
+          console.error('Error updating order:', updateError)
+          
+          // Update webhook log with error
+          await supabase
+            .from('razorpay_webhook_logs')
+            .update({ 
+              processing_error: `Error updating order: ${updateError.message}`,
+              updated_at: new Date().toISOString()
+            })
+            .eq('order_id', orderId)
+            .eq('event_type', 'payment.captured');
+
+          return new Response(JSON.stringify({ error: 'Error updating order', details: updateError }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          });
+        }
+
+        // Get the word plan with error handling
+        const { data: wordPlan, error: planError } = await supabase
+          .from('word_plans')
+          .select('*')
+          .eq('id', order.word_plan_id)
+          .single()
+
+        if (planError || !wordPlan) {
+          const errorMsg = `Word plan not found for ID: ${order.word_plan_id}`;
+          console.error(errorMsg, planError);
+          
+          // Update webhook log with error
+          await supabase
+            .from('razorpay_webhook_logs')
+            .update({ 
+              processing_error: errorMsg,
+              updated_at: new Date().toISOString()
+            })
+            .eq('order_id', orderId)
+            .eq('event_type', 'payment.captured');
+
+          return new Response(JSON.stringify({ error: errorMsg, details: planError }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          });
+        }
+
+        console.log('Processing payment for plan:', wordPlan)
+
+        // Create payment transaction record first
+        const { error: transactionError } = await supabase
+          .from('payment_transactions')
+          .insert({
+            user_id: order.user_id,
+            amount: order.order_amount,
+            status: 'completed',
+            payment_gateway: 'razorpay',
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+            currency: 'INR',
+          })
+
+        if (transactionError) {
+          console.error('Error creating transaction record:', transactionError)
+          // Continue processing even if transaction log fails
+        }
+
+        // Process based on plan category
         if (wordPlan.plan_category === 'subscription') {
-          // Handle subscription purchase
           console.log('Processing subscription purchase')
           
           // Create subscription using the database function
@@ -138,7 +179,16 @@ export async function handleWebhook(req: Request, supabase: any) {
 
           if (subscriptionError) {
             console.error('Error creating subscription:', subscriptionError)
-            // Continue to add word credits even if subscription creation fails
+            
+            // Update webhook log with error
+            await supabase
+              .from('razorpay_webhook_logs')
+              .update({ 
+                processing_error: `Error creating subscription: ${subscriptionError.message}`,
+                updated_at: new Date().toISOString()
+              })
+              .eq('order_id', orderId)
+              .eq('event_type', 'payment.captured');
           } else {
             console.log('Successfully created subscription:', subscriptionData)
           }
@@ -158,6 +208,17 @@ export async function handleWebhook(req: Request, supabase: any) {
 
           if (creditError) {
             console.error('Error adding subscription word credits:', creditError)
+            
+            // Update webhook log with error
+            await supabase
+              .from('razorpay_webhook_logs')
+              .update({ 
+                processing_error: `Error adding subscription word credits: ${creditError.message}`,
+                updated_at: new Date().toISOString()
+              })
+              .eq('order_id', orderId)
+              .eq('event_type', 'payment.captured');
+
             return new Response(JSON.stringify({ error: 'Failed to add word credits', details: creditError }), { 
               status: 500, 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -167,7 +228,6 @@ export async function handleWebhook(req: Request, supabase: any) {
           }
 
         } else if (wordPlan.plan_category === 'topup') {
-          // Handle top-up purchase
           console.log('Processing top-up purchase')
           
           // Check if user has active subscription
@@ -178,6 +238,17 @@ export async function handleWebhook(req: Request, supabase: any) {
 
           if (subscriptionCheckError) {
             console.error('Error checking subscription status:', subscriptionCheckError)
+            
+            // Update webhook log with error
+            await supabase
+              .from('razorpay_webhook_logs')
+              .update({ 
+                processing_error: `Error checking subscription status: ${subscriptionCheckError.message}`,
+                updated_at: new Date().toISOString()
+              })
+              .eq('order_id', orderId)
+              .eq('event_type', 'payment.captured');
+
             return new Response(JSON.stringify({ error: 'Error checking subscription status', details: subscriptionCheckError }), { 
               status: 500, 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -185,7 +256,19 @@ export async function handleWebhook(req: Request, supabase: any) {
           }
 
           if (!hasActiveSubscription) {
-            console.error('User does not have active subscription for top-up purchase')
+            const errorMsg = 'User does not have active subscription for top-up purchase';
+            console.error(errorMsg)
+            
+            // Update webhook log with error
+            await supabase
+              .from('razorpay_webhook_logs')
+              .update({ 
+                processing_error: errorMsg,
+                updated_at: new Date().toISOString()
+              })
+              .eq('order_id', orderId)
+              .eq('event_type', 'payment.captured');
+
             return new Response(JSON.stringify({ error: 'Active subscription required for top-up' }), { 
               status: 400, 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -210,6 +293,17 @@ export async function handleWebhook(req: Request, supabase: any) {
 
           if (creditError) {
             console.error('Error adding top-up word credits:', creditError)
+            
+            // Update webhook log with error
+            await supabase
+              .from('razorpay_webhook_logs')
+              .update({ 
+                processing_error: `Error adding top-up word credits: ${creditError.message}`,
+                updated_at: new Date().toISOString()
+              })
+              .eq('order_id', orderId)
+              .eq('event_type', 'payment.captured');
+
             return new Response(JSON.stringify({ error: 'Failed to add top-up credits', details: creditError }), { 
               status: 500, 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -219,33 +313,59 @@ export async function handleWebhook(req: Request, supabase: any) {
           }
 
         } else {
-          console.error('Unknown plan category:', wordPlan.plan_category)
+          const errorMsg = `Unknown plan category: ${wordPlan.plan_category}`;
+          console.error(errorMsg)
+          
+          // Update webhook log with error
+          await supabase
+            .from('razorpay_webhook_logs')
+            .update({ 
+              processing_error: errorMsg,
+              updated_at: new Date().toISOString()
+            })
+            .eq('order_id', orderId)
+            .eq('event_type', 'payment.captured');
+
           return new Response(JSON.stringify({ error: 'Unknown plan category', category: wordPlan.plan_category }), { 
             status: 400, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           })
         }
 
-        // Mark webhook as processed
+        // Mark webhook as processed successfully
         await supabase
           .from('razorpay_webhook_logs')
-          .update({ processed: true, updated_at: new Date().toISOString() })
+          .update({ 
+            processed: true, 
+            updated_at: new Date().toISOString()
+          })
           .eq('order_id', orderId)
           .eq('event_type', 'payment.captured')
 
-      } catch (error) {
-        console.error('Error processing payment:', error)
-        return new Response(JSON.stringify({ error: 'Error processing payment', details: error.message }), { 
+        console.log(`Successfully processed payment for order ${orderId}`)
+        return new Response(JSON.stringify({ success: true, order_id: orderId, payment_id: paymentId }), { 
+          status: 200, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
+
+      } catch (processingError) {
+        console.error('Error processing payment:', processingError)
+        
+        // Update webhook log with processing error
+        await supabase
+          .from('razorpay_webhook_logs')
+          .update({ 
+            processing_error: processingError.message,
+            updated_at: new Date().toISOString()
+          })
+          .eq('order_id', orderId)
+          .eq('event_type', 'payment.captured');
+
+        return new Response(JSON.stringify({ error: 'Error processing payment', details: processingError.message }), { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         })
       }
-
-      console.log(`Successfully processed payment for order ${orderId}`)
-      return new Response(JSON.stringify({ success: true, order_id: orderId, payment_id: paymentId }), { 
-        status: 200, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      })
     }
 
     // Handle other webhook events

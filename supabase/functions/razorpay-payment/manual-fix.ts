@@ -19,6 +19,53 @@ export async function manualFixPayment(supabase: any, orderId: string) {
 
     console.log('Found order:', order);
 
+    // Check if word_plan_id exists and is valid
+    if (!order.word_plan_id) {
+      console.log('Order missing word_plan_id, attempting to find a suitable plan...');
+      
+      // Try to find a subscription plan that matches the order amount
+      const { data: suitablePlan, error: planError } = await supabase
+        .from('word_plans')
+        .select('*')
+        .eq('plan_category', 'subscription')
+        .eq('is_active', true)
+        .limit(1);
+
+      if (planError || !suitablePlan || suitablePlan.length === 0) {
+        throw new Error('No suitable word plan found to assign to order');
+      }
+
+      // Update the order with a suitable plan
+      const { error: updateOrderError } = await supabase
+        .from('razorpay_orders')
+        .update({ 
+          word_plan_id: suitablePlan[0].id,
+          words_to_credit: suitablePlan[0].words_included,
+          updated_at: new Date().toISOString()
+        })
+        .eq('order_id', orderId);
+
+      if (updateOrderError) {
+        throw new Error(`Failed to update order with word plan: ${updateOrderError.message}`);
+      }
+
+      console.log('Updated order with word plan:', suitablePlan[0]);
+      
+      // Refresh order data
+      const { data: updatedOrder, error: refreshError } = await supabase
+        .from('razorpay_orders')
+        .select('*')
+        .eq('order_id', orderId)
+        .single();
+
+      if (refreshError) {
+        throw new Error(`Failed to refresh order data: ${refreshError.message}`);
+      }
+
+      order.word_plan_id = updatedOrder.word_plan_id;
+      order.words_to_credit = updatedOrder.words_to_credit;
+    }
+
     // Update order status to PAID
     const { error: updateOrderError } = await supabase
       .from('razorpay_orders')
@@ -39,8 +86,8 @@ export async function manualFixPayment(supabase: any, orderId: string) {
       .eq('id', order.word_plan_id)
       .single();
 
-    if (planError) {
-      throw new Error(`Word plan not found: ${planError.message}`);
+    if (planError || !wordPlan) {
+      throw new Error(`Word plan not found: ${planError?.message || 'Plan not found'}`);
     }
 
     console.log('Processing plan:', wordPlan);
@@ -92,6 +139,16 @@ export async function manualFixPayment(supabase: any, orderId: string) {
     if (transactionError) {
       console.error('Error creating transaction record:', transactionError);
     }
+
+    // Mark any related webhook as processed
+    await supabase
+      .from('razorpay_webhook_logs')
+      .update({ 
+        processed: true,
+        processing_error: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('order_id', orderId);
 
     console.log(`Successfully processed manual payment fix for order ${orderId}`);
     return { success: true, message: 'Payment manually processed successfully' };

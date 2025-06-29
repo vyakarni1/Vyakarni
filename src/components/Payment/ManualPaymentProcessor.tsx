@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Settings } from 'lucide-react';
+import PaymentDataFixer from './PaymentDataFixer';
 
 const ManualPaymentProcessor = () => {
   const [orderId, setOrderId] = useState('');
@@ -58,44 +59,48 @@ const ManualPaymentProcessor = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Settings className="h-5 w-5" />
-          <span>मैन्युअल पेमेंट प्रोसेसर</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <Label htmlFor="orderId">Razorpay Order ID</Label>
-          <Input
-            id="orderId"
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
-            placeholder="order_xxxxxxxxxxxxxx"
-          />
-        </div>
-        
-        <Button
-          onClick={handleManualFix}
-          disabled={isProcessing || !orderId.trim()}
-          className="w-full"
-        >
-          {isProcessing ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              प्रोसेस हो रहा है...
-            </>
-          ) : (
-            'मैन्युअल प्रोसेस करें'
-          )}
-        </Button>
-        
-        <p className="text-xs text-gray-600">
-          केवल Admin उपयोग के लिए - असफल भुगतान को मैन्युअल रूप से प्रोसेस करने के लिए
-        </p>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Settings className="h-5 w-5" />
+            <span>मैन्युअल पेमेंट प्रोसेसर</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="orderId">Razorpay Order ID</Label>
+            <Input
+              id="orderId"
+              value={orderId}
+              onChange={(e) => setOrderId(e.target.value)}
+              placeholder="order_xxxxxxxxxxxxxx"
+            />
+          </div>
+          
+          <Button
+            onClick={handleManualFix}
+            disabled={isProcessing || !orderId.trim()}
+            className="w-full"
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                प्रोसेस हो रहा है...
+              </>
+            ) : (
+              'मैन्युअल प्रोसेस करें'
+            )}
+          </Button>
+          
+          <p className="text-xs text-gray-600">
+            केवल Admin उपयोग के लिए - असफल भुगतान को मैन्युअल रूप से प्रोसेस करने के लिए
+          </p>
+        </CardContent>
+      </Card>
+
+      <PaymentDataFixer />
+    </div>
   );
 };
 
