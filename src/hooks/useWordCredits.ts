@@ -10,7 +10,7 @@ export const useWordCredits = () => {
   const { user } = useAuth();
   const { balance, fetchBalance, checkWordLimit, setBalance } = useWordBalance();
   const { deductWords } = useWordDeduction();
-  const { plans, loading, getSubscriptionPlans } = useWordPlans();
+  const { plans, loading, getSubscriptionPlans, getDiscountInfo } = useWordPlans();
   const { addWordCredits } = useWordCreditsManagement();
 
   // Force refresh balance when user changes or component mounts
@@ -66,5 +66,6 @@ export const useWordCredits = () => {
     checkWordLimit,
     addWordCredits: enhancedAddWordCredits,
     getSubscriptionPlans,
+    getDiscountInfo,
   };
 };

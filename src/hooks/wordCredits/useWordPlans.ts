@@ -50,18 +50,22 @@ export const useWordPlans = () => {
       }
 
       // Merge word plans with subscription plan data based on plan_type
-      const enhancedPlans = wordPlans?.map(wordPlan => {
+      const enhancedPlans: WordPlan[] = wordPlans?.map(wordPlan => {
         const subscriptionPlan = subscriptionPlans?.find(
           sp => sp.plan_type === wordPlan.plan_type
         );
+
+        // Convert Json[] to string[] for features
+        const features = subscriptionPlan?.features ? 
+          (Array.isArray(subscriptionPlan.features) ? 
+            subscriptionPlan.features.map(feature => String(feature)) : []) : [];
 
         return {
           ...wordPlan,
           max_words_per_correction: subscriptionPlan?.max_words_per_correction,
           max_corrections_per_month: subscriptionPlan?.max_corrections_per_month,
           max_team_members: subscriptionPlan?.max_team_members,
-          features: subscriptionPlan?.features ? 
-            (Array.isArray(subscriptionPlan.features) ? subscriptionPlan.features : []) : [],
+          features,
           subscription_plan_id: subscriptionPlan?.id,
         };
       }) || [];
