@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Star, Zap, Crown, Calculator, User } from "lucide-react";
 import { toast } from "sonner";
 import { useWordCredits } from "@/hooks/useWordCredits";
-import { useSubscription } from "@/hooks/useSubscription";
 import DiscountBadge from "@/components/DiscountBadge";
 import PaymentGatewaySelector from "@/components/Payment/PaymentGatewaySelector";
 import EnterprisePlanSection from "@/components/EnterprisePlanSection";
@@ -15,8 +14,7 @@ import Layout from "@/components/Layout";
 
 const Pricing = () => {
   const { user, loading: authLoading } = useAuth();
-  const { plans, loading: plansLoading, getSubscriptionPlans, getDiscountInfo } = useWordCredits();
-  const { subscription, loading: subscriptionLoading } = useSubscription();
+  const { plans, loading: plansLoading, getWordCreditPlans, getDiscountInfo } = useWordCredits();
   const navigate = useNavigate();
 
   const handleSelectPlan = async (plan: any) => {
@@ -56,7 +54,7 @@ const Pricing = () => {
     }
   };
 
-  if (authLoading || plansLoading || subscriptionLoading) {
+  if (authLoading || plansLoading) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -66,7 +64,7 @@ const Pricing = () => {
     );
   }
 
-  const subscriptionPlans = getSubscriptionPlans();
+  const wordCreditPlans = getWordCreditPlans();
 
   return (
     <Layout>
@@ -75,7 +73,7 @@ const Pricing = () => {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4 my-[12px] py-[8px]">
-              प्लान चुनें
+              शब्द क्रेडिट खरीदें
             </h1>
             <p className="text-xl text-gray-600 mb-4">
               एक बार खरीदें और स्थायी रूप से उपयोग करें
@@ -84,35 +82,20 @@ const Pricing = () => {
               <Calculator className="h-4 w-4" />
               <span>एक बार भुगतान • कोई समाप्ति नहीं • स्थायी एक्सेस</span>
             </div>
-
-            {/* Current User Status */}
-            {user && subscription && (
-              <div className="max-w-md mx-auto mt-6 p-4 bg-white rounded-lg border shadow-sm">
-                <div className="flex items-center justify-center space-x-2 text-sm">
-                  <User className="h-4 w-4 text-blue-600" />
-                  <span className="text-gray-600">आपका वर्तमान प्लान:</span>
-                  <Badge variant="outline" className="font-medium">
-                    {subscription.plan_name}
-                  </Badge>
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Subscription Plans */}
+          {/* Word Credit Plans */}
           <div className="mb-16">
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto p-6">
-              {subscriptionPlans.map((plan) => {
+              {wordCreditPlans.map((plan) => {
                 const discountInfo = getDiscountInfo(plan.plan_type);
-                const isCurrentPlan = subscription?.plan_type === plan.plan_type;
                 const totalPrice = plan.price_before_gst + (plan.price_before_gst * plan.gst_percentage / 100);
                 
                 return (
                   <Card 
                     key={plan.id} 
                     className={`relative transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
-                      plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 
-                      isCurrentPlan ? 'border-2 border-green-500 shadow-lg' : 'border border-gray-200'
+                      plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
                     }`}
                   >
                     {/* Discount Badge */}
@@ -120,20 +103,13 @@ const Pricing = () => {
                       <DiscountBadge percentage={discountInfo.percentage} />
                     )}
 
-                    {/* Current Plan Badge */}
-                    {isCurrentPlan && (
-                      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-green-600 text-white text-center py-2 text-sm font-medium">
-                        आपका वर्तमान प्लान
-                      </div>
-                    )}
-
-                    {plan.plan_type === 'basic' && !isCurrentPlan && (
+                    {plan.plan_type === 'basic' && (
                       <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
                         सबसे लोकप्रिय
                       </div>
                     )}
 
-                    <CardHeader className={`text-center ${(plan.plan_type === 'basic' && !isCurrentPlan) || isCurrentPlan ? 'pt-12' : 'pt-6'}`}>
+                    <CardHeader className={`text-center ${plan.plan_type === 'basic' ? 'pt-12' : 'pt-6'}`}>
                       <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${getPlanColor(plan.plan_type)} text-white mb-4 mx-auto`}>
                         {getPlanIcon(plan.plan_type)}
                       </div>
@@ -145,7 +121,7 @@ const Pricing = () => {
                           {plan.words_included.toLocaleString()} शब्द
                         </div>
                         <div className="text-xs text-gray-500">
-                          प्रति सुधार: {plan.max_words_per_correction || 'असीमित'} शब्द
+                          स्थायी एक्सेस • कोई समाप्ति नहीं
                         </div>
                       </div>
 
@@ -234,30 +210,13 @@ const Pricing = () => {
 
                       {/* Payment Button */}
                       <div className="pt-4">
-                        {plan.plan_type === 'free' ? (
-                          <Button 
-                            onClick={() => handleSelectPlan(plan)} 
-                            className="w-full bg-gray-600 hover:bg-gray-700" 
-                            disabled
-                          >
-                            साइनअप पर मिलता है
-                          </Button>
-                        ) : isCurrentPlan ? (
-                          <Button 
-                            className="w-full bg-green-600 hover:bg-green-700" 
-                            disabled
-                          >
-                            वर्तमान प्लान
-                          </Button>
-                        ) : (
-                          <PaymentGatewaySelector 
-                            wordPlan={plan} 
-                            onPaymentSuccess={() => {
-                              toast.success("भुगतान सफल! प्लान सक्रिय कर दिया गया है।");
-                              navigate("/billing");
-                            }} 
-                          />
-                        )}
+                        <PaymentGatewaySelector 
+                          wordPlan={plan} 
+                          onPaymentSuccess={() => {
+                            toast.success("भुगतान सफल! शब्द क्रेडिट आपके खाते में जोड़ दिए गए हैं।");
+                            navigate("/billing");
+                          }} 
+                        />
                       </div>
                     </CardContent>
                   </Card>
@@ -274,27 +233,27 @@ const Pricing = () => {
             <h2 className="text-3xl font-bold text-gray-800 mb-8">प्रायः पूछे जाने वाले प्रश्न</h2>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">प्लान कैसे काम करता है?</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">शब्द क्रेडिट कैसे काम करते हैं?</h3>
                 <p className="text-gray-600 text-sm">
-                  एक बार भुगतान करने के बाद आपको स्थायी एक्सेस मिल जाता है। कोई समाप्ति तारीख नहीं है।
+                  एक बार खरीदने के बाद शब्द क्रेडिट हमेशा के लिए आपके खाते में रहते हैं। कोई समाप्ति तारीख नहीं है।
                 </p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">क्या कोई समय सीमा है?</h3>
                 <p className="text-gray-600 text-sm">
-                  नहीं, एक बार खरीदने के बाद आप इसे हमेशा के लिए उपयोग कर सकते हैं।
+                  नहीं, एक बार खरीदने के बाद आप इन्हें कभी भी उपयोग कर सकते हैं। ये खत्म नहीं होते।
                 </p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">क्या मैं प्लान अपग्रेड कर सकता हूं?</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">अधिक शब्द कैसे खरीदें?</h3>
                 <p className="text-gray-600 text-sm">
-                  हां, आप किसी भी समय अपना प्लान अपग्रेड कर सकते हैं।
+                  आप किसी भी समय अपने शब्द क्रेडिट बढ़ा सकते हैं। नए खरीदे शब्द पुराने में जुड़ जाते हैं।
                 </p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">शब्द कैसे काम करते हैं?</h3>
+                <h3 className="font-semibold text-gray-800 mb-2">शब्द कैसे काउंट होते हैं?</h3>
                 <p className="text-gray-600 text-sm">
-                  आपके खरीदे गए शब्द कभी खत्म नहीं होते। आप इन्हें जब चाहें उपयोग कर सकते हैं।
+                  हर व्याकरण जांच के लिए आपके टेक्स्ट के शब्दों की संख्या के बराबर शब्द क्रेडिट कटते हैं।
                 </p>
               </div>
             </div>

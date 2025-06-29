@@ -2,7 +2,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from './types.ts'
 import { handleWebhook } from './webhook-handler.ts'
-import { handleSubscription } from './subscription-handler.ts'
 
 console.log("Razorpay payment function started")
 
@@ -18,23 +17,10 @@ serve(async (req) => {
 
     // Handle webhook requests
     if (url.pathname.includes('/webhook')) {
-      return await handleWebhook(req, null) // supabase client will be initialized in webhook handler
+      return await handleWebhook(req, null)
     }
 
-    // Handle subscription requests
-    if (url.pathname.includes('/subscription') || req.method === 'POST') {
-      const body = await req.clone().json()
-      if (body.action === 'create_subscription' || body.action === 'verify_subscription') {
-        const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2')
-        const supabase = createClient(
-          Deno.env.get('SUPABASE_URL') ?? '',
-          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-        )
-        return await handleSubscription(req, supabase)
-      }
-    }
-
-    // Handle one-time payment requests (existing functionality)
+    // Handle one-time payment requests (simplified)
     const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2')
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -54,7 +40,7 @@ serve(async (req) => {
 
     console.log('Creating one-time payment order for plan:', word_plan_id)
 
-    // Get the user from the request (this should be passed from the client)
+    // Get the user from the request
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Authorization required' }), {
@@ -123,6 +109,8 @@ serve(async (req) => {
           customer_name: customer_name,
           customer_email: customer_email,
           customer_phone: customer_phone,
+          words_to_credit: wordPlan.words_included,
+          plan_type: wordPlan.plan_type,
         },
       }),
     })

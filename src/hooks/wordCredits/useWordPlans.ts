@@ -1,30 +1,15 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
-interface WordPlan {
-  id: string;
-  plan_name: string;
-  plan_type: string;
-  plan_category: string;
-  words_included: number;
-  price_before_gst: number;
-  gst_percentage: number;
-  // Enhanced fields from subscription_plans
-  max_words_per_correction?: number;
-  max_corrections_per_month?: number;
-  max_team_members?: number;
-  features?: string[];
-  subscription_plan_id?: string;
-}
+import type { WordCreditPlan } from '@/types/wordPlan';
 
 export const useWordPlans = () => {
-  const [plans, setPlans] = useState<WordPlan[]>([]);
+  const [plans, setPlans] = useState<WordCreditPlan[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPlans = async () => {
     try {
-      // Fetch word plans with corresponding subscription plan details
+      // Fetch word plans - focus on subscription category plans as main plans
       const { data: wordPlans, error: wordPlansError } = await supabase
         .from('word_plans')
         .select('*')
@@ -37,38 +22,16 @@ export const useWordPlans = () => {
         return;
       }
 
-      // Fetch subscription plans to get features and limits
-      const { data: subscriptionPlans, error: subscriptionError } = await supabase
-        .from('subscription_plans')
-        .select('*')
-        .eq('is_active', true)
-        .order('price_monthly', { ascending: true });
-
-      if (subscriptionError) {
-        console.error('Error fetching subscription plans:', subscriptionError);
-        return;
-      }
-
-      // Merge word plans with subscription plan data based on plan_type
-      const enhancedPlans: WordPlan[] = wordPlans?.map(wordPlan => {
-        const subscriptionPlan = subscriptionPlans?.find(
-          sp => sp.plan_type === wordPlan.plan_type
-        );
-
-        // Convert Json[] to string[] for features
-        const features = subscriptionPlan?.features ? 
-          (Array.isArray(subscriptionPlan.features) ? 
-            subscriptionPlan.features.map(feature => String(feature)) : []) : [];
-
-        return {
-          ...wordPlan,
-          max_words_per_correction: subscriptionPlan?.max_words_per_correction,
-          max_corrections_per_month: subscriptionPlan?.max_corrections_per_month,
-          max_team_members: subscriptionPlan?.max_team_members,
-          features,
-          subscription_plan_id: subscriptionPlan?.id,
-        };
-      }) || [];
+      // Convert to WordCreditPlan format with default features
+      const enhancedPlans: WordCreditPlan[] = wordPlans?.map(plan => ({
+        ...plan,
+        max_words_per_correction: plan.plan_type === 'free' ? 100 : 
+                                  plan.plan_type === 'basic' ? 500 : 2000,
+        max_corrections_per_month: plan.plan_type === 'free' ? 50 : 
+                                   plan.plan_type === 'basic' ? 200 : 1000,
+        max_team_members: plan.plan_type === 'premium' ? 5 : 1,
+        features: getDefaultFeatures(plan.plan_type),
+      })) || [];
 
       setPlans(enhancedPlans);
     } catch (error) {
@@ -78,7 +41,41 @@ export const useWordPlans = () => {
     }
   };
 
-  const getSubscriptionPlans = () => {
+  const getDefaultFeatures = (planType: string): string[] => {
+    const baseFeatures = [
+      "हिंदी व्याकरण जाँच",
+      "एक-क्लिक वाक्य सुधार", 
+      "शैली सुधार",
+      "तत्काल परिणाम"
+    ];
+
+    if (planType === 'free') {
+      return baseFeatures;
+    }
+
+    const premiumFeatures = [
+      ...baseFeatures,
+      "विस्तृत रिपोर्ट",
+      "समर्पित सहायता"
+    ];
+
+    if (planType === 'basic') {
+      return premiumFeatures;
+    }
+
+    if (planType === 'premium') {
+      return [
+        ...premiumFeatures,
+        "एडवांस एआई फीचर्स",
+        "प्राथमिकता सपोर्ट",
+        "टीम सहयोग (5 सदस्य)"
+      ];
+    }
+
+    return baseFeatures;
+  };
+
+  const getWordCreditPlans = () => {
     return plans.filter(plan => plan.plan_category === 'subscription');
   };
 
@@ -118,7 +115,7 @@ export const useWordPlans = () => {
     plans,
     loading,
     fetchPlans,
-    getSubscriptionPlans,
+    getWordCreditPlans,
     getDiscountInfo,
   };
 };

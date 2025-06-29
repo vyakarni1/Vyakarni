@@ -7,17 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Loader2, CreditCard } from 'lucide-react';
 import { useRazorpayPayment } from '@/hooks/useRazorpayPayment';
 import { useAuth } from '@/components/AuthProvider';
-
-interface WordPlan {
-  id: string;
-  plan_name: string;
-  words_included: number;
-  price_before_gst: number;
-  gst_percentage: number;
-}
+import type { WordCreditPlan } from '@/types/wordPlan';
 
 interface RazorpayPaymentButtonProps {
-  wordPlan: WordPlan;
+  wordPlan: WordCreditPlan;
   onPaymentSuccess?: () => void;
 }
 
@@ -53,6 +46,14 @@ const RazorpayPaymentButton: React.FC<RazorpayPaymentButtonProps> = ({
     }
   };
 
+  if (wordPlan.plan_type === 'free' || wordPlan.price_before_gst === 0) {
+    return (
+      <Button className="w-full bg-gray-600 hover:bg-gray-700" disabled>
+        साइनअप पर मिलता है
+      </Button>
+    );
+  }
+
   if (!showForm) {
     return (
       <Button
@@ -73,7 +74,7 @@ const RazorpayPaymentButton: React.FC<RazorpayPaymentButtonProps> = ({
           {wordPlan.plan_name} - ₹{totalAmount.toFixed(2)}
         </CardTitle>
         <p className="text-center text-sm text-gray-600">
-          {wordPlan.words_included.toLocaleString()} शब्द
+          {wordPlan.words_included.toLocaleString()} शब्द स्थायी रूप से
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
