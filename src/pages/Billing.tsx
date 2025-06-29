@@ -2,7 +2,6 @@
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useWordCredits } from "@/hooks/useWordCredits";
-import { useSubscription } from "@/hooks/useSubscription";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import WordCreditsOverview from "@/components/Billing/WordCreditsOverview";
 import BillingHistory from "@/components/Billing/BillingHistory";
@@ -19,7 +18,6 @@ import { toast } from "sonner";
 const Billing = () => {
   const { user, loading: authLoading } = useAuth();
   const { balance, loading: balanceLoading, fetchBalance } = useWordCredits();
-  const { subscription, refetch: refetchSubscription, loading: subscriptionLoading } = useSubscription();
   const { lastUpdate } = useRealtimeSubscription();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -33,7 +31,6 @@ const Billing = () => {
       const refreshData = async () => {
         console.log('Payment success detected, refreshing billing data...');
         await fetchBalance();
-        await refetchSubscription();
         toast.success('भुगतान सफल! आपका डेटा अपडेट हो गया है।');
       };
       
@@ -41,19 +38,19 @@ const Billing = () => {
       const timer = setTimeout(refreshData, 2000);
       return () => clearTimeout(timer);
     }
-  }, [paymentStatus, fetchBalance, refetchSubscription]);
+  }, [paymentStatus, fetchBalance]);
 
   // Refresh data when realtime updates are detected
   useEffect(() => {
     const refreshData = async () => {
       console.log('Realtime update detected, refreshing billing data...');
-      await Promise.all([fetchBalance(), refetchSubscription()]);
+      await fetchBalance();
     };
 
     if (lastUpdate > 0) {
       refreshData();
     }
-  }, [lastUpdate, fetchBalance, refetchSubscription]);
+  }, [lastUpdate, fetchBalance]);
 
   if (!authLoading && !user) {
     navigate("/login");
@@ -65,7 +62,7 @@ const Billing = () => {
     return <PaymentSuccessHandler />;
   }
 
-  if (authLoading || balanceLoading || subscriptionLoading) {
+  if (authLoading || balanceLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center space-y-4">
@@ -79,25 +76,29 @@ const Billing = () => {
   // Manual refresh function for debugging
   const handleManualRefresh = async () => {
     toast.info('डेटा अपडेट हो रहा है...');
-    await Promise.all([fetchBalance(), refetchSubscription()]);
+    await fetchBalance();
     toast.success('डेटा अपडेट हो गया!');
   };
 
-  // Get subscription status for display
-  const getSubscriptionStatusText = () => {
-    if (!subscription) return 'कोई प्लान नहीं';
-    
-    if (balance.purchased_words > 0) {
-      if (subscription.plan_type === 'free') {
-        return balance.purchased_words >= 25000 ? 'प्रीमियम (खरीदा गया)' : 'बेसिक (खरीदा गया)';
-      }
+  // Simple word credit tier determination
+  const getWordCreditTier = () => {
+    if (balance.purchased_words >= 25000) {
+      return 'प्रोफेशनल';
+    } else if (balance.purchased_words >= 5000) {
+      return 'हॉबी';
+    } else {
+      return 'मुफ्त';
     }
-    
-    switch (subscription.plan_type) {
-      case 'premium': return 'प्रीमियम';
-      case 'basic': return 'बेसिक';
-      case 'free': return 'मुफ्त';
-      default: return subscription.plan_name;
+  };
+
+  // Get simple status text
+  const getSimpleStatusText = () => {
+    if (balance.purchased_words > 0 && balance.free_words > 0) {
+      return `${balance.total_words_available.toLocaleString()} शब्द उपलब्ध`;
+    } else if (balance.purchased_words > 0) {
+      return `${balance.purchased_words.toLocaleString()} खरीदे गए शब्द`;
+    } else {
+      return `${balance.free_words.toLocaleString()} मुफ्त शब्द`;
     }
   };
 
@@ -129,7 +130,7 @@ const Billing = () => {
                     {balance.total_words_available.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    खरीदे गए: {balance.purchased_words.toLocaleString()}
+                    उपलब्ध शब्द
                   </p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-blue-600" />
@@ -146,7 +147,7 @@ const Billing = () => {
                     {balance.purchased_words.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    मुफ्त: {balance.free_words.toLocaleString()}
+                    स्थायी रूप से उपलब्ध
                   </p>
                 </div>
                 <CreditCard className="h-8 w-8 text-green-600" />
@@ -158,12 +159,12 @@ const Billing = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">प्लान स्थिति</p>
+                  <p className="text-sm font-medium text-gray-600">शब्द क्रेडिट टियर</p>
                   <p className="text-2xl font-bold text-purple-600">
-                    {getSubscriptionStatusText()}
+                    {getWordCreditTier()}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    स्थिति: {subscription?.status || 'अज्ञात'}
+                    {getSimpleStatusText()}
                   </p>
                 </div>
                 <FileText className="h-8 w-8 text-purple-600" />
@@ -171,22 +172,6 @@ const Billing = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Debug Information (only in development) */}
-        {process.env.NODE_ENV === 'development' && (
-          <Card className="mb-8 border-yellow-200 bg-yellow-50">
-            <CardContent className="p-4">
-              <h3 className="text-sm font-semibold text-yellow-800 mb-2">Debug Information</h3>
-              <div className="text-xs text-yellow-700 space-y-1">
-                <p>Subscription Plan Type: {subscription?.plan_type || 'None'}</p>
-                <p>Subscription Status: {subscription?.status || 'None'}</p>
-                <p>Has Active Subscription: {balance.has_active_subscription ? 'Yes' : 'No'}</p>
-                <p>Purchased Words: {balance.purchased_words}</p>
-                <p>Last Update: {new Date(lastUpdate).toLocaleString()}</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Main Content */}
         <div className="grid lg:grid-cols-3 gap-8">
