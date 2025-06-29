@@ -32,46 +32,12 @@ export const useSubscription = () => {
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const createDefaultSubscription = async () => {
-    if (!user) return;
-
-    try {
-      // Get the free plan ID
-      const { data: freePlan, error: planError } = await supabase
-        .from('subscription_plans')
-        .select('*')
-        .eq('plan_type', 'free')
-        .single();
-
-      if (planError || !freePlan) {
-        console.error('Error getting free plan:', planError);
-        return;
-      }
-
-      // Create subscription for the user
-      const { error: subscriptionError } = await supabase
-        .from('user_subscriptions')
-        .insert({
-          user_id: user.id,
-          plan_id: freePlan.id,
-          status: 'active',
-          auto_renewal: false, // Free plan doesn't auto-renew
-        });
-
-      if (subscriptionError) {
-        console.error('Error creating subscription:', subscriptionError);
-        return;
-      }
-
-      // Refetch subscription after creating
-      fetchSubscription();
-    } catch (error) {
-      console.error('Error in createDefaultSubscription:', error);
+  const fetchSubscription = async (forceRefresh = false) => {
+    if (!user) {
+      setSubscription(null);
+      setLoading(false);
+      return;
     }
-  };
-
-  const fetchSubscription = async () => {
-    if (!user) return;
 
     try {
       // Get subscription with additional billing info
@@ -127,14 +93,78 @@ export const useSubscription = () => {
           setSubscription(newSubscription);
         }
       } else {
-        // No subscription found, create default free subscription
-        console.log('No subscription found, creating default free subscription');
+        // Try to create a default subscription if none exists
+        console.log('No active subscription found, checking if we need to create one');
         await createDefaultSubscription();
       }
     } catch (error) {
       console.error('Error in fetchSubscription:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createDefaultSubscription = async () => {
+    if (!user) return;
+
+    try {
+      // Check if user has purchased word credits but no active subscription
+      const { data: wordCredits } = await supabase
+        .from('user_word_credits')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_free_credit', false)
+        .gt('words_available', 0);
+
+      if (wordCredits && wordCredits.length > 0) {
+        // User has purchased credits, should have basic plan
+        const { data: basicPlan } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .eq('plan_type', 'basic')
+          .eq('is_active', true)
+          .single();
+
+        if (basicPlan) {
+          const { error } = await supabase
+            .from('user_subscriptions')
+            .insert({
+              user_id: user.id,
+              plan_id: basicPlan.id,
+              status: 'active',
+              auto_renewal: false,
+            });
+
+          if (!error) {
+            await fetchSubscription();
+          }
+        }
+      } else {
+        // Create free subscription
+        const { data: freePlan } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .eq('plan_type', 'free')
+          .eq('is_active', true)
+          .single();
+
+        if (freePlan) {
+          const { error } = await supabase
+            .from('user_subscriptions')
+            .insert({
+              user_id: user.id,
+              plan_id: freePlan.id,
+              status: 'active',
+              auto_renewal: false,
+            });
+
+          if (!error) {
+            await fetchSubscription();
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error in createDefaultSubscription:', error);
     }
   };
 
@@ -147,7 +177,6 @@ export const useSubscription = () => {
     if (!user || !subscription) return false;
 
     try {
-      // Calculate next billing date (1 month from now)
       const nextBillingDate = new Date();
       nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
 
@@ -165,7 +194,7 @@ export const useSubscription = () => {
         return false;
       }
 
-      await fetchSubscription();
+      await fetchSubscription(true);
       return true;
     } catch (error) {
       console.error('Error in upgradeSubscription:', error);
@@ -189,7 +218,7 @@ export const useSubscription = () => {
         return false;
       }
 
-      await fetchSubscription();
+      await fetchSubscription(true);
       return true;
     } catch (error) {
       console.error('Error in cancelSubscription:', error);
@@ -197,7 +226,6 @@ export const useSubscription = () => {
     }
   };
 
-  // Enhanced subscription active check using the database function
   const isSubscriptionActive = async (): Promise<boolean> => {
     if (!user) return false;
     
@@ -235,6 +263,6 @@ export const useSubscription = () => {
     upgradeSubscription,
     cancelSubscription,
     isSubscriptionActive,
-    refetch: fetchSubscription
+    refetch: () => fetchSubscription(true)
   };
 };

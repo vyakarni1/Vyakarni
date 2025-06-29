@@ -2,21 +2,38 @@
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useWordCredits } from "@/hooks/useWordCredits";
+import { useSubscription } from "@/hooks/useSubscription";
 import WordCreditsOverview from "@/components/Billing/WordCreditsOverview";
 import BillingHistory from "@/components/Billing/BillingHistory";
 import UsageAnalytics from "@/components/Billing/UsageAnalytics";
 import CurrentPlan from "@/components/Billing/CurrentPlan";
 import PaymentSuccessHandler from "@/components/Payment/PaymentSuccessHandler";
 import UnifiedNavigation from "@/components/UnifiedNavigation";
+import { useEffect } from "react";
 
 const Billing = () => {
   const { user, loading: authLoading } = useAuth();
-  const { balance, loading: balanceLoading } = useWordCredits();
+  const { balance, loading: balanceLoading, fetchBalance } = useWordCredits();
+  const { refetch: refetchSubscription } = useSubscription();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   // Check if this is a payment success redirect
   const paymentStatus = searchParams.get('payment');
+
+  // Refresh data when payment is successful
+  useEffect(() => {
+    if (paymentStatus === 'success') {
+      const refreshData = async () => {
+        await fetchBalance();
+        await refetchSubscription();
+      };
+      
+      // Add delay to ensure database updates are complete
+      const timer = setTimeout(refreshData, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [paymentStatus, fetchBalance, refetchSubscription]);
 
   if (!authLoading && !user) {
     navigate("/login");

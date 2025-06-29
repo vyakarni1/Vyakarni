@@ -13,9 +13,14 @@ export const useWordCredits = () => {
   const { plans, loading, getSubscriptionPlans, getTopupPlans } = useWordPlans();
   const { addWordCredits, canPurchaseTopup } = useWordCreditsManagement();
 
+  // Force refresh balance when user changes or component mounts
   useEffect(() => {
     if (user) {
-      fetchBalance();
+      // Add a small delay to ensure database functions are ready
+      const timer = setTimeout(() => {
+        fetchBalance();
+      }, 100);
+      return () => clearTimeout(timer);
     } else {
       setBalance({
         total_words_available: 0,
@@ -47,16 +52,20 @@ export const useWordCredits = () => {
     return result;
   };
 
-  // Enhanced top-up availability check
   const canPurchaseTopupCredits = async (): Promise<boolean> => {
     return await canPurchaseTopup();
+  };
+
+  // Enhanced refresh function that can be called externally
+  const refreshBalance = async () => {
+    await fetchBalance();
   };
 
   return {
     balance,
     plans,
     loading,
-    fetchBalance,
+    fetchBalance: refreshBalance,
     deductWords: enhancedDeductWords,
     checkWordLimit,
     addWordCredits: enhancedAddWordCredits,
