@@ -3,6 +3,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import WordCreditsOverview from "@/components/Billing/WordCreditsOverview";
 import BillingHistory from "@/components/Billing/BillingHistory";
 import UsageAnalytics from "@/components/Billing/UsageAnalytics";
@@ -17,13 +18,14 @@ const Billing = () => {
   const { user, loading: authLoading } = useAuth();
   const { balance, loading: balanceLoading, fetchBalance } = useWordCredits();
   const { refetch: refetchSubscription } = useSubscription();
+  const { lastUpdate } = useRealtimeSubscription();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   // Check if this is a payment success redirect
   const paymentStatus = searchParams.get('payment');
 
-  // Refresh data when payment is successful
+  // Refresh data when payment is successful or when realtime updates occur
   useEffect(() => {
     if (paymentStatus === 'success') {
       const refreshData = async () => {
@@ -36,6 +38,18 @@ const Billing = () => {
       return () => clearTimeout(timer);
     }
   }, [paymentStatus, fetchBalance, refetchSubscription]);
+
+  // Refresh data when realtime updates are detected
+  useEffect(() => {
+    const refreshData = async () => {
+      console.log('Realtime update detected, refreshing data...');
+      await Promise.all([fetchBalance(), refetchSubscription()]);
+    };
+
+    if (lastUpdate > 0) {
+      refreshData();
+    }
+  }, [lastUpdate, fetchBalance, refetchSubscription]);
 
   if (!authLoading && !user) {
     navigate("/login");

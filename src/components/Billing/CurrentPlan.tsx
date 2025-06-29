@@ -4,12 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useWordCredits } from "@/hooks/useWordCredits";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import { CreditCard, Star, Users, FileText, AlertTriangle, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const CurrentPlan = () => {
-  const { subscription, loading } = useSubscription();
-  const { balance } = useWordCredits();
+  const { subscription, loading, refetch } = useSubscription();
+  const { balance, fetchBalance } = useWordCredits();
+  const { lastUpdate } = useRealtimeSubscription();
+
+  // Refresh subscription data when realtime updates occur
+  useEffect(() => {
+    if (lastUpdate > 0) {
+      console.log('CurrentPlan: Realtime update detected, refreshing subscription...');
+      refetch();
+      fetchBalance();
+    }
+  }, [lastUpdate, refetch, fetchBalance]);
 
   if (loading) {
     return (

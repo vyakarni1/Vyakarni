@@ -40,6 +40,8 @@ export const useSubscription = () => {
     }
 
     try {
+      console.log('Fetching subscription for user:', user.id, forceRefresh ? '(forced)' : '');
+      
       // Get subscription with additional billing info
       const { data, error } = await supabase
         .from('user_subscriptions')

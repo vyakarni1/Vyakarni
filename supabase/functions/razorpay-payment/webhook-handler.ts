@@ -73,7 +73,6 @@ export async function handleWebhook(req: Request, supabase: any) {
           const errorMsg = `Order not found: ${orderId}`;
           console.error(errorMsg, orderError);
           
-          // Update webhook log with error
           await supabase
             .from('razorpay_webhook_logs')
             .update({ 
@@ -103,7 +102,6 @@ export async function handleWebhook(req: Request, supabase: any) {
         if (updateError) {
           console.error('Error updating order:', updateError)
           
-          // Update webhook log with error
           await supabase
             .from('razorpay_webhook_logs')
             .update({ 
@@ -130,7 +128,6 @@ export async function handleWebhook(req: Request, supabase: any) {
           const errorMsg = `Word plan not found for ID: ${order.word_plan_id}`;
           console.error(errorMsg, planError);
           
-          // Update webhook log with error
           await supabase
             .from('razorpay_webhook_logs')
             .update({ 
@@ -166,170 +163,66 @@ export async function handleWebhook(req: Request, supabase: any) {
           // Continue processing even if transaction log fails
         }
 
-        // Process based on plan category
-        if (wordPlan.plan_category === 'subscription') {
-          console.log('Processing subscription purchase')
-          
-          // Create subscription using the database function
+        // Process subscription purchase (all plans are now subscriptions)
+        console.log('Processing subscription purchase for plan:', wordPlan.plan_type)
+        
+        // Find corresponding subscription plan
+        const { data: subscriptionPlan, error: subPlanError } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .eq('plan_type', wordPlan.plan_type)
+          .eq('is_active', true)
+          .single()
+
+        if (subPlanError || !subscriptionPlan) {
+          console.error('Subscription plan not found for type:', wordPlan.plan_type)
+          // Create subscription with basic logic even if plan not found
+        } else {
+          // Create or upgrade subscription using the database function
           const { data: subscriptionData, error: subscriptionError } = await supabase
             .rpc('create_subscription_for_user', {
               user_uuid: order.user_id,
-              plan_uuid: order.word_plan_id
+              plan_uuid: subscriptionPlan.id
             })
 
           if (subscriptionError) {
-            console.error('Error creating subscription:', subscriptionError)
-            
-            // Update webhook log with error
-            await supabase
-              .from('razorpay_webhook_logs')
-              .update({ 
-                processing_error: `Error creating subscription: ${subscriptionError.message}`,
-                updated_at: new Date().toISOString()
-              })
-              .eq('order_id', orderId)
-              .eq('event_type', 'payment.captured');
+            console.error('Error creating/upgrading subscription:', subscriptionError)
           } else {
-            console.log('Successfully created subscription:', subscriptionData)
+            console.log('Successfully created/upgraded subscription:', subscriptionData)
           }
+        }
 
-          // Add subscription word credits (no expiry for subscription words)
-          const { error: creditError } = await supabase
-            .from('user_word_credits')
-            .insert({
-              user_id: order.user_id,
-              words_available: order.words_to_credit,
-              words_purchased: order.words_to_credit,
-              is_free_credit: false,
-              credit_type: 'subscription',
-              purchase_date: new Date().toISOString(),
-              expiry_date: null, // Subscription words don't expire
-            })
+        // Add word credits (no expiry for subscription words)
+        const { error: creditError } = await supabase
+          .from('user_word_credits')
+          .insert({
+            user_id: order.user_id,
+            words_available: order.words_to_credit,
+            words_purchased: order.words_to_credit,
+            is_free_credit: false,
+            credit_type: 'subscription',
+            purchase_date: new Date().toISOString(),
+            expiry_date: null, // No expiry for subscription words
+          })
 
-          if (creditError) {
-            console.error('Error adding subscription word credits:', creditError)
-            
-            // Update webhook log with error
-            await supabase
-              .from('razorpay_webhook_logs')
-              .update({ 
-                processing_error: `Error adding subscription word credits: ${creditError.message}`,
-                updated_at: new Date().toISOString()
-              })
-              .eq('order_id', orderId)
-              .eq('event_type', 'payment.captured');
-
-            return new Response(JSON.stringify({ error: 'Failed to add word credits', details: creditError }), { 
-              status: 500, 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-            })
-          } else {
-            console.log(`Successfully added ${order.words_to_credit} subscription words to user ${order.user_id}`)
-          }
-
-        } else if (wordPlan.plan_category === 'topup') {
-          console.log('Processing top-up purchase')
+        if (creditError) {
+          console.error('Error adding word credits:', creditError)
           
-          // Check if user has active subscription
-          const { data: hasActiveSubscription, error: subscriptionCheckError } = await supabase
-            .rpc('check_user_has_active_subscription', {
-              user_uuid: order.user_id
-            })
-
-          if (subscriptionCheckError) {
-            console.error('Error checking subscription status:', subscriptionCheckError)
-            
-            // Update webhook log with error
-            await supabase
-              .from('razorpay_webhook_logs')
-              .update({ 
-                processing_error: `Error checking subscription status: ${subscriptionCheckError.message}`,
-                updated_at: new Date().toISOString()
-              })
-              .eq('order_id', orderId)
-              .eq('event_type', 'payment.captured');
-
-            return new Response(JSON.stringify({ error: 'Error checking subscription status', details: subscriptionCheckError }), { 
-              status: 500, 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-            })
-          }
-
-          if (!hasActiveSubscription) {
-            const errorMsg = 'User does not have active subscription for top-up purchase';
-            console.error(errorMsg)
-            
-            // Update webhook log with error
-            await supabase
-              .from('razorpay_webhook_logs')
-              .update({ 
-                processing_error: errorMsg,
-                updated_at: new Date().toISOString()
-              })
-              .eq('order_id', orderId)
-              .eq('event_type', 'payment.captured');
-
-            return new Response(JSON.stringify({ error: 'Active subscription required for top-up' }), { 
-              status: 400, 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-            })
-          }
-
-          // Add top-up word credits (30 days expiry)
-          const expiryDate = new Date()
-          expiryDate.setDate(expiryDate.getDate() + 30)
-
-          const { error: creditError } = await supabase
-            .from('user_word_credits')
-            .insert({
-              user_id: order.user_id,
-              words_available: order.words_to_credit,
-              words_purchased: order.words_to_credit,
-              is_free_credit: false,
-              credit_type: 'topup',
-              purchase_date: new Date().toISOString(),
-              expiry_date: expiryDate.toISOString(),
-            })
-
-          if (creditError) {
-            console.error('Error adding top-up word credits:', creditError)
-            
-            // Update webhook log with error
-            await supabase
-              .from('razorpay_webhook_logs')
-              .update({ 
-                processing_error: `Error adding top-up word credits: ${creditError.message}`,
-                updated_at: new Date().toISOString()
-              })
-              .eq('order_id', orderId)
-              .eq('event_type', 'payment.captured');
-
-            return new Response(JSON.stringify({ error: 'Failed to add top-up credits', details: creditError }), { 
-              status: 500, 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-            })
-          } else {
-            console.log(`Successfully added ${order.words_to_credit} top-up words to user ${order.user_id}`)
-          }
-
-        } else {
-          const errorMsg = `Unknown plan category: ${wordPlan.plan_category}`;
-          console.error(errorMsg)
-          
-          // Update webhook log with error
           await supabase
             .from('razorpay_webhook_logs')
             .update({ 
-              processing_error: errorMsg,
+              processing_error: `Error adding word credits: ${creditError.message}`,
               updated_at: new Date().toISOString()
             })
             .eq('order_id', orderId)
             .eq('event_type', 'payment.captured');
 
-          return new Response(JSON.stringify({ error: 'Unknown plan category', category: wordPlan.plan_category }), { 
-            status: 400, 
+          return new Response(JSON.stringify({ error: 'Failed to add word credits', details: creditError }), { 
+            status: 500, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           })
+        } else {
+          console.log(`Successfully added ${order.words_to_credit} subscription words to user ${order.user_id}`)
         }
 
         // Mark webhook as processed successfully
