@@ -1,6 +1,7 @@
 
 import React from 'react';
 import RazorpayPaymentButton from './RazorpayPaymentButton';
+import RazorpaySubscriptionButton from './RazorpaySubscriptionButton';
 
 interface WordPlan {
   id: string;
@@ -19,12 +20,20 @@ interface WordPlan {
 interface PaymentGatewaySelectorProps {
   wordPlan: WordPlan;
   onPaymentSuccess?: () => void;
+  subscriptionMode?: boolean; // New prop to determine payment type
 }
 
 const PaymentGatewaySelector: React.FC<PaymentGatewaySelectorProps> = ({
   wordPlan,
-  onPaymentSuccess
+  onPaymentSuccess,
+  subscriptionMode = false
 }) => {
+  // For subscription plans, use subscription payment
+  if (subscriptionMode || wordPlan.plan_type === 'basic' || wordPlan.plan_type === 'premium') {
+    return <RazorpaySubscriptionButton subscriptionPlan={wordPlan} onPaymentSuccess={onPaymentSuccess} />;
+  }
+
+  // For one-time purchases (topup plans), use regular payment
   return <RazorpayPaymentButton wordPlan={wordPlan} onPaymentSuccess={onPaymentSuccess} />;
 };
 

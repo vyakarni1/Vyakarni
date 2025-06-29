@@ -1,9 +1,17 @@
-
 import { corsHeaders } from './types.ts'
 import { manualFixPayment } from './manual-fix.ts'
 
 export async function handleWebhook(req: Request, supabase: any) {
   console.log('Razorpay webhook received:', req.method, req.url)
+  
+  // Initialize supabase client if not provided
+  if (!supabase) {
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2')
+    supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+  }
   
   // Handle test requests
   if (req.method === 'GET') {
@@ -35,8 +43,9 @@ export async function handleWebhook(req: Request, supabase: any) {
     // Enhanced webhook logging
     const logEntry = {
       event_type: webhookData.event || 'unknown',
-      order_id: webhookData.payload?.order?.entity?.id || webhookData.payload?.payment?.entity?.order_id,
+      order_id: webhookData.payload?.order?.entity?.id || webhookData.payload?.payment?.entity?.order_id || webhookData.payload?.subscription?.entity?.id,
       payment_id: webhookData.payload?.payment?.entity?.id,
+      subscription_id: webhookData.payload?.subscription?.entity?.id,
       webhook_data: webhookData,
       signature: signature,
       processed: false,
@@ -53,7 +62,20 @@ export async function handleWebhook(req: Request, supabase: any) {
       console.error('Error logging webhook:', logError);
     }
 
-    // Handle payment.captured event
+    // Handle subscription events
+    if (webhookData.event === 'subscription.charged') {
+      return await handleSubscriptionCharged(webhookData, supabase);
+    }
+
+    if (webhookData.event === 'subscription.activated') {
+      return await handleSubscriptionActivated(webhookData, supabase);
+    }
+
+    if (webhookData.event === 'subscription.cancelled') {
+      return await handleSubscriptionCancelled(webhookData, supabase);
+    }
+
+    // Handle payment.captured event (existing functionality)
     if (webhookData.event === 'payment.captured') {
       const payment = webhookData.payload.payment.entity
       const orderId = payment.order_id
@@ -275,5 +297,184 @@ export async function handleWebhook(req: Request, supabase: any) {
       status: 500, 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     })
+  }
+}
+
+async function handleSubscriptionCharged(webhookData: any, supabase: any) {
+  const subscription = webhookData.payload.subscription.entity;
+  const payment = webhookData.payload.payment ? webhookData.payload.payment.entity : null;
+  
+  console.log('Processing subscription.charged for subscription:', subscription.id);
+
+  try {
+    // Find the subscription in our database
+    const { data: userSubscription, error: subError } = await supabase
+      .from('user_subscriptions')
+      .select('*')
+      .eq('razorpay_subscription_id', subscription.id)
+      .single();
+
+    if (subError || !userSubscription) {
+      console.error('Subscription not found:', subscription.id);
+      return new Response(JSON.stringify({ error: 'Subscription not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Record the charge
+    const { error: chargeError } = await supabase
+      .from('subscription_charges')
+      .insert({
+        user_id: userSubscription.user_id,
+        mandate_id: userSubscription.mandate_id,
+        amount: subscription.current_start ? (subscription.current_end - subscription.current_start) * subscription.plan_id.item.amount / 100 : 0,
+        currency: 'INR',
+        status: 'paid',
+        charge_date: new Date().toISOString(),
+        paid_at: payment ? new Date(payment.created_at * 1000).toISOString() : new Date().toISOString(),
+        razorpay_payment_id: payment ? payment.id : null,
+        notes: {
+          subscription_id: subscription.id,
+          plan_id: subscription.plan_id,
+        }
+      });
+
+    if (chargeError) {
+      console.error('Error recording subscription charge:', chargeError);
+    }
+
+    // Add word credits for the subscription period
+    const { data: subscriptionPlan, error: planError } = await supabase
+      .from('subscription_plans')
+      .select('*, word_plans!inner(*)')
+      .eq('id', userSubscription.plan_id)
+      .single();
+
+    if (subscriptionPlan && subscriptionPlan.word_plans) {
+      const { error: creditError } = await supabase
+        .from('user_word_credits')
+        .insert({
+          user_id: userSubscription.user_id,
+          words_available: subscriptionPlan.word_plans.words_included,
+          words_purchased: subscriptionPlan.word_plans.words_included,
+          is_free_credit: false,
+          credit_type: 'subscription',
+          purchase_date: new Date().toISOString(),
+          expiry_date: null,
+          related_subscription_id: userSubscription.id,
+        });
+
+      if (creditError) {
+        console.error('Error adding subscription word credits:', creditError);
+      } else {
+        console.log(`Added ${subscriptionPlan.word_plans.words_included} words for subscription ${subscription.id}`);
+      }
+    }
+
+    return new Response(JSON.stringify({ success: true, subscription_id: subscription.id }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    console.error('Error processing subscription charge:', error);
+    return new Response(JSON.stringify({ error: 'Error processing subscription charge' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleSubscriptionActivated(webhookData: any, supabase: any) {
+  const subscription = webhookData.payload.subscription.entity;
+  
+  console.log('Processing subscription.activated for subscription:', subscription.id);
+
+  try {
+    // Update subscription status
+    const { error: updateError } = await supabase
+      .from('user_subscriptions')
+      .update({
+        status: 'active',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('razorpay_subscription_id', subscription.id);
+
+    if (updateError) {
+      console.error('Error updating subscription status:', updateError);
+    }
+
+    // Update mandate status
+    const { error: mandateError } = await supabase
+      .from('subscription_mandates')
+      .update({
+        mandate_status: 'authenticated',
+        status: 'active',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('razorpay_subscription_id', subscription.id);
+
+    if (mandateError) {
+      console.error('Error updating mandate status:', mandateError);
+    }
+
+    return new Response(JSON.stringify({ success: true, subscription_id: subscription.id }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    console.error('Error processing subscription activation:', error);
+    return new Response(JSON.stringify({ error: 'Error processing subscription activation' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleSubscriptionCancelled(webhookData: any, supabase: any) {
+  const subscription = webhookData.payload.subscription.entity;
+  
+  console.log('Processing subscription.cancelled for subscription:', subscription.id);
+
+  try {
+    // Update subscription status
+    const { error: updateError } = await supabase
+      .from('user_subscriptions')
+      .update({
+        status: 'cancelled',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('razorpay_subscription_id', subscription.id);
+
+    if (updateError) {
+      console.error('Error updating subscription status:', updateError);
+    }
+
+    // Update mandate status
+    const { error: mandateError } = await supabase
+      .from('subscription_mandates')
+      .update({
+        status: 'cancelled',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('razorpay_subscription_id', subscription.id);
+
+    if (mandateError) {
+      console.error('Error updating mandate status:', mandateError);
+    }
+
+    return new Response(JSON.stringify({ success: true, subscription_id: subscription.id }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    console.error('Error processing subscription cancellation:', error);
+    return new Response(JSON.stringify({ error: 'Error processing subscription cancellation' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 }
