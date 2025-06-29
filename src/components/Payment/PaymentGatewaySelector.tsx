@@ -8,6 +8,12 @@ interface WordPlan {
   words_included: number;
   price_before_gst: number;
   gst_percentage: number;
+  // Enhanced fields
+  plan_type?: string;
+  max_words_per_correction?: number;
+  max_corrections_per_month?: number;
+  max_team_members?: number;
+  features?: string[];
 }
 
 interface PaymentGatewaySelectorProps {

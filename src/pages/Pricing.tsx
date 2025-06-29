@@ -4,9 +4,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Zap, Crown, Calculator } from "lucide-react";
+import { Check, Star, Zap, Crown, Calculator, User } from "lucide-react";
 import { toast } from "sonner";
 import { useWordCredits } from "@/hooks/useWordCredits";
+import { useSubscription } from "@/hooks/useSubscription";
 import DiscountBadge from "@/components/DiscountBadge";
 import PaymentGatewaySelector from "@/components/Payment/PaymentGatewaySelector";
 import EnterprisePlanSection from "@/components/EnterprisePlanSection";
@@ -14,7 +15,8 @@ import Layout from "@/components/Layout";
 
 const Pricing = () => {
   const { user, loading: authLoading } = useAuth();
-  const { plans, loading: plansLoading, getSubscriptionPlans } = useWordCredits();
+  const { plans, loading: plansLoading, getSubscriptionPlans, getDiscountInfo } = useWordCredits();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
 
   const handleSelectPlan = async (plan: any) => {
@@ -54,30 +56,7 @@ const Pricing = () => {
     }
   };
 
-  const getDiscountInfo = (planType: string) => {
-    switch (planType) {
-      case 'basic':
-        return {
-          hasDiscount: true,
-          percentage: 33,
-          originalPrice: 1499
-        };
-      case 'premium':
-        return {
-          hasDiscount: true,
-          percentage: 23,
-          originalPrice: 12999
-        };
-      default:
-        return {
-          hasDiscount: false,
-          percentage: 0,
-          originalPrice: 0
-        };
-    }
-  };
-
-  if (authLoading || plansLoading) {
+  if (authLoading || plansLoading || subscriptionLoading) {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -105,6 +84,19 @@ const Pricing = () => {
               <Calculator className="h-4 w-4" />
               <span>एक बार भुगतान • कोई समाप्ति नहीं • स्थायी एक्सेस</span>
             </div>
+
+            {/* Current User Status */}
+            {user && subscription && (
+              <div className="max-w-md mx-auto mt-6 p-4 bg-white rounded-lg border shadow-sm">
+                <div className="flex items-center justify-center space-x-2 text-sm">
+                  <User className="h-4 w-4 text-blue-600" />
+                  <span className="text-gray-600">आपका वर्तमान प्लान:</span>
+                  <Badge variant="outline" className="font-medium">
+                    {subscription.plan_name}
+                  </Badge>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Subscription Plans */}
@@ -112,11 +104,15 @@ const Pricing = () => {
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto p-6">
               {subscriptionPlans.map((plan) => {
                 const discountInfo = getDiscountInfo(plan.plan_type);
+                const isCurrentPlan = subscription?.plan_type === plan.plan_type;
+                const totalPrice = plan.price_before_gst + (plan.price_before_gst * plan.gst_percentage / 100);
+                
                 return (
                   <Card 
                     key={plan.id} 
                     className={`relative transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
-                      plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
+                      plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 
+                      isCurrentPlan ? 'border-2 border-green-500 shadow-lg' : 'border border-gray-200'
                     }`}
                   >
                     {/* Discount Badge */}
@@ -124,17 +120,35 @@ const Pricing = () => {
                       <DiscountBadge percentage={discountInfo.percentage} />
                     )}
 
-                    {plan.plan_type === 'basic' && (
+                    {/* Current Plan Badge */}
+                    {isCurrentPlan && (
+                      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-green-600 text-white text-center py-2 text-sm font-medium">
+                        आपका वर्तमान प्लान
+                      </div>
+                    )}
+
+                    {plan.plan_type === 'basic' && !isCurrentPlan && (
                       <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
                         सबसे लोकप्रिय
                       </div>
                     )}
 
-                    <CardHeader className={`text-center ${plan.plan_type === 'basic' ? 'pt-12' : 'pt-6'}`}>
+                    <CardHeader className={`text-center ${(plan.plan_type === 'basic' && !isCurrentPlan) || isCurrentPlan ? 'pt-12' : 'pt-6'}`}>
                       <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${getPlanColor(plan.plan_type)} text-white mb-4 mx-auto`}>
                         {getPlanIcon(plan.plan_type)}
                       </div>
                       <CardTitle className="text-2xl font-bold text-gray-800">{plan.plan_name}</CardTitle>
+                      
+                      {/* Word Credits Display */}
+                      <div className="text-center mb-2">
+                        <div className="text-lg font-semibold text-blue-600">
+                          {plan.words_included.toLocaleString()} शब्द
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          प्रति सुधार: {plan.max_words_per_correction || 'असीमित'} शब्द
+                        </div>
+                      </div>
+
                       <div className="space-y-2">
                         {plan.plan_type !== 'free' ? (
                           <div className="space-y-1">
@@ -151,6 +165,9 @@ const Pricing = () => {
                             <Badge variant="outline" className="text-xs">
                               एक बार भुगतान | 18% GST अतिरिक्त
                             </Badge>
+                            <div className="text-xs text-gray-600">
+                              कुल: ₹{totalPrice.toFixed(0)}
+                            </div>
                           </div>
                         ) : (
                           <div className="text-2xl font-bold text-green-600">निःशुल्क</div>
@@ -159,46 +176,58 @@ const Pricing = () => {
                     </CardHeader>
 
                     <CardContent className="space-y-4">
-                      {/* Features */}
+                      {/* Dynamic Features */}
                       <div className="space-y-3">
-                        <div className="flex items-center space-x-3">
-                          <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-700">हिंदी व्याकरण जाँच</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-700">एक-क्लिक वाक्य सुधार</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-700">स्थायी एक्सेस</span>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span className="text-sm text-gray-700">तत्काल परिणाम</span>
-                        </div>
-                        {plan.plan_type !== 'free' && (
+                        {plan.features && plan.features.length > 0 ? (
+                          plan.features.map((feature, featureIndex) => (
+                            <div key={featureIndex} className="flex items-center space-x-3">
+                              <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                              <span className="text-sm text-gray-700">{feature}</span>
+                            </div>
+                          ))
+                        ) : (
+                          // Fallback features
                           <>
                             <div className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">समर्पित सहायता</span>
+                              <span className="text-sm text-gray-700">हिंदी व्याकरण जाँच</span>
                             </div>
                             <div className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">विस्तृत रिपोर्ट</span>
-                            </div>
-                          </>
-                        )}
-                        {plan.plan_type === 'premium' && (
-                          <>
-                            <div className="flex items-center space-x-3">
-                              <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">एडवांस AI फीचर्स</span>
+                              <span className="text-sm text-gray-700">एक-क्लिक वाक्य सुधार</span>
                             </div>
                             <div className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">प्राथमिकता सपोर्ट</span>
+                              <span className="text-sm text-gray-700">स्थायी एक्सेस</span>
                             </div>
+                            <div className="flex items-center space-x-3">
+                              <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                              <span className="text-sm text-gray-700">तत्काल परिणाम</span>
+                            </div>
+                            {plan.plan_type !== 'free' && (
+                              <>
+                                <div className="flex items-center space-x-3">
+                                  <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                  <span className="text-sm text-gray-700">समर्पित सहायता</span>
+                                </div>
+                                <div className="flex items-center space-x-3">
+                                  <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                  <span className="text-sm text-gray-700">विस्तृत रिपोर्ट</span>
+                                </div>
+                              </>
+                            )}
+                            {plan.plan_type === 'premium' && (
+                              <>
+                                <div className="flex items-center space-x-3">
+                                  <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                  <span className="text-sm text-gray-700">एडवांस AI फीचर्स</span>
+                                </div>
+                                <div className="flex items-center space-x-3">
+                                  <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                  <span className="text-sm text-gray-700">प्राथमिकता सपोर्ट</span>
+                                </div>
+                              </>
+                            )}
                           </>
                         )}
                       </div>
@@ -212,6 +241,13 @@ const Pricing = () => {
                             disabled
                           >
                             साइनअप पर मिलता है
+                          </Button>
+                        ) : isCurrentPlan ? (
+                          <Button 
+                            className="w-full bg-green-600 hover:bg-green-700" 
+                            disabled
+                          >
+                            वर्तमान प्लान
                           </Button>
                         ) : (
                           <PaymentGatewaySelector 
