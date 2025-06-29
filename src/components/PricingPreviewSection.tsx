@@ -7,10 +7,25 @@ import { Badge } from '@/components/ui/badge';
 import DiscountBadge from './DiscountBadge';
 import { useWordCredits } from '@/hooks/useWordCredits';
 import { useAuth } from '@/components/AuthProvider';
+import { useState, useEffect } from 'react';
 
 const PricingPreviewSection = () => {
-  const { plans, loading, canPurchaseTopup } = useWordCredits();
+  const { plans, loading } = useWordCredits();
   const { user } = useAuth();
+  const [canPurchaseTopup, setCanPurchaseTopup] = useState(false);
+
+  // Check topup eligibility on component mount
+  useEffect(() => {
+    const checkTopupEligibility = async () => {
+      if (user) {
+        const { canPurchaseTopup: canUseTopup } = useWordCredits();
+        const result = await canUseTopup();
+        setCanPurchaseTopup(result);
+      }
+    };
+    
+    checkTopupEligibility();
+  }, [user]);
 
   const getPlanIcon = (planType: string, planCategory: string) => {
     if (planCategory === 'topup') return <Plus className="h-6 w-6" />;
@@ -259,7 +274,7 @@ const PricingPreviewSection = () => {
                         <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
                           <Link to="/register">पहले साइनअप करें</Link>
                         </Button>
-                      ) : !canPurchaseTopup() ? (
+                      ) : !canPurchaseTopup ? (
                         <div className="space-y-3">
                           <div className="flex items-center space-x-2 p-3 bg-orange-100 rounded-lg">
                             <AlertTriangle className="h-4 w-4 text-orange-600" />

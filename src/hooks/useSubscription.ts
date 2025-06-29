@@ -48,17 +48,13 @@ export const useSubscription = () => {
         return;
       }
 
-      // Create subscription for the user with next billing date (1 month from now for free plan)
-      const nextBillingDate = new Date();
-      nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
-
+      // Create subscription for the user
       const { error: subscriptionError } = await supabase
         .from('user_subscriptions')
         .insert({
           user_id: user.id,
           plan_id: freePlan.id,
           status: 'active',
-          next_billing_date: nextBillingDate.toISOString(),
           auto_renewal: false, // Free plan doesn't auto-renew
         });
 
@@ -78,7 +74,7 @@ export const useSubscription = () => {
     if (!user) return;
 
     try {
-      // Get subscription with additional billing info - improved query
+      // Get subscription with additional billing info
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select(`
@@ -201,14 +197,12 @@ export const useSubscription = () => {
     }
   };
 
-  // Enhanced subscription active check
+  // Enhanced subscription active check - fixed logic
   const isSubscriptionActive = (): boolean => {
     if (!subscription) return false;
     
-    const isPaidPlan = subscription.plan_type === 'basic' || 
-                      subscription.plan_type === 'premium' ||
-                      subscription.plan_name.includes('हॉबी प्लान') ||
-                      subscription.plan_name.includes('Basic');
+    // Check if it's a paid plan (basic or premium)
+    const isPaidPlan = subscription.plan_type === 'basic' || subscription.plan_type === 'premium';
     
     const isActiveStatus = subscription.status === 'active';
     
@@ -216,7 +210,7 @@ export const useSubscription = () => {
     const notExpired = !subscription.expires_at || 
                        new Date(subscription.expires_at) > new Date();
     
-    console.log('Subscription check:', {
+    console.log('Subscription active check:', {
       isPaidPlan,
       isActiveStatus,
       notExpired,
