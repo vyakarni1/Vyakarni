@@ -5,7 +5,7 @@ import { useAuth } from '@/components/AuthProvider';
 export const useWordCreditsManagement = () => {
   const { user } = useAuth();
 
-  const addWordCredits = async (planType: string, words: number, expiryDays: number = 30, creditType: string = 'topup') => {
+  const addWordCredits = async (planType: string, words: number, expiryDays: number = 120, creditType: string = 'topup') => {
     if (!user) return false;
 
     try {
@@ -19,7 +19,7 @@ export const useWordCreditsManagement = () => {
           words_available: words,
           words_purchased: words,
           purchase_date: new Date().toISOString(),
-          expiry_date: expiryDate.toISOString(),
+          expiry_date: expiryDate.toISOString(),  
           is_free_credit: false,
           credit_type: creditType,
         });
@@ -36,7 +36,7 @@ export const useWordCreditsManagement = () => {
     }
   };
 
-  // Enhanced logic for top-up purchase eligibility - using database function
+  // Enhanced logic for top-up purchase eligibility - using database function for new plan types
   const canPurchaseTopup = async (): Promise<boolean> => {
     if (!user) return false;
 

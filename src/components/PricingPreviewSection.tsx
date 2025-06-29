@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Zap, Star, Crown, Calculator, Plus, AlertTriangle } from 'lucide-react';
+import { Check, Zap, Star, Crown, Users, Calculator, Plus, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import DiscountBadge from './DiscountBadge';
 import { useWordCredits } from '@/hooks/useWordCredits';
@@ -33,10 +33,14 @@ const PricingPreviewSection = () => {
     switch (planType) {
       case 'free':
         return <Zap className="h-6 w-6" />;
-      case 'basic':
+      case 'starter':
         return <Star className="h-6 w-6" />;
-      case 'premium':
+      case 'pro':
         return <Crown className="h-6 w-6" />;
+      case 'elite':
+        return <Crown className="h-6 w-6" />;
+      case 'enterprise':
+        return <Users className="h-6 w-6" />;
       default:
         return <Zap className="h-6 w-6" />;
     }
@@ -48,10 +52,14 @@ const PricingPreviewSection = () => {
     switch (planType) {
       case 'free':
         return 'from-gray-500 to-gray-600';
-      case 'basic':
-        return 'from-blue-500 to-purple-600';
-      case 'premium':
+      case 'starter':
+        return 'from-blue-500 to-blue-600';
+      case 'pro':
+        return 'from-purple-500 to-purple-600';
+      case 'elite':
         return 'from-purple-600 to-pink-600';
+      case 'enterprise':
+        return 'from-gray-800 to-gray-900';
       default:
         return 'from-gray-500 to-gray-600';
     }
@@ -59,17 +67,17 @@ const PricingPreviewSection = () => {
 
   const getDiscountInfo = (planType: string) => {
     switch (planType) {
-      case 'basic':
+      case 'starter':
         return {
           hasDiscount: true,
-          percentage: 33,
-          originalPrice: 1499
+          percentage: 25,
+          originalPrice: 399
         };
-      case 'premium':
+      case 'pro':
         return {
           hasDiscount: true,
-          percentage: 23,
-          originalPrice: 12999
+          percentage: 20,
+          originalPrice: 749
         };
       default:
         return {
@@ -105,27 +113,29 @@ const PricingPreviewSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">मासिक सब्स्क्रिप्शन + वर्ड टॉप-अप</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">5-स्तरीय सब्स्क्रिप्शन + वर्ड टॉप-अप</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
             पहले सब्स्क्रिप्शन चुनें, फिर आवश्यकता अनुसार वर्ड टॉप-अप करें।
           </p>
           <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
             <Calculator className="h-4 w-4" />
-            <span>मासिक बिलिंग • असीमित टॉप-अप सुविधा • कभी भी रद्द करें</span>
+            <span>मासिक बिलिंग • 120-दिन टॉप-अप वैधता • कभी भी रद्द करें</span>
           </div>
         </div>
 
         {/* Subscription Plans */}
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center text-gray-800 mb-8">मासिक सब्स्क्रिप्शन प्लान</h3>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto p-6">
+          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto p-6">
             {subscriptionPlans.map((plan, index) => {
               const discountInfo = getDiscountInfo(plan.plan_type);
+              const isPopular = plan.plan_type === 'starter';
+              
               return (
                 <Card 
                   key={plan.id} 
                   className={`relative transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
-                    plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
+                    isPopular ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
                   }`}
                 >
                   {/* Discount Badge */}
@@ -134,27 +144,27 @@ const PricingPreviewSection = () => {
                   )}
 
                   {/* Popular Badge */}
-                  {plan.plan_type === 'basic' && (
+                  {isPopular && (
                     <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
                       सबसे लोकप्रिय
                     </div>
                   )}
 
-                  <CardHeader className={`text-center ${plan.plan_type === 'basic' ? 'pt-12' : 'pt-6'}`}>
+                  <CardHeader className={`text-center ${isPopular ? 'pt-12' : 'pt-6'}`}>
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${getPlanColor(plan.plan_type, plan.plan_category)} text-white mb-4 mx-auto`}>
                       {getPlanIcon(plan.plan_type, plan.plan_category)}
                     </div>
-                    <CardTitle className="text-2xl font-bold text-gray-800">{plan.plan_name}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-gray-800">{plan.plan_name}</CardTitle>
                     <div className="space-y-2">
                       {plan.plan_type !== 'free' ? (
                         <div className="space-y-1">
                           <div className="flex items-center justify-center space-x-2">
                             {discountInfo.hasDiscount && (
-                              <span className="text-lg text-gray-500 line-through">
+                              <span className="text-sm text-gray-500 line-through">
                                 ₹{discountInfo.originalPrice.toLocaleString('hi-IN')}
                               </span>
                             )}
-                            <span className="text-2xl font-bold text-gray-900">
+                            <span className="text-xl font-bold text-gray-900">
                               ₹{plan.price_before_gst.toLocaleString('hi-IN')}
                             </span>
                           </div>
@@ -163,49 +173,49 @@ const PricingPreviewSection = () => {
                           </Badge>
                         </div>
                       ) : (
-                        <div className="text-2xl font-bold text-green-600">निःशुल्क</div>
+                        <div className="text-xl font-bold text-green-600">निःशुल्क</div>
                       )}
                     </div>
                   </CardHeader>
 
                   <CardContent className="space-y-4">
                     {/* Features */}
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">हिंदी व्याकरण जाँच</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <span className="text-xs text-gray-700">हिंदी व्याकरण जाँच</span>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">एक-क्लिक वाक्य सुधार</span>
+                      <div className="flex items-center space-x-2">
+                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <span className="text-xs text-gray-700">एक-क्लिक वाक्य सुधार</span>  
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">वर्ड टॉप-अप सुविधा</span>
+                      <div className="flex items-center space-x-2">
+                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                        <span className="text-xs text-gray-700">वर्ड टॉप-अप सुविधा</span>
                       </div>
                       {plan.plan_type !== 'free' && (
                         <>
-                          <div className="flex items-center space-x-3">
-                            <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                            <span className="text-sm text-gray-700">समर्पित सहायता</span>
+                          <div className="flex items-center space-x-2">
+                            <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                            <span className="text-xs text-gray-700">समर्पित सहायता</span>
                           </div>
-                          <div className="flex items-center space-x-3">
-                            <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                            <span className="text-sm text-gray-700">विस्तृत रिपोर्ट</span>
+                          <div className="flex items-center space-x-2">
+                            <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                            <span className="text-xs text-gray-700">विस्तृत रिपोर्ट</span>
                           </div>
                         </>
                       )}
-                      {plan.plan_type === 'premium' && (
-                        <>
-                          <div className="flex items-center space-x-3">
-                            <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                            <span className="text-sm text-gray-700">एडवांस AI फीचर्स</span>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                            <span className="text-sm text-gray-700">प्राथमिकता सपोर्ट</span>
-                          </div>
-                        </>
+                      {plan.plan_type === 'elite' && (
+                        <div className="flex items-center space-x-2">
+                          <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                          <span className="text-xs text-gray-700">API एक्सेस</span>
+                        </div>
+                      )}
+                      {plan.plan_type === 'enterprise' && (
+                        <div className="flex items-center space-x-2">
+                          <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                          <span className="text-xs text-gray-700">कस्टम इंटीग्रेशन</span>
+                        </div>
                       )}
                     </div>
 
@@ -215,13 +225,15 @@ const PricingPreviewSection = () => {
                         <Button 
                           className="w-full bg-gray-600 hover:bg-gray-700" 
                           disabled
+                          size="sm"
                         >
                           साइनअप पर मिलता है
                         </Button>
                       ) : (
                         <Button 
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 transition-all duration-300"
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-300"
                           asChild
+                          size="sm"
                         >
                           <Link to={user ? "/pricing" : "/register"}>
                             {user ? "सब्स्क्राइब करें" : "साइनअप करें"}
@@ -239,12 +251,12 @@ const PricingPreviewSection = () => {
         {/* Top-up Plans */}
         {topupPlans.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">वर्ड टॉप-अप</h3>
+            <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">वर्ड टॉप-अप (120 दिन वैधता)</h3>
             <p className="text-center text-gray-600 mb-8">
-              सब्स्क्रिप्शन के साथ अतिरिक्त शब्द खरीदें
+              सब्स्क्रिप्शन के साथ अतिरिक्त शब्द खरीदें - अब 120 दिन की वैधता के साथ!
             </p>
             
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto space-y-4">
               {topupPlans.map((plan) => (
                 <Card key={plan.id} className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
                   <CardContent className="p-6">
@@ -256,7 +268,7 @@ const PricingPreviewSection = () => {
                         <div>
                           <h4 className="text-xl font-bold text-gray-800">{plan.plan_name}</h4>
                           <p className="text-gray-600">{plan.words_included.toLocaleString('hi-IN')} अतिरिक्त शब्द</p>
-                          <p className="text-sm text-purple-600">30 दिन की वैधता</p>
+                          <p className="text-sm text-purple-600 font-medium">120 दिन की वैधता</p>
                         </div>
                       </div>
                       <div className="text-right">

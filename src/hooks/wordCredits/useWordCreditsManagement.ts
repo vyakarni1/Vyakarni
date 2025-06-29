@@ -5,7 +5,7 @@ import { useAuth } from '@/components/AuthProvider';
 export const useWordCreditsManagement = () => {
   const { user } = useAuth();
 
-  const addWordCredits = async (planType: string, words: number, expiryDays: number = 30, creditType: string = 'topup') => {
+  const addWordCredits = async (planType: string, words: number, expiryDays: number = 120, creditType: string = 'topup') => {
     if (!user) return false;
 
     try {
@@ -36,7 +36,7 @@ export const useWordCreditsManagement = () => {
     }
   };
 
-  // Enhanced logic for top-up purchase eligibility
+  // Enhanced logic for top-up purchase eligibility - supports new plan types
   const canPurchaseTopup = async (): Promise<boolean> => {
     if (!user) return false;
 
