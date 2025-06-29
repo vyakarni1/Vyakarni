@@ -17,10 +17,6 @@ interface SubscriptionData {
   next_billing_date: string | null;
   auto_renewal: boolean;
   billing_cycle: string;
-  is_recurring: boolean;
-  mandate_id: string | null;
-  mandate_status: string | null;
-  razorpay_subscription_id: string | null;
 }
 
 // Helper function to convert Json to string array
@@ -45,7 +41,6 @@ export const useSubscription = () => {
         .from('subscription_plans')
         .select('*')
         .eq('plan_type', 'free')
-        .eq('plan_name', 'फ्री प्लान') // Get the actual free plan, not the basic one
         .single();
 
       if (planError || !freePlan) {
@@ -65,7 +60,6 @@ export const useSubscription = () => {
           status: 'active',
           next_billing_date: nextBillingDate.toISOString(),
           auto_renewal: false, // Free plan doesn't auto-renew
-          is_recurring: false, // Free plan is not recurring
         });
 
       if (subscriptionError) {
@@ -84,7 +78,7 @@ export const useSubscription = () => {
     if (!user) return;
 
     try {
-      // Get subscription with additional billing info and mandate details
+      // Get subscription with additional billing info
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select(`
@@ -94,9 +88,6 @@ export const useSubscription = () => {
           next_billing_date,
           auto_renewal,
           billing_cycle,
-          is_recurring,
-          mandate_id,
-          razorpay_subscription_id,
           subscription_plans (
             plan_name,
             plan_type,
@@ -104,11 +95,6 @@ export const useSubscription = () => {
             max_corrections_per_month,
             max_team_members,
             features
-          ),
-          subscription_mandates (
-            status,
-            next_charge_at,
-            remaining_count
           )
         `)
         .eq('user_id', user.id)
@@ -124,7 +110,6 @@ export const useSubscription = () => {
       if (data && data.length > 0) {
         const subscriptionData = data[0];
         const planData = subscriptionData.subscription_plans;
-        const mandateData = subscriptionData.subscription_mandates;
         
         if (planData) {
           setSubscription({
@@ -140,10 +125,6 @@ export const useSubscription = () => {
             next_billing_date: subscriptionData.next_billing_date,
             auto_renewal: subscriptionData.auto_renewal,
             billing_cycle: subscriptionData.billing_cycle,
-            is_recurring: subscriptionData.is_recurring || false,
-            mandate_id: subscriptionData.mandate_id,
-            mandate_status: mandateData?.status || null,
-            razorpay_subscription_id: subscriptionData.razorpay_subscription_id,
           });
         }
       } else {
@@ -218,86 +199,13 @@ export const useSubscription = () => {
   };
 
   const isSubscriptionActive = (): boolean => {
-    if (!subscription) return false;
-    
-    // Check if it's a paid plan (basic or premium) or if it's the हॉबी प्लान (Basic)
-    const isPaidPlan = subscription.plan_type === 'basic' || 
-                      subscription.plan_type === 'premium' ||
-                      subscription.plan_name === 'हॉबी प्लान (Basic)' ||
-                      subscription.plan_type === 'free' && subscription.plan_name === 'हॉबी प्लान (Basic)';
-    
-    return subscription.status === 'active' && isPaidPlan;
+    return subscription?.status === 'active' && 
+           (subscription.plan_type === 'basic' || subscription.plan_type === 'premium');
   };
 
-  const isRecurringSubscription = (): boolean => {
-    return subscription?.is_recurring || false;
-  };
-
-  const getMandateStatus = (): string | null => {
-    return subscription?.mandate_status || null;
-  };
-
-  // Set up real-time subscription for subscription changes
   useEffect(() => {
     if (user) {
       fetchSubscription();
-
-      // Subscribe to changes in user subscriptions
-      const subscription_channel = supabase
-        .channel('user_subscriptions_changes')
-        .on('postgres_changes', 
-          { 
-            event: '*', 
-            schema: 'public', 
-            table: 'user_subscriptions',
-            filter: `user_id=eq.${user.id}`
-          }, 
-          () => {
-            console.log('Subscription changed, refetching...');
-            fetchSubscription();
-          }
-        )
-        .subscribe();
-
-      // Subscribe to changes in subscription mandates
-      const mandates_channel = supabase
-        .channel('subscription_mandates_changes')
-        .on('postgres_changes', 
-          { 
-            event: '*', 
-            schema: 'public', 
-            table: 'subscription_mandates',
-            filter: `user_id=eq.${user.id}`
-          }, 
-          () => {
-            console.log('Subscription mandate changed, refetching...');
-            fetchSubscription();
-          }
-        )
-        .subscribe();
-
-      // Subscribe to changes in word credits
-      const credits_channel = supabase
-        .channel('user_word_credits_changes')
-        .on('postgres_changes', 
-          { 
-            event: '*', 
-            schema: 'public', 
-            table: 'user_word_credits',
-            filter: `user_id=eq.${user.id}`
-          }, 
-          () => {
-            console.log('Word credits changed, refetching subscription...');
-            fetchSubscription();
-          }
-        )
-        .subscribe();
-
-      return () => {
-        subscription_channel.unsubscribe();
-        mandates_channel.unsubscribe();
-        credits_channel.unsubscribe();
-      };
     } else {
       setSubscription(null);
       setLoading(false);
@@ -311,8 +219,6 @@ export const useSubscription = () => {
     upgradeSubscription,
     cancelSubscription,
     isSubscriptionActive,
-    isRecurringSubscription,
-    getMandateStatus,
     refetch: fetchSubscription
   };
 };

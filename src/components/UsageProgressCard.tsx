@@ -6,11 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Coins, CheckCircle, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useWordCredits } from "@/hooks/useWordCredits";
-import { useSubscription } from "@/hooks/useSubscription";
 
 const UsageProgressCard = () => {
   const { balance, loading } = useWordCredits();
-  const { subscription } = useSubscription();
 
   if (loading) {
     return (
@@ -27,14 +25,6 @@ const UsageProgressCard = () => {
 
   const isLowBalance = balance.total_words_available < 100;
   const isGoodBalance = balance.total_words_available > 1000;
-
-  // Check if user has a paid subscription including हॉबी प्लान (Basic)
-  const hasPaidSubscription = subscription && (
-    subscription.plan_name === 'हॉबी प्लान (Basic)' ||
-    subscription.plan_type === 'basic' ||
-    subscription.plan_type === 'premium' ||
-    subscription.plan_type === 'pro'
-  );
 
   const getStatusIcon = () => {
     if (isLowBalance) return <Coins className="h-5 w-5 text-orange-500" />;
@@ -61,14 +51,7 @@ const UsageProgressCard = () => {
             <TrendingUp className="h-5 w-5 text-blue-500" />
             <span>शब्द बैलेंस</span>
           </CardTitle>
-          <div className="flex flex-col items-end space-y-1">
-            {getStatusIcon()}
-            {hasPaidSubscription && (
-              <Badge variant="outline" className="text-blue-600 border-blue-200 text-xs">
-                सक्रिय प्लान
-              </Badge>
-            )}
-          </div>
+          {getStatusIcon()}
         </div>
       </CardHeader>
 
@@ -97,18 +80,10 @@ const UsageProgressCard = () => {
 
         {/* Word Breakdown */}
         <div className="space-y-2">
-          {balance.subscription_words > 0 && (
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-700">सब्स्क्रिप्शन शब्द</span>
-              <span className="text-sm font-medium text-blue-600">{balance.subscription_words.toLocaleString()}</span>
-            </div>
-          )}
-          {balance.topup_words > 0 && (
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-700">टॉप-अप शब्द</span>
-              <span className="text-sm font-medium text-purple-600">{balance.topup_words.toLocaleString()}</span>
-            </div>
-          )}
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium text-gray-700">खरीदे गए शब्द</span>
+            <span className="text-sm font-medium text-purple-600">{balance.purchased_words.toLocaleString()}</span>
+          </div>
           <div className="text-xs text-gray-500">
             {balance.next_expiry_date 
               ? `समाप्ति: ${new Date(balance.next_expiry_date).toLocaleDateString('hi-IN')}`
@@ -125,7 +100,7 @@ const UsageProgressCard = () => {
             </p>
             <Link to="/pricing">
               <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
-                {hasPaidSubscription ? 'टॉप-अप करें' : 'शब्द खरीदें'}
+                शब्द खरीदें
               </Button>
             </Link>
           </div>

@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +14,7 @@ import ProfilePreferences from "./ProfilePreferences";
 import AccountDeletion from "./AccountDeletion";
 import { useProfileForm } from "@/hooks/useProfileForm";
 import { Profile, ProfileFormData } from "@/types/profile";
+import { useState } from "react";
 
 interface ProfileEditFormProps {
   profile: Profile;
@@ -31,6 +32,8 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
 
   const handleFormSubmit = async (data: ProfileFormData): Promise<boolean> => {
     try {
+      // This would typically be handled by a parent component or hook
+      // For now, we'll simulate the API call
       const updatedProfile = { ...profile, ...data };
       onProfileUpdate(updatedProfile);
       toast.success("प्रोफाइल सफलतापूर्वक अपडेट हो गई!");
@@ -170,25 +173,26 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
         
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center text-blue-600">
-              <Settings className="h-5 w-5 mr-2" />
+            <CardTitle className="flex items-center text-amber-600">
+              <AlertCircle className="h-5 w-5 mr-2" />
               पासवर्ड परिवर्तन
             </CardTitle>
           </CardHeader>
           <CardContent>
             {!showPasswordForm ? (
               <div className="space-y-4">
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-800">
-                    सुरक्षा के लिए नियमित रूप से अपना पासवर्ड बदलते रहें।
+                <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-800">
+                    पासवर्ड बदलने की सुविधा अस्थायी रूप से अक्षम है। कृपया समर्थन से संपर्क करें।
                   </p>
                 </div>
                 <Button 
                   variant="outline" 
                   onClick={() => setShowPasswordForm(true)}
                   className="w-full md:w-auto"
+                  disabled
                 >
-                  पासवर्ड बदलें
+                  पासवर्ड बदलें (अक्षम)
                 </Button>
               </div>
             ) : (

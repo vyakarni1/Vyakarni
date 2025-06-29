@@ -55,7 +55,7 @@ const ReportGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const availableMetrics = [
-    { id: 'users', label: 'उपयोगकर्ता मेट्रिक्स', description: 'कुल उपयोगकर्ता, नये पंजीकरण, सक्रियता' },
+    { id: 'users', label: 'उपयोगकर्ता मेट्रिक्स', description: 'कुल उपयोगकर्ता, नए पंजीकरण, सक्रियता' },
     { id: 'revenue', label: 'राजस्व विश्लेषण', description: 'कुल आय, ट्रेंड, प्रति उपयोगकर्ता औसत' },
     { id: 'activity', label: 'गतिविधि डेटा', description: 'सुधार, उपयोग पैटर्न, सत्र डेटा' },
     { id: 'subscriptions', label: 'सब्सक्रिप्शन', description: 'प्लान वितरण, चर्न रेट, अपग्रेड' },
@@ -116,15 +116,15 @@ const ReportGenerator = () => {
       }
 
       toast({
-        title: "रिपोर्ट जेनरेट हुयी",
+        title: "रिपोर्ट जेनरेट हुई",
         description: config.schedule === 'manual' 
-          ? "आपकी रिपोर्ट डाउनलोड हो गयी है।"
-          : "रिपोर्ट शेड्यूल हो गयी है और नियमित रूप से भेजी जायेगी।",
+          ? "आपकी रिपोर्ट डाउनलोड हो गई है।"
+          : "रिपोर्ट शेड्यूल हो गई है और नियमित रूप से भेजी जाएगी।",
       });
     } catch (error) {
       toast({
         title: "त्रुटि",
-        description: "रिपोर्ट जेनरेट करने में समस्या हुयी।",
+        description: "रिपोर्ट जेनरेट करने में समस्या हुई।",
         variant: "destructive"
       });
     } finally {
@@ -135,7 +135,7 @@ const ReportGenerator = () => {
   const previewReport = () => {
     toast({
       title: "रिपोर्ट प्रीव्यू",
-      description: "प्रीव्यू फीचर शीघ्र ही उपलब्ध होगा।",
+      description: "प्रीव्यू फीचर जल्द ही उपलब्ध होगा।",
     });
   };
 

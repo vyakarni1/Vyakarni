@@ -14,15 +14,9 @@ export const useWordCredits = () => {
   const { addWordCredits, canPurchaseTopup } = useWordCreditsManagement();
 
   useEffect(() => {
-    console.log('[useWordCredits] Effect triggered, user:', user ? 'exists' : 'null');
-    
     if (user) {
-      console.log('[useWordCredits] Fetching balance for user:', user.id);
-      fetchBalance().catch(error => {
-        console.error('[useWordCredits] Error fetching balance:', error);
-      });
+      fetchBalance();
     } else {
-      console.log('[useWordCredits] No user, setting default balance');
       setBalance({
         total_words_available: 0,
         topup_words: 0,
@@ -36,45 +30,22 @@ export const useWordCredits = () => {
   }, [user]);
 
   const enhancedDeductWords = async (wordsToDeduct: number, actionType: string, textContent?: string) => {
-    try {
-      console.log('[useWordCredits] Deducting words:', wordsToDeduct, actionType);
-      const result = await deductWords(wordsToDeduct, actionType, textContent);
-      if (result) {
-        console.log('[useWordCredits] Words deducted successfully, refreshing balance');
-        await fetchBalance();
-      }
-      return result;
-    } catch (error) {
-      console.error('[useWordCredits] Error in enhancedDeductWords:', error);
-      return false;
+    const result = await deductWords(wordsToDeduct, actionType, textContent);
+    if (result) {
+      // Refresh balance after successful deduction
+      await fetchBalance();
     }
+    return result;
   };
 
   const enhancedAddWordCredits = async (planType: string, words: number, expiryDays: number = 30, creditType: string = 'topup') => {
-    try {
-      console.log('[useWordCredits] Adding word credits:', planType, words);
-      const result = await addWordCredits(planType, words, expiryDays, creditType);
-      if (result) {
-        console.log('[useWordCredits] Credits added successfully, refreshing balance');
-        await fetchBalance();
-      }
-      return result;
-    } catch (error) {
-      console.error('[useWordCredits] Error in enhancedAddWordCredits:', error);
-      return false;
+    const result = await addWordCredits(planType, words, expiryDays, creditType);
+    if (result) {
+      // Refresh balance after adding credits
+      await fetchBalance();
     }
+    return result;
   };
-
-  const canPurchaseTopupSafe = () => {
-    try {
-      return canPurchaseTopup(balance.has_active_subscription);
-    } catch (error) {
-      console.error('[useWordCredits] Error in canPurchaseTopupSafe:', error);
-      return false;
-    }
-  };
-
-  console.log('[useWordCredits] Current state - balance:', balance, 'loading:', loading);
 
   return {
     balance,
@@ -86,6 +57,6 @@ export const useWordCredits = () => {
     addWordCredits: enhancedAddWordCredits,
     getSubscriptionPlans,
     getTopupPlans,
-    canPurchaseTopup: canPurchaseTopupSafe,
+    canPurchaseTopup: () => canPurchaseTopup(balance.has_active_subscription),
   };
 };

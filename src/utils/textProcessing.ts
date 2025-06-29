@@ -1,47 +1,36 @@
-
 import { wordReplacements } from "@/data/wordReplacements";
 import { Correction } from "@/types/grammarChecker";
-import { logger } from '@/utils/logger';
-import { applyInitialDictionaryCorrections } from './dictionaryProcessor';
-
-// Cache for tokenization results to improve performance
-const tokenizationCache = new Map<string, string[]>();
 
 export const applyWordReplacements = (text: string): {
   correctedText: string;
   appliedCorrections: Correction[];
 } => {
-  logger.debug('Applying word replacements', { textLength: text.length }, 'textProcessing');
+  let correctedText = text;
+  const appliedCorrections: Correction[] = [];
   
-  // Use the unified dictionary processor
-  const { correctedText, corrections } = applyInitialDictionaryCorrections(text);
-  
-  const appliedCorrections = corrections.map(correction => ({
-    ...correction,
-    reason: `सही वर्तनी के लिए "${correction.incorrect}" को "${correction.correct}" से बदला गया`,
-    type: 'spelling' as const
-  }));
-  
-  logger.debug('Word replacements completed', { 
-    correctionsCount: appliedCorrections.length 
-  }, 'textProcessing');
+  wordReplacements.forEach(({ original, replacement }) => {
+    const regex = new RegExp(original, 'g');
+    if (regex.test(correctedText)) {
+      correctedText = correctedText.replace(regex, replacement);
+      appliedCorrections.push({
+        incorrect: original,
+        correct: replacement,
+        reason: `सही वर्तनी के लिए "${original}" को "${replacement}" से बदला गया`,
+        type: 'spelling'
+      });
+    }
+  });
   
   return { correctedText, appliedCorrections };
 };
 
 export const extractCorrectionsFromResponse = (original: string, corrected: string): Correction[] => {
-  logger.debug('Extracting corrections from AI response', { 
-    originalLength: original.length,
-    correctedLength: corrected.length
-  }, 'textProcessing');
-  
   // First apply word replacements to get the preprocessed text
   const { correctedText: preprocessedText } = applyWordReplacements(original);
   
   // Now compare preprocessed text with AI output to get only AI-made corrections
   const aiCorrections = extractAICorrections(preprocessedText, corrected);
   
-  logger.debug('AI corrections extracted', { count: aiCorrections.length }, 'textProcessing');
   return aiCorrections;
 };
 
@@ -92,21 +81,8 @@ const findSentenceLevelCorrections = (original: string, corrected: string): Corr
 };
 
 const tokenizeWithContext = (text: string): string[] => {
-  // Check cache first for performance
-  if (tokenizationCache.has(text)) {
-    return tokenizationCache.get(text)!;
-  }
-  
   // Split preserving punctuation and whitespace context
-  const tokens = text.split(/(\s+)/).filter(token => token.trim().length > 0);
-  
-  // Cache result for future use
-  if (tokenizationCache.size > 100) {
-    tokenizationCache.clear(); // Prevent memory leaks
-  }
-  tokenizationCache.set(text, tokens);
-  
-  return tokens;
+  return text.split(/(\s+)/).filter(token => token.trim().length > 0);
 };
 
 const alignWords = (original: string[], corrected: string[]): Array<{
@@ -284,11 +260,6 @@ const filterMeaningfulCorrections = (corrections: Correction[]): Correction[] =>
 };
 
 export const extractStyleEnhancements = (original: string, enhanced: string): Correction[] => {
-  logger.debug('Extracting style enhancements', { 
-    originalLength: original.length,
-    enhancedLength: enhanced.length
-  }, 'textProcessing');
-  
   // Similar logic for style enhancements, but focusing on vocabulary and flow improvements
   const enhancements: Correction[] = [];
   
@@ -315,6 +286,5 @@ export const extractStyleEnhancements = (original: string, enhanced: string): Co
     enhancedIndex++;
   }
 
-  logger.debug('Style enhancements extracted', { count: enhancements.length }, 'textProcessing');
   return enhancements;
 };

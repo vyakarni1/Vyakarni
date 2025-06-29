@@ -461,238 +461,6 @@ export type Database = {
         }
         Relationships: []
       }
-      razorpay_orders: {
-        Row: {
-          created_at: string | null
-          customer_details: Json
-          id: string
-          order_amount: number
-          order_currency: string | null
-          order_id: string
-          order_meta: Json | null
-          order_status: string | null
-          updated_at: string | null
-          user_id: string
-          word_plan_id: string | null
-          words_to_credit: number
-        }
-        Insert: {
-          created_at?: string | null
-          customer_details: Json
-          id?: string
-          order_amount: number
-          order_currency?: string | null
-          order_id: string
-          order_meta?: Json | null
-          order_status?: string | null
-          updated_at?: string | null
-          user_id: string
-          word_plan_id?: string | null
-          words_to_credit: number
-        }
-        Update: {
-          created_at?: string | null
-          customer_details?: Json
-          id?: string
-          order_amount?: number
-          order_currency?: string | null
-          order_id?: string
-          order_meta?: Json | null
-          order_status?: string | null
-          updated_at?: string | null
-          user_id?: string
-          word_plan_id?: string | null
-          words_to_credit?: number
-        }
-        Relationships: []
-      }
-      razorpay_webhook_logs: {
-        Row: {
-          created_at: string | null
-          event_type: string
-          id: string
-          order_id: string | null
-          payment_id: string | null
-          processed: boolean | null
-          signature: string | null
-          webhook_data: Json
-        }
-        Insert: {
-          created_at?: string | null
-          event_type: string
-          id?: string
-          order_id?: string | null
-          payment_id?: string | null
-          processed?: boolean | null
-          signature?: string | null
-          webhook_data: Json
-        }
-        Update: {
-          created_at?: string | null
-          event_type?: string
-          id?: string
-          order_id?: string | null
-          payment_id?: string | null
-          processed?: boolean | null
-          signature?: string | null
-          webhook_data?: Json
-        }
-        Relationships: []
-      }
-      subscription_charges: {
-        Row: {
-          amount: number
-          charge_date: string
-          created_at: string
-          currency: string | null
-          error_code: string | null
-          error_description: string | null
-          failure_reason: string | null
-          id: string
-          mandate_id: string | null
-          notes: Json | null
-          paid_at: string | null
-          razorpay_invoice_id: string | null
-          razorpay_payment_id: string | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          charge_date: string
-          created_at?: string
-          currency?: string | null
-          error_code?: string | null
-          error_description?: string | null
-          failure_reason?: string | null
-          id?: string
-          mandate_id?: string | null
-          notes?: Json | null
-          paid_at?: string | null
-          razorpay_invoice_id?: string | null
-          razorpay_payment_id?: string | null
-          status: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          charge_date?: string
-          created_at?: string
-          currency?: string | null
-          error_code?: string | null
-          error_description?: string | null
-          failure_reason?: string | null
-          id?: string
-          mandate_id?: string | null
-          notes?: Json | null
-          paid_at?: string | null
-          razorpay_invoice_id?: string | null
-          razorpay_payment_id?: string | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscription_charges_mandate_id_fkey"
-            columns: ["mandate_id"]
-            isOneToOne: false
-            referencedRelation: "subscription_mandates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      subscription_mandates: {
-        Row: {
-          auth_type: string | null
-          created_at: string
-          current_end: string | null
-          current_start: string | null
-          customer_notify: boolean | null
-          end_date: string | null
-          frequency: string | null
-          id: string
-          mandate_id: string | null
-          mandate_status: string | null
-          mandate_type: string | null
-          max_amount: number
-          next_charge_at: string | null
-          notes: Json | null
-          paid_count: number | null
-          razorpay_plan_id: string
-          razorpay_subscription_id: string | null
-          remaining_count: number | null
-          start_date: string
-          status: string | null
-          subscription_id: string | null
-          total_count: number | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          auth_type?: string | null
-          created_at?: string
-          current_end?: string | null
-          current_start?: string | null
-          customer_notify?: boolean | null
-          end_date?: string | null
-          frequency?: string | null
-          id?: string
-          mandate_id?: string | null
-          mandate_status?: string | null
-          mandate_type?: string | null
-          max_amount: number
-          next_charge_at?: string | null
-          notes?: Json | null
-          paid_count?: number | null
-          razorpay_plan_id: string
-          razorpay_subscription_id?: string | null
-          remaining_count?: number | null
-          start_date: string
-          status?: string | null
-          subscription_id?: string | null
-          total_count?: number | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          auth_type?: string | null
-          created_at?: string
-          current_end?: string | null
-          current_start?: string | null
-          customer_notify?: boolean | null
-          end_date?: string | null
-          frequency?: string | null
-          id?: string
-          mandate_id?: string | null
-          mandate_status?: string | null
-          mandate_type?: string | null
-          max_amount?: number
-          next_charge_at?: string | null
-          notes?: Json | null
-          paid_count?: number | null
-          razorpay_plan_id?: string
-          razorpay_subscription_id?: string | null
-          remaining_count?: number | null
-          start_date?: string
-          status?: string | null
-          subscription_id?: string | null
-          total_count?: number | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscription_mandates_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "user_subscriptions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       subscription_plans: {
         Row: {
           created_at: string
@@ -928,63 +696,42 @@ export type Database = {
         Row: {
           auto_renewal: boolean | null
           billing_cycle: string
-          charge_at_cycle: number | null
           created_at: string
           expires_at: string | null
-          grace_period_days: number | null
           id: string
-          is_recurring: boolean | null
-          last_charge_attempt: string | null
-          mandate_id: string | null
           next_billing_date: string | null
           plan_id: string
           razorpay_subscription_id: string | null
-          retry_attempts: number | null
           started_at: string
           status: string
-          subscription_notes: Json | null
           updated_at: string
           user_id: string
         }
         Insert: {
           auto_renewal?: boolean | null
           billing_cycle?: string
-          charge_at_cycle?: number | null
           created_at?: string
           expires_at?: string | null
-          grace_period_days?: number | null
           id?: string
-          is_recurring?: boolean | null
-          last_charge_attempt?: string | null
-          mandate_id?: string | null
           next_billing_date?: string | null
           plan_id: string
           razorpay_subscription_id?: string | null
-          retry_attempts?: number | null
           started_at?: string
           status?: string
-          subscription_notes?: Json | null
           updated_at?: string
           user_id: string
         }
         Update: {
           auto_renewal?: boolean | null
           billing_cycle?: string
-          charge_at_cycle?: number | null
           created_at?: string
           expires_at?: string | null
-          grace_period_days?: number | null
           id?: string
-          is_recurring?: boolean | null
-          last_charge_attempt?: string | null
-          mandate_id?: string | null
           next_billing_date?: string | null
           plan_id?: string
           razorpay_subscription_id?: string | null
-          retry_attempts?: number | null
           started_at?: string
           status?: string
-          subscription_notes?: Json | null
           updated_at?: string
           user_id?: string
         }
@@ -994,13 +741,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_subscriptions_mandate_id_fkey"
-            columns: ["mandate_id"]
-            isOneToOne: false
-            referencedRelation: "subscription_mandates"
             referencedColumns: ["id"]
           },
           {
@@ -1085,7 +825,7 @@ export type Database = {
           {
             foreignKeyName: "fk_user_word_credits_profiles"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1233,15 +973,6 @@ export type Database = {
       }
     }
     Functions: {
-      add_user_word_credits: {
-        Args: {
-          p_user_id: string
-          p_words_to_add: number
-          p_credit_type?: string
-          p_expiry_date?: string
-        }
-        Returns: boolean
-      }
       check_user_has_active_subscription: {
         Args: { user_uuid: string }
         Returns: boolean
@@ -1249,20 +980,6 @@ export type Database = {
       cleanup_expired_reset_tokens: {
         Args: Record<PropertyKey, never>
         Returns: undefined
-      }
-      create_recurring_subscription: {
-        Args: {
-          user_uuid: string
-          plan_uuid: string
-          razorpay_subscription_id: string
-          razorpay_plan_id: string
-          mandate_details?: Json
-        }
-        Returns: Json
-      }
-      create_subscription_for_user: {
-        Args: { user_uuid: string; plan_uuid: string }
-        Returns: Json
       }
       deduct_words: {
         Args: {
@@ -1295,17 +1012,6 @@ export type Database = {
           description: string
           category: string
           is_public: boolean
-        }[]
-      }
-      get_user_active_mandate: {
-        Args: { user_uuid: string }
-        Returns: {
-          mandate_id: string
-          razorpay_subscription_id: string
-          status: string
-          next_charge_at: string
-          remaining_count: number
-          max_amount: number
         }[]
       }
       get_user_stats: {

@@ -111,7 +111,7 @@ const EnhancedUserFilters = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">सभी भूमिकायें</SelectItem>
+                <SelectItem value="all">सभी भूमिकाएं</SelectItem>
                 <SelectItem value="admin">एडमिन</SelectItem>
                 <SelectItem value="user">उपयोगकर्ता</SelectItem>
                 <SelectItem value="suspended">निलंबित</SelectItem>
@@ -172,7 +172,7 @@ const EnhancedUserFilters = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">सभी</SelectItem>
-                <SelectItem value="incomplete">अपूर्ण</SelectItem>
+                <SelectItem value="incomplete">अधूरी</SelectItem>
                 <SelectItem value="complete">पूर्ण</SelectItem>
               </SelectContent>
             </Select>
@@ -192,7 +192,7 @@ const EnhancedUserFilters = ({
                 <SelectItem value="all">सभी समय</SelectItem>
                 <SelectItem value="today">आज</SelectItem>
                 <SelectItem value="week">इस सप्ताह</SelectItem>
-                <SelectItem value="month">इस माह</SelectItem>
+                <SelectItem value="month">इस महीने</SelectItem>
               </SelectContent>
             </Select>
           </div>

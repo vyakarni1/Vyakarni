@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CheckCircle, Copy, ArrowRight, Sparkles, Eye } from "lucide-react";
+import { CheckCircle, Copy, ArrowRight, Sparkles } from "lucide-react";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
 import { HighlightedSegment } from '@/hooks/useTextHighlighting';
 import CorrectionsDropdown from './CorrectionsDropdown';
@@ -40,7 +40,6 @@ const CorrectedTextPanel = ({
 }: CorrectedTextPanelProps) => {
   const currentText = processingMode === 'style' ? enhancedText : correctedText;
   const wordCount = currentText.trim() ? currentText.trim().split(/\s+/).length : 0;
-  const hasCorrections = highlightedSegments.some(segment => segment.type !== 'normal');
   
   const isGrammarMode = processingMode === 'grammar';
   const headerGradient = isGrammarMode 
@@ -60,15 +59,6 @@ const CorrectedTextPanel = ({
             <span className="sm:hidden">{isGrammarMode ? "सुधारा गया" : "शैली सुधारा"}</span>
           </CardTitle>
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {hasCorrections && (
-              <Badge 
-                variant="secondary" 
-                className="bg-white/20 text-white border-0 px-2 py-1 text-xs flex items-center gap-1"
-              >
-                <Eye className="h-3 w-3" />
-                {corrections.length} सुधार
-              </Badge>
-            )}
             {currentText && (
               <Badge variant="secondary" className="bg-white/20 text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
                 {wordCount} शब्द
@@ -87,12 +77,11 @@ const CorrectedTextPanel = ({
           {currentText ? (
             <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
               <div className="p-4 sm:p-6">
-                {hasCorrections ? (
+                {highlightedSegments.length > 0 ? (
                   <HighlightedText 
                     segments={highlightedSegments}
                     onSegmentClick={onSegmentClick}
                     className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap"
-                    showAllHighlights={true}
                   />
                 ) : (
                   <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">

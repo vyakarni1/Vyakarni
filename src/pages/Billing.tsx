@@ -3,13 +3,13 @@ import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, CreditCard, Calendar, Download, BarChart3, Settings } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, CreditCard, Calendar, Download, BarChart3 } from "lucide-react";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import WordCreditsOverview from "@/components/Billing/WordCreditsOverview";
 import BillingHistory from "@/components/Billing/BillingHistory";
 import UsageAnalytics from "@/components/Billing/UsageAnalytics";
 import CurrentPlan from "@/components/Billing/CurrentPlan";
-import RecurringSubscriptionInfo from "@/components/Billing/RecurringSubscriptionInfo";
 import PaymentSuccessHandler from "@/components/Payment/PaymentSuccessHandler";
 
 const Billing = () => {
@@ -20,6 +20,7 @@ const Billing = () => {
 
   // Check if this is a payment success redirect
   const paymentStatus = searchParams.get('payment');
+  const orderId = searchParams.get('order_id');
 
   if (!authLoading && !user) {
     navigate("/login");
@@ -96,9 +97,6 @@ const Billing = () => {
             {/* Current Plan */}
             <CurrentPlan />
             
-            {/* Recurring Subscription Info */}
-            <RecurringSubscriptionInfo />
-            
             {/* Quick Actions */}
             <Card>
               <CardHeader>
@@ -109,12 +107,6 @@ const Billing = () => {
                   <Button className="w-full">
                     <CreditCard className="h-4 w-4 mr-2" />
                     अधिक शब्द खरीदें
-                  </Button>
-                </Link>
-                <Link to="/subscription-management" className="block">
-                  <Button variant="outline" className="w-full">
-                    <Settings className="h-4 w-4 mr-2" />
-                    सब्स्क्रिप्शन प्रबंधित करें
                   </Button>
                 </Link>
                 <Button variant="outline" className="w-full">

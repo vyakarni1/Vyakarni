@@ -102,9 +102,9 @@ const UsageAnalytics = () => {
 
   const getActionTypeLabel = (actionType: string) => {
     const labels: { [key: string]: string } = {
-      'grammar_check': 'व्याकरण जाँच',
+      'grammar_check': 'व्याकरण जांच',
       'style_enhance': 'शैली सुधार',
-      'spelling_check': 'वर्तनी जाँच',
+      'spelling_check': 'वर्तनी जांच',
       'text_correction': 'पाठ सुधार'
     };
     return labels[actionType] || actionType;

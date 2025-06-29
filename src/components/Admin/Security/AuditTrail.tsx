@@ -212,7 +212,7 @@ const AuditTrail = ({ logs, isLoading, onExport }: AuditTrailProps) => {
               <SelectItem value="all">सभी समय</SelectItem>
               <SelectItem value="today">आज</SelectItem>
               <SelectItem value="week">इस सप्ताह</SelectItem>
-              <SelectItem value="month">इस माह</SelectItem>
+              <SelectItem value="month">इस महीने</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -296,7 +296,7 @@ const AuditTrail = ({ logs, isLoading, onExport }: AuditTrailProps) => {
           <div className="text-center py-8">
             <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">कोई ऑडिट लॉग नहीं मिला</h3>
-            <p className="text-gray-600">फ़िल्टर परिवर्तित करने का प्रयास करें</p>
+            <p className="text-gray-600">फ़िल्टर बदलने का प्रयास करें</p>
           </div>
         )}
       </CardContent>

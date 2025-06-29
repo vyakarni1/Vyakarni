@@ -228,7 +228,7 @@ const EnhancedUserTable = ({
                         <span className="text-sm font-medium">{user.profile_completion}%</span>
                       </div>
                       <div className="text-xs text-gray-500">
-                        {user.profile_completion === 100 ? 'पूर्ण प्रोफ़ाइल' : 'अपूर्ण प्रोफ़ाइल'}
+                        {user.profile_completion === 100 ? 'पूर्ण प्रोफ़ाइल' : 'अधूरी प्रोफ़ाइल'}
                       </div>
                     </div>
                   </TableCell>
@@ -270,7 +270,7 @@ const EnhancedUserTable = ({
                           className="text-red-600 focus:text-red-600"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          हटायें
+                          हटाएं
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -285,7 +285,7 @@ const EnhancedUserTable = ({
           <div className="text-center py-12">
             <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">कोई उपयोगकर्ता नहीं मिला</h3>
-            <p className="text-gray-600">खोज मानदंड परिवर्तित करने का प्रयास करें या फिल्टर हटायें</p>
+            <p className="text-gray-600">खोज मानदंड बदलने का प्रयास करें या फिल्टर हटाएं</p>
           </div>
         )}
       </CardContent>

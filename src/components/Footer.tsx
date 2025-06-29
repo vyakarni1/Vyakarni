@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Github, Twitter, Mail, Heart } from "lucide-react";
 const Footer = () => {
@@ -96,7 +97,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">© 2025 व्याकरणी। सभी अधिकार सुरक्षित। Powered by SNS Innovation Labs Pvt. Ltd.</p>
+          <p className="text-gray-400 text-sm">© 2025 व्याकरणी. सभी अधिकार सुरक्षित। Powered by SNS Innovation Labs Pvt. Ltd.</p>
           <p className="text-gray-400 text-sm flex items-center">
             <Heart className="h-4 w-4 text-red-500 mr-1 animate-bounce-subtle" />
             के साथ भारत में बनाया गया

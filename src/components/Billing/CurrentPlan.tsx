@@ -47,12 +47,7 @@ const CurrentPlan = () => {
     );
   }
 
-  const getPlanBadgeColor = (planType: string, planName: string) => {
-    // Special handling for हॉबी प्लान (Basic)
-    if (planName === 'हॉबी प्लान (Basic)') {
-      return 'default';
-    }
-    
+  const getPlanBadgeColor = (planType: string) => {
     switch (planType.toLowerCase()) {
       case 'free':
         return 'secondary';
@@ -65,13 +60,6 @@ const CurrentPlan = () => {
       default:
         return 'outline';
     }
-  };
-
-  const isPaidPlan = () => {
-    return subscription.plan_name === 'हॉबी प्लान (Basic)' || 
-           subscription.plan_type === 'basic' || 
-           subscription.plan_type === 'premium' ||
-           subscription.plan_type === 'pro';
   };
 
   const formatDate = (dateString: string | null) => {
@@ -94,7 +82,7 @@ const CurrentPlan = () => {
               <CreditCard className="h-5 w-5" />
               <span>वर्तमान प्लान</span>
             </div>
-            <Badge variant={getPlanBadgeColor(subscription.plan_type, subscription.plan_name)}>
+            <Badge variant={getPlanBadgeColor(subscription.plan_type)}>
               {subscription.plan_name}
             </Badge>
           </CardTitle>
@@ -106,9 +94,7 @@ const CurrentPlan = () => {
                 <Star className="h-5 w-5 text-yellow-500" />
                 <div>
                   <p className="font-medium">प्लान प्रकार</p>
-                  <p className="text-sm text-gray-600 capitalize">
-                    {subscription.plan_name === 'हॉबी प्लान (Basic)' ? 'Basic' : subscription.plan_type}
-                  </p>
+                  <p className="text-sm text-gray-600 capitalize">{subscription.plan_type}</p>
                 </div>
               </div>
               
@@ -168,7 +154,7 @@ const CurrentPlan = () => {
       {/* Plan Limits */}
       <Card>
         <CardHeader>
-          <CardTitle>उपयोग सीमायें</CardTitle>
+          <CardTitle>उपयोग सीमाएं</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
@@ -189,8 +175,8 @@ const CurrentPlan = () => {
         </CardContent>
       </Card>
 
-      {/* Upgrade Options - Only show for truly free plans */}
-      {!isPaidPlan() && (
+      {/* Upgrade Options */}
+      {subscription.plan_type === 'free' && (
         <Card className="border-orange-200 bg-orange-50">
           <CardContent className="p-6">
             <div className="text-center">
@@ -198,32 +184,11 @@ const CurrentPlan = () => {
                 प्रो प्लान में अपग्रेड करें
               </h3>
               <p className="text-orange-700 mb-4">
-                अधिक शब्द सीमा और एडवांस फीचर्स का लाभ उठायें
+                अधिक शब्द सीमा और एडवांस फीचर्स का लाभ उठाएं
               </p>
               <Link to="/pricing">
                 <Button className="bg-orange-600 hover:bg-orange-700">
                   अपग्रेड करें
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Manage Plan Options for Paid Plans */}
-      {isPaidPlan() && (
-        <Card className="border-green-200 bg-green-50">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-green-800 mb-2">
-                प्लान प्रबंधन
-              </h3>
-              <p className="text-green-700 mb-4">
-                आपका प्लान सक्रिय है। अधिक शब्द या अपग्रेड के लिये यहाँ क्लिक करें।
-              </p>
-              <Link to="/pricing">
-                <Button className="bg-green-600 hover:bg-green-700">
-                  प्लान प्रबंधित करें
                 </Button>
               </Link>
             </div>

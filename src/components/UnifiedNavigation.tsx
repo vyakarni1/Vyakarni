@@ -9,10 +9,9 @@ import { useProfile } from "@/hooks/useProfile";
 import NavigationLogo from "@/components/Navigation/NavigationLogo";
 import DesktopNavigation from "@/components/Navigation/DesktopNavigation";
 import MobileNavigation from "@/components/Navigation/MobileNavigation";
-import { logger } from "@/utils/logger";
 
 interface UnifiedNavigationProps {
-  variant?: "home" | "default" | "transparent";
+  variant?: "home" | "default";
   className?: string;
 }
 
@@ -22,32 +21,20 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
   const { profile } = useProfile(user?.id);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  logger.debug('UnifiedNavigation rendered', { variant, hasUser: !!user }, 'UnifiedNavigation');
-
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
       toast.success("सफलतापूर्वक लॉग आउट हो गए!");
       navigate("/");
-      logger.info('User logged out successfully', undefined, 'UnifiedNavigation');
     } catch (error) {
-      logger.error('Logout error', error, 'UnifiedNavigation');
       toast.error("लॉग आउट में त्रुटि");
     }
   };
 
   const isHome = variant === "home";
-  const isTransparent = variant === "transparent";
   
-  // Enhanced header classes to handle all variants
-  const getHeaderClasses = () => {
-    if (isTransparent) {
-      return "bg-transparent";
-    }
-    return "bg-white/90 backdrop-blur-lg shadow-sm border-b border-gray-200/30";
-  };
-
-  const headerClasses = `${getHeaderClasses()} fixed top-0 left-0 right-0 z-50 transition-all duration-300`;
+  // Fixed positioning for both variants to prevent hiding
+  const headerClasses = "bg-white/90 backdrop-blur-lg shadow-sm border-b border-gray-200/30 fixed top-0 left-0 right-0 z-50 transition-all duration-300";
 
   const containerClasses = "container mx-auto px-6";
   const navClasses = "flex items-center justify-between h-16";
@@ -57,13 +44,13 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
       <div className={containerClasses}>
         <nav className={navClasses}>
           {/* Logo */}
-          <NavigationLogo variant={variant === "transparent" ? "default" : variant} />
+          <NavigationLogo variant={variant} />
 
           {/* Desktop Navigation */}
           <DesktopNavigation 
             user={user}
             profile={profile}
-            variant={variant === "transparent" ? "default" : variant}
+            variant={variant}
             onLogout={handleLogout}
           />
 
@@ -81,7 +68,7 @@ const UnifiedNavigation = ({ variant = "default", className = "" }: UnifiedNavig
         <MobileNavigation
           user={user}
           profile={profile}
-          variant={variant === "transparent" ? "default" : variant}
+          variant={variant}
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
           onLogout={handleLogout}

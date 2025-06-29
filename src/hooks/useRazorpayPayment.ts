@@ -29,7 +29,7 @@ export const useRazorpayPayment = () => {
         description: "कृपया पहले लॉगिन करें।",
         variant: "destructive",
       });
-      throw new Error('User not authenticated');
+      return;
     }
 
     setIsLoading(true);
@@ -43,12 +43,7 @@ export const useRazorpayPayment = () => {
       });
 
       if (error) {
-        console.error('Edge function error:', error);
         throw new Error(error.message || 'Failed to create order');
-      }
-
-      if (!data) {
-        throw new Error('No response data received');
       }
 
       console.log('Razorpay order created:', data);
@@ -77,12 +72,10 @@ export const useRazorpayPayment = () => {
           console.log('Payment successful:', response);
           toast({
             title: "भुगतान सफल",
-            description: "आपका भुगतान सफलतापूर्वक पूरा हुआ। कुछ समय में आपके खाते में शब्द जोड़ दिए जाएंगे।",
+            description: "आपका भुगतान सफलतापूर्वक पूरा हुआ।",
           });
           // Redirect to billing page
-          setTimeout(() => {
-            window.location.href = `/billing?payment=success&order_id=${data.order_id}`;
-          }, 2000);
+          window.location.href = `/billing?payment=success&order_id=${data.order_id}`;
         },
         modal: {
           ondismiss: () => {
@@ -103,7 +96,7 @@ export const useRazorpayPayment = () => {
         console.error('Payment failed:', response);
         toast({
           title: "भुगतान असफल",
-          description: response.error?.description || "भुगतान में त्रुटि हुई। कृपया पुनः प्रयास करें।",
+          description: response.error.description || "भुगतान में त्रुटि हुई।",
           variant: "destructive",
         });
       });
@@ -112,15 +105,11 @@ export const useRazorpayPayment = () => {
 
     } catch (error) {
       console.error('Payment initiation error:', error);
-      const errorMessage = error instanceof Error ? error.message : "भुगतान शुरू करने में त्रुटि हुई।";
-      
       toast({
         title: "भुगतान त्रुटि",
-        description: errorMessage,
+        description: error instanceof Error ? error.message : "भुगतान शुरू करने में त्रुटि हुई।",
         variant: "destructive",
       });
-      
-      throw error;
     } finally {
       setIsLoading(false);
     }

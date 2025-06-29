@@ -78,7 +78,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
               <span className="font-semibold text-blue-900 text-lg">
                 {selectedCount} उपयोगकर्ता चयनित
               </span>
-              <p className="text-sm text-blue-700">बल्क ऑपरेशन के लिये तैयार</p>
+              <p className="text-sm text-blue-700">बल्क ऑपरेशन के लिए तैयार</p>
             </div>
           </div>
           
@@ -99,7 +99,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
                 <DialogHeader>
                   <DialogTitle>शब्द क्रेडिट प्रबंधन</DialogTitle>
                   <DialogDescription>
-                    {selectedCount} चयनित उपयोगकर्ताओं के लिये शब्द क्रेडिट जोड़ें या घटायें
+                    {selectedCount} चयनित उपयोगकर्ताओं के लिए शब्द क्रेडिट जोड़ें या घटाएं
                   </DialogDescription>
                 </DialogHeader>
                 
@@ -119,12 +119,12 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
                       className="flex items-center space-x-1"
                     >
                       <Minus className="h-4 w-4" />
-                      <span>घटायें</span>
+                      <span>घटाएं</span>
                     </Button>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="amount">शब्दों की संख्या</Label>
+                    <Label htmlFor="amount">शब्द की संख्या</Label>
                     <Input
                       id="amount"
                       type="number"
@@ -146,7 +146,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="free">नि:शुल्क क्रेडिट</SelectItem>
+                            <SelectItem value="free">मुफ्त क्रेडिट</SelectItem>
                             <SelectItem value="paid">खरीदा गया क्रेडिट</SelectItem>
                           </SelectContent>
                         </Select>
@@ -170,7 +170,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
                     <Label htmlFor="reason">कारण (वैकल्पिक)</Label>
                     <Textarea
                       id="reason"
-                      placeholder="इस कार्य का कारण बतायें..."
+                      placeholder="इस कार्य का कारण बताएं..."
                       value={creditReason}
                       onChange={(e) => setCreditReason(e.target.value)}
                     />
@@ -182,7 +182,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
                     रद्द करें
                   </Button>
                   <Button onClick={handleCreditManagement} disabled={!creditAmount || isUpdating}>
-                    {creditAction === 'add' ? 'क्रेडिट जोड़ें' : 'क्रेडिट घटायें'}
+                    {creditAction === 'add' ? 'क्रेडिट जोड़ें' : 'क्रेडिट घटाएं'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -230,7 +230,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
               className="flex items-center space-x-1"
             >
               <Trash2 className="h-4 w-4" />
-              <span>हटायें</span>
+              <span>हटाएं</span>
             </Button>
           </div>
         </div>

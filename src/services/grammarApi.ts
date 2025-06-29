@@ -1,10 +1,9 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { wordReplacements } from "@/data/wordReplacements";
-import { logger } from '@/utils/logger';
 
 export const callGrammarCheckAPI = async (inputText: string) => {
-  logger.debug('Sending text for correction', { textLength: inputText.length }, 'grammarApi');
+  console.log('Sending text for correction:', inputText);
   
   const { data, error } = await supabase.functions.invoke('grammar-check', {
     body: {
@@ -14,7 +13,7 @@ export const callGrammarCheckAPI = async (inputText: string) => {
   });
 
   if (error) {
-    logger.error('Edge function error', error, 'grammarApi');
+    console.error('Edge function error:', error);
     throw new Error(`Grammar correction failed: ${error.message}`);
   }
 
@@ -22,10 +21,8 @@ export const callGrammarCheckAPI = async (inputText: string) => {
     throw new Error('No corrected text received from the API');
   }
 
-  logger.debug('Received corrected text', { 
-    correctedTextLength: data.correctedText.length,
-    correctionsCount: data.corrections?.length || 0
-  }, 'grammarApi');
+  console.log('Received corrected text:', data.correctedText);
+  console.log('Received corrections:', data.corrections);
   
   return {
     correctedText: data.correctedText,
@@ -34,14 +31,14 @@ export const callGrammarCheckAPI = async (inputText: string) => {
 };
 
 export const callStyleEnhanceAPI = async (inputText: string) => {
-  logger.debug('Sending text for style enhancement', { textLength: inputText.length }, 'grammarApi');
+  console.log('Sending text for style enhancement:', inputText);
   
   const { data, error } = await supabase.functions.invoke('style-enhance', {
     body: { inputText }
   });
 
   if (error) {
-    logger.error('Edge function error', error, 'grammarApi');
+    console.error('Edge function error:', error);
     throw new Error(`Style enhancement failed: ${error.message}`);
   }
 
@@ -49,6 +46,6 @@ export const callStyleEnhanceAPI = async (inputText: string) => {
     throw new Error('No enhanced text received from the API');
   }
 
-  logger.debug('Received enhanced text', { enhancedTextLength: data.enhancedText.length }, 'grammarApi');
+  console.log('Received enhanced text:', data.enhancedText);
   return data.enhancedText;
 };

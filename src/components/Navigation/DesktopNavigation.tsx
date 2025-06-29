@@ -6,13 +6,12 @@ import NotificationDropdown from "./NotificationDropdown";
 interface DesktopNavigationProps {
   user: any;
   profile: any;
-  variant: "home" | "default" | "transparent";
+  variant: "home" | "default";
   onLogout: () => void;
 }
 
 const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigationProps) => {
   const isHome = variant === "home";
-  const isTransparent = variant === "transparent";
 
   return (
     <div className="hidden md:flex items-center space-x-8">
@@ -51,7 +50,7 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
         </>
       ) : (
         <>
-          {!isHome && !isTransparent && (
+          {!isHome && (
             <>
               <Link 
                 to="/about" 
@@ -65,7 +64,7 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
               >
                 संपर्क
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute -bottom-1 left-0 w-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
               </Link>
               <Link 
                 to="/pricing" 

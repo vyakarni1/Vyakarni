@@ -2,14 +2,12 @@
 import { useAuth } from "./AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import EmailVerificationGuard from "./Security/EmailVerificationGuard";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireEmailVerification?: boolean;
 }
 
-const ProtectedRoute = ({ children, requireEmailVerification = true }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -27,17 +25,7 @@ const ProtectedRoute = ({ children, requireEmailVerification = true }: Protected
     );
   }
 
-  if (!user) return null;
-
-  if (requireEmailVerification) {
-    return (
-      <EmailVerificationGuard>
-        {children}
-      </EmailVerificationGuard>
-    );
-  }
-
-  return <>{children}</>;
+  return user ? <>{children}</> : null;
 };
 
 export default ProtectedRoute;
