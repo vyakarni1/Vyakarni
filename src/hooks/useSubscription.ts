@@ -78,7 +78,7 @@ export const useSubscription = () => {
     if (!user) return;
 
     try {
-      // Get subscription with additional billing info
+      // Get subscription with additional billing info - improved query
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select(`
@@ -112,7 +112,7 @@ export const useSubscription = () => {
         const planData = subscriptionData.subscription_plans;
         
         if (planData) {
-          setSubscription({
+          const newSubscription = {
             subscription_id: subscriptionData.id,
             plan_name: planData.plan_name,
             plan_type: planData.plan_type,
@@ -125,7 +125,10 @@ export const useSubscription = () => {
             next_billing_date: subscriptionData.next_billing_date,
             auto_renewal: subscriptionData.auto_renewal,
             billing_cycle: subscriptionData.billing_cycle,
-          });
+          };
+          
+          console.log('Fetched subscription:', newSubscription);
+          setSubscription(newSubscription);
         }
       } else {
         // No subscription found, create default free subscription
@@ -198,9 +201,32 @@ export const useSubscription = () => {
     }
   };
 
+  // Enhanced subscription active check
   const isSubscriptionActive = (): boolean => {
-    return subscription?.status === 'active' && 
-           (subscription.plan_type === 'basic' || subscription.plan_type === 'premium');
+    if (!subscription) return false;
+    
+    const isPaidPlan = subscription.plan_type === 'basic' || 
+                      subscription.plan_type === 'premium' ||
+                      subscription.plan_name.includes('हॉबी प्लान') ||
+                      subscription.plan_name.includes('Basic');
+    
+    const isActiveStatus = subscription.status === 'active';
+    
+    // Check if subscription hasn't expired
+    const notExpired = !subscription.expires_at || 
+                       new Date(subscription.expires_at) > new Date();
+    
+    console.log('Subscription check:', {
+      isPaidPlan,
+      isActiveStatus,
+      notExpired,
+      plan_type: subscription.plan_type,
+      plan_name: subscription.plan_name,
+      status: subscription.status,
+      expires_at: subscription.expires_at
+    });
+    
+    return isPaidPlan && isActiveStatus && notExpired;
   };
 
   useEffect(() => {

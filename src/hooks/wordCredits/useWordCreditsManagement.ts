@@ -36,8 +36,28 @@ export const useWordCreditsManagement = () => {
     }
   };
 
-  const canPurchaseTopup = (hasActiveSubscription: boolean): boolean => {
-    return hasActiveSubscription;
+  // Enhanced logic for top-up purchase eligibility
+  const canPurchaseTopup = async (): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      // Check if user has active subscription using the database function
+      const { data: hasActiveSubscription, error } = await supabase
+        .rpc('check_user_has_active_subscription', {
+          user_uuid: user.id
+        });
+
+      if (error) {
+        console.error('Error checking subscription status:', error);
+        return false;
+      }
+
+      console.log('Can purchase topup check:', hasActiveSubscription);
+      return hasActiveSubscription || false;
+    } catch (error) {
+      console.error('Error in canPurchaseTopup:', error);
+      return false;
+    }
   };
 
   return {

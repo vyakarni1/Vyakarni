@@ -27,9 +27,21 @@ serve(async (req) => {
         return await handleCreateOrder(req, supabase)
       case 'webhook':
         return await handleWebhook(req, supabase)
+      case 'manual-fix':
+        // Handle manual payment processing for admin use
+        if (req.method === 'POST') {
+          return await handleWebhook(req, supabase)
+        }
+        return new Response(
+          JSON.stringify({ error: 'Method not allowed for manual-fix' }),
+          { 
+            status: 405, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
       default:
         return new Response(
-          JSON.stringify({ error: 'Invalid endpoint' }),
+          JSON.stringify({ error: 'Invalid endpoint', available: ['create-order', 'webhook', 'manual-fix'] }),
           { 
             status: 404, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -39,7 +51,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in razorpay-payment function:', error)
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error', details: error.message }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

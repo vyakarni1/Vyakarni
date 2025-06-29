@@ -47,6 +47,11 @@ export const useWordCredits = () => {
     return result;
   };
 
+  // Enhanced top-up availability check
+  const canPurchaseTopupCredits = async (): Promise<boolean> => {
+    return await canPurchaseTopup();
+  };
+
   return {
     balance,
     plans,
@@ -57,6 +62,6 @@ export const useWordCredits = () => {
     addWordCredits: enhancedAddWordCredits,
     getSubscriptionPlans,
     getTopupPlans,
-    canPurchaseTopup: () => canPurchaseTopup(balance.has_active_subscription),
+    canPurchaseTopup: canPurchaseTopupCredits,
   };
 };
