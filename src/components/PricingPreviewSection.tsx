@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +8,59 @@ import DiscountBadge from './DiscountBadge';
 import { useWordCredits } from '@/hooks/useWordCredits';
 import { useAuth } from '@/components/AuthProvider';
 import { useState, useEffect } from 'react';
+
+function getPlanIcon(planType: string, planCategory: string) {
+  if (planCategory === 'topup') return <Plus className="h-6 w-6" />;
+  
+  switch (planType) {
+    case 'free':
+      return <Zap className="h-6 w-6" />;
+    case 'basic':
+      return <Star className="h-6 w-6" />;
+    case 'premium':
+      return <Crown className="h-6 w-6" />;
+    default:
+      return <Zap className="h-6 w-6" />;
+  }
+}
+
+function getPlanColor(planType: string, planCategory: string) {
+  if (planCategory === 'topup') return 'from-purple-500 to-purple-600';
+  
+  switch (planType) {
+    case 'free':
+      return 'from-gray-500 to-gray-600';
+    case 'basic':
+      return 'from-blue-500 to-purple-600';
+    case 'premium':
+      return 'from-purple-600 to-pink-600';
+    default:
+      return 'from-gray-500 to-gray-600';
+  }
+}
+
+function getDiscountInfo(planType: string) {
+  switch (planType) {
+    case 'basic':
+      return {
+        hasDiscount: true,
+        percentage: 33,
+        originalPrice: 1499
+      };
+    case 'premium':
+      return {
+        hasDiscount: true,
+        percentage: 23,
+        originalPrice: 12999
+      };
+    default:
+      return {
+        hasDiscount: false,
+        percentage: 0,
+        originalPrice: 0
+      };
+  }
+}
 
 const PricingPreviewSection = () => {
   const { plans, loading, canPurchaseTopup } = useWordCredits();
@@ -26,59 +80,6 @@ const PricingPreviewSection = () => {
     
     checkTopupEligibility();
   }, [user, canPurchaseTopup]);
-
-  function getPlanIcon(planType: string, planCategory: string) {
-    if (planCategory === 'topup') return <Plus className="h-6 w-6" />;
-    
-    switch (planType) {
-      case 'free':
-        return <Zap className="h-6 w-6" />;
-      case 'basic':
-        return <Star className="h-6 w-6" />;
-      case 'premium':
-        return <Crown className="h-6 w-6" />;
-      default:
-        return <Zap className="h-6 w-6" />;
-    }
-  }
-
-  function getPlanColor(planType: string, planCategory: string) {
-    if (planCategory === 'topup') return 'from-purple-500 to-purple-600';
-    
-    switch (planType) {
-      case 'free':
-        return 'from-gray-500 to-gray-600';
-      case 'basic':
-        return 'from-blue-500 to-purple-600';
-      case 'premium':
-        return 'from-purple-600 to-pink-600';
-      default:
-        return 'from-gray-500 to-gray-600';
-    }
-  }
-
-  function getDiscountInfo(planType: string) {
-    switch (planType) {
-      case 'basic':
-        return {
-          hasDiscount: true,
-          percentage: 33,
-          originalPrice: 1499
-        };
-      case 'premium':
-        return {
-          hasDiscount: true,
-          percentage: 23,
-          originalPrice: 12999
-        };
-      default:
-        return {
-          hasDiscount: false,
-          percentage: 0,
-          originalPrice: 0
-        };
-    }
-  }
 
   if (loading) {
     return (
@@ -309,59 +310,6 @@ const PricingPreviewSection = () => {
       </div>
     </section>
   );
-
-  function getPlanIcon(planType: string, planCategory: string) {
-    if (planCategory === 'topup') return <Plus className="h-6 w-6" />;
-    
-    switch (planType) {
-      case 'free':
-        return <Zap className="h-6 w-6" />;
-      case 'basic':
-        return <Star className="h-6 w-6" />;
-      case 'premium':
-        return <Crown className="h-6 w-6" />;
-      default:
-        return <Zap className="h-6 w-6" />;
-    }
-  }
-
-  function getPlanColor(planType: string, planCategory: string) {
-    if (planCategory === 'topup') return 'from-purple-500 to-purple-600';
-    
-    switch (planType) {
-      case 'free':
-        return 'from-gray-500 to-gray-600';
-      case 'basic':
-        return 'from-blue-500 to-purple-600';
-      case 'premium':
-        return 'from-purple-600 to-pink-600';
-      default:
-        return 'from-gray-500 to-gray-600';
-    }
-  }
-
-  function getDiscountInfo(planType: string) {
-    switch (planType) {
-      case 'basic':
-        return {
-          hasDiscount: true,
-          percentage: 33,
-          originalPrice: 1499
-        };
-      case 'premium':
-        return {
-          hasDiscount: true,
-          percentage: 23,
-          originalPrice: 12999
-        };
-      default:
-        return {
-          hasDiscount: false,
-          percentage: 0,
-          originalPrice: 0
-        };
-    }
-  }
 };
 
 export default PricingPreviewSection;
