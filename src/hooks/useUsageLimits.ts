@@ -3,7 +3,7 @@ import { useWordCredits } from './useWordCredits';
 import { useSubscription } from './useSubscription';
 
 export const useUsageLimits = () => {
-  const { balance, deductWords, checkWordLimit, canPurchaseTopup } = useWordCredits();
+  const { balance, deductWords, checkWordLimit } = useWordCredits();
   const { subscription, checkWordLimit: checkPerCorrectionLimit, isSubscriptionActive } = useSubscription();
 
   // Check both per-correction limits and available word balance
@@ -46,12 +46,13 @@ export const useUsageLimits = () => {
     };
   };
 
+  // Since top-up feature is removed, these functions now return simple values
   const canUseTopupFeature = async (): Promise<boolean> => {
-    return await canPurchaseTopup();
+    return false; // Top-up feature is no longer available
   };
 
   const needsSubscriptionForTopup = (): boolean => {
-    return !balance.has_active_subscription;
+    return true; // Always true since top-up is not available
   };
 
   return {
