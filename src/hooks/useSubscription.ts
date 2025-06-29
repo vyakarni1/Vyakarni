@@ -197,12 +197,12 @@ export const useSubscription = () => {
     }
   };
 
-  // Enhanced subscription active check - includes new plan types
+  // Enhanced subscription active check - fixed logic
   const isSubscriptionActive = (): boolean => {
     if (!subscription) return false;
     
-    // Check if it's a paid plan (starter, pro, elite, enterprise)
-    const isPaidPlan = ['starter', 'pro', 'elite', 'enterprise'].includes(subscription.plan_type);
+    // Check if it's a paid plan (basic or premium)
+    const isPaidPlan = subscription.plan_type === 'basic' || subscription.plan_type === 'premium';
     
     const isActiveStatus = subscription.status === 'active';
     
