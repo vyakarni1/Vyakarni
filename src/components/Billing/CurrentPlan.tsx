@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useWordCredits } from "@/hooks/useWordCredits";
-import { CreditCard, Star, Calendar, Users, FileText, AlertTriangle } from "lucide-react";
+import { CreditCard, Star, Users, FileText, AlertTriangle, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CurrentPlan = () => {
@@ -50,35 +50,12 @@ const CurrentPlan = () => {
     );
   }
 
-  const getPlanBadgeColor = (planType: string) => {
-    switch (planType.toLowerCase()) {
-      case 'free':
-        return 'secondary';
-      case 'basic':
-        return 'default';
-      case 'premium':
-        return 'destructive';
-      default:
-        return 'outline';
-    }
-  };
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'कोई समाप्ति नहीं';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('hi-IN', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
   const getStatusBadge = () => {
     if (subscription.status === 'active') {
       if (subscription.plan_type === 'free') {
         return <Badge variant="secondary">निःशुल्क प्लान</Badge>;
       } else if (balance.has_active_subscription) {
-        return <Badge variant="default">सक्रिय सब्स्क्रिप्शन</Badge>;
+        return <Badge variant="default">सक्रिय प्लान</Badge>;
       } else {
         return <Badge variant="outline">बेसिक प्लान</Badge>;
       }
@@ -128,47 +105,20 @@ const CurrentPlan = () => {
               <div className="flex items-center space-x-3">
                 <Star className="h-5 w-5 text-yellow-500" />
                 <div>
-                  <p className="font-medium">मासिक सुधार सीमा</p>
-                  <p className="text-sm text-gray-600">{subscription.max_corrections_per_month}</p>
+                  <p className="font-medium">उपलब्ध शब्द</p>
+                  <p className="text-sm text-gray-600">{balance.total_words_available.toLocaleString()}</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-3">
-                <Calendar className="h-5 w-5 text-blue-500" />
+                <ShoppingBag className="h-5 w-5 text-blue-500" />
                 <div>
-                  <p className="font-medium">अगली बिलिंग</p>
-                  <p className="text-sm text-gray-600">{formatDate(subscription.next_billing_date)}</p>
+                  <p className="font-medium">प्लान स्थिति</p>
+                  <p className="text-sm text-gray-600">
+                    {subscription.status === 'active' ? 'सक्रिय' : 'निष्क्रिय'}
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Subscription Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle>सब्स्क्रिप्शन स्थिति</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-medium">वर्तमान स्थिति</span>
-              <span className={`capitalize ${subscription.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                {subscription.status === 'active' ? 'सक्रिय' : 'निष्क्रिय'}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-medium">ऑटो नवीकरण</span>
-              <span className={subscription.auto_renewal ? 'text-green-600' : 'text-orange-600'}>
-                {subscription.auto_renewal ? 'चालू' : 'बंद'}
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-medium">बिलिंग साइकल</span>
-              <span className="capitalize">{subscription.billing_cycle || 'मासिक'}</span>
             </div>
           </div>
         </CardContent>
@@ -200,7 +150,7 @@ const CurrentPlan = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">शब्द टॉप-अप सुविधा</span>
+                  <span className="text-sm">स्थायी शब्द क्रेडिट</span>
                 </div>
               </div>
             )}
@@ -220,12 +170,6 @@ const CurrentPlan = () => {
               {subscription.plan_type === 'free' ? 'प्लान अपग्रेड करें' : 'अधिक शब्द खरीदें'}
             </Button>
           </Link>
-          
-          {subscription.plan_type !== 'free' && balance.has_active_subscription && (
-            <Button variant="outline" className="w-full">
-              सब्स्क्रिप्शन प्रबंधित करें
-            </Button>
-          )}
         </CardContent>
       </Card>
 

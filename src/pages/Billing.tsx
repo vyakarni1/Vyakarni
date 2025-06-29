@@ -10,6 +10,8 @@ import CurrentPlan from "@/components/Billing/CurrentPlan";
 import PaymentSuccessHandler from "@/components/Payment/PaymentSuccessHandler";
 import UnifiedNavigation from "@/components/UnifiedNavigation";
 import { useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { TrendingUp, CreditCard, FileText } from "lucide-react";
 
 const Billing = () => {
   const { user, loading: authLoading } = useAuth();
@@ -61,7 +63,52 @@ const Billing = () => {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">बिलिंग और उपयोग</h1>
-          <p className="text-gray-600">अपने खाते की जानकारी, शब्द उपयोग और भुगतान इतिहास देखें</p>
+          <p className="text-gray-600">अपने खाते की जानकारी, शब्द उपयोग और भुगतान विवरण देखें</p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">कुल शब्द</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {balance.total_words_available.toLocaleString()}
+                  </p>
+                </div>
+                <TrendingUp className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">खरीदे गए शब्द</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {balance.purchased_words.toLocaleString()}
+                  </p>
+                </div>
+                <CreditCard className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">प्लान स्थिति</p>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {balance.has_active_subscription ? 'सक्रिय' : 'बेसिक'}
+                  </p>
+                </div>
+                <FileText className="h-8 w-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Main Content */}

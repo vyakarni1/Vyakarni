@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Receipt, Download, Calendar, CreditCard } from "lucide-react";
+import { Receipt, Calendar, CreditCard } from "lucide-react";
+import ExportDialog from "./ExportDialog";
 
 interface PaymentTransaction {
   id: string;
@@ -119,10 +120,13 @@ const BillingHistory = () => {
             <Receipt className="h-5 w-5" />
             <span>भुगतान इतिहास</span>
           </div>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            निर्यात करें
-          </Button>
+          <ExportDialog 
+            transactions={transactions} 
+            userInfo={{ 
+              name: user?.user_metadata?.name || user?.email?.split('@')[0], 
+              email: user?.email 
+            }} 
+          />
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -160,9 +164,6 @@ const BillingHistory = () => {
                     </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm">
-                  <Download className="h-4 w-4" />
-                </Button>
               </div>
             ))}
             
