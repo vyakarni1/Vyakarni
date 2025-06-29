@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,24 +9,25 @@ import { useAuth } from '@/components/AuthProvider';
 import { useState, useEffect } from 'react';
 
 const PricingPreviewSection = () => {
-  const { plans, loading } = useWordCredits();
+  const { plans, loading, canPurchaseTopup } = useWordCredits();
   const { user } = useAuth();
-  const [canPurchaseTopup, setCanPurchaseTopup] = useState(false);
+  const [canPurchaseTopupState, setCanPurchaseTopupState] = useState(false);
 
   // Check topup eligibility on component mount
   useEffect(() => {
     const checkTopupEligibility = async () => {
       if (user) {
-        const { canPurchaseTopup: canUseTopup } = useWordCredits();
-        const result = await canUseTopup();
-        setCanPurchaseTopup(result);
+        const result = await canPurchaseTopup();
+        setCanPurchaseTopupState(result);
+      } else {
+        setCanPurchaseTopupState(false);
       }
     };
     
     checkTopupEligibility();
-  }, [user]);
+  }, [user, canPurchaseTopup]);
 
-  const getPlanIcon = (planType: string, planCategory: string) => {
+  function getPlanIcon(planType: string, planCategory: string) {
     if (planCategory === 'topup') return <Plus className="h-6 w-6" />;
     
     switch (planType) {
@@ -40,9 +40,9 @@ const PricingPreviewSection = () => {
       default:
         return <Zap className="h-6 w-6" />;
     }
-  };
+  }
 
-  const getPlanColor = (planType: string, planCategory: string) => {
+  function getPlanColor(planType: string, planCategory: string) {
     if (planCategory === 'topup') return 'from-purple-500 to-purple-600';
     
     switch (planType) {
@@ -55,9 +55,9 @@ const PricingPreviewSection = () => {
       default:
         return 'from-gray-500 to-gray-600';
     }
-  };
+  }
 
-  const getDiscountInfo = (planType: string) => {
+  function getDiscountInfo(planType: string) {
     switch (planType) {
       case 'basic':
         return {
@@ -78,7 +78,7 @@ const PricingPreviewSection = () => {
           originalPrice: 0
         };
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -274,7 +274,7 @@ const PricingPreviewSection = () => {
                         <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
                           <Link to="/register">पहले साइनअप करें</Link>
                         </Button>
-                      ) : !canPurchaseTopup ? (
+                      ) : !canPurchaseTopupState ? (
                         <div className="space-y-3">
                           <div className="flex items-center space-x-2 p-3 bg-orange-100 rounded-lg">
                             <AlertTriangle className="h-4 w-4 text-orange-600" />
@@ -309,6 +309,59 @@ const PricingPreviewSection = () => {
       </div>
     </section>
   );
+
+  function getPlanIcon(planType: string, planCategory: string) {
+    if (planCategory === 'topup') return <Plus className="h-6 w-6" />;
+    
+    switch (planType) {
+      case 'free':
+        return <Zap className="h-6 w-6" />;
+      case 'basic':
+        return <Star className="h-6 w-6" />;
+      case 'premium':
+        return <Crown className="h-6 w-6" />;
+      default:
+        return <Zap className="h-6 w-6" />;
+    }
+  }
+
+  function getPlanColor(planType: string, planCategory: string) {
+    if (planCategory === 'topup') return 'from-purple-500 to-purple-600';
+    
+    switch (planType) {
+      case 'free':
+        return 'from-gray-500 to-gray-600';
+      case 'basic':
+        return 'from-blue-500 to-purple-600';
+      case 'premium':
+        return 'from-purple-600 to-pink-600';
+      default:
+        return 'from-gray-500 to-gray-600';
+    }
+  }
+
+  function getDiscountInfo(planType: string) {
+    switch (planType) {
+      case 'basic':
+        return {
+          hasDiscount: true,
+          percentage: 33,
+          originalPrice: 1499
+        };
+      case 'premium':
+        return {
+          hasDiscount: true,
+          percentage: 23,
+          originalPrice: 12999
+        };
+      default:
+        return {
+          hasDiscount: false,
+          percentage: 0,
+          originalPrice: 0
+        };
+    }
+  }
 };
 
 export default PricingPreviewSection;

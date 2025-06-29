@@ -197,30 +197,26 @@ export const useSubscription = () => {
     }
   };
 
-  // Enhanced subscription active check - fixed logic
-  const isSubscriptionActive = (): boolean => {
-    if (!subscription) return false;
+  // Enhanced subscription active check using the database function
+  const isSubscriptionActive = async (): Promise<boolean> => {
+    if (!user) return false;
     
-    // Check if it's a paid plan (basic or premium)
-    const isPaidPlan = subscription.plan_type === 'basic' || subscription.plan_type === 'premium';
-    
-    const isActiveStatus = subscription.status === 'active';
-    
-    // Check if subscription hasn't expired
-    const notExpired = !subscription.expires_at || 
-                       new Date(subscription.expires_at) > new Date();
-    
-    console.log('Subscription active check:', {
-      isPaidPlan,
-      isActiveStatus,
-      notExpired,
-      plan_type: subscription.plan_type,
-      plan_name: subscription.plan_name,
-      status: subscription.status,
-      expires_at: subscription.expires_at
-    });
-    
-    return isPaidPlan && isActiveStatus && notExpired;
+    try {
+      const { data: hasActiveSubscription, error } = await supabase
+        .rpc('check_user_has_active_subscription', {
+          user_uuid: user.id
+        });
+
+      if (error) {
+        console.error('Error checking subscription active status:', error);
+        return false;
+      }
+
+      return hasActiveSubscription || false;
+    } catch (error) {
+      console.error('Error in isSubscriptionActive:', error);
+      return false;
+    }
   };
 
   useEffect(() => {

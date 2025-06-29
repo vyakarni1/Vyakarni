@@ -41,7 +41,7 @@ export const useWordCreditsManagement = () => {
     if (!user) return false;
 
     try {
-      // Check if user has active subscription using the database function
+      // Check if user has active subscription using the updated database function
       const { data: hasActiveSubscription, error } = await supabase
         .rpc('check_user_has_active_subscription', {
           user_uuid: user.id
