@@ -3,11 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSubscription } from "@/hooks/useSubscription";
-import { CreditCard, Star, Calendar, Users, FileText } from "lucide-react";
+import { useWordCredits } from "@/hooks/useWordCredits";
+import { CreditCard, Star, Calendar, Users, FileText, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CurrentPlan = () => {
   const { subscription, loading } = useSubscription();
+  const { balance } = useWordCredits();
 
   if (loading) {
     return (
@@ -37,6 +39,7 @@ const CurrentPlan = () => {
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
+            <AlertTriangle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
             <p className="text-gray-500 mb-4">कोई सक्रिय प्लान नहीं मिला</p>
             <Link to="/pricing">
               <Button>प्लान चुनें</Button>
@@ -53,10 +56,8 @@ const CurrentPlan = () => {
         return 'secondary';
       case 'basic':
         return 'default';
-      case 'pro':
-        return 'default';
       case 'premium':
-        return 'default';
+        return 'destructive';
       default:
         return 'outline';
     }
@@ -72,6 +73,19 @@ const CurrentPlan = () => {
     });
   };
 
+  const getStatusBadge = () => {
+    if (subscription.status === 'active') {
+      if (subscription.plan_type === 'free') {
+        return <Badge variant="secondary">निःशुल्क प्लान</Badge>;
+      } else if (balance.has_active_subscription) {
+        return <Badge variant="default">सक्रिय सब्स्क्रिप्शन</Badge>;
+      } else {
+        return <Badge variant="outline">बेसिक प्लान</Badge>;
+      }
+    }
+    return <Badge variant="destructive">निष्क्रिय</Badge>;
+  };
+
   return (
     <div className="space-y-6">
       {/* Current Plan Overview */}
@@ -82,38 +96,23 @@ const CurrentPlan = () => {
               <CreditCard className="h-5 w-5" />
               <span>वर्तमान प्लान</span>
             </div>
-            <Badge variant={getPlanBadgeColor(subscription.plan_type)}>
-              {subscription.plan_name}
-            </Badge>
+            {getStatusBadge()}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Star className="h-5 w-5 text-yellow-500" />
-                <div>
-                  <p className="font-medium">प्लान प्रकार</p>
-                  <p className="text-sm text-gray-600 capitalize">{subscription.plan_type}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <Calendar className="h-5 w-5 text-blue-500" />
-                <div>
-                  <p className="font-medium">समाप्ति तिथि</p>
-                  <p className="text-sm text-gray-600">{formatDate(subscription.expires_at)}</p>
-                </div>
-              </div>
+          <div className="space-y-6">
+            <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{subscription.plan_name}</h3>
+              <p className="text-sm text-gray-600 capitalize">प्लान प्रकार: {subscription.plan_type}</p>
             </div>
-            
-            <div className="space-y-4">
+
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="flex items-center space-x-3">
                 <FileText className="h-5 w-5 text-green-500" />
                 <div>
                   <p className="font-medium">शब्द सीमा प्रति सुधार</p>
                   <p className="text-sm text-gray-600">
-                    {subscription.max_words_per_correction} शब्द
+                    {subscription.max_words_per_correction.toLocaleString()} शब्द
                   </p>
                 </div>
               </div>
@@ -125,6 +124,51 @@ const CurrentPlan = () => {
                   <p className="text-sm text-gray-600">{subscription.max_team_members}</p>
                 </div>
               </div>
+
+              <div className="flex items-center space-x-3">
+                <Star className="h-5 w-5 text-yellow-500" />
+                <div>
+                  <p className="font-medium">मासिक सुधार सीमा</p>
+                  <p className="text-sm text-gray-600">{subscription.max_corrections_per_month}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Calendar className="h-5 w-5 text-blue-500" />
+                <div>
+                  <p className="font-medium">अगली बिलिंग</p>
+                  <p className="text-sm text-gray-600">{formatDate(subscription.next_billing_date)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Subscription Status */}
+      <Card>
+        <CardHeader>
+          <CardTitle>सब्स्क्रिप्शन स्थिति</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="font-medium">वर्तमान स्थिति</span>
+              <span className={`capitalize ${subscription.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+                {subscription.status === 'active' ? 'सक्रिय' : 'निष्क्रिय'}
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="font-medium">ऑटो नवीकरण</span>
+              <span className={subscription.auto_renewal ? 'text-green-600' : 'text-orange-600'}>
+                {subscription.auto_renewal ? 'चालू' : 'बंद'}
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="font-medium">बिलिंग साइकल</span>
+              <span className="capitalize">{subscription.billing_cycle || 'मासिक'}</span>
             </div>
           </div>
         </CardContent>
@@ -136,7 +180,7 @@ const CurrentPlan = () => {
           <CardTitle>प्लान फीचर्स</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3">
             {subscription.features && subscription.features.length > 0 ? (
               subscription.features.map((feature, index) => (
                 <div key={index} className="flex items-center space-x-3">
@@ -145,41 +189,52 @@ const CurrentPlan = () => {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 col-span-2">कोई फीचर जानकारी उपलब्ध नहीं है</p>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">हिंदी व्याकरण जांच</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">वाक्य सुधार सुझाव</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">शब्द टॉप-अप सुविधा</span>
+                </div>
+              </div>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Plan Limits */}
+      {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>उपयोग सीमाएं</CardTitle>
+          <CardTitle>त्वरित कार्यवाही</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">
-                {subscription.max_words_per_correction}
-              </div>
-              <p className="text-sm text-blue-800">शब्द प्रति सुधार</p>
-            </div>
-            
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">
-                {subscription.max_team_members}
-              </div>
-              <p className="text-sm text-purple-800">टीम सदस्य</p>
-            </div>
-          </div>
+        <CardContent className="space-y-3">
+          <Link to="/pricing" className="block">
+            <Button className="w-full">
+              <CreditCard className="h-4 w-4 mr-2" />
+              {subscription.plan_type === 'free' ? 'प्लान अपग्रेड करें' : 'अधिक शब्द खरीदें'}
+            </Button>
+          </Link>
+          
+          {subscription.plan_type !== 'free' && balance.has_active_subscription && (
+            <Button variant="outline" className="w-full">
+              सब्स्क्रिप्शन प्रबंधित करें
+            </Button>
+          )}
         </CardContent>
       </Card>
 
-      {/* Upgrade Options */}
+      {/* Upgrade Prompt for Free Plan */}
       {subscription.plan_type === 'free' && (
         <Card className="border-orange-200 bg-orange-50">
           <CardContent className="p-6">
             <div className="text-center">
+              <Star className="h-8 w-8 text-orange-600 mx-auto mb-2" />
               <h3 className="text-lg font-semibold text-orange-800 mb-2">
                 प्रो प्लान में अपग्रेड करें
               </h3>

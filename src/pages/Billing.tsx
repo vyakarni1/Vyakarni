@@ -1,16 +1,13 @@
 
 import { useAuth } from "@/components/AuthProvider";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CreditCard, Calendar, Download, BarChart3 } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import WordCreditsOverview from "@/components/Billing/WordCreditsOverview";
 import BillingHistory from "@/components/Billing/BillingHistory";
 import UsageAnalytics from "@/components/Billing/UsageAnalytics";
 import CurrentPlan from "@/components/Billing/CurrentPlan";
 import PaymentSuccessHandler from "@/components/Payment/PaymentSuccessHandler";
+import UnifiedNavigation from "@/components/UnifiedNavigation";
 
 const Billing = () => {
   const { user, loading: authLoading } = useAuth();
@@ -20,7 +17,6 @@ const Billing = () => {
 
   // Check if this is a payment success redirect
   const paymentStatus = searchParams.get('payment');
-  const orderId = searchParams.get('order_id');
 
   if (!authLoading && !user) {
     navigate("/login");
@@ -42,45 +38,13 @@ const Billing = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/dashboard" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link to="/dashboard">
-                <Button variant="outline" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  डैशबोर्ड
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-6 py-8">
+      <UnifiedNavigation />
+      
+      <div className="pt-20 container mx-auto px-6 py-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">बिलिंग और उपयोग</h1>
           <p className="text-gray-600">अपने खाते की जानकारी, शब्द उपयोग और भुगतान इतिहास देखें</p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">खाता स्थिति</p>
-                  <p className="text-lg font-semibold text-green-600">सक्रिय</p>
-                </div>
-                <BarChart3 className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Main Content */}
@@ -96,25 +60,6 @@ const Billing = () => {
           <div className="space-y-6">
             {/* Current Plan */}
             <CurrentPlan />
-            
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>त्वरित कार्यवाही</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Link to="/pricing" className="block">
-                  <Button className="w-full">
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    अधिक शब्द खरीदें
-                  </Button>
-                </Link>
-                <Button variant="outline" className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
-                  बिल डाउनलोड करें
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
 
