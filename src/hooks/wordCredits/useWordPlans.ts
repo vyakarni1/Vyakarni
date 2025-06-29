@@ -82,24 +82,24 @@ export const useWordPlans = () => {
     return plans.filter(plan => plan.plan_category === 'subscription');
   };
 
-  // Get dynamic discount information
+  // Get dynamic discount information based on plan type
   const getDiscountInfo = (planType: string) => {
     const plan = plans.find(p => p.plan_type === planType);
     if (!plan) return { hasDiscount: false, percentage: 0, originalPrice: 0 };
 
-    // Calculate discount based on plan type (you can make this more dynamic)
+    // Calculate discount based on plan type
     switch (planType) {
       case 'basic':
         return {
           hasDiscount: true,
           percentage: 33,
-          originalPrice: Math.round(plan.price_before_gst * 1.5) // 50% markup as original
+          originalPrice: Math.round(plan.price_before_gst * 1.5)
         };
       case 'premium':
         return {
           hasDiscount: true,
           percentage: 23,
-          originalPrice: Math.round(plan.price_before_gst * 1.3) // 30% markup as original
+          originalPrice: Math.round(plan.price_before_gst * 1.3)
         };
       default:
         return {

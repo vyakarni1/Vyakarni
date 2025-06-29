@@ -149,10 +149,16 @@ export const useSubscription = () => {
             plan_uuid: targetPlan.id
           });
 
-        if (!subscriptionError && subscriptionResult?.success) {
-          console.log('Successfully created/updated subscription:', subscriptionResult);
-          // Refetch the subscription data
-          await fetchSubscription();
+        if (!subscriptionError && subscriptionResult) {
+          // Fix TypeScript error: properly handle Json return type
+          const result = subscriptionResult as { success?: boolean };
+          if (result?.success) {
+            console.log('Successfully created/updated subscription:', subscriptionResult);
+            // Refetch the subscription data
+            await fetchSubscription();
+          } else {
+            console.error('Subscription creation failed:', subscriptionResult);
+          }
         } else {
           console.error('Error creating subscription:', subscriptionError);
         }
