@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,12 +10,18 @@ import DiscountBadge from "@/components/DiscountBadge";
 import PaymentGatewaySelector from "@/components/Payment/PaymentGatewaySelector";
 import EnterprisePlanSection from "@/components/EnterprisePlanSection";
 import Layout from "@/components/Layout";
-
 const Pricing = () => {
-  const { user, loading: authLoading } = useAuth();
-  const { plans, loading: plansLoading, getWordCreditPlans, getDiscountInfo } = useWordCredits();
+  const {
+    user,
+    loading: authLoading
+  } = useAuth();
+  const {
+    plans,
+    loading: plansLoading,
+    getWordCreditPlans,
+    getDiscountInfo
+  } = useWordCredits();
   const navigate = useNavigate();
-
   const handleSelectPlan = async (plan: any) => {
     if (!user) {
       navigate("/login");
@@ -27,7 +32,6 @@ const Pricing = () => {
       return;
     }
   };
-
   const getPlanIcon = (planType: string) => {
     switch (planType) {
       case 'free':
@@ -40,7 +44,6 @@ const Pricing = () => {
         return <Zap className="h-6 w-6" />;
     }
   };
-
   const getPlanColor = (planType: string) => {
     switch (planType) {
       case 'free':
@@ -53,21 +56,15 @@ const Pricing = () => {
         return 'from-gray-500 to-gray-600';
     }
   };
-
   if (authLoading || plansLoading) {
-    return (
-      <Layout>
+    return <Layout>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
         </div>
-      </Layout>
-    );
+      </Layout>;
   }
-
   const wordCreditPlans = getWordCreditPlans();
-
-  return (
-    <Layout>
+  return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="container mx-auto px-6 py-12">
           {/* Header */}
@@ -75,39 +72,26 @@ const Pricing = () => {
             <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4 my-[12px] py-[8px]">
               शब्द क्रेडिट खरीदें
             </h1>
-            <p className="text-xl text-gray-600 mb-4">
-              एक बार खरीदें और स्थायी रूप से उपयोग करें
-            </p>
+            <p className="text-xl text-gray-600 mb-4">एक बार खरीदें और 120 दिनों तक निर्बाध उपयोग करें</p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
               <Calculator className="h-4 w-4" />
-              <span>एक बार भुगतान • कोई समाप्ति नहीं • स्थायी एक्सेस</span>
+              <span>तत्काल सुलभ प्रयोग • उच्च गुणवत्ता परिणाम • त्वरित प्रगति अनुगमन</span>
             </div>
           </div>
 
           {/* Word Credit Plans */}
           <div className="mb-16">
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto p-6">
-              {wordCreditPlans.map((plan) => {
-                const discountInfo = getDiscountInfo(plan.plan_type);
-                const totalPrice = plan.price_before_gst + (plan.price_before_gst * plan.gst_percentage / 100);
-                
-                return (
-                  <Card 
-                    key={plan.id} 
-                    className={`relative transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
-                      plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'
-                    }`}
-                  >
+              {wordCreditPlans.map(plan => {
+              const discountInfo = getDiscountInfo(plan.plan_type);
+              const totalPrice = plan.price_before_gst + plan.price_before_gst * plan.gst_percentage / 100;
+              return <Card key={plan.id} className={`relative transition-all duration-300 hover:shadow-2xl hover:scale-105 ${plan.plan_type === 'basic' ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'}`}>
                     {/* Discount Badge */}
-                    {discountInfo.hasDiscount && (
-                      <DiscountBadge percentage={discountInfo.percentage} />
-                    )}
+                    {discountInfo.hasDiscount && <DiscountBadge percentage={discountInfo.percentage} />}
 
-                    {plan.plan_type === 'basic' && (
-                      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
+                    {plan.plan_type === 'basic' && <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
                         सबसे लोकप्रिय
-                      </div>
-                    )}
+                      </div>}
 
                     <CardHeader className={`text-center ${plan.plan_type === 'basic' ? 'pt-12' : 'pt-6'}`}>
                       <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${getPlanColor(plan.plan_type)} text-white mb-4 mx-auto`}>
@@ -126,14 +110,11 @@ const Pricing = () => {
                       </div>
 
                       <div className="space-y-2">
-                        {plan.plan_type !== 'free' ? (
-                          <div className="space-y-1">
+                        {plan.plan_type !== 'free' ? <div className="space-y-1">
                             <div className="flex items-center justify-center space-x-2">
-                              {discountInfo.hasDiscount && (
-                                <span className="text-lg text-gray-500 line-through">
+                              {discountInfo.hasDiscount && <span className="text-lg text-gray-500 line-through">
                                   ₹{discountInfo.originalPrice.toLocaleString('hi-IN')}
-                                </span>
-                              )}
+                                </span>}
                               <span className="text-2xl font-bold text-gray-900">
                                 ₹{plan.price_before_gst.toLocaleString('hi-IN')}
                               </span>
@@ -144,26 +125,19 @@ const Pricing = () => {
                             <div className="text-xs text-gray-600">
                               कुल: ₹{totalPrice.toFixed(0)}
                             </div>
-                          </div>
-                        ) : (
-                          <div className="text-2xl font-bold text-green-600">निःशुल्क</div>
-                        )}
+                          </div> : <div className="text-2xl font-bold text-green-600">निःशुल्क</div>}
                       </div>
                     </CardHeader>
 
                     <CardContent className="space-y-4">
                       {/* Dynamic Features */}
                       <div className="space-y-3">
-                        {plan.features && plan.features.length > 0 ? (
-                          plan.features.map((feature, featureIndex) => (
-                            <div key={featureIndex} className="flex items-center space-x-3">
+                        {plan.features && plan.features.length > 0 ? plan.features.map((feature, featureIndex) => <div key={featureIndex} className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                               <span className="text-sm text-gray-700">{feature}</span>
-                            </div>
-                          ))
-                        ) : (
-                          // Fallback features
-                          <>
+                            </div>) :
+                    // Fallback features
+                    <>
                             <div className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                               <span className="text-sm text-gray-700">हिंदी व्याकरण जाँच</span>
@@ -180,8 +154,7 @@ const Pricing = () => {
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                               <span className="text-sm text-gray-700">तत्काल परिणाम</span>
                             </div>
-                            {plan.plan_type !== 'free' && (
-                              <>
+                            {plan.plan_type !== 'free' && <>
                                 <div className="flex items-center space-x-3">
                                   <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                                   <span className="text-sm text-gray-700">समर्पित सहायता</span>
@@ -190,10 +163,8 @@ const Pricing = () => {
                                   <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                                   <span className="text-sm text-gray-700">विस्तृत रिपोर्ट</span>
                                 </div>
-                              </>
-                            )}
-                            {plan.plan_type === 'premium' && (
-                              <>
+                              </>}
+                            {plan.plan_type === 'premium' && <>
                                 <div className="flex items-center space-x-3">
                                   <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                                   <span className="text-sm text-gray-700">एडवांस AI फीचर्स</span>
@@ -202,26 +173,20 @@ const Pricing = () => {
                                   <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                                   <span className="text-sm text-gray-700">प्राथमिकता सपोर्ट</span>
                                 </div>
-                              </>
-                            )}
-                          </>
-                        )}
+                              </>}
+                          </>}
                       </div>
 
                       {/* Payment Button */}
                       <div className="pt-4">
-                        <PaymentGatewaySelector 
-                          wordPlan={plan} 
-                          onPaymentSuccess={() => {
-                            toast.success("भुगतान सफल! शब्द क्रेडिट आपके खाते में जोड़ दिए गए हैं।");
-                            navigate("/billing");
-                          }} 
-                        />
+                        <PaymentGatewaySelector wordPlan={plan} onPaymentSuccess={() => {
+                      toast.success("भुगतान सफल! शब्द क्रेडिट आपके खाते में जोड़ दिए गए हैं।");
+                      navigate("/billing");
+                    }} />
                       </div>
                     </CardContent>
-                  </Card>
-                );
-              })}
+                  </Card>;
+            })}
             </div>
           </div>
 
@@ -233,35 +198,25 @@ const Pricing = () => {
             <h2 className="text-3xl font-bold text-gray-800 mb-8">प्रायः पूछे जाने वाले प्रश्न</h2>
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">शब्द क्रेडिट कैसे काम करते हैं?</h3>
-                <p className="text-gray-600 text-sm">
-                  एक बार खरीदने के बाद शब्द क्रेडिट हमेशा के लिए आपके खाते में रहते हैं। कोई समाप्ति तारीख नहीं है।
-                </p>
+                <h3 className="font-semibold text-gray-800 mb-2">शब्द-सीमा कितने दिनों के लिये वैध होती है?</h3>
+                <p className="text-gray-600 text-sm">हमारी नवीनतम नीतियों के अनुसार शब्द-सीमा 120 दिनों (चार माह) के लिये वैध है। यद्यपि यह अवधि कंपनी के दिशा-निर्देशों के अनुरूप परिवर्तनीय है।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">क्या कोई समय सीमा है?</h3>
-                <p className="text-gray-600 text-sm">
-                  नहीं, एक बार खरीदने के बाद आप इन्हें कभी भी उपयोग कर सकते हैं। ये खत्म नहीं होते।
-                </p>
+                <h3 className="font-semibold text-gray-800 mb-2">क्या प्रति माह शब्द प्रयोग के कुछ बंधन हैं?</h3>
+                <p className="text-gray-600 text-sm">जी नही, प्रति माह शब्द प्रयोग का कोई बंधन नहीं है। आप 180 दिनों के मध्य कभी भी अपने शब्दों का प्रयोग कर सकते हैं। एक बार यह अवधि पूर्ण होने पर शेष शब्द स्वतः समाप्त हो जाते हैं।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
-                <h3 className="font-semibold text-gray-800 mb-2">अधिक शब्द कैसे खरीदें?</h3>
-                <p className="text-gray-600 text-sm">
-                  आप किसी भी समय अपने शब्द क्रेडिट बढ़ा सकते हैं। नए खरीदे शब्द पुराने में जुड़ जाते हैं।
-                </p>
+                <h3 className="font-semibold text-gray-800 mb-2">आप पेमेंट की किन विधियों को स्वीकार करते हैं?</h3>
+                <p className="text-gray-600 text-sm">हमारे पेमेंट गेटवे साझीदार विभिन्न प्रकार की पेमेंट विधियों को स्वीकार करते हैं। </p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">शब्द कैसे काउंट होते हैं?</h3>
-                <p className="text-gray-600 text-sm">
-                  हर व्याकरण जांच के लिए आपके टेक्स्ट के शब्दों की संख्या के बराबर शब्द क्रेडिट कटते हैं।
-                </p>
+                <p className="text-gray-600 text-sm">हर व्याकरण जाँच के लिये आपके टेक्स्ट के शब्दों की संख्या के बराबर शब्द क्रेडिट कटते हैं।</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Pricing;
