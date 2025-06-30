@@ -94,7 +94,7 @@ const WordCreditsOverview = () => {
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>खरीदे गए शब्द</span>
+              <span>खरीदे गये शब्द</span>
               <span>{balance.purchased_words} / {balance.total_words_available}</span>
             </div>
             <Progress 
@@ -106,7 +106,7 @@ const WordCreditsOverview = () => {
           {isLowBalance && (
             <div className="mt-4 p-4 bg-orange-100 rounded-lg border border-orange-200">
               <p className="text-sm text-orange-800 mb-3">
-                ⚠️ आपके शब्द कम हो रहे हैं! अधिक शब्द खरीदने के लिए नीचे दिए गए बटन पर क्लिक करें।
+                ⚠️ आपके शब्द कम हो रहे हैं! अधिक शब्द खरीदने के लिये नीचे दिये गये बटन पर क्लिक करें।
               </p>
               <Link to="/pricing">
                 <Button className="bg-orange-600 hover:bg-orange-700">

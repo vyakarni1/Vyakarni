@@ -34,7 +34,7 @@ const ExportDialog = ({ transactions, userInfo }: ExportDialogProps) => {
 
   const handleExport = async () => {
     if (filteredTransactions.length === 0) {
-      alert('निर्यात के लिए कोई डेटा उपलब्ध नहीं है।');
+      alert('निर्यात के लिये कोई डेटा उपलब्ध नहीं है।');
       return;
     }
 
@@ -67,7 +67,7 @@ const ExportDialog = ({ transactions, userInfo }: ExportDialogProps) => {
       setIsOpen(false);
     } catch (error) {
       console.error('Export error:', error);
-      alert('निर्यात में त्रुटि हुई। कृपया पुनः प्रयास करें।');
+      alert('निर्यात में त्रुटि हुयी। कृपया पुनः प्रयास करें।');
     } finally {
       setIsExporting(false);
     }
@@ -135,13 +135,13 @@ const ExportDialog = ({ transactions, userInfo }: ExportDialogProps) => {
 
           {/* Date Range */}
           <div>
-            <label className="text-sm font-medium">तारीख सीमा</label>
+            <label className="text-sm font-medium">तिथि सीमा</label>
             <div className="flex space-x-2">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="flex-1">
                     <CalendarIcon className="h-4 w-4 mr-2" />
-                    {dateRange.from ? format(dateRange.from, 'dd/MM/yyyy') : 'शुरुआत'}
+                    {dateRange.from ? format(dateRange.from, 'dd/MM/yyyy') : 'प्रारंभ'}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">

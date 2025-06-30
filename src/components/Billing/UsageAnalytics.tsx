@@ -65,7 +65,7 @@ const UsageAnalytics = () => {
             <div className="text-2xl font-bold text-green-600">
               {formatNumber(totalWordsUsed)}
             </div>
-            <p className="text-sm text-green-800">उपयोग किए गए</p>
+            <p className="text-sm text-green-800">उपयोग किये गये</p>
           </div>
 
           <div className="text-center p-4 bg-purple-50 rounded-lg">
@@ -73,13 +73,13 @@ const UsageAnalytics = () => {
             <div className="text-2xl font-bold text-purple-600">
               {formatNumber(balance.purchased_words)}
             </div>
-            <p className="text-sm text-purple-800">खरीदे गए शब्द</p>
+            <p className="text-sm text-purple-800">खरीदे गये शब्द</p>
           </div>
         </div>
 
         {/* Current Tier Limits */}
         <div className="border-t pt-4">
-          <h4 className="font-medium mb-3">वर्तमान टियर सीमाएं</h4>
+          <h4 className="font-medium mb-3">वर्तमान टियर सीमायें</h4>
           <div className="grid gap-3 md:grid-cols-2">
             <div className="flex justify-between text-sm">
               <span>टियर प्रकार:</span>
@@ -109,7 +109,7 @@ const UsageAnalytics = () => {
               <div className="flex justify-between text-sm">
                 <span className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <span>खरीदे गए शब्द</span>
+                  <span>खरीदे गये शब्द</span>
                 </span>
                 <span className="font-medium">{formatNumber(balance.purchased_words)}</span>
               </div>
@@ -128,10 +128,10 @@ const UsageAnalytics = () => {
         <div className="bg-blue-50 rounded-lg p-4">
           <h4 className="font-medium mb-2 text-blue-800">उपयोग सुझाव</h4>
           <ul className="text-sm text-blue-700 space-y-1">
-            <li>• छोटे टेक्स्ट को बार-बार जांचने से बचें</li>
-            <li>• एक साथ अधिक टेक्स्ट जांचें ({currentTier.maxWordsPerCorrection} शब्द तक)</li>
+            <li>• छोटे टेक्स्ट को बार-बार जाँचने से बचें</li>
+            <li>• एक साथ अधिक टेक्स्ट जाँचें ({currentTier.maxWordsPerCorrection} शब्द तक)</li>
             <li>• आपके शब्द कभी समाप्त नहीं होते - स्थायी उपयोग</li>
-            <li>• अधिक शब्दों के लिए नया पैकेज खरीदें</li>
+            <li>• अधिक शब्दों के लिये नया पैकेज खरीदें</li>
           </ul>
         </div>
       </CardContent>

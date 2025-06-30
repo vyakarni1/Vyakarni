@@ -67,7 +67,7 @@ const CurrentPlan = () => {
   // Get features based on tier
   const getFeatures = () => {
     const baseFeatures = [
-      "हिंदी व्याकरण जांच",
+      "हिंदी व्याकरण जाँच",
       "वाक्य सुधार सुझाव",
       "स्थायी शब्द क्रेडिट"
     ];
@@ -80,7 +80,7 @@ const CurrentPlan = () => {
       ...baseFeatures,
       "समर्पित सहायता",
       "विस्तृत रिपोर्ट",
-      "उन्नत व्याकरण जांच"
+      "उन्नत व्याकरण जाँच"
     ];
 
     if (currentTier.type === 'hobby') {
@@ -122,7 +122,7 @@ const CurrentPlan = () => {
               </p>
               {balance.purchased_words > 0 && (
                 <p className="text-xs text-green-600 mt-1">
-                  ✓ {balance.purchased_words.toLocaleString()} शब्द खरीदे गए (स्थायी)
+                  ✓ {balance.purchased_words.toLocaleString()} शब्द खरीदे गये (स्थायी)
                 </p>
               )}
             </div>
@@ -157,7 +157,7 @@ const CurrentPlan = () => {
               <div className="flex items-center space-x-3">
                 <ShoppingBag className="h-5 w-5 text-blue-500" />
                 <div>
-                  <p className="font-medium">खरीदे गए शब्द</p>
+                  <p className="font-medium">खरीदे गये शब्द</p>
                   <p className="text-sm text-gray-600">
                     {balance.purchased_words.toLocaleString()}
                   </p>
@@ -210,7 +210,7 @@ const CurrentPlan = () => {
                 अधिक शब्द क्रेडिट खरीदें
               </h3>
               <p className="text-orange-700 mb-4">
-                बेहतर सुविधाओं और अधिक शब्द सीमा का लाभ उठाएं
+                उत्कृष्ट सुविधाओं और अधिक शब्द सीमा का लाभ उठायें
               </p>
               <Link to="/pricing">
                 <Button className="bg-orange-600 hover:bg-orange-700">
