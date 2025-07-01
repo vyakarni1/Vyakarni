@@ -10,9 +10,9 @@ const escapeRegex = (string: string): string => {
 // Create a more robust word boundary pattern for Devanagari text
 const createDevanagariWordBoundary = (word: string): RegExp => {
   const escapedWord = escapeRegex(word);
-  // Use word boundaries that work better with Devanagari
-  // Match at start of string, after whitespace, or after punctuation
-  return new RegExp(`(^|[\\s\\u0964\\u0965।\\.,!?;:])${escapedWord}(?=[\\s\\u0964\\u0965।\\.,!?;:]|$)`, 'g');
+  // Simplified approach: match the word with optional word boundaries
+  // This catches words in context better than strict boundary matching
+  return new RegExp(`\\b${escapedWord}\\b|(?<=\\s|^)${escapedWord}(?=\\s|$)|${escapedWord}`, 'g');
 };
 
 export const applyDictionaryCorrections = (text: string): { correctedText: string; corrections: Correction[] } => {
@@ -24,22 +24,19 @@ export const applyDictionaryCorrections = (text: string): { correctedText: strin
   console.log('Text length:', text.length);
 
   wordReplacements.forEach(({ original, replacement }) => {
-    // Create a more robust regex pattern for Devanagari text
-    const regex = createDevanagariWordBoundary(original);
+    // Use simpler global replacement for better matching
+    const beforeReplacement = correctedText;
+    let replacementCount = 0;
     
-    // First check if the word exists in the text
-    const testMatches = text.match(new RegExp(escapeRegex(original), 'g'));
-    console.log(`Testing word "${original}":`, testMatches ? `${testMatches.length} potential matches` : 'no matches');
-    
-    if (testMatches) {
-      // Apply the correction with proper boundary matching
-      let replacementCount = 0;
-      const beforeReplacement = correctedText;
+    // Check if the word exists in the text first
+    if (correctedText.includes(original)) {
+      console.log(`Found word "${original}" in text`);
       
-      correctedText = correctedText.replace(regex, (match, prefix) => {
+      // Simple global replacement with tracking
+      correctedText = correctedText.replace(new RegExp(escapeRegex(original), 'g'), (match) => {
         replacementCount++;
-        console.log(`Replacing match "${match}" with "${prefix}${replacement}"`);
-        return prefix + replacement;
+        console.log(`Replacing "${match}" with "${replacement}"`);
+        return replacement;
       });
       
       if (replacementCount > 0) {
@@ -55,9 +52,6 @@ export const applyDictionaryCorrections = (text: string): { correctedText: strin
           type: 'vocabulary',
           source: 'dictionary'
         });
-      } else {
-        console.log(`❌ No replacement made for: "${original}" (regex didn't match)`);
-        console.log('Regex used:', regex);
       }
     } else {
       console.log(`ℹ️ Word "${original}" not found in text`);
