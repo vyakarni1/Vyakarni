@@ -1,15 +1,14 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CheckCircle, Copy, ArrowRight, Sparkles } from "lucide-react";
-import { Correction, ProcessingMode } from "@/types/grammarChecker";
-import { HighlightedSegment } from '@/hooks/useTextHighlighting';
+import { Badge } from "@/components/ui/badge";
+import { Copy, CheckCircle2, Sparkles, Loader2 } from "lucide-react";
+import EnhancedHighlightedText from './EnhancedHighlightedText';
 import CorrectionsDropdown from './CorrectionsDropdown';
-import HighlightedText from './HighlightedText';
+import { Correction, ProcessingMode } from "@/types/grammarChecker";
+import { EnhancedHighlightedSegment } from '@/hooks/useEnhancedTextHighlighting';
 
 interface CorrectedTextPanelProps {
   correctedText: string;
@@ -18,123 +17,131 @@ interface CorrectedTextPanelProps {
   isLoading: boolean;
   processingMode: ProcessingMode;
   progress: number;
+  currentStage: string;
   onCopyToClipboard: () => void;
-  highlightedSegments?: HighlightedSegment[];
-  onSegmentClick?: (correctionIndex: number) => void;
-  selectedCorrectionIndex?: number | null;
-  onCorrectionClick?: (index: number) => void;
+  highlightedSegments: EnhancedHighlightedSegment[];
+  onSegmentClick: (correctionIndex: number) => void;
+  selectedCorrectionIndex: number | null;
+  onCorrectionClick: (index: number) => void;
 }
 
-const CorrectedTextPanel = ({ 
+const CorrectedTextPanel = ({
   correctedText,
   enhancedText,
-  corrections, 
-  isLoading, 
+  corrections,
+  isLoading,
   processingMode,
-  progress, 
+  progress,
+  currentStage,
   onCopyToClipboard,
-  highlightedSegments = [],
+  highlightedSegments,
   onSegmentClick,
   selectedCorrectionIndex,
-  onCorrectionClick,
-  currentStage
-}: CorrectedTextPanelProps & { currentStage?: string }) => {
-  const currentText = processingMode === 'style' ? enhancedText : correctedText;
-  const wordCount = currentText.trim() ? currentText.trim().split(/\s+/).length : 0;
-  
-  const isGrammarMode = processingMode === 'grammar';
-  const headerGradient = isGrammarMode 
-    ? "bg-gradient-to-r from-emerald-600 to-teal-600" 
-    : "bg-gradient-to-r from-purple-600 to-pink-600";
-  
-  const headerTitle = isGrammarMode ? "सुधारा गया पाठ" : "शैली सुधारा गया पाठ";
-  const headerIcon = isGrammarMode ? CheckCircle : Sparkles;
+  onCorrectionClick
+}: CorrectedTextPanelProps) => {
+  const displayText = processingMode === 'style' ? enhancedText : correctedText;
+  const hasText = Boolean(displayText);
+  const modeIcon = processingMode === 'style' ? Sparkles : CheckCircle2;
+  const modeTitle = processingMode === 'style' ? 'शैली सुधारा गया टेक्स्ट' : 'सुधारा हुआ टेक्स्ट';
+  const modeColor = processingMode === 'style' ? 'from-purple-600 to-pink-600' : 'from-green-600 to-emerald-600';
+
+  // Group corrections by source for better display
+  const dictionaryCorrections = corrections.filter(c => c.source === 'dictionary');
+  const gptCorrections = corrections.filter(c => c.source === 'gpt');
 
   return (
-    <Card className="shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col">
-      <CardHeader className={`${headerGradient} text-white p-4 sm:p-8 flex-shrink-0`}>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg sm:text-2xl font-bold flex items-center gap-2 sm:gap-3">
-            {React.createElement(headerIcon, { className: "h-5 w-5 sm:h-6 sm:w-6" })}
-            <span className="hidden sm:inline">{headerTitle}</span>
-            <span className="sm:hidden">{isGrammarMode ? "सुधारा गया" : "शैली सुधारा"}</span>
-          </CardTitle>
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {currentText && (
-              <Badge variant="secondary" className="bg-white/20 text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
-                {wordCount} शब्द
-              </Badge>
-            )}
-            <CorrectionsDropdown 
-              corrections={corrections} 
-              selectedCorrectionIndex={selectedCorrectionIndex}
-              onCorrectionClick={onCorrectionClick}
-            />
-          </div>
-        </div>
+    <Card className="h-full shadow-xl border-0 rounded-3xl overflow-hidden">
+      <CardHeader className={`bg-gradient-to-r ${modeColor} text-white pb-6`}>
+        <CardTitle className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
+          {React.createElement(modeIcon, { className: "h-6 w-6 sm:h-8 sm:w-8" })}
+          {modeTitle}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 sm:p-8 flex-1 flex flex-col">
-        <div className="flex-1 bg-slate-50 rounded-2xl overflow-hidden">
-          {currentText ? (
-            <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
-              <div className="p-4 sm:p-6">
-                {highlightedSegments.length > 0 ? (
-                  <HighlightedText 
-                    segments={highlightedSegments}
-                    onSegmentClick={onSegmentClick}
-                    className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap"
-                  />
-                ) : (
-                  <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
-                    {currentText}
-                  </p>
-                )}
-              </div>
-            </ScrollArea>
-          ) : (
-            <div className="flex items-center justify-center h-[400px] sm:h-[500px] lg:h-[600px]">
-              <div className="text-center">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <ArrowRight className="h-6 w-6 sm:h-8 sm:w-8 text-slate-400" />
-                </div>
-                <p className="text-slate-400 text-base sm:text-lg font-medium">
-                  {isGrammarMode ? "सुधारा गया पाठ यहाँ दिखेगा..." : "शैली सुधारा गया पाठ यहाँ दिखेगा..."}
-                </p>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2">
-                  {isGrammarMode ? "पहले व्याकरण सुधार बटन दबायें" : "पहले शैली सुधार बटन दबायें"}
-                </p>
-              </div>
+      
+      <CardContent className="p-4 sm:p-8 flex flex-col h-full">
+        {isLoading ? (
+          <div className="flex-1 flex flex-col items-center justify-center space-y-6">
+            <Loader2 className="h-12 w-12 sm:h-16 sm:w-16 animate-spin text-blue-600" />
+            <div className="text-center space-y-3">
+              <p className="text-lg sm:text-xl font-semibold text-gray-700">
+                {processingMode === 'style' ? 'शैली सुधार रहे हैं...' : 'व्याकरण जांच रहे हैं...'}
+              </p>
+              <p className="text-sm text-gray-500">{currentStage}</p>
             </div>
-          )}
-        </div>
-        
-        {isLoading && (
-          <div className="mt-6 sm:mt-8 flex-shrink-0">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-slate-700">प्रगति</span>
-                {currentStage && (
-                  <span className="text-xs text-slate-500 mt-1">{currentStage}</span>
-                )}
-              </div>
-              <span className="text-sm text-slate-500 font-medium">{progress}%</span>
+            <div className="w-full max-w-md">
+              <Progress value={progress} className="h-3 rounded-full" />
+              <p className="text-center text-sm text-gray-500 mt-2">{Math.round(progress)}% पूर्ण</p>
             </div>
-            <Progress value={progress} className="h-3 bg-slate-200 rounded-full overflow-hidden">
-              <div className={`h-full ${isGrammarMode ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-purple-500 to-pink-500'} transition-all duration-300 ease-out`} />
-            </Progress>
           </div>
-        )}
+        ) : hasText ? (
+          <>
+            <div className="flex-1 mb-6">
+              <div className="min-h-[300px] sm:min-h-[400px] p-4 sm:p-6 text-base sm:text-lg leading-relaxed bg-gray-50 rounded-2xl border-2 border-gray-200 overflow-y-auto">
+                <EnhancedHighlightedText
+                  segments={highlightedSegments}
+                  onSegmentClick={onSegmentClick}
+                  className="font-hindi"
+                />
+              </div>
+            </div>
 
-        {currentText && !isLoading && (
-          <div className="flex space-x-4 mt-6 sm:mt-8 flex-shrink-0">
-            <Button
-              onClick={onCopyToClipboard}
-              variant="outline"
-              className="flex-1 rounded-xl border-slate-200 hover:bg-slate-50 transition-all duration-200 text-sm sm:text-base"
-            >
-              <Copy className="h-4 w-4 mr-2" />
-              कॉपी करें
-            </Button>
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap gap-2">
+                  {corrections.length > 0 && (
+                    <>
+                      <Badge variant="secondary" className="px-3 py-1">
+                        {corrections.length} सुधार
+                      </Badge>
+                      {dictionaryCorrections.length > 0 && (
+                        <Badge variant="outline" className="px-3 py-1 border-blue-300 text-blue-700">
+                          {dictionaryCorrections.length} शब्दकोश
+                        </Badge>
+                      )}
+                      {gptCorrections.length > 0 && (
+                        <Badge variant="outline" className="px-3 py-1 border-purple-300 text-purple-700">
+                          {gptCorrections.length} AI
+                        </Badge>
+                      )}
+                    </>
+                  )}
+                </div>
+                
+                <Button
+                  onClick={onCopyToClipboard}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Copy className="h-4 w-4" />
+                  कॉपी करें
+                </Button>
+              </div>
+
+              {corrections.length > 0 && (
+                <CorrectionsDropdown
+                  corrections={corrections}
+                  selectedIndex={selectedCorrectionIndex}
+                  onCorrectionClick={onCorrectionClick}
+                />
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                {React.createElement(modeIcon, { className: "h-12 w-12 sm:h-16 sm:w-16 text-gray-400" })}
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl sm:text-2xl font-semibold text-gray-700">
+                  {processingMode === 'style' ? 'शैली सुधार का परिणाम यहाँ दिखेगा' : 'सुधारा हुआ टेक्स्ट यहाँ दिखेगा'}
+                </h3>
+                <p className="text-gray-500 text-sm sm:text-base">
+                  पहले बाएं में अपना टेक्स्ट लिखें या पेस्ट करें
+                </p>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>

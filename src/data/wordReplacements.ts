@@ -1,3 +1,4 @@
+
 export const wordReplacements = [
   {
     original: 'मां',
@@ -76,10 +77,6 @@ export const wordReplacements = [
     replacement: 'समझायें'
   },
   {
-    original: 'समझाए',
-    replacement: 'समझाये'
-  },
-  {
     original: 'किए',
     replacement: 'किये'
   },
@@ -140,20 +137,12 @@ export const wordReplacements = [
     replacement: 'भिजवाये'
   },
   {
-    original: 'गड़बड़ाए',
-    replacement: 'गड़बड़ाये'
+    original: 'गड़बड़ाए',
+    replacement: 'गड़बड़ाये'
   },
   {
     original: 'पहुंचवाए',
     replacement: 'पहुँचवाये'
-  },
-  {
-    original: 'पहुँचाए',
-    replacement: 'पहुँचाये'
-  },
-  {
-    original: 'पहुंचाए',
-    replacement: 'पहुँचाये'
   },
   {
     original: 'कहिए',
@@ -228,8 +217,8 @@ export const wordReplacements = [
     replacement: 'दिखलायें'
   },
   {
-    original: 'बड़बड़ाए',
-    replacement: 'बड़बड़ाये'
+    original: 'बड़बड़ाए',
+    replacement: 'बड़बड़ाये'
   },
   {
     original: 'पलटाए',
@@ -372,12 +361,12 @@ export const wordReplacements = [
     replacement: 'पकवाये'
   },
   {
-    original: 'छुड़ाए',
-    replacement: 'छुड़ाये'
+    original: 'छुड़ाए',
+    replacement: 'छुड़ाये'
   },
   {
-    original: 'छुड़वाए',
-    replacement: 'छुड़वाये'
+    original: 'छुड़वाए',
+    replacement: 'छुड़वाये'
   },
   {
     original: 'बरगलाए',
@@ -392,24 +381,12 @@ export const wordReplacements = [
     replacement: 'लाये'
   },
   {
-    original: 'जाइए',
-    replacement: 'जाइये'
-  },
-  {
     original: 'लाइए',
     replacement: 'लाइये'
   },
   {
     original: 'खाइए',
     replacement: 'खाइये'
-  },
-  {
-    original: 'जाइएगा',
-    replacement: 'जाइयेगा'
-  },
-  {
-    original: 'इए',
-    replacement: 'इये'
   },
   {
     original: 'करिए',
@@ -428,6 +405,10 @@ export const wordReplacements = [
     replacement: 'उड़ायेंगे'
   },
   {
+    original: 'उड़ाएँगे',
+    replacement: 'उड़ायेंगे'
+  },
+  {
     original: 'रुकाने',
     replacement: 'रुकवाने'
   },
@@ -442,9 +423,5 @@ export const wordReplacements = [
   {
     original: 'कोशाध्यक्ष',
     replacement: 'कोषाध्यक्ष'
-  },
-  {
-    original: 'उड़ाएँगे',
-    replacement: 'उड़ायेंगे'
   }
 ];
