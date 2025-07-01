@@ -20,12 +20,12 @@ export const wordReplacements = [
     replacement: 'अन्यमयस्क'
   },
   {
-    original: 'गए ',
-    replacement: 'गये '
+    original: 'गए',
+    replacement: 'गये'
   },
   {
-    original: 'आए ',
-    replacement: 'आये '
+    original: 'आए',
+    replacement: 'आये'
   },
   {
     original: 'दिए',
@@ -37,46 +37,46 @@ export const wordReplacements = [
   },
   {
     original: 'हुए',
-    replacement: 'हुये '
+    replacement: 'हुये'
   },
   {
-    original: 'शुभकामनाएँ ',
-    replacement: 'शुभकामनायें  '
-  },
-  {
-    original: 'शुभकामनाएं ',
+    original: 'शुभकामनाएँ',
     replacement: 'शुभकामनायें'
   },
   {
-    original: 'कामनाएं ',
+    original: 'शुभकामनाएं',
+    replacement: 'शुभकामनायें'
+  },
+  {
+    original: 'कामनाएं',
     replacement: 'कामनायें'
   },
   {
-    original: 'कामनाएँ  ',
+    original: 'कामनाएँ',
     replacement: 'कामनायें'
   },
   {
-    original: 'भाए ',
-    replacement: 'भाये '
+    original: 'भाए',
+    replacement: 'भाये'
   },
   {
     original: 'चलाए',
-    replacement: 'चलाये '
+    replacement: 'चलाये'
   },
   {
-    original: 'समझाए ',
+    original: 'समझाए',
     replacement: 'समझायें'
   },
   {
-    original: 'समझाएं ',
+    original: 'समझाएं',
     replacement: 'समझायें'
   },
   {
-    original: 'समझाएँ ',
-    replacement: 'समझायें '
+    original: 'समझाएँ',
+    replacement: 'समझायें'
   },
   {
-    original: 'समझाए ',
+    original: 'समझाए',
     replacement: 'समझाये'
   },
   {
@@ -84,12 +84,12 @@ export const wordReplacements = [
     replacement: 'किये'
   },
   {
-    original: 'लिए ',
-    replacement: 'लिये '
+    original: 'लिए',
+    replacement: 'लिये'
   },
   {
-    original: 'सराए ',
-    replacement: 'सराय '
+    original: 'सराए',
+    replacement: 'सराय'
   },
   {
     original: 'पहनाए',
@@ -100,104 +100,104 @@ export const wordReplacements = [
     replacement: 'पहनवाये'
   },
   {
-    original: 'खाए ',
-    replacement: 'खाये '
+    original: 'खाए',
+    replacement: 'खाये'
   },
   {
-    original: 'निभाए ',
-    replacement: 'निभाये '
+    original: 'निभाए',
+    replacement: 'निभाये'
   },
   {
-    original: 'कसमसाए ',
-    replacement: 'कसमसाये '
+    original: 'कसमसाए',
+    replacement: 'कसमसाये'
   },
   {
-    original: 'झरझराए ',
-    replacement: 'झरझराये '
+    original: 'झरझराए',
+    replacement: 'झरझराये'
   },
   {
-    original: 'बरसाए ',
-    replacement: 'बरसाये '
-  },
-  {
-    original: 'पहुँचाए ',
-    replacement: 'पहुँचाये '
-  },
-  {
-    original: 'पहुंचाए ',
-    replacement: 'पहुँचाये'
-  },
-  {
-    original: 'दिलाए ',
-    replacement: 'दिलाये '
-  },
-  {
-    original: 'दिलवाए',
-    replacement: 'दिलवाये '
-  },
-  {
-    original: 'भिजवाए ',
-    replacement: 'भिजवाये '
-  },
-  {
-    original: 'गड़बड़ाए ',
-    replacement: 'गड़बड़ाये '
-  },
-  {
-    original: 'पहुंचवाए ',
-    replacement: 'पहुँचवाये '
+    original: 'बरसाए',
+    replacement: 'बरसाये'
   },
   {
     original: 'पहुँचाए',
-    replacement: 'पहुँचाये '
+    replacement: 'पहुँचाये'
   },
   {
-    original: 'पहुंचाए ',
-    replacement: 'पहुँचाये '
+    original: 'पहुंचाए',
+    replacement: 'पहुँचाये'
+  },
+  {
+    original: 'दिलाए',
+    replacement: 'दिलाये'
+  },
+  {
+    original: 'दिलवाए',
+    replacement: 'दिलवाये'
+  },
+  {
+    original: 'भिजवाए',
+    replacement: 'भिजवाये'
+  },
+  {
+    original: 'गड़बड़ाए',
+    replacement: 'गड़बड़ाये'
+  },
+  {
+    original: 'पहुंचवाए',
+    replacement: 'पहुँचवाये'
+  },
+  {
+    original: 'पहुँचाए',
+    replacement: 'पहुँचाये'
+  },
+  {
+    original: 'पहुंचाए',
+    replacement: 'पहुँचाये'
   },
   {
     original: 'कहिए',
-    replacement: 'कहिये '
+    replacement: 'कहिये'
   },
   {
-    original: 'गई ',
-    replacement: 'गयी '
+    original: 'गई',
+    replacement: 'गयी'
   },
   {
     original: 'आई',
-    replacement: 'आयी '
+    replacement: 'आयी'
   },
   {
-    original: 'नई ',
-    replacement: 'नयी '
+    original: 'नई',
+    replacement: 'नयी'
   },
   {
-    original: 'पहुंचाई ',
-    replacement: 'पहुँचायी '
+    original: 'पहुंचाई',
+    replacement: 'पहुँचायी'
   },
   {
-    original: 'पहुँचाई ',
+    original: 'पहुँचाई',
     replacement: 'पहुँचायी'
   },
   {
     original: 'पहुंचवाई',
-    replacement: 'पहुँचवायी  '
+    replacement: 'पहुँचवायी'
   },
   {
     original: 'पहुँचवाई',
     replacement: 'पहुँचवायी'
   },
   {
-    original: 'छटपटाए ',
-    replacement: 'छटपटाये '
+    original: 'छटपटाए',
+    replacement: 'छटपटाये'
   },
   {
-    original: 'पटपटाए ',
+    original: 'पटपटाए',
     replacement: 'पटपटाये'
   },
   {
-    original: 'पटपटाईं ',
-    replacement: 'पटपटायीं '
+    original: 'पटपटाईं',
+    replacement: 'पटपटायीं'
   },
   {
     original: 'पटपटाई',
@@ -205,70 +205,70 @@ export const wordReplacements = [
   },
   {
     original: 'उलझाए',
-    replacement: 'उलझाये '
+    replacement: 'उलझाये'
   },
   {
     original: 'उलझवाए',
     replacement: 'उलझवाये'
   },
   {
-    original: 'कराए ',
+    original: 'कराए',
     replacement: 'कराये'
   },
   {
-    original: 'करवाए ',
-    replacement: 'करवाये '
+    original: 'करवाए',
+    replacement: 'करवाये'
   },
   {
-    original: 'दिखाए ',
-    replacement: 'दिखाये '
+    original: 'दिखाए',
+    replacement: 'दिखाये'
   },
   {
-    original: 'दिखलाए ',
-    replacement: 'दिखलायें '
+    original: 'दिखलाए',
+    replacement: 'दिखलायें'
   },
   {
     original: 'बड़बड़ाए',
-    replacement: 'बड़बड़ाये '
+    replacement: 'बड़बड़ाये'
   },
   {
     original: 'पलटाए',
-    replacement: 'पलटाये '
+    replacement: 'पलटाये'
   },
   {
     original: 'पलटवाए',
     replacement: 'पलटवाये'
   },
   {
-    original: 'परम्पराएं ',
-    replacement: 'परम्परायें '
+    original: 'परम्पराएं',
+    replacement: 'परम्परायें'
   },
   {
     original: 'परम्पराएँ',
-    replacement: 'परम्परायें '
+    replacement: 'परम्परायें'
   },
   {
-    original: 'परंपराएं ',
+    original: 'परंपराएं',
     replacement: 'परंपरायें'
   },
   {
-    original: 'परंपराएँ ',
+    original: 'परंपराएँ',
     replacement: 'परंपरायें'
   },
   {
     original: 'समझिए',
-    replacement: 'समझिये '
+    replacement: 'समझिये'
   },
   {
-    original: 'समझाइए ',
-    replacement: 'समझाइये '
+    original: 'समझाइए',
+    replacement: 'समझाइये'
   },
   {
-    original: 'बर्बर्तापूर्ण ',
+    original: 'बर्बर्तापूर्ण',
     replacement: 'बर्बरतापूर्ण'
   },
   {
-    original: 'बरबरतापूर्ण ',
+    original: 'बरबरतापूर्ण',
     replacement: 'बर्बरतापूर्ण'
   },
   {
@@ -277,19 +277,19 @@ export const wordReplacements = [
   },
   {
     original: 'आइएगा',
-    replacement: 'आइयेगा '
+    replacement: 'आइयेगा'
   },
   {
-    original: 'जाइएगा ',
-    replacement: 'जाइयेगा '
+    original: 'जाइएगा',
+    replacement: 'जाइयेगा'
   },
   {
     original: 'जाइए',
-    replacement: 'जाइये '
+    replacement: 'जाइये'
   },
   {
-    original: 'एगा ',
-    replacement: 'येगा '
+    original: 'एगा',
+    replacement: 'येगा'
   },
   {
     original: 'एंगे',
@@ -304,44 +304,44 @@ export const wordReplacements = [
     replacement: 'येगी'
   },
   {
-    original: 'इए ',
-    replacement: 'इये '
+    original: 'इए',
+    replacement: 'इये'
   },
   {
-    original: 'ईए ',
-    replacement: 'इये '
+    original: 'ईए',
+    replacement: 'इये'
   },
   {
     original: 'कांच',
-    replacement: 'काँच '
+    replacement: 'काँच'
   },
   {
     original: 'आंच',
-    replacement: 'आँच '
+    replacement: 'आँच'
   },
   {
     original: 'खांच',
-    replacement: 'खाँच '
+    replacement: 'खाँच'
   },
   {
     original: 'बांह',
     replacement: 'बाँह'
   },
   {
-    original: 'बाईं ',
-    replacement: 'बायीं '
+    original: 'बाईं',
+    replacement: 'बायीं'
   },
   {
-    original: 'दाईं ',
-    replacement: 'दायीं '
+    original: 'दाईं',
+    replacement: 'दायीं'
   },
   {
-    original: 'आंख ',
+    original: 'आंख',
     replacement: 'आँख'
   },
   {
     original: 'कांख',
-    replacement: 'काँख '
+    replacement: 'काँख'
   },
   {
     original: 'जांघ',
@@ -349,47 +349,47 @@ export const wordReplacements = [
   },
   {
     original: 'विशेशता',
-    replacement: 'विशेषता '
+    replacement: 'विशेषता'
   },
   {
     original: 'पराई',
-    replacement: 'परायी '
+    replacement: 'परायी'
   },
   {
     original: 'पराए',
-    replacement: 'पराये '
+    replacement: 'पराये'
   },
   {
-    original: 'पीजिए ',
-    replacement: 'पीजिये '
+    original: 'पीजिए',
+    replacement: 'पीजिये'
   },
   {
     original: 'पकाए',
-    replacement: 'पकाये '
+    replacement: 'पकाये'
   },
   {
     original: 'पकवाए',
-    replacement: 'पकवाये '
+    replacement: 'पकवाये'
   },
   {
     original: 'छुड़ाए',
-    replacement: 'छुड़ाये '
+    replacement: 'छुड़ाये'
   },
   {
     original: 'छुड़वाए',
-    replacement: 'छुड़वाये '
+    replacement: 'छुड़वाये'
   },
   {
     original: 'बरगलाए',
-    replacement: 'बरगलाये '
+    replacement: 'बरगलाये'
   },
   {
     original: 'वाए',
-    replacement: 'वाये '
+    replacement: 'वाये'
   },
   {
     original: 'लाए',
-    replacement: 'लाये '
+    replacement: 'लाये'
   },
   {
     original: 'जाइए',
@@ -404,12 +404,12 @@ export const wordReplacements = [
     replacement: 'खाइये'
   },
   {
-    original: 'जाइएगा ',
-    replacement: 'जाइयेगा '
+    original: 'जाइएगा',
+    replacement: 'जाइयेगा'
   },
   {
-    original: 'इए ',
-    replacement: 'इये '
+    original: 'इए',
+    replacement: 'इये'
   },
   {
     original: 'करिए',
@@ -417,15 +417,15 @@ export const wordReplacements = [
   },
   {
     original: 'डालिए',
-    replacement: 'डालिये '
+    replacement: 'डालिये'
   },
   {
     original: 'बनवाई',
     replacement: 'बनवायी'
   },
   {
-    original: 'उड़ाएंगे ',
-    replacement: 'उड़ायेंगे '
+    original: 'उड़ाएंगे',
+    replacement: 'उड़ायेंगे'
   },
   {
     original: 'रुकाने',
@@ -442,5 +442,9 @@ export const wordReplacements = [
   {
     original: 'कोशाध्यक्ष',
     replacement: 'कोषाध्यक्ष'
+  },
+  {
+    original: 'उड़ाएँगे',
+    replacement: 'उड़ायेंगे'
   }
 ];
