@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useEnhancedGrammarChecker } from "@/hooks/useEnhancedGrammarChecker";
+import { useGrammarChecker } from "@/hooks/useGrammarChecker";
 import Header from './GrammarChecker/Header';
 import TextInputPanel from './GrammarChecker/TextInputPanel';
 import CorrectedTextPanel from './GrammarChecker/CorrectedTextPanel';
@@ -22,26 +22,26 @@ const GrammarChecker = () => {
     resetText,
     copyToClipboard,
     highlighting
-  } = useEnhancedGrammarChecker();
+  } = useGrammarChecker();
 
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
   const charCount = inputText.length;
 
-  // Generate enhanced highlighted segments for both input and output text
-  const inputHighlightedSegments = highlighting.parseTextWithEnhancedHighlights(
+  // Generate highlighted segments for both input and output text
+  const inputHighlightedSegments = highlighting.parseTextWithHighlights(
     inputText, 
     corrections, 
     'input'
   );
 
   const outputText = processingMode === 'style' ? enhancedText : correctedText;
-  const outputHighlightedSegments = highlighting.parseTextWithEnhancedHighlights(
+  const outputHighlightedSegments = highlighting.parseTextWithHighlights(
     outputText,
     corrections,
     'output'
   );
 
-  // Show highlights only when we have corrections and text
+  // Show highlights only when we have corrections and text - fix: ensure boolean type
   const showHighlights = Boolean(corrections.length > 0 && (correctedText || enhancedText));
 
   const handleSegmentClick = (correctionIndex: number) => {
