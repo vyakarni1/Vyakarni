@@ -1,4 +1,5 @@
 
+import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useWordLimits } from "@/hooks/useWordLimits";
 import { useTextHighlighting } from "@/hooks/useTextHighlighting";
