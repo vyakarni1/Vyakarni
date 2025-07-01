@@ -36,8 +36,9 @@ const CorrectedTextPanel = ({
   highlightedSegments = [],
   onSegmentClick,
   selectedCorrectionIndex,
-  onCorrectionClick
-}: CorrectedTextPanelProps) => {
+  onCorrectionClick,
+  currentStage
+}: CorrectedTextPanelProps & { currentStage?: string }) => {
   const currentText = processingMode === 'style' ? enhancedText : correctedText;
   const wordCount = currentText.trim() ? currentText.trim().split(/\s+/).length : 0;
   
@@ -110,7 +111,12 @@ const CorrectedTextPanel = ({
         {isLoading && (
           <div className="mt-6 sm:mt-8 flex-shrink-0">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-slate-700">प्रगति</span>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-slate-700">प्रगति</span>
+                {currentStage && (
+                  <span className="text-xs text-slate-500 mt-1">{currentStage}</span>
+                )}
+              </div>
               <span className="text-sm text-slate-500 font-medium">{progress}%</span>
             </div>
             <Progress value={progress} className="h-3 bg-slate-200 rounded-full overflow-hidden">

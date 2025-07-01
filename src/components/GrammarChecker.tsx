@@ -15,6 +15,7 @@ const GrammarChecker = () => {
     isLoading,
     processingMode,
     progress,
+    currentStage,
     corrections,
     correctGrammar,
     enhanceStyle,
@@ -78,6 +79,7 @@ const GrammarChecker = () => {
             isLoading={isLoading}
             processingMode={processingMode}
             progress={progress}
+            currentStage={currentStage}
             onCopyToClipboard={copyToClipboard}
             highlightedSegments={outputHighlightedSegments}
             onSegmentClick={handleSegmentClick}
