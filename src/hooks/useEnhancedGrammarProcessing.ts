@@ -118,7 +118,7 @@ export const useEnhancedGrammarProcessing = () => {
 
   const resetGrammarData = () => {
     setCorrectedText('');
-    setCorrections([]);
+    setcorrections([]);
     transformationTracker.reset();
   };
 

@@ -5,7 +5,6 @@ export interface Correction {
   reason: string;
   type: 'grammar' | 'spelling' | 'punctuation' | 'syntax' | 'vocabulary' | 'flow' | 'eloquence' | 'engagement';
   source?: 'dictionary' | 'gpt';
-  step?: string;
 }
 
 export interface WordReplacement {

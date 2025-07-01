@@ -121,7 +121,7 @@ const CorrectedTextPanel = ({
               {corrections.length > 0 && (
                 <CorrectionsDropdown
                   corrections={corrections}
-                  selectedCorrectionIndex={selectedCorrectionIndex}
+                  selectedIndex={selectedCorrectionIndex}
                   onCorrectionClick={onCorrectionClick}
                 />
               )}
