@@ -296,6 +296,10 @@ export const wordReplacements = [
     replacement: 'येंगे'
   },
   {
+    original: 'एँगे',
+    replacement: 'येंगे'
+  },
+  {
     original: 'एंगी',
     replacement: 'येंगी'
   },
@@ -424,6 +428,10 @@ export const wordReplacements = [
     replacement: 'बनवायी'
   },
   {
+    original: 'उड़ाएँगे',
+    replacement: 'उड़ायेंगे'
+  },
+  {
     original: 'उड़ाएंगे',
     replacement: 'उड़ायेंगे'
   },
@@ -444,7 +452,139 @@ export const wordReplacements = [
     replacement: 'कोषाध्यक्ष'
   },
   {
-    original: 'उड़ाएँगे',
-    replacement: 'उड़ायेंगे'
+    original: 'बांध',
+    replacement: 'बाँध'
+  },
+  {
+    original: 'बांझ',
+    replacement: 'बाँझ'
+  },
+  {
+    original: 'रखूंगा',
+    replacement: 'रखूँगा'
+  },
+  {
+    original: 'उठूंगा',
+    replacement: 'उठूँगा'
+  },
+  {
+    original: 'बैठूंगा',
+    replacement: 'बैठूँगा'
+  },
+  {
+    original: 'जाऊंगा',
+    replacement: 'जाऊँगा'
+  },
+  {
+    original: 'चलूंगा',
+    replacement: 'चलूँगा'
+  },
+  {
+    original: 'आऊंगा',
+    replacement: 'आऊँगा'
+  },
+  {
+    original: 'खाऊंगा',
+    replacement: 'खाऊँगा'
+  },
+  {
+    original: 'पियूंगा',
+    replacement: 'पियूँगा'
+  },
+  {
+    original: 'पिऊँगा',
+    replacement: 'पियूँगा'
+  },
+  {
+    original: 'लड़ूंगा',
+    replacement: 'लड़ूँगा'
+  },
+  {
+    original: 'उड़ूंगा',
+    replacement: 'उड़ूँगा'
+  },
+  {
+    original: 'समझूंगा',
+    replacement: 'समझूँगा'
+  },
+  {
+    original: 'समझाऊंगा',
+    replacement: 'समझाऊँगा'
+  },
+  {
+    original: 'दूंगा',
+    replacement: 'दूँगा'
+  },
+  {
+    original: 'रखूंगी',
+    replacement: 'रखूँगी'
+  },
+  {
+    original: 'उठूंगी',
+    replacement: 'उठूँगी'
+  },
+  {
+    original: 'बैठूंगी',
+    replacement: 'बैठूँगी'
+  },
+  {
+    original: 'जाऊंगी',
+    replacement: 'जाऊँगी'
+  },
+  {
+    original: 'चलूंगी',
+    replacement: 'चलूँगी'
+  },
+  {
+    original: 'आऊंगी',
+    replacement: 'आऊँगी'
+  },
+  {
+    original: 'खाऊंगी',
+    replacement: 'खाऊँगी'
+  },
+  {
+    original: 'पियूंगी',
+    replacement: 'पियूँगी'
+  },
+  {
+    original: 'पिऊँगी',
+    replacement: 'पियूँगी'
+  },
+  {
+    original: 'लड़ूंगी',
+    replacement: 'लड़ूँगी'
+  },
+  {
+    original: 'उड़ूंगी',
+    replacement: 'उड़ूँगी'
+  },
+  {
+    original: 'समझूंगी',
+    replacement: 'समझूँगी'
+  },
+  {
+    original: 'समझाऊंगी',
+    replacement: 'समझाऊँगी'
+  },
+  {
+    original: 'दूंगी',
+    replacement: 'दूँगी'
+  },
+  {
+    original: 'बनाएंगी',
+    replacement: 'बनायेंगी'
+  },
+  {
+    original: 'बनाएँगी',
+    replacement: 'बनायेंगी'
+  },
+  {
+    original: 'बनाएंगे',
+    replacement: 'बनायेंगे'
+  },
+  {
+    original: 'बनाएँगे',
+    replacement: 'बनायेंगे'
   }
 ];
