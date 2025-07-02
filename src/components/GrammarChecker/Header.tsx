@@ -7,7 +7,7 @@ const Header = () => {
           <img alt="व्याकरणी Logo" className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8" onError={e => {
           console.log('Logo failed to load in header');
           e.currentTarget.style.display = 'none';
-        }} src="/lovable-uploads/bc952e37-ce24-4c2d-a9a4-c172b32cc141.png" />
+        }} src="/lovable-uploads/8eb89ac1-0c37-4487-b12d-81601f7564eb.png" />
         </div>
         <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold bg-gradient-to-r from-blue-900 via-blue-600 to-indigo-600 bg-clip-text text-transparent py-[10px] px-[6px]">
           व्याकरणी
