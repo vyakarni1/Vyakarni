@@ -19,24 +19,45 @@ const ResetPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    const type = searchParams.get('type');
-
-    if (!accessToken || !refreshToken || type !== 'recovery') {
-      toast.error("अमान्य या समाप्त हो गया रीसेट लिंक");
-      navigate('/forgot-password');
+    // Check for error parameters first
+    const error = searchParams.get('error');
+    const errorCode = searchParams.get('error_code');
+    const errorDescription = searchParams.get('error_description');
+    
+    if (error) {
+      console.error('Auth error:', { error, errorCode, errorDescription });
+      
+      if (errorCode === 'otp_expired') {
+        toast.error("रीसेट लिंक समाप्त हो गया है। कृपया नया लिंक मांगें।");
+      } else {
+        toast.error("रीसेट लिंक अमान्य है। कृपया नया लिंक मांगें।");
+      }
+      
+      // Redirect to forgot password page after showing error
+      setTimeout(() => {
+        navigate('/forgot-password');
+      }, 3000);
       return;
     }
 
-    // Set the session with the tokens from the URL
-    supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken
-    }).catch((error) => {
-      console.error('Session error:', error);
-      toast.error("सत्र त्रुटि। कृपया पुनः प्रयास करें।");
-      navigate('/forgot-password');
+    // Check if user has a valid session (after clicking email link)
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Session error:', error);
+        toast.error("सत्र त्रुटि। कृपया पुनः प्रयास करें।");
+        navigate('/forgot-password');
+        return;
+      }
+
+      if (!session) {
+        // No session found, this means the token might be expired or invalid
+        toast.error("रीसेट सत्र नहीं मिला। कृपया नया रीसेट लिंक मांगें।");
+        navigate('/forgot-password');
+        return;
+      }
+
+      // Session is valid, user can now reset password
+      console.log('Valid session found for password reset');
     });
   }, [searchParams, navigate]);
 
