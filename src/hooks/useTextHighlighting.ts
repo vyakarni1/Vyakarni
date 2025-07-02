@@ -7,8 +7,6 @@ export interface HighlightedSegment {
   isHighlighted: boolean;
   type: 'incorrect' | 'correct' | 'normal';
   correctionIndex?: number;
-  startIndex?: number;
-  endIndex?: number;
 }
 
 export const useTextHighlighting = () => {
@@ -23,30 +21,26 @@ export const useTextHighlighting = () => {
       return [{ text, isHighlighted: false, type: 'normal' }];
     }
 
-    // Simplified approach: build segments by finding and replacing words
     const segments: HighlightedSegment[] = [];
-    let remainingText = text;
-    let currentIndex = 0;
+    let lastIndex = 0;
 
-    // Process each correction to find matches in the text
     corrections.forEach((correction, index) => {
       const searchText = type === 'input' ? correction.incorrect : correction.correct;
       const highlightType = type === 'input' ? 'incorrect' : 'correct';
       
-      // Find the first occurrence of this word in remaining text
-      const wordIndex = remainingText.indexOf(searchText);
+      const wordIndex = text.indexOf(searchText, lastIndex);
       
       if (wordIndex !== -1) {
-        // Add any text before this word as normal
-        if (wordIndex > 0) {
+        // Add text before the correction
+        if (wordIndex > lastIndex) {
           segments.push({
-            text: remainingText.substring(0, wordIndex),
+            text: text.substring(lastIndex, wordIndex),
             isHighlighted: false,
             type: 'normal'
           });
         }
         
-        // Add the highlighted word
+        // Add the highlighted correction
         segments.push({
           text: searchText,
           isHighlighted: selectedCorrectionIndex === index,
@@ -54,23 +48,17 @@ export const useTextHighlighting = () => {
           correctionIndex: index
         });
         
-        // Update remaining text
-        remainingText = remainingText.substring(wordIndex + searchText.length);
+        lastIndex = wordIndex + searchText.length;
       }
     });
 
-    // Add any remaining text as normal
-    if (remainingText.length > 0) {
+    // Add remaining text
+    if (lastIndex < text.length) {
       segments.push({
-        text: remainingText,
+        text: text.substring(lastIndex),
         isHighlighted: false,
         type: 'normal'
       });
-    }
-
-    // If no segments were created, return the original text as normal
-    if (segments.length === 0) {
-      return [{ text, isHighlighted: false, type: 'normal' }];
     }
 
     return segments;
