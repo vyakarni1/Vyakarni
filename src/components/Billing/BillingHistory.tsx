@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/AuthProvider";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Receipt, Calendar, CreditCard } from "lucide-react";
+import { Receipt, Calendar, CreditCard, Download, FileText } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import ExportDialog from "./ExportDialog";
+import { exportSingleInvoice } from "@/utils/exportUtils";
+import { toast } from "sonner";
 
 interface PaymentTransaction {
   id: string;
@@ -84,6 +87,24 @@ const BillingHistory = () => {
       currency: currency,
       minimumFractionDigits: 0
     }).format(amount);
+  };
+
+  const handleDownloadInvoice = async (transaction: PaymentTransaction) => {
+    try {
+      const userInfo = {
+        name: user?.user_metadata?.name || user?.email?.split('@')[0],
+        email: user?.email
+      };
+      
+      const doc = exportSingleInvoice(transaction, userInfo);
+      const invoiceNumber = `VYAK-${new Date().getFullYear()}-${transaction.id.slice(-8).toUpperCase()}`;
+      doc.save(`invoice-${invoiceNumber}.pdf`);
+      
+      toast.success('Invoice downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      toast.error('Failed to download invoice. Please try again.');
+    }
   };
 
   if (loading) {
@@ -164,6 +185,35 @@ const BillingHistory = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Action Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Download className="h-4 w-4 mr-2" />
+                      Actions
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-white border shadow-lg">
+                    <DropdownMenuItem 
+                      onClick={() => handleDownloadInvoice(transaction)}
+                      className="cursor-pointer hover:bg-gray-100"
+                    >
+                      <FileText className="h-4 w-4 mr-2" />
+                      Download Invoice
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        navigator.clipboard.writeText(transaction.id);
+                        toast.success('Transaction ID copied to clipboard!');
+                      }}
+                      className="cursor-pointer hover:bg-gray-100"
+                    >
+                      <Receipt className="h-4 w-4 mr-2" />
+                      Copy Transaction ID
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ))}
             
