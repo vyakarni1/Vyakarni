@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText, RotateCcw, Zap, Sparkles, AlertTriangle } from "lucide-react";
 import HighlightedText from './HighlightedText';
-import { HighlightedSegment } from '@/hooks/useTextHighlighting';
+import { HighlightedSegment } from '@/hooks/useAdvancedHighlighting';
 
 interface TextInputPanelProps {
   inputText: string;

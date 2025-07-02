@@ -2,8 +2,8 @@
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useWordLimits } from "@/hooks/useWordLimits";
-import { useTextHighlighting } from "@/hooks/useTextHighlighting";
-import { useGrammarProcessing } from "@/hooks/useGrammarProcessing";
+import { useAdvancedHighlighting } from "@/hooks/useAdvancedHighlighting";
+import { useRestructuredGrammarProcessing } from "@/hooks/useRestructuredGrammarProcessing";
 import { useStyleProcessing } from "@/hooks/useStyleProcessing";
 import { useProgressManagement } from "@/hooks/useProgressManagement";
 import { useTextOperations } from "@/hooks/useTextOperations";
@@ -11,9 +11,9 @@ import { useTextOperations } from "@/hooks/useTextOperations";
 export const useGrammarChecker = () => {
   const { trackUsage } = useUsageStats();
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
-  const highlighting = useTextHighlighting();
+  const highlighting = useAdvancedHighlighting();
   
-  const grammarProcessing = useGrammarProcessing();
+  const grammarProcessing = useRestructuredGrammarProcessing();
   const styleProcessing = useStyleProcessing();
   const progressManagement = useProgressManagement();
   const textOperations = useTextOperations();
@@ -40,7 +40,19 @@ export const useGrammarChecker = () => {
           await new Promise(resolve => setTimeout(resolve, 500));
         },
         
-        // Stage 2-6: Grammar processing stages
+        // Stage 2: GPT Analysis  
+        async () => {
+          // This will be handled inside processGrammarCorrection
+          await new Promise(resolve => setTimeout(resolve, 100));
+        },
+
+        // Stage 3: Dictionary Corrections
+        async () => {
+          // This will be handled inside processGrammarCorrection
+          await new Promise(resolve => setTimeout(resolve, 100));
+        },
+        
+        // Stage 4: Final processing
         async () => {
           await grammarProcessing.processGrammarCorrection(
             textOperations.inputText,

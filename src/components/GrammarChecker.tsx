@@ -27,7 +27,7 @@ const GrammarChecker = () => {
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
   const charCount = inputText.length;
 
-  // Generate highlighted segments for both input and output text
+  // Generate highlighted segments for both input and output text using new advanced highlighting
   const inputHighlightedSegments = highlighting.parseTextWithHighlights(
     inputText, 
     corrections, 
@@ -41,7 +41,7 @@ const GrammarChecker = () => {
     'output'
   );
 
-  // Show highlights only when we have corrections and text - fix: ensure boolean type
+  // Show highlights only when we have corrections and text
   const showHighlights = Boolean(corrections.length > 0 && (correctedText || enhancedText));
 
   const handleSegmentClick = (correctionIndex: number) => {

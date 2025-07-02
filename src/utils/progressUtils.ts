@@ -14,14 +14,12 @@ export interface ProgressManager {
   setCurrentStage?: (stage: string) => void;
 }
 
-// Grammar correction stages
+// Grammar correction stages - NEW 3-STEP PROCESS
 export const GRAMMAR_STAGES: ProgressStage[] = [
-  { name: "प्रारंभिक सेटअप", startPercent: 0, endPercent: 20, estimatedDuration: 500 },
-  { name: "शब्दकोश सुधार (चरण 1)", startPercent: 20, endPercent: 40, estimatedDuration: 800 },
-  { name: "GPT विश्लेषण", startPercent: 40, endPercent: 70, estimatedDuration: 3000 },
-  { name: "शब्दकोश सुधार (चरण 2)", startPercent: 70, endPercent: 85, estimatedDuration: 600 },
-  { name: "अंतिम जांच", startPercent: 85, endPercent: 95, estimatedDuration: 500 },
-  { name: "परिणाम तैयार करना", startPercent: 95, endPercent: 100, estimatedDuration: 300 }
+  { name: "प्रारंभिक सेटअप", startPercent: 0, endPercent: 15, estimatedDuration: 500 },
+  { name: "GPT विश्लेषण", startPercent: 15, endPercent: 65, estimatedDuration: 3000 },
+  { name: "शब्दकोश सुधार", startPercent: 65, endPercent: 90, estimatedDuration: 800 },
+  { name: "परिणाम तैयार करना", startPercent: 90, endPercent: 100, estimatedDuration: 400 }
 ];
 
 // Style enhancement stages  
