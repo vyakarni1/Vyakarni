@@ -83,6 +83,7 @@ const CorrectedTextPanel = ({
                     segments={highlightedSegments}
                     onSegmentClick={onSegmentClick}
                     className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap"
+                    corrections={corrections}
                   />
                 ) : (
                   <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
