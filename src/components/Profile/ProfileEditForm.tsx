@@ -181,18 +181,17 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
           <CardContent>
             {!showPasswordForm ? (
               <div className="space-y-4">
-                <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-                  <p className="text-sm text-amber-800">
-                    पासवर्ड बदलने की सुविधा अस्थायी रूप से अक्षम है। कृपया समर्थन से संपर्क करें।
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-800">
+                    अपना खाता पासवर्ड बदलने के लिए यहाँ क्लिक करें। सुरक्षा के लिए आपसे वर्तमान पासवर्ड पूछा जाएगा।
                   </p>
                 </div>
                 <Button 
                   variant="outline" 
                   onClick={() => setShowPasswordForm(true)}
                   className="w-full md:w-auto"
-                  disabled
                 >
-                  पासवर्ड बदलें (अक्षम)
+                  पासवर्ड बदलें
                 </Button>
               </div>
             ) : (
