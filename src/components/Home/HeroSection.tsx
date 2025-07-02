@@ -16,7 +16,7 @@ const HeroSection = () => {
             <img alt="व्याकरणी Logo" onError={e => {
             console.log('Hero logo failed to load');
             e.currentTarget.style.display = 'none';
-          }} src="/lovable-uploads/9899ecd1-1a2c-404a-bfd9-83a555e6cfc4.png" className="w-full h-full object-contain" />
+          }} className="w-full h-full object-contain" src="/lovable-uploads/c3ed7ddf-6967-4d12-b28b-186bc3c15826.png" />
           </div>
         </div>
         
