@@ -29,7 +29,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
             className="flex items-center space-x-2 transition-all duration-200 hover:scale-105"
           >
             <img 
-              src="/lovable-uploads/feb8e6c8-b871-4f30-9ddd-2c20bb223a84.png" 
+              src="/lovable-uploads/1bf69a70-2442-4bb2-8681-6877bdaeec2d.png" 
               alt="व्याकरणी Logo" 
               className="h-8 w-8"
             />

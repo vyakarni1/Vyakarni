@@ -10,7 +10,7 @@ const Navigation = () => {
           <div className="flex items-center space-x-3">
             <Link to="/" className="flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/feb8e6c8-b871-4f30-9ddd-2c20bb223a84.png" 
+                src="/lovable-uploads/1bf69a70-2442-4bb2-8681-6877bdaeec2d.png" 
                 alt="व्याकरणी Logo" 
                 className="h-10 w-10 transition-transform duration-200 hover:scale-105"
               />
