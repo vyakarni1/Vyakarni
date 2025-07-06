@@ -42,22 +42,29 @@ export const useGrammarChecker = () => {
         
         // Stage 2: GPT Analysis  
         async () => {
-          // This will be handled inside processGrammarCorrection
-          await new Promise(resolve => setTimeout(resolve, 100));
+          // Real progress updates handled via callback in processGrammarCorrection
         },
 
         // Stage 3: Dictionary Corrections
         async () => {
-          // This will be handled inside processGrammarCorrection
-          await new Promise(resolve => setTimeout(resolve, 100));
+          // Real progress updates handled via callback in processGrammarCorrection
         },
         
-        // Stage 4: Final processing
+        // Stage 4: Final processing with progress integration
         async () => {
+          const progressCallback = (stage: number, progress: number) => {
+            // Map internal processing stages to overall progress stages
+            const stageMap = { 1: 1, 2: 2, 3: 3 }; // Maps to stages 2, 3, 4 in overall flow
+            if (stageMap[stage]) {
+              progressManagement.updateStageProgress(stageMap[stage], progress);
+            }
+          };
+          
           await grammarProcessing.processGrammarCorrection(
             textOperations.inputText,
             trackUsage,
-            trackWordUsage
+            trackWordUsage,
+            progressCallback
           );
         }
       ];
@@ -90,15 +97,34 @@ export const useGrammarChecker = () => {
       const stageCallbacks = [
         // Stage 1: Initial setup
         async () => {
-          await new Promise(resolve => setTimeout(resolve, 800));
+          await new Promise(resolve => setTimeout(resolve, 500));
         },
         
-        // Stage 2: Style processing
+        // Stage 2: GPT Style Enhancement
         async () => {
+          // Real progress updates handled via callback in processStyleEnhancement
+        },
+
+        // Stage 3: Dictionary Application
+        async () => {
+          // Real progress updates handled via callback in processStyleEnhancement
+        },
+        
+        // Stage 4: Final processing with progress integration
+        async () => {
+          const progressCallback = (stage: number, progress: number) => {
+            // Map internal processing stages to overall progress stages
+            const stageMap = { 1: 1, 2: 2, 3: 3 }; // Maps to stages 2, 3, 4 in overall flow
+            if (stageMap[stage]) {
+              progressManagement.updateStageProgress(stageMap[stage], progress);
+            }
+          };
+          
           await styleProcessing.processStyleEnhancement(
             textOperations.inputText,
             trackUsage,
-            trackWordUsage
+            trackWordUsage,
+            progressCallback
           );
         }
       ];

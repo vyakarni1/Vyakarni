@@ -22,11 +22,12 @@ export const GRAMMAR_STAGES: ProgressStage[] = [
   { name: "परिणाम तैयार करना", startPercent: 90, endPercent: 100, estimatedDuration: 400 }
 ];
 
-// Style enhancement stages  
+// Style enhancement stages - NEW 3-STEP PROCESS
 export const STYLE_STAGES: ProgressStage[] = [
-  { name: "प्रारंभिक सेटअप", startPercent: 0, endPercent: 30, estimatedDuration: 800 },
-  { name: "शैली विश्लेषण", startPercent: 30, endPercent: 90, estimatedDuration: 4000 },
-  { name: "परिणाम तैयार करना", startPercent: 90, endPercent: 100, estimatedDuration: 500 }
+  { name: "प्रारंभिक सेटअप", startPercent: 0, endPercent: 15, estimatedDuration: 500 },
+  { name: "GPT शैली सुधार", startPercent: 15, endPercent: 50, estimatedDuration: 2500 },
+  { name: "शब्दकोश सुधार", startPercent: 50, endPercent: 80, estimatedDuration: 800 },
+  { name: "परिणाम तैयार करना", startPercent: 80, endPercent: 100, estimatedDuration: 400 }
 ];
 
 export const createRealTimeProgressManager = (
