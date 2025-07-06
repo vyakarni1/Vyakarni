@@ -16,7 +16,7 @@ serve(async (req) => {
   }
 
   try {
-    const { inputText, wordReplacements } = await req.json();
+    const { inputText } = await req.json();
 
     if (!inputText || !inputText.trim()) {
       return new Response(
@@ -32,17 +32,7 @@ serve(async (req) => {
     const inputWordCount = inputText.trim().split(/\s+/).length;
     console.log(`Processing text with ${inputWordCount} words`);
 
-    // Apply word replacements first
-    let preprocessedText = inputText;
-    if (wordReplacements && Array.isArray(wordReplacements)) {
-      wordReplacements.forEach(({ original, replacement }) => {
-        const regex = new RegExp(original, 'g');
-        preprocessedText = preprocessedText.replace(regex, replacement);
-      });
-    }
-
     console.log('Original text:', inputText);
-    console.log('After word replacements:', preprocessedText);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -120,7 +110,7 @@ Return ONLY the JSON object, no additional text or explanations.`
           },
           {
             role: 'user',
-            content: `Please correct the grammatical errors in this Hindi text and make it sound more natural and fluent while following the JSON format specified:\n\n${preprocessedText}`
+            content: `Please correct the grammatical errors in this Hindi text and make it sound more natural and fluent while following the JSON format specified:\n\n${inputText}`
           }
         ],
         max_tokens: 16000,

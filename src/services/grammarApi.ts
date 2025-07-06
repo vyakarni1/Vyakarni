@@ -6,10 +6,7 @@ export const callGrammarCheckAPI = async (inputText: string) => {
   console.log('Sending text for correction:', inputText);
   
   const { data, error } = await supabase.functions.invoke('grammar-check', {
-    body: {
-      inputText,
-      wordReplacements
-    }
+    body: { inputText }
   });
 
   if (error) {
@@ -28,6 +25,53 @@ export const callGrammarCheckAPI = async (inputText: string) => {
     correctedText: data.correctedText,
     corrections: data.corrections || []
   };
+};
+
+export const callDictionaryApplyAPI = async (correctedText: string, wordReplacements: any[]) => {
+  console.log('Applying dictionary to corrected text:', correctedText);
+  
+  const { data, error } = await supabase.functions.invoke('dictionary-apply', {
+    body: {
+      correctedText,
+      wordReplacements
+    }
+  });
+
+  if (error) {
+    console.error('Dictionary apply error:', error);
+    throw new Error(`Dictionary application failed: ${error.message}`);
+  }
+
+  if (!data || !data.textWithDictionary) {
+    throw new Error('No text with dictionary received from the API');
+  }
+
+  console.log('Received text with dictionary:', data.textWithDictionary);
+  return data.textWithDictionary;
+};
+
+export const callTextComparisonAPI = async (originalText: string, finalText: string, processingType: string = 'grammar_check') => {
+  console.log('Comparing texts for highlighting:', { originalText, finalText, processingType });
+  
+  const { data, error } = await supabase.functions.invoke('text-comparison', {
+    body: {
+      originalText,
+      finalText,
+      processingType
+    }
+  });
+
+  if (error) {
+    console.error('Text comparison error:', error);
+    throw new Error(`Text comparison failed: ${error.message}`);
+  }
+
+  if (!data || !data.corrections) {
+    throw new Error('No corrections received from comparison API');
+  }
+
+  console.log('Received comparison corrections:', data.corrections);
+  return data.corrections;
 };
 
 export const callStyleEnhanceAPI = async (inputText: string) => {
