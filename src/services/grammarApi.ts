@@ -75,7 +75,7 @@ export const callTextComparisonAPI = async (originalText: string, finalText: str
 };
 
 // Grok 3 API functions
-export const callGrokGrammarCheckAPI = async (inputText: string) => {
+export const callGrokGrammarCheckAPI = async (inputText: string): Promise<{ correctedText: string, corrections: any[] }> => {
   console.log('Sending text for Grok grammar correction:', inputText);
   
   const { data, error } = await supabase.functions.invoke('grok-grammar-check', {
@@ -92,7 +92,12 @@ export const callGrokGrammarCheckAPI = async (inputText: string) => {
   }
 
   console.log('Received Grok corrected text:', data.correctedText);
-  return data.correctedText;
+  console.log('Received Grok corrections:', data.corrections?.length || 0);
+  
+  return {
+    correctedText: data.correctedText,
+    corrections: data.corrections || []
+  };
 };
 
 export const callGrokDictionaryApplyAPI = async (correctedText: string, wordReplacements: any[]) => {

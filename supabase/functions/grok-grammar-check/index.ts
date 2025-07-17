@@ -51,14 +51,24 @@ Rules:
 - Be careful of how अनुस्वार की बिंदी & चंद्रबिंदु (ँ) is used in writing words especially.
 
 Instructions:
-First, provide the fully corrected Hindi text.
-Then, list each correction you made in this format:
-- Original: [original word/phrase]
-- Corrected: [corrected version]
-- Type: [grammar/syntax/word selection/punctuation/spelling]
-- Reason: [brief explanation in Hindi]
+Return your response in this exact JSON format:
+{
+  "correctedText": "The fully corrected Hindi text",
+  "corrections": [
+    {
+      "incorrect": "original word/phrase",
+      "correct": "corrected version",
+      "type": "grammar|syntax|word_selection|punctuation|spelling",
+      "reason": "brief explanation in Hindi"
+    }
+  ]
+}
 
-If no corrections are needed, return the original text followed by "कोई सुधार आवश्यक नहीं।"`
+If no corrections are needed, return:
+{
+  "correctedText": "original text",
+  "corrections": []
+}`
           },
           {
             role: 'user',
@@ -84,16 +94,36 @@ If no corrections are needed, return the original text followed by "कोई �
       throw new Error('Invalid response structure from Grok API');
     }
     
-    const correctedText = data.choices[0].message.content?.trim();
+    const rawResponse = data.choices[0].message.content?.trim();
     
-    if (!correctedText) {
+    if (!rawResponse) {
       console.error('No content in response:', data.choices[0].message);
       throw new Error('No corrected text received from Grok API');
     }
     
-    console.log('Grok corrected text:', correctedText);
+    console.log('Raw Grok response:', rawResponse);
 
-    return new Response(JSON.stringify({ correctedText }), {
+    // Parse JSON response
+    let grokResult;
+    try {
+      grokResult = JSON.parse(rawResponse);
+    } catch (parseError) {
+      console.error('Failed to parse JSON, falling back to text extraction:', parseError);
+      // Fallback: extract corrected text from non-JSON response
+      const lines = rawResponse.split('\n');
+      const correctedText = lines[0] || rawResponse;
+      grokResult = {
+        correctedText: correctedText,
+        corrections: []
+      };
+    }
+
+    console.log('Parsed Grok result:', grokResult);
+
+    return new Response(JSON.stringify({
+      correctedText: grokResult.correctedText || rawResponse,
+      corrections: grokResult.corrections || []
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
