@@ -57,13 +57,6 @@ const CorrectedTextPanel = ({
                 {wordCount} शब्द
               </Badge>
             )}
-            {corrections.length > 0 && (
-              <CorrectionsDropdown 
-                corrections={corrections}
-                selectedCorrectionIndex={null}
-                onCorrectionClick={() => {}}
-              />
-            )}
           </div>
         </div>
       </CardHeader>

@@ -44,16 +44,9 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
       onProgressUpdate?.(5, 'व्याकरण सुधार...');
       const grokResponse = await callGrokGrammarCheckAPI(inputText);
       
-      // Extract corrected text and AI corrections
-      const correctedText = grokResponse.correctedText;
-      const aiCorrections = grokResponse.corrections.map((correction: any) => ({
-        ...correction,
-        source: 'gpt',
-        type: correction.type === 'word_selection' ? 'vocabulary' : correction.type
-      }));
-      
+      // Parse the corrected text - now preserving full length
+      const correctedText = parseGrokResponse(grokResponse);
       console.log('After parsing - corrected text length:', correctedText.length);
-      console.log('AI corrections found:', aiCorrections.length);
       onProgressUpdate?.(50, 'शब्दकोश लागू...');
 
       // Stage 2: Dictionary Application (50-100%)
@@ -65,19 +58,15 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
 
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Combine AI corrections and dictionary corrections
-      const allCorrections = [...aiCorrections, ...dictionaryCorrections];
-      
       setCorrectedText(textWithDictionary);
-      setCorrections(allCorrections);
+      setCorrections([]); // No corrections since we removed text comparison
 
       console.log('Grammar correction completed successfully');
       console.log('Final output length:', textWithDictionary.length);
-      console.log('Total corrections:', allCorrections.length);
 
       return {
         correctedText: textWithDictionary,
-        corrections: allCorrections
+        corrections: []
       };
     } catch (error) {
       console.error('Grok grammar processing error:', error);
