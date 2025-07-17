@@ -20,7 +20,7 @@ serve(async (req) => {
       throw new Error('Input text is required');
     }
 
-    console.log('Correcting Hindi text with Grok 3:', inputText);
+    console.log('Correcting Hindi text with Grok 4:', inputText);
 
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
@@ -29,7 +29,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'grok-3',
+        model: 'grok-4',
         messages: [
           {
             role: 'system',
