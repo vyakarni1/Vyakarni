@@ -46,34 +46,26 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
     setIsProcessing(true);
     
     try {
-      // Stage 1: Initial Setup (0-15%)
-      onProgressUpdate?.(5, 'प्रारंभिक सेटअप...');
-      await new Promise(resolve => setTimeout(resolve, 300));
-      onProgressUpdate?.(15, 'Grok 3 के साथ व्याकरण सुधार...');
-
-      // Stage 2: Grammar Correction with Grok (15-50%)
+      // Stage 1: Grammar Correction with Grok (0-50%)
+      onProgressUpdate?.(5, 'व्याकरण सुधार...');
       const grokResponse = await callGrokGrammarCheckAPI(inputText);
       
-      // Parse the two-part response (corrected text + corrections list)
+      // Parse the corrected text
       const correctedText = parseGrokResponse(grokResponse);
-      onProgressUpdate?.(50, 'शब्दकोश लागू किया जा रहा है...');
+      onProgressUpdate?.(50, 'शब्दकोश लागू...');
 
-      // Stage 3: Dictionary Application (50-80%)
+      // Stage 2: Dictionary Application (50-100%)
       const textWithDictionary = await callGrokDictionaryApplyAPI(correctedText, wordReplacements);
-      onProgressUpdate?.(80, 'तुलना और हाइलाइटिंग तैयार की जा रही है...');
-
-      // Stage 4: Text Comparison for Highlighting (80-100%)
-      const corrections = await callGrokTextComparisonAPI(inputText, textWithDictionary, 'grammar_check');
       onProgressUpdate?.(100, 'पूर्ण!');
 
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       setCorrectedText(textWithDictionary);
-      setCorrections(corrections);
+      setCorrections([]); // No corrections since we removed text comparison
 
       return {
         correctedText: textWithDictionary,
-        corrections
+        corrections: []
       };
     } catch (error) {
       console.error('Grok grammar processing error:', error);

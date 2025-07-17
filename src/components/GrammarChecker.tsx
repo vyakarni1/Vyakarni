@@ -27,30 +27,8 @@ const GrammarChecker = () => {
   const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
   const charCount = inputText.length;
 
-  // Generate highlighted segments for both input and output text using new advanced highlighting
-  const inputHighlightedSegments = highlighting.parseTextWithHighlights(
-    inputText, 
-    corrections, 
-    'input'
-  );
-
   const outputText = processingMode === 'style' ? enhancedText : correctedText;
-  const outputHighlightedSegments = highlighting.parseTextWithHighlights(
-    outputText,
-    corrections,
-    'output'
-  );
 
-  // Show highlights only when we have corrections and text
-  const showHighlights = Boolean(corrections.length > 0 && (correctedText || enhancedText));
-
-  const handleSegmentClick = (correctionIndex: number) => {
-    highlighting.highlightCorrection(correctionIndex);
-  };
-
-  const handleCorrectionClick = (index: number) => {
-    highlighting.highlightCorrection(index);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
@@ -67,9 +45,6 @@ const GrammarChecker = () => {
             onCorrectGrammar={correctGrammar}
             onEnhanceStyle={enhanceStyle}
             onResetText={resetText}
-            highlightedSegments={inputHighlightedSegments}
-            onSegmentClick={handleSegmentClick}
-            showHighlights={showHighlights}
           />
 
           <CorrectedTextPanel
@@ -81,10 +56,6 @@ const GrammarChecker = () => {
             progress={progress}
             currentStage={currentStage}
             onCopyToClipboard={copyToClipboard}
-            highlightedSegments={outputHighlightedSegments}
-            onSegmentClick={handleSegmentClick}
-            selectedCorrectionIndex={highlighting.selectedCorrectionIndex}
-            onCorrectionClick={handleCorrectionClick}
           />
         </div>
 

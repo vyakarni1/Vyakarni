@@ -19,10 +19,6 @@ interface CorrectedTextPanelProps {
   processingMode: ProcessingMode;
   progress: number;
   onCopyToClipboard: () => void;
-  highlightedSegments?: HighlightedSegment[];
-  onSegmentClick?: (correctionIndex: number) => void;
-  selectedCorrectionIndex?: number | null;
-  onCorrectionClick?: (index: number) => void;
 }
 
 const CorrectedTextPanel = ({ 
@@ -33,10 +29,6 @@ const CorrectedTextPanel = ({
   processingMode,
   progress, 
   onCopyToClipboard,
-  highlightedSegments = [],
-  onSegmentClick,
-  selectedCorrectionIndex,
-  onCorrectionClick,
   currentStage
 }: CorrectedTextPanelProps & { currentStage?: string }) => {
   const currentText = processingMode === 'style' ? enhancedText : correctedText;
@@ -65,11 +57,6 @@ const CorrectedTextPanel = ({
                 {wordCount} शब्द
               </Badge>
             )}
-            <CorrectionsDropdown 
-              corrections={corrections} 
-              selectedCorrectionIndex={selectedCorrectionIndex}
-              onCorrectionClick={onCorrectionClick}
-            />
           </div>
         </div>
       </CardHeader>
@@ -78,18 +65,9 @@ const CorrectedTextPanel = ({
           {currentText ? (
             <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
               <div className="p-4 sm:p-6">
-                {highlightedSegments.length > 0 ? (
-                  <HighlightedText 
-                    segments={highlightedSegments}
-                    onSegmentClick={onSegmentClick}
-                    className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap"
-                    corrections={corrections}
-                  />
-                ) : (
-                  <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
-                    {currentText}
-                  </p>
-                )}
+                <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
+                  {currentText}
+                </p>
               </div>
             </ScrollArea>
           ) : (

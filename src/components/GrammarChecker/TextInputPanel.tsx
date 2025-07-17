@@ -16,9 +16,6 @@ interface TextInputPanelProps {
   onCorrectGrammar: () => void;
   onEnhanceStyle: () => void;
   onResetText: () => void;
-  highlightedSegments?: HighlightedSegment[];
-  onSegmentClick?: (correctionIndex: number) => void;
-  showHighlights?: boolean;
 }
 
 const MAX_WORD_LIMIT = 1000;
@@ -31,10 +28,7 @@ const TextInputPanel = ({
   charCount, 
   onCorrectGrammar,
   onEnhanceStyle,
-  onResetText,
-  highlightedSegments = [],
-  onSegmentClick,
-  showHighlights = false
+  onResetText
 }: TextInputPanelProps) => {
   const getWordCountColor = () => {
     if (wordCount > MAX_WORD_LIMIT) return 'bg-red-500 text-white';
@@ -64,24 +58,13 @@ const TextInputPanel = ({
       </CardHeader>
       <CardContent className="p-4 sm:p-8 flex-1 flex flex-col">
         <div className="flex-1 bg-slate-50 rounded-2xl overflow-hidden relative">
-          {showHighlights && inputText && highlightedSegments.length > 0 ? (
-            <div className="h-[400px] sm:h-[500px] lg:h-[600px] overflow-y-auto p-4 sm:p-6">
-              <HighlightedText 
-                segments={highlightedSegments}
-                onSegmentClick={onSegmentClick}
-                className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap"
-                corrections={[]}
-              />
-            </div>
-          ) : (
-            <Textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="यहाँ अपना हिंदी पाठ लिखें..."
-              className="flex-1 h-[400px] sm:h-[500px] lg:h-[600px] text-base sm:text-lg border-0 resize-none focus-visible:ring-0 p-4 sm:p-6 bg-transparent rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
-              disabled={isLoading}
-            />
-          )}
+          <Textarea
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="यहाँ अपना हिंदी पाठ लिखें..."
+            className="flex-1 h-[400px] sm:h-[500px] lg:h-[600px] text-base sm:text-lg border-0 resize-none focus-visible:ring-0 p-4 sm:p-6 bg-transparent rounded-2xl text-slate-800 placeholder:text-slate-400 leading-relaxed"
+            disabled={isLoading}
+          />
         </div>
         
         {/* Word Limit Warning */}
