@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { callGrokGrammarCheckAPI, callGrokDictionaryApplyAPI, callGrokTextComparisonAPI } from '@/services/grammarApi';
-import { wordReplacements } from '@/data/wordReplacements';
+import { callGrokGrammarCheckAPI } from '@/services/grammarApi';
+import { applyPreciseWordReplacements, validateReplacements } from '@/utils/preciseWordReplacements';
 
 interface UseGrokGrammarProcessingProps {
   onProgressUpdate?: (progress: number, stage: string) => void;
@@ -54,8 +54,10 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
       const correctedText = parseGrokResponse(grokResponse);
       onProgressUpdate?.(50, 'शब्दकोश लागू...');
 
-      // Stage 2: Dictionary Application (50-100%)
-      const textWithDictionary = await callGrokDictionaryApplyAPI(correctedText, wordReplacements);
+      // Stage 2: Dictionary Application (50-100%) - Now using precise JavaScript implementation
+      console.log('Starting precise dictionary application...');
+      validateReplacements(correctedText); // Validate before applying
+      const { correctedText: textWithDictionary, corrections: dictionaryCorrections } = applyPreciseWordReplacements(correctedText);
       onProgressUpdate?.(100, 'पूर्ण!');
 
       await new Promise(resolve => setTimeout(resolve, 300));
