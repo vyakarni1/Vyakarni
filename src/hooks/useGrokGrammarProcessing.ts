@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { callGrokGrammarCheckAPI } from '@/services/grammarApi';
 import { applyPreciseWordReplacements, validateReplacements } from '@/utils/preciseWordReplacements';
@@ -6,27 +7,19 @@ interface UseGrokGrammarProcessingProps {
   onProgressUpdate?: (progress: number, stage: string) => void;
 }
 
-// Parse the structured response from Grok
+// Parse the structured response from Grok - simplified to preserve full text
 const parseGrokResponse = (response: string): string => {
   try {
-    // Split response into corrected text and corrections list
-    const parts = response.split('\n\n');
+    console.log('Parsing Grok response, original length:', response.length);
     
-    // Find the first part that contains substantial Hindi text (corrected version)
-    for (const part of parts) {
-      const cleanPart = part.trim();
-      // Look for Hindi text that's longer than a few words and doesn't start with bullet points or dashes
-      if (cleanPart.length > 20 && 
-          !cleanPart.startsWith('-') && 
-          !cleanPart.startsWith('•') && 
-          !cleanPart.includes(':') &&
-          /[\u0900-\u097F]/.test(cleanPart)) {
-        return cleanPart;
-      }
-    }
+    // Simply trim whitespace and return the full response
+    // Grok 4 is returning the complete corrected text directly
+    const cleanedResponse = response.trim();
     
-    // Fallback: return the first substantial part
-    return parts[0]?.trim() || response.trim();
+    console.log('Parsed response length:', cleanedResponse.length);
+    console.log('First 200 characters of parsed response:', cleanedResponse.substring(0, 200));
+    
+    return cleanedResponse;
   } catch (error) {
     console.warn('Error parsing Grok response, using full response:', error);
     return response.trim();
@@ -43,6 +36,7 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
       throw new Error('कृपया सुधार के लिए कुछ पाठ लिखें');
     }
 
+    console.log('Starting grammar correction for text length:', inputText.length);
     setIsProcessing(true);
     
     try {
@@ -50,20 +44,25 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
       onProgressUpdate?.(5, 'व्याकरण सुधार...');
       const grokResponse = await callGrokGrammarCheckAPI(inputText);
       
-      // Parse the corrected text
+      // Parse the corrected text - now preserving full length
       const correctedText = parseGrokResponse(grokResponse);
+      console.log('After parsing - corrected text length:', correctedText.length);
       onProgressUpdate?.(50, 'शब्दकोश लागू...');
 
-      // Stage 2: Dictionary Application (50-100%) - Now using precise JavaScript implementation
+      // Stage 2: Dictionary Application (50-100%)
       console.log('Starting precise dictionary application...');
       validateReplacements(correctedText); // Validate before applying
       const { correctedText: textWithDictionary, corrections: dictionaryCorrections } = applyPreciseWordReplacements(correctedText);
+      console.log('After dictionary application - final text length:', textWithDictionary.length);
       onProgressUpdate?.(100, 'पूर्ण!');
 
       await new Promise(resolve => setTimeout(resolve, 300));
 
       setCorrectedText(textWithDictionary);
       setCorrections([]); // No corrections since we removed text comparison
+
+      console.log('Grammar correction completed successfully');
+      console.log('Final output length:', textWithDictionary.length);
 
       return {
         correctedText: textWithDictionary,
