@@ -1,0 +1,68 @@
+import { useState, useCallback } from 'react';
+import { callGrokGrammarCheckAPI, callGrokDictionaryApplyAPI, callGrokTextComparisonAPI } from '@/services/grammarApi';
+import { wordReplacements } from '@/data/wordReplacements';
+
+interface UseGrokGrammarProcessingProps {
+  onProgressUpdate?: (progress: number, stage: string) => void;
+}
+
+export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarProcessingProps = {}) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [correctedText, setCorrectedText] = useState('');
+  const [corrections, setCorrections] = useState([]);
+
+  const processGrammarCorrection = useCallback(async (inputText: string) => {
+    if (!inputText.trim()) {
+      throw new Error('कृपया सुधार के लिए कुछ पाठ लिखें');
+    }
+
+    setIsProcessing(true);
+    
+    try {
+      // Stage 1: Initial Setup (0-15%)
+      onProgressUpdate?.(5, 'प्रारंभिक सेटअप...');
+      await new Promise(resolve => setTimeout(resolve, 300));
+      onProgressUpdate?.(15, 'Grok 3 के साथ व्याकरण सुधार...');
+
+      // Stage 2: Grammar Correction with Grok (15-50%)
+      const correctedText = await callGrokGrammarCheckAPI(inputText);
+      onProgressUpdate?.(50, 'शब्दकोश लागू किया जा रहा है...');
+
+      // Stage 3: Dictionary Application (50-80%)
+      const textWithDictionary = await callGrokDictionaryApplyAPI(correctedText, wordReplacements);
+      onProgressUpdate?.(80, 'तुलना और हाइलाइटिंग तैयार की जा रही है...');
+
+      // Stage 4: Text Comparison for Highlighting (80-100%)
+      const corrections = await callGrokTextComparisonAPI(inputText, textWithDictionary, 'grammar_check');
+      onProgressUpdate?.(100, 'पूर्ण!');
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      setCorrectedText(textWithDictionary);
+      setCorrections(corrections);
+
+      return {
+        correctedText: textWithDictionary,
+        corrections
+      };
+    } catch (error) {
+      console.error('Grok grammar processing error:', error);
+      throw error;
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [onProgressUpdate]);
+
+  const resetGrammarData = () => {
+    setCorrectedText('');
+    setCorrections([]);
+  };
+
+  return {
+    processGrammarCorrection,
+    isProcessing,
+    correctedText,
+    corrections,
+    resetGrammarData
+  };
+};

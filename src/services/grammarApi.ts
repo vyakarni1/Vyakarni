@@ -74,6 +74,95 @@ export const callTextComparisonAPI = async (originalText: string, finalText: str
   return data.corrections;
 };
 
+// Grok 3 API functions
+export const callGrokGrammarCheckAPI = async (inputText: string) => {
+  console.log('Sending text for Grok grammar correction:', inputText);
+  
+  const { data, error } = await supabase.functions.invoke('grok-grammar-check', {
+    body: { inputText }
+  });
+
+  if (error) {
+    console.error('Grok grammar check error:', error);
+    throw new Error(`Grok grammar correction failed: ${error.message}`);
+  }
+
+  if (!data || !data.correctedText) {
+    throw new Error('No corrected text received from Grok API');
+  }
+
+  console.log('Received Grok corrected text:', data.correctedText);
+  return data.correctedText;
+};
+
+export const callGrokDictionaryApplyAPI = async (correctedText: string, wordReplacements: any[]) => {
+  console.log('Applying dictionary to corrected text with Grok:', correctedText);
+  
+  const { data, error } = await supabase.functions.invoke('grok-dictionary-apply', {
+    body: {
+      correctedText,
+      wordReplacements
+    }
+  });
+
+  if (error) {
+    console.error('Grok dictionary apply error:', error);
+    throw new Error(`Grok dictionary application failed: ${error.message}`);
+  }
+
+  if (!data || !data.textWithDictionary) {
+    throw new Error('No text with dictionary received from Grok API');
+  }
+
+  console.log('Received Grok text with dictionary:', data.textWithDictionary);
+  return data.textWithDictionary;
+};
+
+export const callGrokTextComparisonAPI = async (originalText: string, finalText: string, processingType: string = 'grammar_check') => {
+  console.log('Comparing texts for highlighting with Grok:', { originalText, finalText, processingType });
+  
+  const { data, error } = await supabase.functions.invoke('grok-text-comparison', {
+    body: {
+      originalText,
+      finalText,
+      processingType
+    }
+  });
+
+  if (error) {
+    console.error('Grok text comparison error:', error);
+    throw new Error(`Grok text comparison failed: ${error.message}`);
+  }
+
+  if (!data || !data.corrections) {
+    throw new Error('No corrections received from Grok comparison API');
+  }
+
+  console.log('Received Grok comparison corrections:', data.corrections);
+  return data.corrections;
+};
+
+export const callGrokStyleEnhanceAPI = async (inputText: string) => {
+  console.log('Sending text for Grok style enhancement:', inputText);
+  
+  const { data, error } = await supabase.functions.invoke('grok-style-enhance', {
+    body: { inputText }
+  });
+
+  if (error) {
+    console.error('Grok style enhance error:', error);
+    throw new Error(`Grok style enhancement failed: ${error.message}`);
+  }
+
+  if (!data || !data.enhancedText) {
+    throw new Error('No enhanced text received from Grok API');
+  }
+
+  console.log('Received Grok enhanced text:', data.enhancedText);
+  return data.enhancedText;
+};
+
+// Legacy GPT functions (keeping for fallback)
 export const callStyleEnhanceAPI = async (inputText: string) => {
   console.log('Sending text for style enhancement:', inputText);
   

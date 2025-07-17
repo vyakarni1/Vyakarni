@@ -3,8 +3,8 @@ import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useWordLimits } from "@/hooks/useWordLimits";
 import { useAdvancedHighlighting } from "@/hooks/useAdvancedHighlighting";
-import { useRestructuredGrammarProcessing } from "@/hooks/useRestructuredGrammarProcessing";
-import { useStyleProcessing } from "@/hooks/useStyleProcessing";
+import { useGrokGrammarProcessing } from "@/hooks/useGrokGrammarProcessing";
+import { useGrokStyleProcessing } from "@/hooks/useGrokStyleProcessing";
 import { useProgressManagement } from "@/hooks/useProgressManagement";
 import { useTextOperations } from "@/hooks/useTextOperations";
 
@@ -13,10 +13,15 @@ export const useGrammarChecker = () => {
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
   const highlighting = useAdvancedHighlighting();
   
-  const grammarProcessing = useRestructuredGrammarProcessing();
-  const styleProcessing = useStyleProcessing();
   const progressManagement = useProgressManagement();
   const textOperations = useTextOperations();
+  
+  const grammarProcessing = useGrokGrammarProcessing({
+    onProgressUpdate: progressManagement.updateProgress
+  });
+  const styleProcessing = useGrokStyleProcessing({
+    onProgressUpdate: progressManagement.updateProgress
+  });
 
   const correctGrammar = async () => {
     if (!textOperations.validateInput(textOperations.inputText)) {
@@ -28,52 +33,21 @@ export const useGrammarChecker = () => {
     }
 
     textOperations.setProcessingMode('grammar');
-    progressManagement.startProgress('grammar');
-    grammarProcessing.resetGrammarData();
-    styleProcessing.resetStyleData();
-    highlighting.clearHighlight();
-
+    
     try {
-      const stageCallbacks = [
-        // Stage 1: Initial setup
-        async () => {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        },
+      const result = await grammarProcessing.processGrammarCorrection(textOperations.inputText);
+      
+      if (result) {
+        // Track usage after successful processing
+        trackUsage('correction');
+        trackWordUsage(textOperations.inputText, 'grammar_correction');
         
-        // Stage 2: GPT Analysis  
-        async () => {
-          // Real progress updates handled via callback in processGrammarCorrection
-        },
-
-        // Stage 3: Dictionary Corrections
-        async () => {
-          // Real progress updates handled via callback in processGrammarCorrection
-        },
+        // Results are automatically set in the hook state
         
-        // Stage 4: Final processing with progress integration
-        async () => {
-          const progressCallback = (stage: number, progress: number) => {
-            // Map internal processing stages to overall progress stages
-            const stageMap = { 1: 1, 2: 2, 3: 3 }; // Maps to stages 2, 3, 4 in overall flow
-            if (stageMap[stage]) {
-              progressManagement.updateStageProgress(stageMap[stage], progress);
-            }
-          };
-          
-          await grammarProcessing.processGrammarCorrection(
-            textOperations.inputText,
-            trackUsage,
-            trackWordUsage,
-            progressCallback
-          );
-        }
-      ];
-
-      progressManagement.runStagesWithProgress('grammar', stageCallbacks);
-
+        toast.success("व्याकरण सुधार पूर्ण हुआ!");
+      }
     } catch (error) {
       console.error('Error correcting grammar:', error);
-      progressManagement.resetProgressState();
       toast.error(`त्रुटि: ${error.message || "कुछ गलत हुआ है। कृपया फिर से कोशिश करें।"}`);
     }
   };
@@ -88,52 +62,21 @@ export const useGrammarChecker = () => {
     }
 
     textOperations.setProcessingMode('style');
-    progressManagement.startProgress('style');
-    grammarProcessing.resetGrammarData();
-    styleProcessing.resetStyleData();
-    highlighting.clearHighlight();
-
+    
     try {
-      const stageCallbacks = [
-        // Stage 1: Initial setup
-        async () => {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        },
+      const result = await styleProcessing.processStyleEnhancement(textOperations.inputText);
+      
+      if (result) {
+        // Track usage after successful processing
+        trackUsage('enhancement');
+        trackWordUsage(textOperations.inputText, 'style_enhancement');
         
-        // Stage 2: GPT Style Enhancement
-        async () => {
-          // Real progress updates handled via callback in processStyleEnhancement
-        },
-
-        // Stage 3: Dictionary Application
-        async () => {
-          // Real progress updates handled via callback in processStyleEnhancement
-        },
+        // Results are automatically set in the hook state
         
-        // Stage 4: Final processing with progress integration
-        async () => {
-          const progressCallback = (stage: number, progress: number) => {
-            // Map internal processing stages to overall progress stages
-            const stageMap = { 1: 1, 2: 2, 3: 3 }; // Maps to stages 2, 3, 4 in overall flow
-            if (stageMap[stage]) {
-              progressManagement.updateStageProgress(stageMap[stage], progress);
-            }
-          };
-          
-          await styleProcessing.processStyleEnhancement(
-            textOperations.inputText,
-            trackUsage,
-            trackWordUsage,
-            progressCallback
-          );
-        }
-      ];
-
-      progressManagement.runStagesWithProgress('style', stageCallbacks);
-
+        toast.success("शैली सुधार पूर्ण हुआ!");
+      }
     } catch (error) {
       console.error('Error enhancing style:', error);
-      progressManagement.resetProgressState();
       toast.error(`त्रुटि: ${error.message || "कुछ गलत हुआ है। कृपया फिर से कोशिश करें।"}`);
     }
   };

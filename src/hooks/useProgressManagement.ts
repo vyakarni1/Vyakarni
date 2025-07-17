@@ -63,6 +63,12 @@ export const useProgressManagement = () => {
     }
   };
 
+  const updateProgress = (progress: number, stage: string) => {
+    setProgress(progress);
+    setCurrentStage(stage);
+    setIsLoading(progress < 100);
+  };
+
   return {
     progress,
     currentStage,
@@ -71,6 +77,7 @@ export const useProgressManagement = () => {
     completeProgress,
     resetProgressState,
     runStagesWithProgress,
-    updateStageProgress
+    updateStageProgress,
+    updateProgress
   };
 };
