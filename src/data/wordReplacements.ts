@@ -597,7 +597,7 @@ export const wordReplacements = [
   },
   {
     original: 'बनाइ',
-    replacement: 'बनायी''
+    replacement: 'बनायी\''
   },
   {
     original: 'चलाई',
