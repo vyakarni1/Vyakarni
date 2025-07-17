@@ -23,7 +23,6 @@ import OtherPolicies from "./pages/OtherPolicies";
 import PricingPolicy from "./pages/PricingPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import Index from "./pages/Index";
-import SimpleGrammarChecker from "./components/SimpleGrammarChecker";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -79,7 +78,7 @@ function App() {
                 path="/grammar-checker" 
                 element={
                   <ProtectedRoute>
-                    <SimpleGrammarChecker />
+                    <Index />
                   </ProtectedRoute>
                 } 
               />
