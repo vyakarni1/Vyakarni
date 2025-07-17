@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CheckCircle, Copy, ArrowRight, Sparkles } from "lucide-react";
 import { Correction, ProcessingMode } from "@/types/grammarChecker";
-import { HighlightedSegment } from '@/hooks/useAdvancedHighlighting';
+import { HighlightedSegment } from '@/hooks/useRobustHighlighting';
 import CorrectionsDropdown from './CorrectionsDropdown';
 import HighlightedText from './HighlightedText';
 

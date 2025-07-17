@@ -108,19 +108,21 @@ const CorrectionsDropdown = ({ corrections, selectedCorrectionIndex, onCorrectio
               <BookOpen className="h-4 w-4" />
               शब्दकोश सुधार ({dictionaryCorrections.length})
             </DropdownMenuLabel>
-            {dictionaryCorrections.map((correction, index) => (
-              <DropdownMenuItem 
-                key={`dict-${index}`} 
-                className={`p-0 focus:bg-slate-50 rounded-xl cursor-pointer ${
-                  selectedCorrectionIndex === index ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                }`}
-                onClick={() => handleCorrectionClick(index)}
-              >
+            {dictionaryCorrections.map((correction, globalIndex) => {
+              const correctionIndex = corrections.findIndex(c => c === correction);
+              return (
+                <DropdownMenuItem 
+                  key={`dict-${globalIndex}`} 
+                  className={`p-0 focus:bg-slate-50 rounded-xl cursor-pointer ${
+                    selectedCorrectionIndex === correctionIndex ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                  }`}
+                  onClick={() => handleCorrectionClick(correctionIndex)}
+                >
                 <div className="w-full p-4 border-b border-slate-100">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-3">
                       <span className="bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                        {index + 1}
+                        {correctionIndex + 1}
                       </span>
                       <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs font-medium`}>
                         {getCorrectionTypeLabel(correction.type)}
@@ -146,9 +148,10 @@ const CorrectionsDropdown = ({ corrections, selectedCorrectionIndex, onCorrectio
                     </p>
                   </div>
                 </div>
-              </DropdownMenuItem>
-            ))}
-            {gptCorrections.length > 0 && <DropdownMenuSeparator />}
+               </DropdownMenuItem>
+               );
+             })}
+             {gptCorrections.length > 0 && <DropdownMenuSeparator />}
           </>
         )}
 
@@ -158,19 +161,21 @@ const CorrectionsDropdown = ({ corrections, selectedCorrectionIndex, onCorrectio
               <Brain className="h-4 w-4" />
               AI विश्लेषण सुधार ({gptCorrections.length})
             </DropdownMenuLabel>
-            {gptCorrections.map((correction, index) => (
-              <DropdownMenuItem 
-                key={`gpt-${index}`} 
-                className={`p-0 focus:bg-slate-50 rounded-xl cursor-pointer ${
-                  selectedCorrectionIndex === (dictionaryCorrections.length + index) ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                }`}
-                onClick={() => handleCorrectionClick(dictionaryCorrections.length + index)}
-              >
+            {gptCorrections.map((correction, globalIndex) => {
+              const correctionIndex = corrections.findIndex(c => c === correction);
+              return (
+                <DropdownMenuItem 
+                  key={`gpt-${globalIndex}`} 
+                  className={`p-0 focus:bg-slate-50 rounded-xl cursor-pointer ${
+                    selectedCorrectionIndex === correctionIndex ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                  }`}
+                  onClick={() => handleCorrectionClick(correctionIndex)}
+                >
                 <div className="w-full p-4 border-b border-slate-100 last:border-b-0">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-3">
                       <span className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                        {dictionaryCorrections.length + index + 1}
+                        {correctionIndex + 1}
                       </span>
                       <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs font-medium`}>
                         {getCorrectionTypeLabel(correction.type)}
@@ -196,10 +201,11 @@ const CorrectionsDropdown = ({ corrections, selectedCorrectionIndex, onCorrectio
                     </p>
                   </div>
                 </div>
-              </DropdownMenuItem>
-            ))}
-          </>
-        )}
+               </DropdownMenuItem>
+               );
+             })}
+           </>
+         )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

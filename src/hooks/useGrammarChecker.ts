@@ -2,7 +2,7 @@
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useWordLimits } from "@/hooks/useWordLimits";
-import { useAdvancedHighlighting } from "@/hooks/useAdvancedHighlighting";
+import { useRobustHighlighting } from "@/hooks/useRobustHighlighting";
 import { useGrokGrammarProcessing } from "@/hooks/useGrokGrammarProcessing";
 import { useGrokStyleProcessing } from "@/hooks/useGrokStyleProcessing";
 import { useProgressManagement } from "@/hooks/useProgressManagement";
@@ -11,7 +11,7 @@ import { useTextOperations } from "@/hooks/useTextOperations";
 export const useGrammarChecker = () => {
   const { trackUsage } = useUsageStats();
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
-  const highlighting = useAdvancedHighlighting();
+  const highlighting = useRobustHighlighting();
   
   const progressManagement = useProgressManagement();
   const textOperations = useTextOperations();

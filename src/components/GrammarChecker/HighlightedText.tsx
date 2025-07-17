@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { HighlightedSegment } from '@/hooks/useAdvancedHighlighting';
+import { HighlightedSegment } from '@/hooks/useRobustHighlighting';
 import CorrectionPopup from './CorrectionPopup';
 import { Correction } from '@/types/grammarChecker';
 
