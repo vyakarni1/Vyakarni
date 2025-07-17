@@ -20,7 +20,7 @@ serve(async (req) => {
       throw new Error('Input text is required');
     }
 
-    console.log('Correcting Hindi text with Grok 4:', inputText);
+    console.log('Correcting Hindi text with Grok 4-0709:', inputText);
 
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
@@ -29,7 +29,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'grok-4',
+        model: 'grok-4-0709',
         messages: [
           {
             role: 'system',
@@ -65,17 +65,31 @@ If no corrections are needed, return the original text followed by "कोई �
             content: `Please correct the grammatical errors in this Hindi text while keeping the meaning and style intact:\n\n${inputText}`
           }
         ],
-        temperature: 0.1,
+        temperature: 0,
         max_tokens: 2000,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Grok API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Grok API error response:', errorText);
+      throw new Error(`Grok API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const correctedText = data.choices[0].message.content.trim();
+    console.log('Full Grok API response:', JSON.stringify(data, null, 2));
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid response structure:', data);
+      throw new Error('Invalid response structure from Grok API');
+    }
+    
+    const correctedText = data.choices[0].message.content?.trim();
+    
+    if (!correctedText) {
+      console.error('No content in response:', data.choices[0].message);
+      throw new Error('No corrected text received from Grok API');
+    }
     
     console.log('Grok corrected text:', correctedText);
 
