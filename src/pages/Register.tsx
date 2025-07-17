@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
+import FacebookAuthButton from "@/components/FacebookAuthButton";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +41,7 @@ const Register = () => {
         email: email.trim(),
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
           data: {
             name: name.trim() || null // Allow empty name
           }
@@ -106,6 +109,20 @@ const Register = () => {
                 </div> : "रजिस्टर करें"}
             </Button>
           </form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-muted-foreground">या</span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <GoogleAuthButton mode="register" />
+            <FacebookAuthButton mode="register" />
+          </div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">

@@ -10,6 +10,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { cleanupAuthState } from "@/utils/authUtils";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
+import FacebookAuthButton from "@/components/FacebookAuthButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -152,6 +154,20 @@ const Login = () => {
                 {isLoading ? "लॉग इन हो रहे हैं..." : "लॉग इन करें"}
               </Button>
             </form>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-muted-foreground">या</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <GoogleAuthButton mode="login" />
+              <FacebookAuthButton mode="login" />
+            </div>
 
             <div className="text-center">
               <span className="text-gray-600">खाता नहीं है? </span>
