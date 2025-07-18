@@ -51,8 +51,8 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
 
       // Stage 2: Dictionary Application (50-100%)
       console.log('Starting precise dictionary application...');
-      validateReplacements(correctedText); // Validate before applying
-      const { correctedText: textWithDictionary, corrections: dictionaryCorrections } = applyPreciseWordReplacements(correctedText);
+      await validateReplacements(correctedText); // Validate before applying
+      const { correctedText: textWithDictionary, corrections: dictionaryCorrections } = await applyPreciseWordReplacements(correctedText);
       console.log('After dictionary application - final text length:', textWithDictionary.length);
       onProgressUpdate?.(100, 'पूर्ण!');
 

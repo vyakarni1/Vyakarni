@@ -235,6 +235,33 @@ export type Database = {
         }
         Relationships: []
       }
+      dictionary_sync_status: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: string
+          last_sync_at: string | null
+          sync_status: string | null
+          total_records: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          sync_status?: string | null
+          total_records?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          sync_status?: string | null
+          total_records?: number | null
+        }
+        Relationships: []
+      }
       email_templates: {
         Row: {
           body_html: string
@@ -1102,6 +1129,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      word_dictionary: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          original: string
+          replacement: string
+          source: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          original: string
+          replacement: string
+          source?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          original?: string
+          replacement?: string
+          source?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       word_plans: {
         Row: {

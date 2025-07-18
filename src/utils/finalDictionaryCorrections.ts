@@ -1,16 +1,20 @@
 
-import { wordReplacements } from "@/data/wordReplacements";
+import { dictionaryService } from "@/services/dictionaryService";
 import { Correction } from "@/types/grammarChecker";
 
-export const applyFinalDictionaryCorrections = (text: string): { correctedText: string; corrections: Correction[] } => {
+export async function applyFinalDictionaryCorrections(text: string): Promise<{ correctedText: string; corrections: Correction[] }> {
   let correctedText = text;
   const corrections: Correction[] = [];
 
-  console.log('=== FINAL DICTIONARY CORRECTIONS START ===');
-  console.log('Input text:', text);
-  console.log('Text length:', text.length);
+  try {
+    console.log('=== FINAL DICTIONARY CORRECTIONS START ===');
+    console.log('Input text:', text);
+    console.log('Text length:', text.length);
 
-  wordReplacements.forEach(({ original, replacement }) => {
+    // Get dictionary from service
+    const wordReplacements = await dictionaryService.getDictionary();
+
+    wordReplacements.forEach(({ original, replacement }) => {
     // Check if the original word exists in the text (simple contains check)
     if (correctedText.includes(original)) {
       console.log(`Found word "${original}" in text, replacing with "${replacement}"`);
@@ -45,15 +49,19 @@ export const applyFinalDictionaryCorrections = (text: string): { correctedText: 
     }
   });
 
-  console.log(`Final dictionary corrections completed: ${corrections.length} corrections applied`);
-  console.log('Final corrected text:', correctedText);
-  console.log('Original vs Final:');
-  console.log('Original:', text);
-  console.log('Final:   ', correctedText);
-  console.log('=== FINAL DICTIONARY CORRECTIONS END ===');
-  
-  return { correctedText, corrections };
-};
+    console.log(`Final dictionary corrections completed: ${corrections.length} corrections applied`);
+    console.log('Final corrected text:', correctedText);
+    console.log('Original vs Final:');
+    console.log('Original:', text);
+    console.log('Final:   ', correctedText);
+    console.log('=== FINAL DICTIONARY CORRECTIONS END ===');
+    
+    return { correctedText, corrections };
+  } catch (error) {
+    console.error('Error in final dictionary corrections:', error);
+    return { correctedText: text, corrections: [] };
+  }
+}
 
 // Verification function to test specific words
 export const verifyCorrections = (text: string): void => {

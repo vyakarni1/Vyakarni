@@ -1,15 +1,19 @@
-import { wordReplacements } from "@/data/wordReplacements";
+import { dictionaryService } from "@/services/dictionaryService";
 import { Correction } from "@/types/grammarChecker";
 
-export const applySimpleDictionaryCorrections = (text: string): { correctedText: string; corrections: Correction[] } => {
+export async function applySimpleDictionaryCorrections(text: string): Promise<{ correctedText: string; corrections: Correction[] }> {
   let correctedText = text;
   const corrections: Correction[] = [];
 
-  console.log('=== SIMPLE DICTIONARY CORRECTIONS START ===');
-  console.log('Input text:', text);
-  console.log('Text length:', text.length);
+  try {
+    console.log('=== SIMPLE DICTIONARY CORRECTIONS START ===');
+    console.log('Input text:', text);
+    console.log('Text length:', text.length);
 
-  wordReplacements.forEach(({ original, replacement }) => {
+    // Get dictionary from service
+    const wordReplacements = await dictionaryService.getDictionary();
+
+    wordReplacements.forEach(({ original, replacement }) => {
     // Simple global replacement using split and join for maximum reliability
     if (correctedText.includes(original)) {
       console.log(`Found word "${original}" in text, replacing with "${replacement}"`);
@@ -43,12 +47,16 @@ export const applySimpleDictionaryCorrections = (text: string): { correctedText:
     }
   });
 
-  console.log(`Simple dictionary corrections completed: ${corrections.length} corrections found`);
-  console.log('Final corrected text:', correctedText);
-  console.log('Original vs Final comparison:');
-  console.log('Original:', text);
-  console.log('Final:   ', correctedText);
-  console.log('=== SIMPLE DICTIONARY CORRECTIONS END ===');
-  
-  return { correctedText, corrections };
-};
+    console.log(`Simple dictionary corrections completed: ${corrections.length} corrections found`);
+    console.log('Final corrected text:', correctedText);
+    console.log('Original vs Final comparison:');
+    console.log('Original:', text);
+    console.log('Final:   ', correctedText);
+    console.log('=== SIMPLE DICTIONARY CORRECTIONS END ===');
+    
+    return { correctedText, corrections };
+  } catch (error) {
+    console.error('Error in simple dictionary corrections:', error);
+    return { correctedText: text, corrections: [] };
+  }
+}

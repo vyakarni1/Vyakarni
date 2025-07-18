@@ -17,7 +17,7 @@ export const useGrammarProcessing = () => {
       console.log('Input text length:', inputText.length);
       
       // Step 1: Dictionary corrections on input
-      const step1Result = applyDictionaryCorrections(inputText);
+      const step1Result = await applyDictionaryCorrections(inputText);
       const step1Text = step1Result.correctedText;
       const step1Corrections = step1Result.corrections;
       console.log('\n=== STEP 1: Dictionary corrections on input ===');
@@ -35,7 +35,7 @@ export const useGrammarProcessing = () => {
       
       // Step 3: Dictionary corrections on GPT output
       console.log('\n=== STEP 3: Dictionary corrections on GPT output ===');
-      const step3Result = applyDictionaryCorrections(gptResult.correctedText);
+      const step3Result = await applyDictionaryCorrections(gptResult.correctedText);
       const step3Text = step3Result.correctedText;
       const step3Corrections = step3Result.corrections;
       console.log('Step 3 input:', gptResult.correctedText);
@@ -44,7 +44,7 @@ export const useGrammarProcessing = () => {
       
       // Step 4: Final dictionary pass
       console.log('\n=== STEP 4: FINAL DICTIONARY PASS (NEW ROBUST METHOD) ===');
-      const finalResult = applyFinalDictionaryCorrections(step3Text);
+      const finalResult = await applyFinalDictionaryCorrections(step3Text);
       const finalText = finalResult.correctedText;
       const finalCorrections = finalResult.corrections;
       console.log('Step 4 input:', step3Text);
