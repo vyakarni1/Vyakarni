@@ -1,3 +1,4 @@
+
 import { dictionaryService } from "@/services/dictionaryService";
 import { Correction } from "@/types/grammarChecker";
 
@@ -14,8 +15,15 @@ export const applyPreciseWordReplacements = async (text: string): Promise<{ corr
     console.log('=== PRECISE WORD REPLACEMENTS START ===');
     console.log('Input text:', text);
 
-    // Get dictionary from service
+    // Get dictionary from service (database only)
     const wordReplacements = await dictionaryService.getDictionary();
+
+    if (wordReplacements.length === 0) {
+      console.warn('No dictionary entries available. Skipping precise word replacements.');
+      return { correctedText: text, corrections: [] };
+    }
+
+    console.log(`Loaded ${wordReplacements.length} dictionary entries from database`);
 
     wordReplacements.forEach(({ original, replacement }) => {
       // Create regex pattern for exact word matching with Devanagari boundaries

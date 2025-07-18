@@ -1,6 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { wordReplacements } from "@/data/wordReplacements";
 
 export interface WordReplacement {
   original: string;
@@ -42,19 +41,19 @@ export class DictionaryService {
   }
 
   /**
-   * Get dictionary with smart fallback strategy:
-   * 1. Try database cache (Google Sheets)
-   * 2. Fallback to static dictionary
+   * Get dictionary from database only (Google Sheets sync)
+   * No fallback to static dictionary
    */
   async getDictionary(): Promise<WordReplacement[]> {
     try {
       // Check if we have valid cached data
       const now = Date.now();
       if (this.cachedDictionary && (now - this.cacheTimestamp) < this.CACHE_DURATION) {
+        console.log(`Using cached dictionary with ${this.cachedDictionary.length} entries`);
         return this.cachedDictionary;
       }
 
-      // Try to get dictionary from database
+      // Get dictionary from database only
       const dbDictionary = await this.getDictionaryFromDB();
       
       if (dbDictionary.length > 0) {
@@ -64,13 +63,14 @@ export class DictionaryService {
         return dbDictionary;
       }
 
-      // Fallback to static dictionary
-      console.log('Falling back to static dictionary');
-      return this.getStaticDictionary();
+      // If no database entries, return empty array (no fallback)
+      console.warn('No dictionary entries found in database. Dictionary will be empty until sync is performed.');
+      return [];
       
     } catch (error) {
-      console.error('Error loading dictionary, falling back to static:', error);
-      return this.getStaticDictionary();
+      console.error('Error loading dictionary from database:', error);
+      // Return empty array instead of fallback
+      return [];
     }
   }
 
@@ -102,43 +102,18 @@ export class DictionaryService {
 
       if (error) {
         console.error('Error fetching dictionary table data:', error);
-        // Fallback to static data
-        const staticEntries = this.getStaticDictionary()
-          .filter(entry => 
-            !searchTerm || 
-            entry.original.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            entry.replacement.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        
-        const paginatedStatic = staticEntries.slice(from, to + 1);
+        // Return empty data instead of fallback
         return {
-          entries: paginatedStatic.map(entry => ({ ...entry, source: 'static' })),
-          totalCount: staticEntries.length,
+          entries: [],
+          totalCount: 0,
           page,
           pageSize
         };
       }
 
-      // If no database entries, return static data
-      if (!dbEntries || dbEntries.length === 0) {
-        const staticEntries = this.getStaticDictionary()
-          .filter(entry => 
-            !searchTerm || 
-            entry.original.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            entry.replacement.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        
-        const paginatedStatic = staticEntries.slice(from, to + 1);
-        return {
-          entries: paginatedStatic.map(entry => ({ ...entry, source: 'static' })),
-          totalCount: staticEntries.length,
-          page,
-          pageSize
-        };
-      }
-
+      // Return database entries or empty array
       return {
-        entries: dbEntries.map(entry => ({ ...entry, source: 'google_sheets' })),
+        entries: (dbEntries || []).map(entry => ({ ...entry, source: 'google_sheets' })),
         totalCount: count || 0,
         page,
         pageSize
@@ -146,15 +121,10 @@ export class DictionaryService {
 
     } catch (error) {
       console.error('Error in getDictionaryTableData:', error);
-      // Return static data as fallback
-      const staticEntries = this.getStaticDictionary();
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
-      const paginatedStatic = staticEntries.slice(from, to + 1);
-      
+      // Return empty data instead of fallback
       return {
-        entries: paginatedStatic.map(entry => ({ ...entry, source: 'static' })),
-        totalCount: staticEntries.length,
+        entries: [],
+        totalCount: 0,
         page,
         pageSize
       };
@@ -177,13 +147,6 @@ export class DictionaryService {
     }
 
     return data || [];
-  }
-
-  /**
-   * Get static dictionary as fallback
-   */
-  private getStaticDictionary(): WordReplacement[] {
-    return wordReplacements.map(entry => ({ ...entry, source: 'static' }));
   }
 
   /**
@@ -248,21 +211,20 @@ export class DictionaryService {
   }> {
     try {
       const currentDictionary = await this.getDictionary();
-      const dbDictionary = await this.getDictionaryFromDB().catch(() => []);
       const syncStatus = await this.getSyncStatus();
 
       return {
         totalEntries: currentDictionary.length,
-        databaseEntries: dbDictionary.length,
-        staticEntries: this.getStaticDictionary().length,
+        databaseEntries: currentDictionary.length,
+        staticEntries: 0, // No more static entries
         lastSync: syncStatus?.last_sync_at || null
       };
     } catch (error) {
       console.error('Error getting dictionary stats:', error);
       return {
-        totalEntries: this.getStaticDictionary().length,
+        totalEntries: 0,
         databaseEntries: 0,
-        staticEntries: this.getStaticDictionary().length,
+        staticEntries: 0,
         lastSync: null
       };
     }
@@ -286,7 +248,7 @@ export class DictionaryService {
         ...allEntries.map(entry => [
           `"${entry.original}"`,
           `"${entry.replacement}"`,
-          `"${entry.source || 'unknown'}"`
+          `"${entry.source || 'google_sheets'}"`
         ].join(','))
       ];
       

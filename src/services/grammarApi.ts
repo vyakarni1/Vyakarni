@@ -1,6 +1,4 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import { wordReplacements } from "@/data/wordReplacements";
 
 export const callGrammarCheckAPI = async (inputText: string) => {
   console.log('Sending text for correction:', inputText);

@@ -24,8 +24,15 @@ export const applyDictionaryCorrections = async (text: string): Promise<{ correc
     console.log('Input text:', text);
     console.log('Text length:', text.length);
 
-    // Get dictionary from service
+    // Get dictionary from service (database only)
     const wordReplacements = await dictionaryService.getDictionary();
+
+    if (wordReplacements.length === 0) {
+      console.warn('No dictionary entries available. Skipping dictionary corrections.');
+      return { correctedText: text, corrections: [] };
+    }
+
+    console.log(`Loaded ${wordReplacements.length} dictionary entries from database`);
 
     wordReplacements.forEach(({ original, replacement }) => {
       // Create a more robust regex pattern for Devanagari text
@@ -90,8 +97,13 @@ export const trackDictionaryCorrections = async (originalText: string, corrected
     console.log('Original:', originalText);
     console.log('Corrected:', correctedText);
     
-    // Get dictionary from service
+    // Get dictionary from service (database only)
     const wordReplacements = await dictionaryService.getDictionary();
+    
+    if (wordReplacements.length === 0) {
+      console.warn('No dictionary entries available for tracking corrections.');
+      return [];
+    }
     
     wordReplacements.forEach(({ original, replacement }) => {
       // Check if the original word exists in original text
