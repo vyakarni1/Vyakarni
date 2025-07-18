@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { toast } from "sonner";
 import { useWordLimits } from "@/hooks/useWordLimits";
 import { useSubscription } from "@/hooks/useSubscription";
-import { callGrokGrammarCheckAPI } from '@/services/grammarApi';
+import { supabase } from '@/integrations/supabase/client';
 import { applyFinalDictionaryCorrections } from '@/utils/finalDictionaryCorrections';
 import { Correction } from "@/types/grammarChecker";
 
@@ -47,23 +47,23 @@ export const useEnhancedGrammarChecker = ({ onProgressUpdate }: UseEnhancedGramm
       // Step 1: AI Correction with Grok-3 (0-40%)
       onProgressUpdate?.(5, 'AI व्याकरण विश्लेषण...');
       
-      const grokResponse = await fetch('/functions/v1/grok-grammar-check', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify({ 
+      const { data: grokData, error: grokError } = await supabase.functions.invoke('grok-grammar-check', {
+        body: { 
           inputText,
           userTier
-        })
+        }
       });
 
-      if (!grokResponse.ok) {
-        throw new Error('AI correction failed');
+      if (grokError) {
+        console.error('Grok function error:', grokError);
+        throw new Error(`AI सुधार विफल: ${grokError.message}`);
       }
 
-      const { correctedText: aiCorrectedText, corrections: aiCorrs = [] } = await grokResponse.json();
+      if (!grokData || !grokData.correctedText) {
+        throw new Error('AI से कोई सुधारा गया पाठ प्राप्त नहीं हुआ');
+      }
+
+      const { correctedText: aiCorrectedText, corrections: aiCorrs = [] } = grokData;
       
       onProgressUpdate?.(40, 'AI सुधार पूर्ण...');
       setAiCorrections(aiCorrs);
@@ -96,7 +96,21 @@ export const useEnhancedGrammarChecker = ({ onProgressUpdate }: UseEnhancedGramm
       };
     } catch (error) {
       console.error('Enhanced grammar processing error:', error);
-      throw error;
+      
+      // Show user-friendly error messages
+      if (error.message.includes('Word limit exceeded')) {
+        // Already handled above
+        throw error;
+      } else if (error.message.includes('XAI API key')) {
+        toast.error('सिस्टम कॉन्फ़िगरेशन त्रुटि। कृपया बाद में पुनः प्रयास करें।');
+        throw new Error('सिस्टम कॉन्फ़िगरेशन त्रुटि');
+      } else if (error.message.includes('Grok API error')) {
+        toast.error('AI सेवा अस्थायी रूप से अनुपलब्ध है। कृपया कुछ समय बाद पुनः प्रयास करें।');
+        throw new Error('AI सेवा अनुपलब्ध');
+      } else {
+        toast.error('व्याकरण सुधार में त्रुटि हुई। कृपया पुनः प्रयास करें।');
+        throw error;
+      }
     } finally {
       setIsProcessing(false);
     }

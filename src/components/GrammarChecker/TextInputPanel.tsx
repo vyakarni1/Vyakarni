@@ -1,11 +1,11 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText, RotateCcw, Zap, Sparkles, AlertTriangle } from "lucide-react";
-import HighlightedText from './HighlightedText';
-import { HighlightedSegment } from '@/hooks/useAdvancedHighlighting';
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface TextInputPanelProps {
   inputText: string;
@@ -18,8 +18,6 @@ interface TextInputPanelProps {
   onResetText: () => void;
 }
 
-const MAX_WORD_LIMIT = 1000;
-
 const TextInputPanel = ({ 
   inputText, 
   setInputText, 
@@ -30,10 +28,16 @@ const TextInputPanel = ({
   onEnhanceStyle,
   onResetText
 }: TextInputPanelProps) => {
+  const { isSubscriptionActive } = useSubscription();
+  
+  // Dynamic word limit based on subscription
+  const MAX_WORD_LIMIT = isSubscriptionActive ? 1000 : 100;
+  const userType = isSubscriptionActive ? 'प्रीमियम' : 'मुफ्त';
+
   const getWordCountColor = () => {
     if (wordCount > MAX_WORD_LIMIT) return 'bg-red-500 text-white';
-    if (wordCount > 900) return 'bg-red-100 text-red-700';
-    if (wordCount > 800) return 'bg-yellow-100 text-yellow-700';
+    if (wordCount > MAX_WORD_LIMIT * 0.9) return 'bg-red-100 text-red-700';
+    if (wordCount > MAX_WORD_LIMIT * 0.8) return 'bg-yellow-100 text-yellow-700';
     return 'bg-green-100 text-green-700';
   };
 
@@ -48,12 +52,17 @@ const TextInputPanel = ({
             <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
             मूल पाठ
           </CardTitle>
-          <Badge 
-            variant="secondary" 
-            className={`border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm font-semibold ${getWordCountColor()}`}
-          >
-            {wordCount} / {MAX_WORD_LIMIT} शब्द
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="bg-white/20 text-white border-0 px-2 py-1 text-xs">
+              {userType}
+            </Badge>
+            <Badge 
+              variant="secondary" 
+              className={`border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm font-semibold ${getWordCountColor()}`}
+            >
+              {wordCount} / {MAX_WORD_LIMIT} शब्द
+            </Badge>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="p-4 sm:p-8 flex-1 flex flex-col">
@@ -72,12 +81,17 @@ const TextInputPanel = ({
           <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0" />
             <p className="text-sm text-red-700">
-              शब्द सीमा पार हो गई! कृपया टेक्स्ट को {MAX_WORD_LIMIT} शब्दों तक सीमित करें।
+              शब्द सीमा पार हो गई! {userType} उपयोगकर्ता {MAX_WORD_LIMIT} शब्दों तक सीमित हैं। आपके पाठ में {wordCount} शब्द हैं।
+              {!isSubscriptionActive && (
+                <span className="block mt-1 font-medium">
+                  प्रीमियम प्लान के साथ 1000 शब्दों तक का उपयोग करें।
+                </span>
+              )}
             </p>
           </div>
         )}
         
-        {wordCount > 800 && wordCount <= MAX_WORD_LIMIT && (
+        {wordCount > MAX_WORD_LIMIT * 0.8 && wordCount <= MAX_WORD_LIMIT && (
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-yellow-500 flex-shrink-0" />
             <p className="text-sm text-yellow-700">

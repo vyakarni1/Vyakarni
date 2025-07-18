@@ -21,6 +21,10 @@ serve(async (req) => {
       throw new Error('Input text is required');
     }
 
+    if (!xaiApiKey) {
+      throw new Error('XAI API key not configured');
+    }
+
     // Dynamic word limit based on user tier
     const wordLimit = userTier === 'paid' ? 1000 : 100;
     const wordCount = inputText.trim().split(/\s+/).length;
@@ -31,18 +35,27 @@ serve(async (req) => {
 
     console.log(`Processing ${wordCount} words with Grok-3 for ${userTier} user`);
 
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${xaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'grok-3-large',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an expert Hindi grammar correction AI.
+    // Try different Grok-3 model names as per X.AI documentation
+    const modelNames = ['grok-3', 'grok-3-fast', 'grok-3-beta'];
+    let response;
+    let lastError;
+
+    for (const modelName of modelNames) {
+      try {
+        console.log(`Attempting with model: ${modelName}`);
+        
+        response = await fetch('https://api.x.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${xaiApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: modelName,
+            messages: [
+              {
+                role: 'system',
+                content: `You are an expert Hindi grammar correction AI.
 
 Your task: Correct ONLY grammatical errors in the given Hindi text.
 
@@ -75,21 +88,34 @@ Return a JSON object with this exact structure:
 }
 
 Return ONLY the JSON object, no additional text.`
-          },
-          {
-            role: 'user',
-            content: `Please correct the grammatical errors in this Hindi text:\n\n${inputText}`
-          }
-        ],
-        temperature: 0.1,
-        max_tokens: 3000,
-      }),
-    });
+              },
+              {
+                role: 'user',
+                content: `Please correct the grammatical errors in this Hindi text:\n\n${inputText}`
+              }
+            ],
+            temperature: 0.1,
+            max_tokens: 3000,
+          }),
+        });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Grok API error response:', errorText);
-      throw new Error(`Grok API error: ${response.status} - ${errorText}`);
+        if (response.ok) {
+          console.log(`Successfully connected with model: ${modelName}`);
+          break;
+        } else {
+          const errorText = await response.text();
+          lastError = `Model ${modelName} failed: ${response.status} - ${errorText}`;
+          console.log(lastError);
+        }
+      } catch (error) {
+        lastError = `Model ${modelName} error: ${error.message}`;
+        console.log(lastError);
+      }
+    }
+
+    if (!response || !response.ok) {
+      console.error('All Grok model attempts failed:', lastError);
+      throw new Error(`Grok API error: ${lastError}`);
     }
 
     const data = await response.json();
