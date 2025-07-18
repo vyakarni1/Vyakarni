@@ -3,3 +3,6 @@ project_id = "yvgrgystclritaigvnmh"
 
 [functions.razorpay-payment]
 verify_jwt = false
+
+[functions.sync-dictionary]
+verify_jwt = false

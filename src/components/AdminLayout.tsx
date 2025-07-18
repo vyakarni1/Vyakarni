@@ -7,7 +7,8 @@ import {
   Settings, 
   BarChart3,
   Mail,
-  Shield
+  Shield,
+  BookOpen
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -38,6 +39,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: "संपर्क संदेश", 
       href: "/admin/contacts", 
       icon: Mail 
+    },
+    { 
+      name: "शब्दकोश प्रबंधन", 
+      href: "/admin/dictionary", 
+      icon: BookOpen 
     },
     { 
       name: "सेटिंग्स", 

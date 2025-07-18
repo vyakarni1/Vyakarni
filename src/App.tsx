@@ -30,6 +30,7 @@ import Billing from "@/pages/Billing";
 import AdminRoute from "./components/AdminRoute";
 import Admin from "./pages/Admin";
 import AdminUsers from "./pages/AdminUsers";
+import { DictionaryManagement } from "./components/Admin/DictionaryManagement";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +100,15 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminUsers />
+                  </AdminRoute>
+                } 
+              />
+              
+              <Route 
+                path="/admin/dictionary" 
+                element={
+                  <AdminRoute>
+                    <DictionaryManagement />
                   </AdminRoute>
                 } 
               />
