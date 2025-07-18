@@ -1,11 +1,11 @@
 
-import { useOptimizedWordBalance } from './optimized/useOptimizedWordBalance';
-import { useOptimizedSubscription } from './optimized/useOptimizedSubscription';
+import { useWordCredits } from './useWordCredits';
+import { useSubscription } from './useSubscription';
 import { toast } from 'sonner';
 
 export const useWordLimits = () => {
-  const { balance, checkWordLimit, deductWords, isDeducting } = useOptimizedWordBalance();
-  const { isSubscriptionActive } = useOptimizedSubscription();
+  const { balance, deductWords, checkWordLimit } = useWordCredits();
+  const { subscription, isSubscriptionActive } = useSubscription();
 
   const getWordLimitPerCorrection = (): number => {
     return isSubscriptionActive ? 1000 : 100;
@@ -49,11 +49,7 @@ export const useWordLimits = () => {
 
   const trackWordUsage = async (text: string, actionType: string) => {
     const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
-    return await deductWords({
-      wordsToDeduct: wordCount,
-      actionType,
-      textContent: text
-    });
+    return await deductWords(wordCount, actionType, text);
   };
 
   const getRemainingWords = (): number => {
@@ -79,6 +75,5 @@ export const useWordLimits = () => {
     getWordBreakdown,
     getWordLimitPerCorrection,
     isSubscriptionActive,
-    isDeducting,
   };
 };
