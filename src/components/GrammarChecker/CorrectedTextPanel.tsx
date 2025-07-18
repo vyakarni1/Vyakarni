@@ -57,7 +57,7 @@ const CorrectedTextPanel = ({
   } = useEnhancedLoading(isLoading, currentStage || '', processingMode, progress);
 
   return (
-    <Card className={`shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col transition-all duration-500 ${getCardAnimationClass()}`}>
+    <Card className={`shadow-2xl border-0 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm h-full flex flex-col ${getCardAnimationClass()}`}>
       {/* Floating dots animation */}
       <FloatingDots 
         isActive={isLoading} 
@@ -77,7 +77,7 @@ const CorrectedTextPanel = ({
           <div className="flex items-center space-x-2 sm:space-x-3">
             {/* AI Corrections Badge */}
             {isGrammarMode && aiCorrections.length > 0 && (
-              <Badge variant="secondary" className="bg-blue-100/20 text-white border-0 px-2 sm:px-3 py-1 text-xs flex items-center gap-1 animate-slide-in-right">
+              <Badge variant="secondary" className="bg-blue-100/20 text-white border-0 px-2 sm:px-3 py-1 text-xs flex items-center gap-1">
                 <Brain className="h-3 w-3" />
                 {aiCorrections.length} AI
               </Badge>
@@ -85,14 +85,14 @@ const CorrectedTextPanel = ({
             
             {/* Dictionary Corrections Badge */}
             {isGrammarMode && dictionaryCorrections.length > 0 && (
-              <Badge variant="secondary" className="bg-green-100/20 text-white border-0 px-2 sm:px-3 py-1 text-xs flex items-center gap-1 animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
+              <Badge variant="secondary" className="bg-green-100/20 text-white border-0 px-2 sm:px-3 py-1 text-xs flex items-center gap-1">
                 <BookOpen className="h-3 w-3" />
                 {dictionaryCorrections.length} शब्दकोश
               </Badge>
             )}
             
             {currentText && (
-              <Badge variant="secondary" className="bg-white/20 text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm animate-fade-in-up">
+              <Badge variant="secondary" className="bg-white/20 text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
                 {wordCount} शब्द
               </Badge>
             )}
@@ -116,7 +116,7 @@ const CorrectedTextPanel = ({
           {currentText ? (
             <ScrollArea className="h-[400px] sm:h-[500px] lg:h-[600px]">
               <div className="p-4 sm:p-6">
-                <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap animate-fade-in-up">
+                <p className="text-base sm:text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">
                   {currentText}
                 </p>
               </div>
@@ -124,18 +124,18 @@ const CorrectedTextPanel = ({
           ) : (
             <div className="flex items-center justify-center h-[400px] sm:h-[500px] lg:h-[600px]">
               <div className="text-center">
-                <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-300 ${isLoading ? 'animate-breathe' : ''}`}>
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-300`}>
                   {isLoading ? (
-                    <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-slate-600 animate-bounce" />
+                    <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-slate-600 animate-pulse" />
                   ) : (
                     <ArrowRight className="h-6 w-6 sm:h-8 sm:w-8 text-slate-400" />
                   )}
                 </div>
                 
-                {/* Enhanced loading text with Hindi phrases */}
+                {/* Simplified loading text */}
                 <div className="min-h-[60px] flex flex-col items-center justify-center">
                   {isLoading && currentPhrase ? (
-                    <p className={`text-slate-600 text-base sm:text-lg font-medium mb-2 transition-all duration-300 ${phraseTransitionClass} loading-text-enter`}>
+                    <p className={`text-slate-600 text-base sm:text-lg font-medium mb-2 ${phraseTransitionClass}`}>
                       {currentPhrase}
                     </p>
                   ) : (
@@ -145,7 +145,7 @@ const CorrectedTextPanel = ({
                   )}
                   
                   {!isLoading && (
-                    <p className="text-xs sm:text-sm text-slate-300 mt-2 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                    <p className="text-xs sm:text-sm text-slate-300 mt-2">
                       {isGrammarMode ? "पहले व्याकरण सुधार बटन दबायें" : "पहले शैली सुधार बटन दबायें"}
                     </p>
                   )}
@@ -155,19 +155,19 @@ const CorrectedTextPanel = ({
           )}
         </div>
         
-        {/* Enhanced progress section */}
+        {/* Simplified progress section */}
         {isLoading && (
-          <div className="mt-6 sm:mt-8 flex-shrink-0 animate-fade-in-up">
+          <div className="mt-6 sm:mt-8 flex-shrink-0">
             <div className="flex items-center justify-between mb-3">
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-slate-700">प्रगति</span>
                 {currentStage && (
-                  <span className="text-xs text-slate-500 mt-1 transition-all duration-300">
+                  <span className="text-xs text-slate-500 mt-1">
                     {currentStage}
                   </span>
                 )}
               </div>
-              <span className="text-sm text-slate-500 font-medium transition-all duration-300">
+              <span className="text-sm text-slate-500 font-medium">
                 {progress}%
               </span>
             </div>
@@ -183,9 +183,9 @@ const CorrectedTextPanel = ({
           </div>
         )}
 
-        {/* Copy button with enhanced animation */}
+        {/* Copy button */}
         {currentText && !isLoading && (
-          <div className="flex space-x-4 mt-6 sm:mt-8 flex-shrink-0 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <div className="flex space-x-4 mt-6 sm:mt-8 flex-shrink-0">
             <Button
               onClick={onCopyToClipboard}
               variant="outline"

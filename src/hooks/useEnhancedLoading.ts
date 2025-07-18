@@ -5,23 +5,23 @@ import { ProcessingMode } from "@/types/grammarChecker";
 interface LoadingPhrase {
   text: string;
   stage: string;
-  duration: number;
 }
 
 const GRAMMAR_PHRASES: LoadingPhrase[] = [
-  { text: "आपका पाठ सुधारा जा रहा है...", stage: "प्रारंभिक सेटअप", duration: 2000 },
-  { text: "व्याकरण की जांच की जा रही है...", stage: "GPT विश्लेषण", duration: 3000 },
-  { text: "AI से बात हो रही है...", stage: "GPT विश्लेषण", duration: 2500 },
-  { text: "शब्दकोश लागू किया जा रहा है...", stage: "शब्दकोश सुधार", duration: 2000 },
-  { text: "अंतिम सुधार किए जा रहे हैं...", stage: "परिणाम तैयार करना", duration: 1500 }
+  { text: "आपका पाठ सुधारा जा रहा है...", stage: "प्रारंभिक सेटअप" },
+  { text: "व्याकरण की जांच की जा रही है...", stage: "AI विश्लेषण" },
+  { text: "AI सुधार पूर्ण...", stage: "AI सुधार पूर्ण" },
+  { text: "शब्दकोश लागू किया जा रहा है...", stage: "शब्दकोश लागू कर रहे हैं" },
+  { text: "अंतिम सुधार किए जा रहे हैं...", stage: "अंतिम सुधार" },
+  { text: "पूर्ण!", stage: "पूर्ण!" }
 ];
 
 const STYLE_PHRASES: LoadingPhrase[] = [
-  { text: "आपकी लेखन शैली सुधारी जा रही है...", stage: "प्रारंभिक सेटअप", duration: 2000 },
-  { text: "वाक्य संरचना में सुधार...", stage: "GPT शैली सुधार", duration: 3000 },
-  { text: "भाषा की सुंदरता बढ़ाई जा रही है...", stage: "GPT शैली सुधार", duration: 2500 },
-  { text: "शब्दों का चुनाव बेहतर बनाया जा रहा है...", stage: "शब्दकोश सुधार", duration: 2000 },
-  { text: "लेखन को और भी निखारा जा रहा है...", stage: "परिणाम तैयार करना", duration: 1500 }
+  { text: "आपकी लेखन शैली सुधारी जा रही है...", stage: "प्रारंभिक सेटअप" },
+  { text: "वाक्य संरचना में सुधार...", stage: "शैली सुधार" },
+  { text: "भाषा की सुंदरता बढ़ाई जा रही है...", stage: "भाषा सुधार" },
+  { text: "लेखन को और भी निखारा जा रहा है...", stage: "परिणाम तैयार करना" },
+  { text: "पूर्ण!", stage: "पूर्ण!" }
 ];
 
 export const useEnhancedLoading = (
@@ -31,7 +31,6 @@ export const useEnhancedLoading = (
   progress: number
 ) => {
   const [currentPhrase, setCurrentPhrase] = useState('');
-  const [phraseIndex, setPhraseIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const phrases = useMemo(() => 
@@ -39,62 +38,38 @@ export const useEnhancedLoading = (
     [processingMode]
   );
 
-  // Enhanced loading phrase rotation
+  // Stage-based phrase selection (simplified)
   useEffect(() => {
     if (!isLoading) {
       setCurrentPhrase('');
-      setPhraseIndex(0);
       return;
     }
 
-    const interval = setInterval(() => {
-      setIsAnimating(true);
-      
-      setTimeout(() => {
-        setPhraseIndex(prev => {
-          const nextIndex = (prev + 1) % phrases.length;
-          setCurrentPhrase(phrases[nextIndex].text);
-          return nextIndex;
-        });
-        setIsAnimating(false);
-      }, 200);
-    }, 2500);
-
-    // Set initial phrase
-    if (phrases.length > 0) {
-      setCurrentPhrase(phrases[0].text);
-    }
-
-    return () => clearInterval(interval);
-  }, [isLoading, phrases]);
-
-  // Stage-based phrase selection
-  useEffect(() => {
-    if (currentStage && phrases.length > 0) {
+    if (currentStage) {
       const stagePhrase = phrases.find(p => p.stage === currentStage);
       if (stagePhrase && stagePhrase.text !== currentPhrase) {
         setIsAnimating(true);
         setTimeout(() => {
           setCurrentPhrase(stagePhrase.text);
           setIsAnimating(false);
-        }, 200);
+        }, 150);
       }
     }
-  }, [currentStage, phrases, currentPhrase]);
+  }, [currentStage, phrases, currentPhrase, isLoading]);
 
   const getProgressBarClass = () => {
-    const baseClass = "h-full transition-all duration-500 ease-out rounded-full";
+    const baseClass = "h-full transition-all duration-300 ease-out rounded-full";
     const gradientClass = processingMode === 'grammar' 
       ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-400' 
       : 'bg-gradient-to-r from-purple-500 via-pink-500 to-purple-400';
     
-    return `${baseClass} ${gradientClass} ${isLoading ? 'animate-pulse' : ''}`;
+    return `${baseClass} ${gradientClass}`;
   };
 
   const getCardAnimationClass = () => {
     return isLoading 
-      ? 'animate-pulse shadow-2xl transform scale-[1.02]' 
-      : 'shadow-xl transform scale-100';
+      ? 'shadow-xl transform scale-[1.01] transition-all duration-300' 
+      : 'shadow-xl transform scale-100 transition-all duration-300';
   };
 
   return {
@@ -102,6 +77,6 @@ export const useEnhancedLoading = (
     isAnimating,
     getProgressBarClass,
     getCardAnimationClass,
-    phraseTransitionClass: isAnimating ? 'opacity-0 transform scale-95' : 'opacity-100 transform scale-100'
+    phraseTransitionClass: isAnimating ? 'opacity-50 transition-opacity duration-150' : 'opacity-100 transition-opacity duration-150'
   };
 };

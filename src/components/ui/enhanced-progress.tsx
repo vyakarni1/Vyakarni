@@ -32,9 +32,8 @@ const EnhancedProgress = React.forwardRef<
       {/* Progress bar */}
       <div
         className={cn(
-          "h-full transition-all duration-700 ease-out rounded-full",
-          gradientClasses[gradient],
-          showShimmer && "animate-pulse"
+          "h-full transition-all duration-500 ease-out rounded-full will-change-transform",
+          gradientClasses[gradient]
         )}
         style={{ 
           width: `${Math.min(Math.max(value, 0), 100)}%`,
@@ -43,21 +42,14 @@ const EnhancedProgress = React.forwardRef<
       />
       
       {/* Shimmer effect */}
-      {showShimmer && (
-        <div className="absolute inset-0 h-full rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_infinite]" />
+      {showShimmer && value > 0 && value < 100 && (
+        <div 
+          className="absolute top-0 h-full w-8 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_1.5s_infinite]"
+          style={{
+            left: `${Math.min(Math.max(value - 8, 0), 92)}%`
+          }}
+        />
       )}
-      
-      {/* Glow effect */}
-      <div 
-        className={cn(
-          "absolute inset-0 h-full rounded-full opacity-50 blur-sm",
-          gradientClasses[gradient]
-        )}
-        style={{ 
-          width: `${Math.min(Math.max(value, 0), 100)}%`,
-          animation: showShimmer ? 'glow 2s ease-in-out infinite alternate' : 'none'
-        }}
-      />
     </div>
   );
 });

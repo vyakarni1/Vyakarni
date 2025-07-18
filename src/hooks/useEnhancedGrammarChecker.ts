@@ -44,8 +44,11 @@ export const useEnhancedGrammarChecker = ({ onProgressUpdate }: UseEnhancedGramm
     setIsProcessing(true);
     
     try {
-      // Step 1: AI Correction with Grok-3 (0-40%)
-      onProgressUpdate?.(5, 'AI व्याकरण विश्लेषण...');
+      // Step 1: Initial Setup (0-15%)
+      onProgressUpdate?.(15, 'प्रारंभिक सेटअप');
+      
+      // Step 2: AI Correction with Grok-3 (15-60%)
+      onProgressUpdate?.(30, 'AI विश्लेषण');
       
       const { data: grokData, error: grokError } = await supabase.functions.invoke('grok-grammar-check', {
         body: { 
@@ -65,19 +68,19 @@ export const useEnhancedGrammarChecker = ({ onProgressUpdate }: UseEnhancedGramm
 
       const { correctedText: aiCorrectedText, corrections: aiCorrs = [] } = grokData;
       
-      onProgressUpdate?.(40, 'AI सुधार पूर्ण...');
+      onProgressUpdate?.(60, 'AI सुधार पूर्ण');
       setAiCorrections(aiCorrs);
 
-      // Step 2: Dictionary Application (40-80%)
-      onProgressUpdate?.(50, 'शब्दकोश लागू कर रहे हैं...');
+      // Step 3: Dictionary Application (60-85%)
+      onProgressUpdate?.(70, 'शब्दकोश लागू कर रहे हैं');
       
       const { correctedText: finalText, corrections: dictCorrs } = await applyFinalDictionaryCorrections(aiCorrectedText);
       
-      onProgressUpdate?.(80, 'शब्दकोश सुधार पूर्ण...');
+      onProgressUpdate?.(85, 'शब्दकोश सुधार पूर्ण');
       setDictionaryCorrections(dictCorrs);
 
-      // Step 3: Finalization (80-100%)
-      onProgressUpdate?.(90, 'अंतिम सुधार...');
+      // Step 4: Finalization (85-100%)
+      onProgressUpdate?.(95, 'अंतिम सुधार');
       
       setCorrectedText(finalText);
       
