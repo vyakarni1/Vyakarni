@@ -1,74 +1,61 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const xaiApiKey = Deno.env.get('XAI_API_KEY');
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Initialize Supabase client for server-side operations
-const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
-
-const checkUserTier = async (userId: string) => {
-  try {
-    const { data, error } = await supabase.rpc('check_user_has_active_subscription', {
-      user_uuid: userId
-    });
-    
-    if (error) {
-      console.error('Error checking user subscription:', error);
-      return false;
-    }
-    
-    return data || false;
-  } catch (error) {
-    console.error('Error in checkUserTier:', error);
-    return false;
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
   }
-};
 
-const getUserIdFromToken = async (authHeader: string) => {
   try {
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return null;
-    }
-    
-    const token = authHeader.substring(7);
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
-    if (error || !user) {
-      console.error('Error getting user from token:', error);
-      return null;
-    }
-    
-    return user.id;
-  } catch (error) {
-    console.error('Error in getUserIdFromToken:', error);
-    return null;
-  }
-};
+    const { inputText, userTier = 'free' } = await req.json();
 
-const callGrokAPI = async (inputText: string, model: string = 'grok-3') => {
-  console.log(`Attempting Grok API call with model: ${model}`);
-  
-  const response = await fetch('https://api.x.ai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${xaiApiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        {
-          role: 'system',
-          content: `You are an expert Hindi language stylist with deep understanding of natural Hindi expression and literary traditions. Your task is to enhance the writing style of Hindi text while making it sound more natural, fluent, and authentic to native Hindi speakers.
+    if (!inputText) {
+      throw new Error('Input text is required');
+    }
+
+    if (!xaiApiKey) {
+      throw new Error('XAI API key not configured');
+    }
+
+    // Dynamic word limit based on user tier
+    const wordLimit = userTier === 'paid' ? 1000 : 100;
+    const wordCount = inputText.trim().split(/\s+/).length;
+    
+    if (wordCount > wordLimit) {
+      throw new Error(`Text exceeds ${wordLimit} word limit for ${userTier} users. Current text has ${wordCount} words.`);
+    }
+
+    console.log(`Processing ${wordCount} words with Grok-3 for ${userTier} user`);
+
+    // Try different Grok-3 model names as per X.AI documentation
+    const modelNames = ['grok-3', 'grok-3-fast', 'grok-3-beta'];
+    let response;
+    let lastError;
+
+    for (const modelName of modelNames) {
+      try {
+        console.log(`Attempting with model: ${modelName}`);
+        
+        response = await fetch('https://api.x.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${xaiApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: modelName,
+            messages: [
+              {
+                role: 'system',
+                content: `You are an expert Hindi language stylist with deep understanding of natural Hindi expression and literary traditions. Your task is to enhance the writing style of Hindi text while making it sound more natural, fluent, and authentic to native Hindi speakers.
 
 NATURAL HINDI STYLE ENHANCEMENT PRINCIPLES:
 
@@ -161,118 +148,74 @@ The enhanced text should:
 - Feel like elevated natural Hindi expression
 
 Return ONLY the JSON object, nothing else. The text should sound beautifully natural and authentically Hindi.`
-        },
-        {
-          role: 'user',
-          content: `Please enhance the style of this Hindi text to make it more eloquent, engaging, and naturally fluent while keeping the meaning intact:\n\n${inputText}`
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 2000,
-    }),
-  });
+              },
+              {
+                role: 'user',
+                content: `Please enhance the style of this Hindi text to make it more eloquent, engaging, and naturally fluent while keeping the meaning intact:\n\n${inputText}`
+              }
+            ],
+            temperature: 0.7,
+            max_tokens: 3000,
+          }),
+        });
 
-  if (!response.ok) {
-    throw new Error(`Grok API error: ${response.status} - ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data.choices[0].message.content.trim();
-};
-
-const parseGrokResponse = (response: string) => {
-  try {
-    // Remove any markdown code blocks if present
-    const cleanedResponse = response.replace(/```json\s*|\s*```/g, '');
-    
-    // Try to parse as JSON first
-    const parsed = JSON.parse(cleanedResponse);
-    if (parsed.enhancedText) {
-      return parsed;
-    }
-  } catch (error) {
-    console.warn('Failed to parse JSON response, treating as plain text:', error);
-  }
-  
-  // Fallback: treat as plain text
-  return {
-    enhancedText: response.trim(),
-    enhancements: []
-  };
-};
-
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const { inputText, userTier } = await req.json();
-
-    if (!inputText) {
-      throw new Error('Input text is required');
-    }
-
-    console.log('Style enhancing text with Grok:', inputText);
-    console.log('Input text length:', inputText.length);
-
-    // Get user ID from authorization header
-    const authHeader = req.headers.get('authorization');
-    const userId = await getUserIdFromToken(authHeader || '');
-    console.log('User ID from token:', userId);
-
-    // Check user tier and apply word limits
-    const isPaidUser = userId ? await checkUserTier(userId) : false;
-    const wordLimit = isPaidUser ? 1000 : 100;
-    const wordCount = inputText.trim().split(/\s+/).length;
-    
-    console.log(`User tier: ${isPaidUser ? 'paid' : 'free'}, Word limit: ${wordLimit}, Word count: ${wordCount}`);
-
-    if (wordCount > wordLimit) {
-      throw new Error(`Text too long. Maximum ${wordLimit} words allowed for ${isPaidUser ? 'paid' : 'free'} users. Your text has ${wordCount} words.`);
-    }
-
-    let enhancedResult;
-    let usedModel = 'unknown';
-
-    // Try multiple Grok models in order of preference
-    const grokModels = ['grok-3', 'grok-3-fast', 'grok-3-beta'];
-    
-    if (xaiApiKey) {
-      for (const model of grokModels) {
-        try {
-          console.log(`Trying Grok model: ${model}`);
-          const grokResponse = await callGrokAPI(inputText, model);
-          enhancedResult = parseGrokResponse(grokResponse);
-          usedModel = model;
-          console.log(`Successfully used Grok model: ${model}`);
+        if (response.ok) {
+          console.log(`Successfully connected with model: ${modelName}`);
           break;
-        } catch (error) {
-          console.error(`Grok model ${model} failed:`, error);
-          if (model === grokModels[grokModels.length - 1]) {
-            throw error; // If last Grok model fails, throw the error
-          }
+        } else {
+          const errorText = await response.text();
+          lastError = `Model ${modelName} failed: ${response.status} - ${errorText}`;
+          console.log(lastError);
         }
+      } catch (error) {
+        lastError = `Model ${modelName} error: ${error.message}`;
+        console.log(lastError);
       }
-    } else {
-      throw new Error('XAI API key not configured');
     }
 
-    if (!enhancedResult) {
-      throw new Error('No API keys available for style enhancement');
+    if (!response || !response.ok) {
+      console.error('All Grok model attempts failed:', lastError);
+      throw new Error(`Grok API error: ${lastError}`);
     }
 
-    console.log('Style enhancement completed successfully');
-    console.log('Used model:', usedModel);
-    console.log('Enhanced text:', enhancedResult.enhancedText);
-    console.log('Number of enhancements:', enhancedResult.enhancements?.length || 0);
+    const data = await response.json();
+    console.log('Grok API response received:', data.choices?.[0]?.message?.content ? 'Success' : 'No content');
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid response structure:', data);
+      throw new Error('Invalid response structure from Grok API');
+    }
+    
+    const aiResponse = data.choices[0].message.content?.trim();
+    
+    if (!aiResponse) {
+      console.error('No content in response:', data.choices[0].message);
+      throw new Error('No enhanced text received from Grok API');
+    }
+
+    // Parse JSON response
+    let parsedResponse;
+    try {
+      const cleanedResponse = aiResponse.replace(/```json\s*|\s*```/g, '');
+      parsedResponse = JSON.parse(cleanedResponse);
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', parseError);
+      console.error('AI response was:', aiResponse);
+      
+      // Fallback: treat entire response as enhanced text
+      parsedResponse = {
+        enhancedText: aiResponse,
+        enhancements: []
+      };
+    }
+
+    const { enhancedText, enhancements = [] } = parsedResponse;
+    
+    console.log(`Grok style enhancement completed: ${enhancements.length} enhancements found`);
 
     return new Response(JSON.stringify({ 
-      enhancedText: enhancedResult.enhancedText,
-      enhancements: enhancedResult.enhancements || [],
-      model: usedModel,
-      wordCount: wordCount,
-      userTier: isPaidUser ? 'paid' : 'free'
+      enhancedText,
+      enhancements: enhancements.map(e => ({ ...e, source: 'ai' }))
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
