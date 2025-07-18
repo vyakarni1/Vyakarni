@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ProcessingMode } from "@/types/grammarChecker";
 import { 
   createRealTimeProgressManager, 
@@ -15,25 +15,53 @@ export const useProgressManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentMode, setCurrentMode] = useState<ProcessingMode>('grammar');
 
-  const startProgress = (mode: ProcessingMode) => {
+  // Memoized callbacks for better performance
+  const startProgress = useCallback((mode: ProcessingMode) => {
     setIsLoading(true);
     setProgress(0);
     setCurrentStage('');
     setCurrentMode(mode);
-  };
+  }, []);
 
-  const completeProgress = () => {
-    setIsLoading(false);
-    setCurrentStage('');
-  };
+  const completeProgress = useCallback(() => {
+    setProgress(100);
+    setTimeout(() => {
+      setIsLoading(false);
+      setCurrentStage('');
+    }, 500); // Small delay for smooth completion animation
+  }, []);
 
-  const resetProgressState = () => {
+  const resetProgressState = useCallback(() => {
     resetProgress(setProgress);
     setCurrentStage('');
     setIsLoading(false);
-  };
+  }, []);
 
-  const runStagesWithProgress = (
+  // Optimized progress update with smoother transitions
+  const updateProgress = useCallback((newProgress: number, stage: string) => {
+    // Smooth progress updates to prevent jumps
+    setProgress(prev => {
+      const diff = newProgress - prev;
+      if (Math.abs(diff) > 20) {
+        // Large jumps - animate in steps
+        const steps = Math.ceil(Math.abs(diff) / 5);
+        const stepSize = diff / steps;
+        
+        for (let i = 1; i <= steps; i++) {
+          setTimeout(() => {
+            setProgress(prev + (stepSize * i));
+          }, i * 50);
+        }
+        return prev;
+      }
+      return newProgress;
+    });
+    
+    setCurrentStage(stage);
+    setIsLoading(newProgress < 100);
+  }, []);
+
+  const runStagesWithProgress = useCallback((
     mode: ProcessingMode,
     stageCallbacks: (() => Promise<void>)[],
     onComplete?: () => void
@@ -49,27 +77,23 @@ export const useProgressManagement = () => {
       completeProgress();
       onComplete?.();
     });
-  };
+  }, [completeProgress]);
 
-  const updateStageProgress = (stageIndex: number, progress: number) => {
+  const updateStageProgress = useCallback((stageIndex: number, stageProgress: number) => {
     const stages = currentMode === 'grammar' ? GRAMMAR_STAGES : STYLE_STAGES;
     const stage = stages[stageIndex];
     if (stage) {
-      const progressWithinStage = Math.min(Math.max(progress, 0), 100);
+      const progressWithinStage = Math.min(Math.max(stageProgress, 0), 100);
       const totalProgress = stage.startPercent + 
         ((stage.endPercent - stage.startPercent) * progressWithinStage / 100);
+      
       setProgress(Math.round(totalProgress));
       setCurrentStage(stage.name);
     }
-  };
+  }, [currentMode]);
 
-  const updateProgress = (progress: number, stage: string) => {
-    setProgress(progress);
-    setCurrentStage(stage);
-    setIsLoading(progress < 100);
-  };
-
-  return {
+  // Memoized return object to prevent unnecessary re-renders
+  return useMemo(() => ({
     progress,
     currentStage,
     isLoading,
@@ -79,5 +103,15 @@ export const useProgressManagement = () => {
     runStagesWithProgress,
     updateStageProgress,
     updateProgress
-  };
+  }), [
+    progress,
+    currentStage,
+    isLoading,
+    startProgress,
+    completeProgress,
+    resetProgressState,
+    runStagesWithProgress,
+    updateStageProgress,
+    updateProgress
+  ]);
 };

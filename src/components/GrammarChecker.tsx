@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { useGrammarChecker } from "@/hooks/useGrammarChecker";
 import Header from './GrammarChecker/Header';
 import TextInputPanel from './GrammarChecker/TextInputPanel';
 import CorrectedTextPanel from './GrammarChecker/CorrectedTextPanel';
 import FeaturesSection from './GrammarChecker/FeaturesSection';
 
-const GrammarChecker = () => {
+const GrammarChecker = memo(() => {
   const {
     inputText,
     setInputText,
@@ -63,6 +63,8 @@ const GrammarChecker = () => {
       </div>
     </div>
   );
-};
+});
+
+GrammarChecker.displayName = 'GrammarChecker';
 
 export default GrammarChecker;
