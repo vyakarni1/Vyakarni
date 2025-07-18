@@ -1,34 +1,29 @@
 
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
-import { useWordLimits } from "@/hooks/useWordLimits";
 import { useRobustHighlighting } from "@/hooks/useRobustHighlighting";
-import { useGrokGrammarProcessing } from "@/hooks/useGrokGrammarProcessing";
 import { useGrokStyleProcessing } from "@/hooks/useGrokStyleProcessing";
 import { useProgressManagement } from "@/hooks/useProgressManagement";
 import { useTextOperations } from "@/hooks/useTextOperations";
+import { useEnhancedGrammarChecker } from "@/hooks/useEnhancedGrammarChecker";
 
 export const useGrammarChecker = () => {
   const { trackUsage } = useUsageStats();
-  const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
   const highlighting = useRobustHighlighting();
   
   const progressManagement = useProgressManagement();
   const textOperations = useTextOperations();
   
-  const grammarProcessing = useGrokGrammarProcessing({
+  const grammarProcessing = useEnhancedGrammarChecker({
     onProgressUpdate: progressManagement.updateProgress
   });
+  
   const styleProcessing = useGrokStyleProcessing({
     onProgressUpdate: progressManagement.updateProgress
   });
 
   const correctGrammar = async () => {
     if (!textOperations.validateInput(textOperations.inputText)) {
-      return;
-    }
-
-    if (!checkAndEnforceWordLimit(textOperations.inputText)) {
       return;
     }
 
@@ -40,9 +35,6 @@ export const useGrammarChecker = () => {
       if (result) {
         // Track usage after successful processing
         trackUsage('correction');
-        trackWordUsage(textOperations.inputText, 'grammar_correction');
-        
-        // Results are automatically set in the hook state
         
         toast.success("व्याकरण सुधार पूर्ण हुआ!");
       }
@@ -57,10 +49,6 @@ export const useGrammarChecker = () => {
       return;
     }
 
-    if (!checkAndEnforceWordLimit(textOperations.inputText)) {
-      return;
-    }
-
     textOperations.setProcessingMode('style');
     
     try {
@@ -69,9 +57,6 @@ export const useGrammarChecker = () => {
       if (result) {
         // Track usage after successful processing
         trackUsage('enhancement');
-        trackWordUsage(textOperations.inputText, 'style_enhancement');
-        
-        // Results are automatically set in the hook state
         
         toast.success("शैली सुधार पूर्ण हुआ!");
       }
@@ -105,7 +90,7 @@ export const useGrammarChecker = () => {
   // Get current corrections based on processing mode
   const currentCorrections = textOperations.processingMode === 'style' 
     ? styleProcessing.corrections 
-    : grammarProcessing.corrections;
+    : grammarProcessing.getAllCorrections();
 
   const wordCount = textOperations.getWordCount(textOperations.inputText);
   const charCount = textOperations.getCharCount(textOperations.inputText);
@@ -120,6 +105,8 @@ export const useGrammarChecker = () => {
     progress: progressManagement.progress,
     currentStage: progressManagement.currentStage,
     corrections: currentCorrections,
+    aiCorrections: grammarProcessing.aiCorrections,
+    dictionaryCorrections: grammarProcessing.dictionaryCorrections,
     correctGrammar,
     enhanceStyle,
     resetText,

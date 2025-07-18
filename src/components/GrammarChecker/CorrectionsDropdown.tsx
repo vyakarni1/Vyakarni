@@ -1,17 +1,29 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AlertCircle, ChevronDown, CheckCircle, X, BookOpen, Brain } from "lucide-react";
+import { AlertCircle, ChevronDown, CheckCircle, X, BookOpen, Brain, Zap } from "lucide-react";
 import { Correction } from "@/types/grammarChecker";
 
 interface CorrectionsDropdownProps {
-  corrections: Correction[];
+  corrections?: Correction[];
+  aiCorrections?: Correction[];
+  dictionaryCorrections?: Correction[];
   selectedCorrectionIndex?: number | null;
   onCorrectionClick?: (index: number) => void;
 }
 
-const CorrectionsDropdown = ({ corrections, selectedCorrectionIndex, onCorrectionClick }: CorrectionsDropdownProps) => {
+const CorrectionsDropdown = ({ 
+  corrections = [], 
+  aiCorrections = [], 
+  dictionaryCorrections = [],
+  selectedCorrectionIndex, 
+  onCorrectionClick 
+}: CorrectionsDropdownProps) => {
+  
+  const totalCorrections = aiCorrections.length + dictionaryCorrections.length;
+  
   const getCorrectionTypeColor = (type: string) => {
     switch (type) {
       case 'grammar':
@@ -46,42 +58,63 @@ const CorrectionsDropdown = ({ corrections, selectedCorrectionIndex, onCorrectio
     }
   };
 
-  const getSourceIcon = (source?: string) => {
-    if (source === 'dictionary') {
-      return <BookOpen className="h-3 w-3" />;
-    }
-    return <Brain className="h-3 w-3" />;
-  };
-
-  const getSourceLabel = (source?: string) => {
-    if (source === 'dictionary') {
-      return 'शब्दकोश';
-    }
-    return 'AI विश्लेषण';
-  };
-
-  const getSourceColor = (source?: string) => {
-    if (source === 'dictionary') {
-      return 'bg-emerald-100 text-emerald-700';
-    }
-    return 'bg-blue-100 text-blue-700';
-  };
-
   const handleCorrectionClick = (index: number) => {
     if (onCorrectionClick) {
       onCorrectionClick(index);
     }
   };
 
-  if (corrections.length === 0) {
+  const renderCorrectionItem = (correction: Correction, index: number, source: 'ai' | 'dictionary') => {
+    const isSelected = selectedCorrectionIndex === index;
+    const sourceColor = source === 'ai' ? 'from-blue-500 to-indigo-500' : 'from-emerald-500 to-green-500';
+    const sourceIcon = source === 'ai' ? Brain : BookOpen;
+    const sourceLabel = source === 'ai' ? 'AI विश्लेषण' : 'शब्दकोश';
+
+    return (
+      <DropdownMenuItem 
+        key={`${source}-${index}`}
+        className={`p-0 focus:bg-slate-50 rounded-xl cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
+          isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+        }`}
+        onClick={() => handleCorrectionClick(index)}
+      >
+        <div className="w-full p-4 border-b border-slate-100 last:border-b-0">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-3">
+              <span className={`bg-gradient-to-r ${sourceColor} text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold animate-fade-in`}>
+                {index + 1}
+              </span>
+              <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs font-medium transition-all duration-200`}>
+                {getCorrectionTypeLabel(correction.type)}
+              </Badge>
+              <Badge className={`${source === 'ai' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'} text-xs font-medium flex items-center gap-1 transition-all duration-200`}>
+                {React.createElement(sourceIcon, { className: "h-3 w-3" })}
+                {sourceLabel}
+              </Badge>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3 animate-slide-in-right">
+              <X className="h-4 w-4 text-red-500" />
+              <span className="text-red-600 text-sm line-through font-medium">"{correction.incorrect}"</span>
+            </div>
+            <div className="flex items-center space-x-3 animate-slide-in-right">
+              <CheckCircle className="h-4 w-4 text-emerald-500" />
+              <span className="text-emerald-600 text-sm font-semibold">"{correction.correct}"</span>
+            </div>
+            <p className="text-xs text-slate-600 mt-2 ml-7 leading-relaxed animate-fade-in">
+              {correction.reason}
+            </p>
+          </div>
+        </div>
+      </DropdownMenuItem>
+    );
+  };
+
+  if (totalCorrections === 0) {
     return null;
   }
-
-  const dictionaryCorrections = corrections.filter(c => c.source === 'dictionary');
-  const gptCorrections = corrections.filter(c => c.source === 'gpt' || !c.source);
-
-  console.log('Corrections dropdown - Dictionary corrections:', dictionaryCorrections);
-  console.log('Corrections dropdown - GPT corrections:', gptCorrections);
 
   return (
     <DropdownMenu>
@@ -89,123 +122,46 @@ const CorrectionsDropdown = ({ corrections, selectedCorrectionIndex, onCorrectio
         <Button 
           variant="secondary" 
           size="sm" 
-          className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-xl px-4 py-2"
+          className="bg-white/20 text-white border-0 hover:bg-white/30 rounded-xl px-4 py-2 transition-all duration-200 hover:scale-105"
         >
-          <AlertCircle className="h-4 w-4 mr-2" />
-          {corrections.length} सुधार
+          <AlertCircle className="h-4 w-4 mr-2 animate-pulse" />
+          {totalCorrections} सुधार
           <ChevronDown className="h-4 w-4 ml-2" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96 max-h-96 overflow-y-auto bg-white border-0 shadow-2xl rounded-2xl p-2 z-50">
-        <DropdownMenuLabel className="text-base font-semibold text-slate-700 px-4 py-3">
-          सभी सुधार ({corrections.length})
+      <DropdownMenuContent className="w-96 max-h-96 overflow-y-auto bg-white border-0 shadow-2xl rounded-2xl p-2 z-50 animate-scale-in">
+        <DropdownMenuLabel className="text-base font-semibold text-slate-700 px-4 py-3 flex items-center gap-2">
+          <Zap className="h-4 w-4 text-blue-500" />
+          सभी सुधार ({totalCorrections})
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         
-        {dictionaryCorrections.length > 0 && (
+        {/* AI Corrections Section */}
+        {aiCorrections.length > 0 && (
           <>
-            <DropdownMenuLabel className="text-sm font-medium text-emerald-600 px-4 py-2 flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              शब्दकोश सुधार ({dictionaryCorrections.length})
+            <DropdownMenuLabel className="text-sm font-medium text-blue-600 px-4 py-2 flex items-center gap-2 animate-fade-in">
+              <Brain className="h-4 w-4" />
+              AI विश्लेषण सुधार ({aiCorrections.length})
             </DropdownMenuLabel>
-            {dictionaryCorrections.map((correction, globalIndex) => {
-              const correctionIndex = corrections.findIndex(c => c === correction);
-              return (
-                <DropdownMenuItem 
-                  key={`dict-${globalIndex}`} 
-                  className={`p-0 focus:bg-slate-50 rounded-xl cursor-pointer ${
-                    selectedCorrectionIndex === correctionIndex ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                  }`}
-                  onClick={() => handleCorrectionClick(correctionIndex)}
-                >
-                <div className="w-full p-4 border-b border-slate-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <span className="bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                        {correctionIndex + 1}
-                      </span>
-                      <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs font-medium`}>
-                        {getCorrectionTypeLabel(correction.type)}
-                      </Badge>
-                      <Badge className={`${getSourceColor(correction.source)} text-xs font-medium flex items-center gap-1`}>
-                        {getSourceIcon(correction.source)}
-                        {getSourceLabel(correction.source)}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <X className="h-4 w-4 text-red-500" />
-                      <span className="text-red-600 text-sm line-through font-medium">"{correction.incorrect}"</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <CheckCircle className="h-4 w-4 text-emerald-500" />
-                      <span className="text-emerald-600 text-sm font-semibold">"{correction.correct}"</span>
-                    </div>
-                    <p className="text-xs text-slate-600 mt-2 ml-7 leading-relaxed">
-                      {correction.reason}
-                    </p>
-                  </div>
-                </div>
-               </DropdownMenuItem>
-               );
-             })}
-             {gptCorrections.length > 0 && <DropdownMenuSeparator />}
+            {aiCorrections.map((correction, index) => 
+              renderCorrectionItem(correction, index, 'ai')
+            )}
+            {dictionaryCorrections.length > 0 && <DropdownMenuSeparator />}
           </>
         )}
 
-        {gptCorrections.length > 0 && (
+        {/* Dictionary Corrections Section */}
+        {dictionaryCorrections.length > 0 && (
           <>
-            <DropdownMenuLabel className="text-sm font-medium text-blue-600 px-4 py-2 flex items-center gap-2">
-              <Brain className="h-4 w-4" />
-              AI विश्लेषण सुधार ({gptCorrections.length})
+            <DropdownMenuLabel className="text-sm font-medium text-emerald-600 px-4 py-2 flex items-center gap-2 animate-fade-in">
+              <BookOpen className="h-4 w-4" />
+              शब्दकोश सुधार ({dictionaryCorrections.length})
             </DropdownMenuLabel>
-            {gptCorrections.map((correction, globalIndex) => {
-              const correctionIndex = corrections.findIndex(c => c === correction);
-              return (
-                <DropdownMenuItem 
-                  key={`gpt-${globalIndex}`} 
-                  className={`p-0 focus:bg-slate-50 rounded-xl cursor-pointer ${
-                    selectedCorrectionIndex === correctionIndex ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                  }`}
-                  onClick={() => handleCorrectionClick(correctionIndex)}
-                >
-                <div className="w-full p-4 border-b border-slate-100 last:border-b-0">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <span className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                        {correctionIndex + 1}
-                      </span>
-                      <Badge className={`${getCorrectionTypeColor(correction.type)} text-xs font-medium`}>
-                        {getCorrectionTypeLabel(correction.type)}
-                      </Badge>
-                      <Badge className={`${getSourceColor(correction.source)} text-xs font-medium flex items-center gap-1`}>
-                        {getSourceIcon(correction.source)}
-                        {getSourceLabel(correction.source)}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <X className="h-4 w-4 text-red-500" />
-                      <span className="text-red-600 text-sm line-through font-medium">"{correction.incorrect}"</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <CheckCircle className="h-4 w-4 text-emerald-500" />
-                      <span className="text-emerald-600 text-sm font-semibold">"{correction.correct}"</span>
-                    </div>
-                    <p className="text-xs text-slate-600 mt-2 ml-7 leading-relaxed">
-                      {correction.reason}
-                    </p>
-                  </div>
-                </div>
-               </DropdownMenuItem>
-               );
-             })}
-           </>
-         )}
+            {dictionaryCorrections.map((correction, index) => 
+              renderCorrectionItem(correction, aiCorrections.length + index, 'dictionary')
+            )}
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

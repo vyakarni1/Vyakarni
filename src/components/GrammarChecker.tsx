@@ -17,18 +17,16 @@ const GrammarChecker = () => {
     progress,
     currentStage,
     corrections,
+    aiCorrections,
+    dictionaryCorrections,
     correctGrammar,
     enhanceStyle,
     resetText,
     copyToClipboard,
-    highlighting
+    highlighting,
+    wordCount,
+    charCount
   } = useGrammarChecker();
-
-  const wordCount = inputText.trim() ? inputText.trim().split(/\s+/).length : 0;
-  const charCount = inputText.length;
-
-  const outputText = processingMode === 'style' ? enhancedText : correctedText;
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
@@ -51,6 +49,8 @@ const GrammarChecker = () => {
             correctedText={correctedText}
             enhancedText={enhancedText}
             corrections={corrections}
+            aiCorrections={aiCorrections}
+            dictionaryCorrections={dictionaryCorrections}
             isLoading={isLoading}
             processingMode={processingMode}
             progress={progress}
