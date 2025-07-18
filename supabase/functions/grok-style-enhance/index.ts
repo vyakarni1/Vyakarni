@@ -1,39 +1,74 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const xaiApiKey = Deno.env.get('XAI_API_KEY');
+const supabaseUrl = Deno.env.get('SUPABASE_URL');
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+// Initialize Supabase client for server-side operations
+const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
+const checkUserTier = async (userId: string) => {
   try {
-    const { inputText } = await req.json();
-
-    if (!inputText) {
-      throw new Error('Input text is required');
+    const { data, error } = await supabase.rpc('check_user_has_active_subscription', {
+      user_uuid: userId
+    });
+    
+    if (error) {
+      console.error('Error checking user subscription:', error);
+      return false;
     }
+    
+    return data || false;
+  } catch (error) {
+    console.error('Error in checkUserTier:', error);
+    return false;
+  }
+};
 
-    console.log('Enhancing style for text with Grok 3:', inputText);
+const getUserIdFromToken = async (authHeader: string) => {
+  try {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return null;
+    }
+    
+    const token = authHeader.substring(7);
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      console.error('Error getting user from token:', error);
+      return null;
+    }
+    
+    return user.id;
+  } catch (error) {
+    console.error('Error in getUserIdFromToken:', error);
+    return null;
+  }
+};
 
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${xaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'grok-3',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an expert Hindi language stylist with deep understanding of natural Hindi expression and literary traditions. Your task is to enhance the writing style of Hindi text while making it sound more natural, fluent, and authentic to native Hindi speakers.
+const callGrokAPI = async (inputText: string, model: string = 'grok-3') => {
+  console.log(`Attempting Grok API call with model: ${model}`);
+  
+  const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${xaiApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: model,
+      messages: [
+        {
+          role: 'system',
+          content: `You are an expert Hindi language stylist with deep understanding of natural Hindi expression and literary traditions. Your task is to enhance the writing style of Hindi text while making it sound more natural, fluent, and authentic to native Hindi speakers.
 
 NATURAL HINDI STYLE ENHANCEMENT PRINCIPLES:
 
@@ -94,6 +129,28 @@ QUALITY STANDARDS FOR ENHANCED TEXT:
 - Should demonstrate natural Hindi literary grace
 - Must feel authentic, not artificial or over-stylized
 
+ENHANCEMENT CATEGORIES:
+1. **vocabulary** - sophisticated word choices while maintaining naturalness
+2. **flow** - improved sentence connections and transitions
+3. **eloquence** - added literary grace and sophistication
+4. **structure** - varied sentence patterns for better rhythm
+5. **engagement** - enhanced interest and readability
+
+RESPONSE FORMAT:
+You must respond with a valid JSON object in this exact format:
+{
+  "enhancedText": "The complete enhanced text in Hindi",
+  "enhancements": [
+    {
+      "original": "original phrase or word",
+      "enhanced": "enhanced phrase or word", 
+      "reason": "explanation of the enhancement in Hindi",
+      "type": "vocabulary|flow|eloquence|structure|engagement",
+      "source": "ai"
+    }
+  ]
+}
+
 FINAL RESULT EXPECTATIONS:
 The enhanced text should:
 - Be more sophisticated yet natural
@@ -103,28 +160,120 @@ The enhanced text should:
 - Maintain perfect clarity and readability
 - Feel like elevated natural Hindi expression
 
-Return only the enhanced text in Hindi, nothing else. The text should sound beautifully natural and authentically Hindi.`
-          },
-          {
-            role: 'user',
-            content: `Please enhance the style of this Hindi text to make it more eloquent, engaging, and naturally fluent while keeping the meaning intact:\n\n${inputText}`
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-      }),
-    });
+Return ONLY the JSON object, nothing else. The text should sound beautifully natural and authentically Hindi.`
+        },
+        {
+          role: 'user',
+          content: `Please enhance the style of this Hindi text to make it more eloquent, engaging, and naturally fluent while keeping the meaning intact:\n\n${inputText}`
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000,
+    }),
+  });
 
-    if (!response.ok) {
-      throw new Error(`Grok API error: ${response.status}`);
+  if (!response.ok) {
+    throw new Error(`Grok API error: ${response.status} - ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content.trim();
+};
+
+const parseGrokResponse = (response: string) => {
+  try {
+    // Remove any markdown code blocks if present
+    const cleanedResponse = response.replace(/```json\s*|\s*```/g, '');
+    
+    // Try to parse as JSON first
+    const parsed = JSON.parse(cleanedResponse);
+    if (parsed.enhancedText) {
+      return parsed;
+    }
+  } catch (error) {
+    console.warn('Failed to parse JSON response, treating as plain text:', error);
+  }
+  
+  // Fallback: treat as plain text
+  return {
+    enhancedText: response.trim(),
+    enhancements: []
+  };
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { inputText, userTier } = await req.json();
+
+    if (!inputText) {
+      throw new Error('Input text is required');
     }
 
-    const data = await response.json();
-    const enhancedText = data.choices[0].message.content.trim();
-    
-    console.log('Grok style enhanced text:', enhancedText);
+    console.log('Style enhancing text with Grok:', inputText);
+    console.log('Input text length:', inputText.length);
 
-    return new Response(JSON.stringify({ enhancedText }), {
+    // Get user ID from authorization header
+    const authHeader = req.headers.get('authorization');
+    const userId = await getUserIdFromToken(authHeader || '');
+    console.log('User ID from token:', userId);
+
+    // Check user tier and apply word limits
+    const isPaidUser = userId ? await checkUserTier(userId) : false;
+    const wordLimit = isPaidUser ? 1000 : 100;
+    const wordCount = inputText.trim().split(/\s+/).length;
+    
+    console.log(`User tier: ${isPaidUser ? 'paid' : 'free'}, Word limit: ${wordLimit}, Word count: ${wordCount}`);
+
+    if (wordCount > wordLimit) {
+      throw new Error(`Text too long. Maximum ${wordLimit} words allowed for ${isPaidUser ? 'paid' : 'free'} users. Your text has ${wordCount} words.`);
+    }
+
+    let enhancedResult;
+    let usedModel = 'unknown';
+
+    // Try multiple Grok models in order of preference
+    const grokModels = ['grok-3', 'grok-3-fast', 'grok-3-beta'];
+    
+    if (xaiApiKey) {
+      for (const model of grokModels) {
+        try {
+          console.log(`Trying Grok model: ${model}`);
+          const grokResponse = await callGrokAPI(inputText, model);
+          enhancedResult = parseGrokResponse(grokResponse);
+          usedModel = model;
+          console.log(`Successfully used Grok model: ${model}`);
+          break;
+        } catch (error) {
+          console.error(`Grok model ${model} failed:`, error);
+          if (model === grokModels[grokModels.length - 1]) {
+            throw error; // If last Grok model fails, throw the error
+          }
+        }
+      }
+    } else {
+      throw new Error('XAI API key not configured');
+    }
+
+    if (!enhancedResult) {
+      throw new Error('No API keys available for style enhancement');
+    }
+
+    console.log('Style enhancement completed successfully');
+    console.log('Used model:', usedModel);
+    console.log('Enhanced text:', enhancedResult.enhancedText);
+    console.log('Number of enhancements:', enhancedResult.enhancements?.length || 0);
+
+    return new Response(JSON.stringify({ 
+      enhancedText: enhancedResult.enhancedText,
+      enhancements: enhancedResult.enhancements || [],
+      model: usedModel,
+      wordCount: wordCount,
+      userTier: isPaidUser ? 'paid' : 'free'
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
