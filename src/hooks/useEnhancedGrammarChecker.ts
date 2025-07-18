@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { toast } from "sonner";
 import { useWordLimits } from "@/hooks/useWordLimits";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useOptimizedSubscription } from "./optimized/useOptimizedSubscription";
 import { supabase } from '@/integrations/supabase/client';
 import { applyFinalDictionaryCorrections } from '@/utils/finalDictionaryCorrections';
 import { Correction } from "@/types/grammarChecker";
@@ -18,7 +18,7 @@ export const useEnhancedGrammarChecker = ({ onProgressUpdate }: UseEnhancedGramm
   const [dictionaryCorrections, setDictionaryCorrections] = useState<Correction[]>([]);
   
   const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
-  const { subscription, isSubscriptionActive } = useSubscription();
+  const { isSubscriptionActive } = useOptimizedSubscription();
 
   const processGrammarCorrection = useCallback(async (inputText: string) => {
     if (!inputText.trim()) {

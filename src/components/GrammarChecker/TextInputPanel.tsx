@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FileText, RotateCcw, Zap, Sparkles, AlertTriangle } from "lucide-react";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useOptimizedSubscription } from "@/hooks/optimized/useOptimizedSubscription";
 
 interface TextInputPanelProps {
   inputText: string;
@@ -28,7 +28,7 @@ const TextInputPanel = ({
   onEnhanceStyle,
   onResetText
 }: TextInputPanelProps) => {
-  const { isSubscriptionActive } = useSubscription();
+  const { isSubscriptionActive } = useOptimizedSubscription();
   
   // Dynamic word limit based on subscription
   const MAX_WORD_LIMIT = isSubscriptionActive ? 1000 : 100;
