@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,7 +29,7 @@ import Billing from "@/pages/Billing";
 import AdminRoute from "./components/AdminRoute";
 import Admin from "./pages/Admin";
 import AdminUsers from "./pages/AdminUsers";
-import { DictionaryManagement } from "./components/Admin/DictionaryManagement";
+import AdminDictionary from "./pages/AdminDictionary";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +58,7 @@ function App() {
               <Route path="/data-protection" element={<DataProtection />} />
               <Route path="/other-policies" element={<OtherPolicies />} />
               <Route path="/pricing" element={<Pricing />} />
+              
               <Route 
                 path="/dashboard" 
                 element={
@@ -83,7 +83,6 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              
               <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
               
               <Route 
@@ -94,7 +93,6 @@ function App() {
                   </AdminRoute>
                 } 
               />
-              
               <Route 
                 path="/admin/users" 
                 element={
@@ -103,12 +101,11 @@ function App() {
                   </AdminRoute>
                 } 
               />
-              
               <Route 
                 path="/admin/dictionary" 
                 element={
                   <AdminRoute>
-                    <DictionaryManagement />
+                    <AdminDictionary />
                   </AdminRoute>
                 } 
               />
