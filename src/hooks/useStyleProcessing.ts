@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { toast } from "sonner";
 import { Correction } from "@/types/grammarChecker";
 import { callStyleEnhanceAPI, callDictionaryApplyAPI, callTextComparisonAPI } from "@/services/grammarApi";
-import { wordReplacements } from "@/data/wordReplacements";
+import { dictionaryService } from '@/services/dictionaryService';
 
 export const useStyleProcessing = () => {
   const [enhancedText, setEnhancedText] = useState('');
@@ -27,7 +27,8 @@ export const useStyleProcessing = () => {
       console.log('\n=== STEP 2: GPT DICTIONARY APPLICATION ===');
       console.log('Applying dictionary replacements to GPT enhanced text:', enhanced);
       progressCallback?.(2, 0);
-      const textWithDictionary = await callDictionaryApplyAPI(enhanced, wordReplacements);
+      const dictionary = await dictionaryService.getDictionary();
+      const textWithDictionary = await callDictionaryApplyAPI(enhanced, dictionary);
       progressCallback?.(2, 100);
       console.log('Text after dictionary application:', textWithDictionary);
       

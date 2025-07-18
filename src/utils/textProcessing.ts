@@ -1,14 +1,15 @@
-import { wordReplacements } from "@/data/wordReplacements";
 import { Correction } from "@/types/grammarChecker";
+import { dictionaryService } from '@/services/dictionaryService';
 
-export const applyWordReplacements = (text: string): {
+export const applyWordReplacements = async (text: string): Promise<{
   correctedText: string;
   appliedCorrections: Correction[];
-} => {
+}> => {
+  const dictionary = await dictionaryService.getDictionary();
   let correctedText = text;
   const appliedCorrections: Correction[] = [];
   
-  wordReplacements.forEach(({ original, replacement }) => {
+  dictionary.forEach(({ original, replacement }) => {
     const regex = new RegExp(original, 'g');
     if (regex.test(correctedText)) {
       correctedText = correctedText.replace(regex, replacement);
@@ -24,9 +25,9 @@ export const applyWordReplacements = (text: string): {
   return { correctedText, appliedCorrections };
 };
 
-export const extractCorrectionsFromResponse = (original: string, corrected: string): Correction[] => {
+export const extractCorrectionsFromResponse = async (original: string, corrected: string): Promise<Correction[]> => {
   // First apply word replacements to get the preprocessed text
-  const { correctedText: preprocessedText } = applyWordReplacements(original);
+  const { correctedText: preprocessedText } = await applyWordReplacements(original);
   
   // Now compare preprocessed text with AI output to get only AI-made corrections
   const aiCorrections = extractAICorrections(preprocessedText, corrected);

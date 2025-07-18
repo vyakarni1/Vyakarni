@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { callGrokStyleEnhanceAPI, callGrokDictionaryApplyAPI, callGrokTextComparisonAPI } from '@/services/grammarApi';
-import { wordReplacements } from '@/data/wordReplacements';
+import { dictionaryService } from '@/services/dictionaryService';
 
 interface UseGrokStyleProcessingProps {
   onProgressUpdate?: (progress: number, stage: string) => void;
@@ -29,7 +29,8 @@ export const useGrokStyleProcessing = ({ onProgressUpdate }: UseGrokStyleProcess
       onProgressUpdate?.(50, 'शब्दकोश लागू किया जा रहा है...');
 
       // Stage 3: Dictionary Application (50-80%)
-      const textWithDictionary = await callGrokDictionaryApplyAPI(enhancedText, wordReplacements);
+      const dictionary = await dictionaryService.getDictionary();
+      const textWithDictionary = await callGrokDictionaryApplyAPI(enhancedText, dictionary);
       onProgressUpdate?.(80, 'तुलना और हाइलाइटिंग तैयार की जा रही है...');
 
       // Stage 4: Text Comparison for Highlighting (80-100%)
