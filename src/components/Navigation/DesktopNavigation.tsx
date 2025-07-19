@@ -21,28 +21,28 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
             to="/dashboard" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            डैशबोर्ड
+            डैशबोर्ड(Dashboard)
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/grammar-checker" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            व्याकरण जाँच
+            व्याकरण जाँच(Grammar Check)
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/profile" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            प्रोफाइल
+            प्रोफाइल(Profile)
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/pricing" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            प्राइसिंग
+            प्राइसिंग(Pricing)
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <NotificationDropdown />
@@ -54,21 +54,21 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
             to="/about" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            हमारे बारे में
+            हमारे बारे में(About Us)
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/contact" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            संपर्क
+            संपर्क(Contact Us)
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/pricing" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            प्राइसिंग
+            प्राइसिंग(Pricing)
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <AuthButtons user={user} profile={profile} variant={variant} onLogout={onLogout} />
