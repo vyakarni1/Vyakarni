@@ -261,7 +261,61 @@ const About = () => {
             </div>
           </div>
         </section>
-        
+        {/* What We Do */}
+<section className="py-16 bg-white">
+  <div className="container mx-auto px-6">
+    <div className="text-center mb-12">
+      <h2 className="text-4xl font-bold mb-4 text-gray-800">
+        {language === "english" ? "What We Do" : "हम क्या करते हैं"}
+      </h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        {language === "english"
+          ? "Vyakarni is an advanced AI-powered Hindi writing assistant. We help individuals, students, professionals, writers, educators, and organisations write grammatically correct, elegant, and impactful Hindi. Our tool automatically corrects grammar, spelling, punctuation, sentence structure, and enhances language style, making every Hindi sentence precise, natural, and refined."
+          : "व्याकरणी एक उन्नत AI-सक्षम हिंदी लेखन सहायक है। हम व्यक्तियों, छात्रों, पेशेवरों, लेखकों, शिक्षकों और संगठनों को व्याकरण की दृष्टि से शुद्ध, सुरुचिपूर्ण एवं प्रभावशाली हिंदी लिखने में सहायता प्रदान करते हैं। हमारा उपकरण स्वतः ही व्याकरण, वर्तनी, विराम चिह्न, वाक्य संरचना की त्रुटियाँ सुधारता है और भाषा की शैली को परिष्कृत करता है, जिससे प्रत्येक हिंदी वाक्य शुद्ध, स्वाभाविक एवं परिमार्जित बनता है।"}
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-1 gap-8">
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <CheckCircle className="h-8 w-8 text-green-600 mb-2" />
+          <CardTitle className="text-2xl text-green-800">
+            {language === "english" ? "Key Capabilities" : "मुख्य क्षमताएँ"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Automatic correction of grammar, spelling, punctuation, and sentence structure."
+                : "व्याकरण, वर्तनी, विराम चिह्न, और वाक्य संरचना की स्वतः सुधार सुविधा।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Language style enhancement for refined and elegant expression."
+                : "शब्द चयन और शैली को परिष्कृत करने की क्षमता, जिससे अभिव्यक्ति और अधिक सुंदर एवं प्रभावशाली बनती है।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Helps students, professionals, educators, and organisations write better Hindi effortlessly."
+                : "छात्रों, पेशेवरों, शिक्षकों और संगठनों को बिना प्रयास के बेहतर हिंदी लिखने में सहायता करता है।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Makes Hindi writing impactful, natural, and grammatically accurate."
+                : "हिंदी लेखन को प्रभावशाली, स्वाभाविक और व्याकरण की दृष्टि से सटीक बनाता है।"}
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</section>
+
         {/* Team Section */}
         <section className="py-16 bg-gradient-to-br from-purple-50 via-white to-blue-50">
           <div className="container mx-auto px-6">
