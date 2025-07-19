@@ -112,7 +112,7 @@ export const useTranslation = () => {
                 // Handle elements with mixed content (text + child elements)
                 if (element.children.length > 0) {
                   // Replace only direct text nodes
-                  Array.from(element.childNodes).forEach(node => {
+                  Array.from(element.childNodes).forEach((node: ChildNode) => {
                     if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
                       node.textContent = data.translatedText;
                     }
