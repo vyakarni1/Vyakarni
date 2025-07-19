@@ -801,6 +801,81 @@ const About = () => {
           </div>
         </section>
 
+        {/* AI Development & Infrastructure – Sphere Layout */}
+<section className="py-16 bg-white">
+  <div className="container mx-auto px-6">
+    <div className="text-center mb-12">
+      <h2 className="text-4xl font-bold mb-4 text-gray-800">
+        {language === "english" ? "AI Development & Infrastructure" : "AI विकास और अवसंरचना"}
+      </h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        {language === "english"
+          ? "From API reliance to building fine-tuned Hindi AI models, Vyakarni is scaling its own intelligent engine with secure, high-performance infrastructure."
+          : "API पर निर्भरता से आगे बढ़ते हुए, व्याकरणी अब सुरक्षित और उच्च-प्रदर्शन अवसंरचना के साथ हिंदी AI मॉडल विकसित कर रहा है।"}
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
+      {[
+        {
+          icon: <Settings className="h-8 w-8 mb-2" />,
+          title: language === "english" ? "Custom AI Models" : "स्वनिर्मित AI मॉडल",
+          desc: language === "english"
+            ? "Tailored for Hindi grammar and elegance"
+            : "हिंदी व्याकरण और सौंदर्य के अनुरूप।",
+        },
+        {
+          icon: <Handshake className="h-8 w-8 mb-2" />,
+          title: language === "english" ? "Open Source Collaboration" : "ओपन-सोर्स सहयोग",
+          desc: language === "english"
+            ? "Working with the community to refine models"
+            : "समुदाय के साथ मिलकर मॉडल सुधार।",
+        },
+        {
+          icon: <Cpu className="h-8 w-8 mb-2" />,
+          title: language === "english" ? "Model Training" : "मॉडल प्रशिक्षण",
+          desc: language === "english"
+            ? "Real-world data, real-time feedback"
+            : "वास्तविक डेटा और प्रतिक्रिया पर आधारित।",
+        },
+        {
+          icon: <Cloud className="h-8 w-8 mb-2" />,
+          title: language === "english" ? "Cloud Infrastructure" : "क्लाउड अवसंरचना",
+          desc: language === "english"
+            ? "Secure & scalable compute environments"
+            : "सुरक्षित और स्केलेबल कंप्यूट संसाधन।",
+        },
+        {
+          icon: <Scale className="h-8 w-8 mb-2" />,
+          title: language === "english" ? "Built for Scale" : "विस्तार के लिए निर्मित",
+          desc: language === "english"
+            ? "From learners to large enterprises"
+            : "सीखने वालों से लेकर संगठनों तक।",
+        },
+        {
+          icon: <RefreshCw className="h-8 w-8 mb-2" />,
+          title: language === "english" ? "Continuous Learning" : "निरंतर सुधार",
+          desc: language === "english"
+            ? "Evolving with Hindi language trends"
+            : "हिंदी भाषा प्रवृत्तियों के साथ विकसित।",
+        },
+      ].map((item, index) => (
+        <div
+          key={index}
+          className="flex flex-col items-center justify-center text-center w-56 h-56 rounded-full bg-gray-50 border border-gray-200 shadow-md hover:shadow-xl transition duration-300 hover:bg-blue-50 p-6 group"
+        >
+          <div className="text-blue-600 group-hover:scale-110 transition duration-300">
+            {item.icon}
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-700">{item.title}</h3>
+          <p className="text-sm text-gray-600 mt-2">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
         {/* Call to Action */}
         <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="container mx-auto px-6 text-center">
