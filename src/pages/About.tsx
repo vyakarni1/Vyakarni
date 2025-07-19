@@ -468,53 +468,96 @@ const About = () => {
       </p>
     </div>
 
-    <div className="grid md:grid-cols-2 gap-8">
-      <Card className="border-yellow-200 bg-yellow-50">
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Students & Educators */}
+      <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
-          <Users className="h-8 w-8 text-yellow-600 mb-2" />
-          <CardTitle className="text-2xl text-yellow-800">
-            {language === "english" ? "Who Can Use Vyakarni?" : "कौन उपयोग कर सकता है व्याकरणी?"}
+          <BookOpen className="h-8 w-8 text-blue-600 mb-2" />
+          <CardTitle className="text-xl text-blue-800">
+            {language === "english" ? "Students & Educators" : "छात्र एवं शिक्षक"}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ul className="space-y-3 text-gray-700">
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Students & Educators: Those learning Hindi or teaching it, who wish to write and submit error-free work."
-                : "छात्र एवं शिक्षक: जो हिंदी सीख रहे हैं या पढ़ा रहे हैं, और त्रुटिरहित लेखन करना चाहते हैं।"}
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Professionals & Businesses: Anyone creating official documents, presentations, emails, or reports in Hindi."
-                : "पेशेवर एवं व्यवसाय: जो हिंदी में दस्तावेज़, प्रस्तुतियाँ, ईमेल या रिपोर्ट तैयार करते हैं।"}
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Content Creators & Writers: Authors, poets, journalists, bloggers, and media professionals publishing in Hindi."
-                : "सामग्री निर्माता एवं लेखक: लेखक, कवि, पत्रकार, ब्लॉगर एवं हिंदी में प्रकाशित करने वाले मीडिया पेशेवर।"}
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Institutions & Organisations: Government offices, NGOs, educational institutions, and enterprises with a need for high-quality Hindi communication."
-                : "संस्थान एवं संगठन: सरकारी कार्यालय, एनजीओ, शैक्षिक संस्थान एवं व्यवसायिक संगठन जिनमें स्तरीय हिंदी संप्रेषण की आवश्यकता है।"}
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Diaspora & Global Hindi Speakers: Hindi speakers worldwide who wish to maintain and enhance their written Hindi for personal or professional purposes."
-                : "प्रवासी एवं वैश्विक हिंदी भाषी: जो विश्वभर में हिंदी बोलते हैं और अपनी लिखित हिंदी को व्यक्तिगत या पेशेवर कारणों से सुधारना चाहते हैं।"}
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Anyone wishing to improve Hindi writing skills: From school children to senior citizens, Vyakarni is accessible to all who value correct and expressive Hindi."
-                : "जो भी हिंदी लेखन कौशल सुधारना चाहता है: स्कूल के बच्चों से लेकर वरिष्ठ नागरिकों तक, व्याकरणी हर उस व्यक्ति के लिए सुलभ है जो शुद्ध और भावपूर्ण हिंदी को महत्व देता है।"}
-            </li>
-          </ul>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Those learning Hindi or teaching it, who wish to write and submit error-free work."
+            : "जो हिंदी सीख रहे हैं या पढ़ा रहे हैं, और त्रुटिरहित लेखन करना चाहते हैं।"}
+        </CardContent>
+      </Card>
+
+      {/* Professionals & Businesses */}
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <Briefcase className="h-8 w-8 text-green-600 mb-2" />
+          <CardTitle className="text-xl text-green-800">
+            {language === "english" ? "Professionals & Businesses" : "पेशेवर एवं व्यवसाय"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Anyone creating official documents, presentations, emails, or reports in Hindi."
+            : "जो हिंदी में दस्तावेज़, प्रस्तुतियाँ, ईमेल या रिपोर्ट तैयार करते हैं।"}
+        </CardContent>
+      </Card>
+
+      {/* Content Creators & Writers */}
+      <Card className="border-purple-200 bg-purple-50">
+        <CardHeader>
+          <PenTool className="h-8 w-8 text-purple-600 mb-2" />
+          <CardTitle className="text-xl text-purple-800">
+            {language === "english" ? "Content Creators & Writers" : "सामग्री निर्माता एवं लेखक"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Authors, poets, journalists, bloggers, and media professionals publishing in Hindi."
+            : "लेखक, कवि, पत्रकार, ब्लॉगर एवं हिंदी में प्रकाशित करने वाले मीडिया पेशेवर।"}
+        </CardContent>
+      </Card>
+
+      {/* Institutions & Organisations */}
+      <Card className="border-yellow-200 bg-yellow-50">
+        <CardHeader>
+          <Building className="h-8 w-8 text-yellow-600 mb-2" />
+          <CardTitle className="text-xl text-yellow-800">
+            {language === "english" ? "Institutions & Organisations" : "संस्थान एवं संगठन"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Government offices, NGOs, educational institutions, and enterprises with a need for high-quality Hindi communication."
+            : "सरकारी कार्यालय, एनजीओ, शैक्षिक संस्थान एवं व्यवसायिक संगठन जिनमें स्तरीय हिंदी संप्रेषण की आवश्यकता है।"}
+        </CardContent>
+      </Card>
+
+      {/* Diaspora & Global Hindi Speakers */}
+      <Card className="border-red-200 bg-red-50">
+        <CardHeader>
+          <Globe className="h-8 w-8 text-red-600 mb-2" />
+          <CardTitle className="text-xl text-red-800">
+            {language === "english" ? "Diaspora & Global Hindi Speakers" : "प्रवासी एवं वैश्विक हिंदी भाषी"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Hindi speakers worldwide who wish to maintain and enhance their written Hindi for personal or professional purposes."
+            : "जो विश्वभर में हिंदी बोलते हैं और अपनी लिखित हिंदी को व्यक्तिगत या पेशेवर कारणों से सुधारना चाहते हैं।"}
+        </CardContent>
+      </Card>
+
+      {/* Anyone Wishing to Improve */}
+      <Card className="border-indigo-200 bg-indigo-50">
+        <CardHeader>
+          <Heart className="h-8 w-8 text-indigo-600 mb-2" />
+          <CardTitle className="text-xl text-indigo-800">
+            {language === "english"
+              ? "Anyone Wishing to Improve Hindi Writing"
+              : "हिंदी लेखन सुधारने की इच्छा रखने वाला कोई भी व्यक्ति"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "From school children to senior citizens, Vyakarni is accessible to all who value correct and expressive Hindi."
+            : "स्कूल के बच्चों से लेकर वरिष्ठ नागरिकों तक, व्याकरणी हर उस व्यक्ति के लिए सुलभ है जो शुद्ध और भावपूर्ण हिंदी को महत्व देता है।"}
         </CardContent>
       </Card>
     </div>
