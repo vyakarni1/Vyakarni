@@ -1,11 +1,10 @@
 
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Github, Twitter, Mail, Heart } from "lucide-react";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
-  const [language, setLanguage] = useState<"english" | "hindi">("hindi");
+  const { language } = useLanguage();
 
   const content = {
     english: {
@@ -56,29 +55,6 @@ const Footer = () => {
 
   return (
     <footer className="bg-gray-900 text-white relative">
-      {/* Language Toggle */}
-      <div className="absolute top-4 right-4 z-10 bg-gray-800/90 backdrop-blur-sm rounded-lg p-1 shadow-lg border border-gray-700">
-        <ToggleGroup
-          type="single"
-          value={language}
-          onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
-          className="gap-1"
-        >
-          <ToggleGroupItem
-            value="hindi"
-            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300"
-          >
-            हिंदी
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="english"
-            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white text-gray-300"
-          >
-            English
-          </ToggleGroupItem>
-        </ToggleGroup>
-      </div>
-
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}

@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useLanguage } from "@/contexts/LanguageContext";
+import GlobalLanguageToggle from "@/components/GlobalLanguageToggle";
 
 interface HeaderProps {
   variant?: "default" | "transparent";
@@ -11,7 +12,7 @@ interface HeaderProps {
 
 const Header = ({ variant = "default" }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [language, setLanguage] = useState<"english" | "hindi">("hindi");
+  const { language } = useLanguage();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -45,26 +46,8 @@ const Header = ({ variant = "default" }: HeaderProps) => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerClasses}`}>
       {/* Language Toggle */}
-      <div className="absolute top-2 right-4 z-60 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-lg border border-gray-200">
-        <ToggleGroup
-          type="single"
-          value={language}
-          onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
-          className="gap-1"
-        >
-          <ToggleGroupItem
-            value="hindi"
-            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-          >
-            हिंदी
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="english"
-            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-          >
-            English
-          </ToggleGroupItem>
-        </ToggleGroup>
+      <div className="absolute top-2 right-4 z-60">
+        <GlobalLanguageToggle />
       </div>
 
       <div className="container mx-auto px-6">
