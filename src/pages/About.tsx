@@ -266,7 +266,7 @@ const About = () => {
   <div className="container mx-auto px-6">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-bold mb-4 text-gray-800">
-        {language === "english" ? "What We Do" : "हम क्या करते हैं"}
+        {language === "english" ? "What We Do" : "हम क्या करते हैं?"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
         {language === "english"
