@@ -55,6 +55,7 @@ Guidelines:
 3. Make text more engaging and eloquent
 4. Enhance clarity through better expression
 5. Add literary grace while maintaining naturalness
+6. Use बिंदु (ं) instead of चंद्रबिंदु (ँ) in words like 'बायीं' and 'दायीं' unless the nasalized vowel explicitly requires चंद्रबिंदु as per standard Hindi orthography.
 
 Maintain:
 - Original meaning completely

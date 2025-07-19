@@ -55,6 +55,7 @@ Rules:
 3. Fix punctuation errors (विराम चिह्न की त्रुटियाँ)
 4. Fix syntax errors (वाक्य संरचना की त्रुटियाँ)
 5. Fix word selection errors only if the word is clearly wrong
+6. Use बिंदु (ं) instead of चंद्रबिंदु (ँ) in words like 'बायीं' and 'दायीं' unless the nasalized vowel explicitly requires चंद्रबिंदु as per standard Hindi orthography.
 
 DO NOT:
 - Change the meaning, tone, or style
@@ -66,10 +67,10 @@ Return only the corrected Hindi text, nothing else.`
               },
               {
                 role: 'user',
-                content: `Please correct the grammatical errors in this Hindi text:\n\n${inputText}`
+                content: `Please correct the Hindi Language grammatical errors in this Hindi text:\n\n${inputText}`
               }
             ],
-            temperature: 0.1,
+            temperature: 0,
             max_tokens: 3000,
           }),
         });
