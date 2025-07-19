@@ -47,7 +47,7 @@ export const useEnhancedGrammarChecker = ({ onProgressUpdate }: UseEnhancedGramm
       // Step 1: Initial Setup (0-15%)
       onProgressUpdate?.(15, 'प्रारंभिक सेटअप');
       
-      // Step 2: AI Correction with Grok-3 (15-60%)
+      // Step 2: AI Correction with Vyakarni (15-60%)
       onProgressUpdate?.(30, 'AI विश्लेषण');
       
       const { data: grokData, error: grokError } = await supabase.functions.invoke('grok-grammar-check', {

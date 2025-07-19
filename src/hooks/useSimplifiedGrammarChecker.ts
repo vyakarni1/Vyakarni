@@ -20,8 +20,8 @@ export const useSimplifiedGrammarChecker = ({ onProgressUpdate }: UseSimplifiedG
     setIsProcessing(true);
     
     try {
-      // Step 1: Grok-3 Processing (0-60%)
-      onProgressUpdate?.(20, 'Grok-3 से व्याकरण सुधार...');
+      // Step 1: Vyakarni Processing (0-60%)
+      onProgressUpdate?.(20, 'Vyakarni से व्याकरण सुधार...');
       
       const { data: grokData, error: grokError } = await supabase.functions.invoke('grok-grammar-check', {
         body: { inputText }

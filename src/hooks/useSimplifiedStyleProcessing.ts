@@ -20,8 +20,8 @@ export const useSimplifiedStyleProcessing = ({ onProgressUpdate }: UseSimplified
     setIsProcessing(true);
     
     try {
-      // Step 1: Grok-3 Processing (0-60%)
-      onProgressUpdate?.(20, 'Grok-3 से शैली सुधार...');
+      // Step 1: Vyakarni Processing (0-60%)
+      onProgressUpdate?.(20, 'Vyakarni से शैली सुधार...');
       
       const { data: grokData, error: grokError } = await supabase.functions.invoke('grok-style-enhance', {
         body: { inputText }
