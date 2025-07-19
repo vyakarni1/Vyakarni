@@ -31,8 +31,8 @@ const TestimonialsSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4" data-translate>उपयोगकर्ताओं के विचार</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto" data-translate>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">उपयोगकर्ताओं के विचार</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             देखिये कि हमारे उपयोगकर्ता व्याकरणी के विषय में क्या कह रहे हैं।
           </p>
         </div>
@@ -49,7 +49,7 @@ const TestimonialsSection = () => {
                   <Quote className="h-8 w-8 text-blue-500 opacity-50" />
                 </div>
                 
-                <p className="text-gray-700 mb-6 leading-relaxed italic" data-translate>
+                <p className="text-gray-700 mb-6 leading-relaxed italic">
                   "{testimonial.content}"
                 </p>
                 
@@ -64,8 +64,8 @@ const TestimonialsSection = () => {
                     {testimonial.name.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-800" data-translate>{testimonial.name}</div>
-                    <div className="text-sm text-gray-500" data-translate>{testimonial.role}</div>
+                    <div className="font-semibold text-gray-800">{testimonial.name}</div>
+                    <div className="text-sm text-gray-500">{testimonial.role}</div>
                   </div>
                 </div>
               </CardContent>

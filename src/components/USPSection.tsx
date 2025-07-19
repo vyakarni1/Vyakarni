@@ -53,10 +53,10 @@ const USPSection = () => {
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4" data-translate>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">
             व्याकरणी को क्यों चुनें?
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto" data-translate>हमारे अनोखे लाभ जो हमें विशेष रूप से स्वीकार्य बनाते हैं।</p>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">हमारे अनोखे लाभ जो हमें विशेष रूप से स्वीकार्य बनाते हैं।</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -71,11 +71,11 @@ const USPSection = () => {
                   </div>
                 </div>
                 
-                <h3 className="text-xl font-bold text-gray-800 mb-4 group-hover:text-blue-600 transition-colors duration-300" data-translate>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 group-hover:text-blue-600 transition-colors duration-300">
                   {usp.title}
                 </h3>
                 
-                <p className="text-gray-600 leading-relaxed" data-translate>
+                <p className="text-gray-600 leading-relaxed">
                   {usp.description}
                 </p>
                 

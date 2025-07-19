@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-import TranslationToggle from "./TranslationToggle";
 
 interface MobileNavigationProps {
   user: any;
@@ -35,33 +34,32 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              <span data-translate data-original="डैशबोर्ड">डैशबोर्ड</span>
+              डैशबोर्ड
             </Link>
             <Link 
               to="/grammar-checker" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              <span data-translate data-original="व्याकरण जाँच">व्याकरण जाँच</span>
+              व्याकरण जाँच
             </Link>
             <Link 
               to="/profile" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              <span data-translate data-original="प्रोफाइल">प्रोफाइल</span>
+              प्रोफाइल
             </Link>
             <Link 
               to="/pricing" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              <span data-translate data-original="प्राइसिंग">प्राइसिंग</span>
+              प्राइसिंग
             </Link>
-            <TranslationToggle variant="mobile" />
             <div className="pt-3 border-t border-gray-200">
               <div className="px-3 py-2 text-sm text-gray-600">
-                <span data-translate data-original="नमस्ते">नमस्ते</span>, {profile?.name || user.email?.split('@')[0]}
+                नमस्ते, {profile?.name || user.email?.split('@')[0]}
               </div>
               <Button 
                 variant="outline" 
@@ -70,7 +68,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
                 className="w-full justify-start mt-2"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                <span data-translate data-original="लॉग आउट">लॉग आउट</span>
+                लॉग आउट
               </Button>
             </div>
           </>
@@ -83,34 +81,33 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
                   className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                   onClick={handleLinkClick}
                 >
-                  <span data-translate data-original="हमारे बारे में">हमारे बारे में</span>
+                  हमारे बारे में
                 </Link>
                 <Link 
                   to="/contact" 
                   className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                   onClick={handleLinkClick}
                 >
-                  <span data-translate data-original="संपर्क">संपर्क</span>
+                  संपर्क
                 </Link>
                 <Link 
                   to="/pricing" 
                   className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                   onClick={handleLinkClick}
                 >
-                  <span data-translate data-original="प्राइसिंग">प्राइसिंग</span>
+                  प्राइसिंग
                 </Link>
               </>
             )}
-            <TranslationToggle variant="mobile" />
             <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
               <Link to="/login" onClick={handleLinkClick}>
                 <Button variant="outline" size="sm" className="w-full transition-all duration-200">
-                  <span data-translate data-original="लॉगिन">लॉगिन</span>
+                  लॉगिन
                 </Button>
               </Link>
               <Link to="/register" onClick={handleLinkClick}>
                 <Button size="sm" className="w-full transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600">
-                  <span data-translate data-original="रजिस्टर करें">रजिस्टर करें</span>
+                  रजिस्टर करयें
                 </Button>
               </Link>
             </div>
