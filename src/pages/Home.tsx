@@ -1,7 +1,8 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import UnifiedNavigation from "@/components/UnifiedNavigation";
 import HeroSection from "@/components/Home/HeroSection";
 import FeaturesSection from "@/components/Home/FeaturesSection";
@@ -18,6 +19,107 @@ import MarqueeBar from "@/components/MarqueeBar";
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [language, setLanguage] = useState<"english" | "hindi">("hindi");
+
+  const hindiContent = {
+    hero: {
+      title: "AI के साथ हिंदी लेखन",
+      subtitle: "सुधारें",
+      description: "आधुनिक AI तकनीक का उपयोग कर अपने हिंदी पाठ को तुरंत सुधारें।",
+      subdescription: "व्याकरण की त्रुटियों को एक क्लिक में ठीक करें।",
+      freeTrialText: "निःशुल्क परीक्षण",
+      quickResultsText: "त्वरित परिणाम",
+      startButtonText: "तत्काल आरम्भ करें"
+    },
+    features: {
+      title: "व्याकरणी की विशेषतायें",
+      description: "हमारी AI-संचालित तकनीक के साथ अपनी हिंदी लेखन क्षमता को श्रेष्ठतर बनायें।",
+      feature1: {
+        title: "तत्काल सुधार",
+        description: "एक क्लिक में व्याकरण की त्रुटियों को त्वरित रूप से दूर करें।"
+      },
+      feature2: {
+        title: "AI संचालित",
+        description: "AI की शक्तिशाली तकनीक से संचालित। अत्याधुनिक AI मॉडल का उपयोग।"
+      },
+      feature3: {
+        title: "निपुण विशेषज्ञ",
+        description: "हिंदी व्याकरण में विशेष रूप से प्रशिक्षित। देवनागरी लिपि में पूर्णतः पारंगत।"
+      },
+      feature4: {
+        title: "सभी डिवाइस पर उपलब्ध",
+        description: "मोबाइल, टैबलेट या कंप्यूटर - कहीं भी, कभी भी उपयोग करें।"
+      }
+    },
+    howItWorks: {
+      title: "व्याकरणी कैसे कार्य करता है?",
+      description: "मात्र तीन सरल चरणों में अपने हिंदी पाठ को सुधारें।",
+      step1: {
+        title: "वेबसाइट पर रजिस्टर करें",
+        description: "निःशुल्क खाता बनायें एवं अविलम्ब कार्य आरम्भ करें। कोई गुप्त शुल्क नहीं।"
+      },
+      step2: {
+        title: "अपना पाठ लिखें",
+        description: "अपने हिंदी पाठ की प्रविष्टि करें एवं तीव्र गति से सुधारा गया परिणाम प्राप्त करें।"
+      },
+      step3: {
+        title: "परिणाम प्राप्त करें",
+        description: "व्याकरण, शब्द-चयन, विराम चिह्न, वाक्य-विन्यास एवं भाषा-सौष्ठव को उन्नत करें।"
+      },
+      buttonText: "अभी प्रयोग करें"
+    }
+  };
+
+  const englishContent = {
+    hero: {
+      title: "Improve Hindi Writing",
+      subtitle: "with AI",
+      description: "Instantly improve your Hindi text using modern AI technology.",
+      subdescription: "Fix grammar errors with one click.",
+      freeTrialText: "Free Trial",
+      quickResultsText: "Quick Results",
+      startButtonText: "Get Started Now"
+    },
+    features: {
+      title: "Vyakarni Features",
+      description: "Enhance your Hindi writing skills with our AI-powered technology.",
+      feature1: {
+        title: "Instant Correction",
+        description: "Quickly fix grammar errors with one click."
+      },
+      feature2: {
+        title: "AI Powered",
+        description: "Powered by advanced AI technology. Uses state-of-the-art AI models."
+      },
+      feature3: {
+        title: "Expert Specialist",
+        description: "Specially trained in Hindi grammar. Fully proficient in Devanagari script."
+      },
+      feature4: {
+        title: "Available on All Devices",
+        description: "Use anywhere, anytime - mobile, tablet, or computer."
+      }
+    },
+    howItWorks: {
+      title: "How Does Vyakarni Work?",
+      description: "Improve your Hindi text in just three simple steps.",
+      step1: {
+        title: "Register on Website",
+        description: "Create a free account and start immediately. No hidden charges."
+      },
+      step2: {
+        title: "Write Your Text",
+        description: "Enter your Hindi text and get improved results at high speed."
+      },
+      step3: {
+        title: "Get Results",
+        description: "Improve grammar, word choice, punctuation, sentence structure, and language elegance."
+      },
+      buttonText: "Try Now"
+    }
+  };
+
+  const currentContent = language === "english" ? englishContent : hindiContent;
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -27,54 +129,74 @@ const Home = () => {
     if (error && errorCode) {
       console.log('Auth error detected:', { error, errorCode, errorDescription });
       
-      // Handle specific error cases
       if (errorCode === 'otp_expired') {
-        toast.error("पासवर्ड रीसेट लिंक की समय सीमा समाप्त हो गई है", {
-          description: "कृपया नया पासवर्ड रीसेट लिंक मांगें",
+        toast.error(language === "english" ? "Password reset link has expired" : "पासवर्ड रीसेट लिंक की समय सीमा समाप्त हो गई है", {
+          description: language === "english" ? "Please request a new password reset link" : "कृपया नया पासवर्ड रीसेट लिंक मांगें",
           action: {
-            label: "नया लिंक मांगें",
+            label: language === "english" ? "Request New Link" : "नया लिंक मांगें",
             onClick: () => navigate('/forgot-password')
           },
           duration: 8000
         });
       } else if (error === 'access_denied') {
-        toast.error("पासवर्ड रीसेट लिंक अमान्य है", {
-          description: "यह लिंक गलत है या इसकी समय सीमा समाप्त हो गई है",
+        toast.error(language === "english" ? "Password reset link is invalid" : "पासवर्ड रीसेट लिंक अमान्य है", {
+          description: language === "english" ? "This link is incorrect or has expired" : "यह लिंक गलत है या इसकी समय सीमा समाप्त हो गई है",
           action: {
-            label: "नया लिंक मांगें",
+            label: language === "english" ? "Request New Link" : "नया लिंक मांगें",
             onClick: () => navigate('/forgot-password')
           },
           duration: 8000
         });
       } else {
-        // Generic auth error
-        toast.error("प्रमाणीकरण त्रुटि", {
-          description: errorDescription || "कुछ गलत हुआ है, कृपया पुनः प्रयास करें",
+        toast.error(language === "english" ? "Authentication Error" : "प्रमाणीकरण त्रुटि", {
+          description: errorDescription || (language === "english" ? "Something went wrong, please try again" : "कुछ गलत हुआ है, कृपया पुनः प्रयास करें"),
           duration: 6000
         });
       }
 
-      // Clean up URL parameters after showing the error
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('error');
       newSearchParams.delete('error_code');
       newSearchParams.delete('error_description');
       
-      // Update URL without these parameters
       setSearchParams(newSearchParams, { replace: true });
     }
-  }, [searchParams, setSearchParams, navigate]);
+  }, [searchParams, setSearchParams, navigate, language]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <UnifiedNavigation variant="home" />
       <MarqueeBar />
+      
+      {/* Language Toggle */}
+      <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
+        <ToggleGroup
+          type="single"
+          value={language}
+          onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
+          className="gap-1"
+        >
+          <ToggleGroupItem
+            value="hindi"
+            className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+          >
+            हिंदी
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="english"
+            className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+          >
+            English
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       <div className="pt-24">
-        <HeroSection />
-        <FeaturesSection />
+        <HeroSection content={currentContent.hero} />
+        <FeaturesSection content={currentContent.features} />
         <USPSection />
         <CounterSection />
-        <HowItWorksSection />
+        <HowItWorksSection content={currentContent.howItWorks} />
         <PricingPreviewSection />
         <TestimonialsSection />
         <FAQSection />

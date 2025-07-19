@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,11 +22,72 @@ interface ContactFormData {
 const Contact = () => {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [language, setLanguage] = useState<"english" | "hindi">("hindi");
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
+
+  const hindiContent = {
+    pageTitle: "हमसे संपर्क करयें",
+    pageDescription: "हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करयें।",
+    sendMessageTitle: "संदेश भेजें",
+    loginRequired: "संदेश भेजने के लिये कृपया लॉगिन करयें",
+    loginButton: "लॉगिन करयें",
+    nameLabel: "पूरा नाम",
+    namePlaceholder: "आपका नाम",
+    nameRequired: "नाम आवश्यक है",
+    emailLabel: "ईमेल पता",
+    emailPlaceholder: "आपका ईमेल",
+    emailRequired: "ईमेल आवश्यक है",
+    emailValid: "वैध ईमेल दर्ज करयें",
+    messageLabel: "संदेश",
+    messagePlaceholder: "आपका संदेश यहाँ लिखें...",
+    messageRequired: "संदेश आवश्यक है",
+    sendButton: "संदेश भेजें",
+    sending: "भेजा जा रहा है...",
+    contactDetailsTitle: "संपर्क हेतु विवरण",
+    workingHoursTitle: "कार्यसमय",
+    mondayFriday: "सोमवार - शुक्रवार",
+    weekend: "शनिवार एवं रविवार",
+    holiday: "अवकाश",
+    holidayNote: "राजपत्रित अवकाशों पर सेवा उपलब्ध नहीं होंगी।",
+    successMessage: "आपका संदेश सफलतापूर्वक भेज दिया गया है! हम जल्द ही आपसे संपर्क करयेंगे।",
+    errorMessage: "संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करयें।",
+    genericError: "कुछ गलत हुआ है। कृपया पुनः प्रयास करयें।"
+  };
+
+  const englishContent = {
+    pageTitle: "Contact Us",
+    pageDescription: "Our team is ready to assist you. Feel free to share your questions or suggestions.",
+    sendMessageTitle: "Send Message",
+    loginRequired: "Please login to send a message",
+    loginButton: "Login",
+    nameLabel: "Full Name",
+    namePlaceholder: "Your name",
+    nameRequired: "Name is required",
+    emailLabel: "Email Address",
+    emailPlaceholder: "Your email",
+    emailRequired: "Email is required",
+    emailValid: "Enter a valid email",
+    messageLabel: "Message",
+    messagePlaceholder: "Write your message here...",
+    messageRequired: "Message is required",
+    sendButton: "Send Message",
+    sending: "Sending...",
+    contactDetailsTitle: "Contact Details",
+    workingHoursTitle: "Working Hours",
+    mondayFriday: "Monday - Friday",
+    weekend: "Saturday & Sunday",
+    holiday: "Closed",
+    holidayNote: "Services will not be available on public holidays.",
+    successMessage: "Your message has been sent successfully! We will contact you soon.",
+    errorMessage: "Error sending message. Please try again.",
+    genericError: "Something went wrong. Please try again."
+  };
+
+  const currentContent = language === "english" ? englishContent : hindiContent;
 
   const onSubmit = async (data: ContactFormData) => {
     if (!user) {
-      toast.error("संदेश भेजने के लिये कृपया लॉगिन करयें");
+      toast.error(currentContent.loginRequired);
       return;
     }
 
@@ -42,15 +104,15 @@ const Contact = () => {
 
       if (error) {
         console.error('Error submitting contact form:', error);
-        toast.error("संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करयें।");
+        toast.error(currentContent.errorMessage);
         return;
       }
 
-      toast.success("आपका संदेश सफलतापूर्वक भेज दिया गया है! हम जल्द ही आपसे संपर्क करयेंगे।");
+      toast.success(currentContent.successMessage);
       reset();
     } catch (error) {
       console.error('Error in contact form submission:', error);
-      toast.error("कुछ गलत हुआ है। कृपया पुनः प्रयास करयें।");
+      toast.error(currentContent.genericError);
     } finally {
       setIsSubmitting(false);
     }
@@ -59,13 +121,36 @@ const Contact = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* Language Toggle */}
+        <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
+          <ToggleGroup
+            type="single"
+            value={language}
+            onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
+            className="gap-1"
+          >
+            <ToggleGroupItem
+              value="hindi"
+              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+            >
+              हिंदी
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="english"
+              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+            >
+              English
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              हमसे संपर्क करयें
+              {currentContent.pageTitle}
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करयें।
+              {currentContent.pageDescription}
             </p>
           </div>
 
@@ -75,25 +160,25 @@ const Contact = () => {
               <CardHeader>
                 <CardTitle className="text-2xl text-gray-900 flex items-center">
                   <Send className="mr-2 h-6 w-6" />
-                  संदेश भेजें
+                  {currentContent.sendMessageTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {!user ? (
                   <div className="text-center py-8">
-                    <p className="text-gray-600 mb-4">संदेश भेजने के लिये कृपया लॉगिन करयें</p>
+                    <p className="text-gray-600 mb-4">{currentContent.loginRequired}</p>
                     <Button asChild>
-                      <a href="/login">लॉगिन करयें</a>
+                      <a href="/login">{currentContent.loginButton}</a>
                     </Button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div>
-                      <Label htmlFor="name">पूरा नाम</Label>
+                      <Label htmlFor="name">{currentContent.nameLabel}</Label>
                       <Input
                         id="name"
-                        {...register("name", { required: "नाम आवश्यक है" })}
-                        placeholder="आपका नाम"
+                        {...register("name", { required: currentContent.nameRequired })}
+                        placeholder={currentContent.namePlaceholder}
                         className="mt-1"
                       />
                       {errors.name && (
@@ -102,18 +187,18 @@ const Contact = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="email">ईमेल पता</Label>
+                      <Label htmlFor="email">{currentContent.emailLabel}</Label>
                       <Input
                         id="email"
                         type="email"
                         {...register("email", { 
-                          required: "ईमेल आवश्यक है",
+                          required: currentContent.emailRequired,
                           pattern: {
                             value: /^\S+@\S+$/i,
-                            message: "वैध ईमेल दर्ज करयें"
+                            message: currentContent.emailValid
                           }
                         })}
-                        placeholder="आपका ईमेल"
+                        placeholder={currentContent.emailPlaceholder}
                         className="mt-1"
                       />
                       {errors.email && (
@@ -122,11 +207,11 @@ const Contact = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="message">संदेश</Label>
+                      <Label htmlFor="message">{currentContent.messageLabel}</Label>
                       <Textarea
                         id="message"
-                        {...register("message", { required: "संदेश आवश्यक है" })}
-                        placeholder="आपका संदेश यहाँ लिखें..."
+                        {...register("message", { required: currentContent.messageRequired })}
+                        placeholder={currentContent.messagePlaceholder}
                         rows={6}
                         className="mt-1"
                       />
@@ -140,7 +225,7 @@ const Contact = () => {
                       className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" 
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? "भेजा जा रहा है..." : "संदेश भेजें"}
+                      {isSubmitting ? currentContent.sending : currentContent.sendButton}
                     </Button>
                   </form>
                 )}
@@ -151,7 +236,7 @@ const Contact = () => {
             <div className="space-y-8">
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900">संपर्क हेतु विवरण</CardTitle>
+                  <CardTitle className="text-2xl text-gray-900">{currentContent.contactDetailsTitle}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center space-x-4">
@@ -159,7 +244,9 @@ const Contact = () => {
                       <Mail className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">ईमेल</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {language === "english" ? "Email" : "ईमेल"}
+                      </h3>
                       <p className="text-gray-600">support@vyakarni.com</p>
                     </div>
                   </div>
@@ -169,7 +256,9 @@ const Contact = () => {
                       <Phone className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">फोन</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {language === "english" ? "Phone" : "फोन"}
+                      </h3>
                       <p className="text-gray-600">+91 98765 43210</p>
                     </div>
                   </div>
@@ -179,9 +268,11 @@ const Contact = () => {
                       <MapPin className="h-6 w-6 text-purple-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">पता</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {language === "english" ? "Address" : "पता"}
+                      </h3>
                       <p className="text-gray-600">
-                        व्याकरणी, सेक्टर 143, नॉएडा
+                        {language === "english" ? "Vyakarni, Sector 143, Noida" : "व्याकरणी, सेक्टर 143, नॉएडा"}
                       </p>
                     </div>
                   </div>
@@ -190,20 +281,20 @@ const Contact = () => {
 
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900">कार्यसमय</CardTitle>
+                  <CardTitle className="text-2xl text-gray-900">{currentContent.workingHoursTitle}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">सोमवार - शुक्रवार</span>
+                      <span className="text-gray-600">{currentContent.mondayFriday}</span>
                       <span className="font-semibold">10:00 AM - 6:00 PM</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">शनिवार एवं रविवार</span>
-                      <span className="font-semibold">अवकाश</span>
+                      <span className="text-gray-600">{currentContent.weekend}</span>
+                      <span className="font-semibold">{currentContent.holiday}</span>
                     </div>
                     <div className="mt-4 text-sm text-gray-500">
-                      राजपत्रित अवकाशों पर सेवा उपलब्ध नहीं होंगी।
+                      {currentContent.holidayNote}
                     </div>
                   </div>
                 </CardContent>
