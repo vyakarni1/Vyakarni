@@ -96,6 +96,13 @@ const About = () => {
 
   const currentContent = language === "english" ? englishContent : hindiContent;
 
+  // Team member images
+  const teamImages = [
+    "/lovable-uploads/photo-1649972904349-6e44c42644a7", // First team member
+    "/lovable-uploads/photo-1581091226825-a6a2a5aee158", // Second team member  
+    "/lovable-uploads/photo-1581092795360-fd1ca04f0952", // Third team member
+  ];
+
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -269,7 +276,13 @@ const About = () => {
                   className="text-center hover:shadow-2xl transition-all duration-300 border-blue-100 group bg-white/70"
                 >
                   <CardHeader className="flex flex-col items-center">
-                    <User className="h-16 w-16 text-purple-600 mb-4 rounded-full bg-purple-100 p-4 group-hover:scale-105 transition-transform" />
+                    <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-105 transition-transform">
+                      <img 
+                        src={teamImages[idx]} 
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <CardTitle className="text-2xl font-semibold text-blue-700 mb-1">{member.name}</CardTitle>
                     <div className="text-md text-purple-700 mb-2 font-medium">{member.title}</div>
                   </CardHeader>
