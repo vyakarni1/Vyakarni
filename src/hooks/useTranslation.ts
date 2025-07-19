@@ -3,10 +3,15 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
+interface TranslationCache {
+  [key: string]: string;
+}
+
 export const useTranslation = () => {
   const [isTranslated, setIsTranslated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(true);
+  const [translationCache, setTranslationCache] = useState<TranslationCache>({});
   const location = useLocation();
 
   // Routes to exclude from translation
@@ -21,6 +26,11 @@ export const useTranslation = () => {
       // Apply translation to current page after a short delay
       setTimeout(() => translatePageContent('en'), 100);
     }
+  }, [location.pathname]);
+
+  // Clear cache when route changes
+  useEffect(() => {
+    setTranslationCache({});
   }, [location.pathname]);
 
   // Selectors for elements to translate (excluding inputs, code, etc.)
@@ -58,7 +68,7 @@ export const useTranslation = () => {
       if (hasChildElements && !element.hasAttribute('data-translate')) {
         // Only translate if it has direct text content
         const directText = Array.from(element.childNodes)
-          .filter(node => node.nodeType === Node.TEXT_NODE)
+          .filter((node): node is ChildNode => node.nodeType === Node.TEXT_NODE)
           .map(node => node.textContent?.trim())
           .join('').trim();
         return directText.length > 0;
@@ -66,6 +76,43 @@ export const useTranslation = () => {
       
       return true;
     });
+  };
+
+  const translateText = async (text: string, targetLanguage: 'hi' | 'en'): Promise<string> => {
+    const cacheKey = `${text}_${targetLanguage}`;
+    
+    // Return cached translation if available
+    if (translationCache[cacheKey]) {
+      return translationCache[cacheKey];
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('translate-text', {
+        body: {
+          text: text.trim(),
+          targetLanguage,
+          sourceLanguage: targetLanguage === 'en' ? 'hi' : 'en'
+        }
+      });
+
+      if (error) {
+        console.error('Translation error:', error);
+        return text;
+      }
+
+      const translatedText = data?.translatedText || text;
+      
+      // Cache the translation
+      setTranslationCache(prev => ({
+        ...prev,
+        [cacheKey]: translatedText
+      }));
+      
+      return translatedText;
+    } catch (error) {
+      console.error('Translation request failed:', error);
+      return text;
+    }
   };
 
   const translatePageContent = async (targetLanguage: 'hi' | 'en') => {
@@ -77,15 +124,15 @@ export const useTranslation = () => {
       const elementsToTranslate = getTranslatableElements();
       console.log(`Found ${elementsToTranslate.length} elements to translate`);
       
-      // Group elements into batches for better performance
-      const batchSize = 5; // Reduced batch size to minimize conflicts
+      // Process elements in smaller batches to avoid overwhelming the API
+      const batchSize = 3;
       const batches = [];
       for (let i = 0; i < elementsToTranslate.length; i += batchSize) {
         batches.push(elementsToTranslate.slice(i, i + batchSize));
       }
       
       for (const batch of batches) {
-        await Promise.all(batch.map(async (element) => {
+        const promises = batch.map(async (element) => {
           // Skip if element is no longer in the DOM
           if (!document.contains(element)) {
             return;
@@ -104,72 +151,57 @@ export const useTranslation = () => {
               }
             }
 
-            try {
-              const { data, error } = await supabase.functions.invoke('translate-text', {
-                body: {
-                  text: originalText.trim(),
-                  targetLanguage,
-                  sourceLanguage: targetLanguage === 'en' ? 'hi' : 'en'
-                }
-              });
-
-              if (error) {
-                console.error('Translation error:', error);
-                return;
-              }
-
-              if (data?.translatedText) {
-                // Use requestAnimationFrame to avoid conflicts with React's rendering
-                requestAnimationFrame(() => {
-                  // Final check that element is still in DOM
-                  if (!document.contains(element)) {
-                    return;
-                  }
-
-                  try {
-                    // Avoid manipulating elements with children to prevent React conflicts
-                    if (element.children.length === 0) {
-                      element.textContent = data.translatedText;
-                    } else {
-                      // For elements with children, only modify if they have direct text content
-                      const hasDirectText = Array.from(element.childNodes).some(
-                        (node): node is ChildNode => (node as ChildNode).nodeType === Node.TEXT_NODE && (node as ChildNode).textContent?.trim() !== ''
-                      );
-                      
-                      if (hasDirectText) {
-                        // Create a safe wrapper to avoid React conflicts
-                        const textSpan = document.createElement('span');
-                        textSpan.textContent = data.translatedText;
-                        textSpan.setAttribute('data-translation', 'true');
-                        
-                        // Replace text nodes more safely
-                        Array.from(element.childNodes).forEach((node) => {
-                          const childNode = node as ChildNode;
-                          if (childNode.nodeType === Node.TEXT_NODE && childNode.textContent?.trim()) {
-                            try {
-                              if (document.contains(childNode) && childNode.parentNode === element) {
-                                element.replaceChild(textSpan.cloneNode(true), childNode);
-                              }
-                            } catch (replaceError) {
-                              console.warn('Safe text replacement failed:', replaceError);
-                            }
-                          }
-                        });
+            const translatedText = await translateText(originalText, targetLanguage);
+            
+            // Use a much safer approach that avoids replaceChild
+            if (document.contains(element) && translatedText !== originalText) {
+              try {
+                // Only update text content for simple elements
+                if (element.children.length === 0) {
+                  element.textContent = translatedText;
+                } else {
+                  // For complex elements, use a data attribute approach
+                  element.setAttribute('data-translated-text', translatedText);
+                  
+                  // Use CSS to show translated text (safer than DOM manipulation)
+                  if (!document.querySelector('#translation-styles')) {
+                    const styleSheet = document.createElement('style');
+                    styleSheet.id = 'translation-styles';
+                    styleSheet.textContent = `
+                      [data-translated-text]:not([data-translate]) {
+                        position: relative;
                       }
-                    }
-                  } catch (domError) {
-                    console.warn('DOM modification failed:', domError);
+                      [data-translated-text]:not([data-translate])::before {
+                        content: attr(data-translated-text);
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: inherit;
+                        color: inherit;
+                        font: inherit;
+                        z-index: 1;
+                        pointer-events: none;
+                      }
+                      [data-translated-text]:not([data-translate]) * {
+                        visibility: hidden;
+                      }
+                    `;
+                    document.head.appendChild(styleSheet);
                   }
-                });
+                }
+              } catch (domError) {
+                console.warn('Safe text update failed:', domError);
               }
-            } catch (error) {
-              console.error('Translation request failed:', error);
             }
           }
-        }));
+        });
+
+        await Promise.all(promises);
         
-        // Longer delay between batches to reduce conflicts
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // Longer delay between batches to ensure stability
+        await new Promise(resolve => setTimeout(resolve, 300));
       }
     } catch (error) {
       console.error('Translation process failed:', error);
@@ -184,6 +216,16 @@ export const useTranslation = () => {
     console.log('Toggling translation, current state:', isTranslated);
     
     const newLanguage = isTranslated ? 'hi' : 'en';
+    
+    // Clean up any existing translation styles
+    const existingStyles = document.querySelector('#translation-styles');
+    if (existingStyles && newLanguage === 'hi') {
+      existingStyles.remove();
+      // Restore original text for complex elements
+      document.querySelectorAll('[data-translated-text]').forEach(element => {
+        element.removeAttribute('data-translated-text');
+      });
+    }
     
     await translatePageContent(newLanguage);
     
