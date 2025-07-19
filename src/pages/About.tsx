@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star, Mail } from "lucide-react";
+import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star, Mail, User } from "lucide-react";
 import Layout from "@/components/Layout";
 
 const About = () => {
@@ -19,6 +20,8 @@ const About = () => {
     missionVisionDesc: "हिंदी भाषा में लोगों की अभिव्यक्ति की क्षमता में वृद्धि करने वाला एक आधुनिक डिजिटल प्लेटफार्म निर्मित कर उसे लोगों के प्रयोग हेतु एक सशक्त विकल्प के रूप में प्रस्तुत करना।",
     missionTitle: "हमारा ध्येय",
     visionTitle: "हमारा दृष्टिकोण",
+    teamTitle: "हमारी टीम",
+    teamDesc: "व्याकरणी के पीछे समर्पित और अनुभवी व्यक्तियों की टीम",
     coreValuesTitle: "हमारी मूल्य-प्रणाली",
     coreValuesDesc: "हिंदी भाषा के प्रति हमारी प्रतिबद्धता को व्यक्त करने वाले कुछ कारक",
     achievementsTitle: "हमारी उपलब्धियाँ",
@@ -29,7 +32,24 @@ const About = () => {
     joinUsText1: "व्याकरणी हमारे लिये एक अभियान है। एक ऐसा अभियान, जिसके माध्यम से हम लोगों को हिंदी भाषा में दक्ष संवाद करने हेतु प्रोत्साहित करेंगे। 'सर्वजन हिताय' की मूल भावना के साथ प्रारंभ किया गया यह अभियान सर्वजन के सहयोग की अनुपस्थिति में पूर्ण न हो सकेगा।",
     joinUsText2: "व्याकरणी के इस महा-अभियान से किसी भी रूप में जुड़ने के लिये आप हमें हमारे ई-मेल support@vyakarni.com पर संपर्क कर सकते हैं।",
     getStartedButton: "तत्काल आरम्भ करें",
-    joinCampaignButton: "व्याकरणी अभियान में जुड़ें"
+    joinCampaignButton: "व्याकरणी अभियान में जुड़ें",
+    team: [
+      {
+        name: "सत्येन श्रीवास्तव",
+        title: "संस्थापक एवं मुख्य कार्यकारी अधिकारी",
+        bio: "AI तकनीक, उत्पाद नवाचार एवं हिंदी भाषा के प्रचार-प्रसार में गहरी विशेषज्ञता। हिंदी AI के क्षेत्र में अग्रणी।"
+      },
+      {
+        name: "आराध्या वर्मा",
+        title: "तकनीकी निदेशक",
+        bio: "मशीन लर्निंग, क्लाउड आर्किटेक्चर और सिस्टम डिजाइन में विशेषज्ञता। उत्कृष्टता के साथ प्लेटफॉर्म निर्माण।"
+      },
+      {
+        name: "राजीव रंजन",
+        title: "भाषा विशेषज्ञ",
+        bio: "हिंदी व्याकरण, साहित्य और भाषा शुद्धि के क्षेत्र में विख्यात। टीम को भाषाई गुणवत्ता एवं उत्कृष्टता की दिशा में मार्गदर्शन।"
+      }
+    ]
   };
 
   const englishContent = {
@@ -41,7 +61,9 @@ const About = () => {
     missionVisionTitle: "Our Mission and Vision",
     missionVisionDesc: "To create a modern digital platform that enhances people's expression capabilities in Hindi and present it as a powerful alternative for people's use.",
     missionTitle: "Our Mission",
-    visionTitle: "Our Vision", 
+    visionTitle: "Our Vision",
+    teamTitle: "Our Team",
+    teamDesc: "A dedicated and experienced team behind Vyakarni",
     coreValuesTitle: "Our Core Values",
     coreValuesDesc: "Some factors that express our commitment to the Hindi language",
     achievementsTitle: "Our Achievements",
@@ -52,7 +74,24 @@ const About = () => {
     joinUsText1: "Vyakarni is a campaign for us. A campaign through which we will encourage people to communicate skillfully in Hindi. This campaign, started with the core spirit of 'for the welfare of all', cannot be completed without the cooperation of everyone.",
     joinUsText2: "To join this great campaign of Vyakarni in any form, you can contact us at our email support@vyakarni.com.",
     getStartedButton: "Get Started Now",
-    joinCampaignButton: "Join Vyakarni Campaign"
+    joinCampaignButton: "Join Vyakarni Campaign",
+    team: [
+      {
+        name: "Satyen Srivastava",
+        title: "Founder & Chief Executive Officer",
+        bio: "Expert in AI technology, product innovation and promotion of Hindi language. A pioneer in Hindi AI."
+      },
+      {
+        name: "Aradhya Verma",
+        title: "Technical Director",
+        bio: "Expertise in machine learning, cloud architecture and system design. Building the platform with excellence."
+      },
+      {
+        name: "Rajeev Ranjan",
+        title: "Language Expert",
+        bio: "Renowned in the field of Hindi grammar, literature and linguistic purity. Guides the team in linguistic quality and excellence."
+      }
+    ]
   };
 
   const currentContent = language === "english" ? englishContent : hindiContent;
@@ -216,56 +255,34 @@ const About = () => {
           </div>
         </section>
         
-{/* Team Section */}
-<section className="py-16 bg-gradient-to-br from-purple-50 via-white to-blue-50">
-  <div className="container mx-auto px-6">
-    <div className="text-center mb-12">
-      <h2 className="text-4xl font-bold mb-4 text-gray-800">{currentContent.teamTitle || (language === "english" ? "Our Team" : "हमारी टीम")}</h2>
-      <p className="text-xl text-gray-600">{currentContent.teamDesc || (language === "english" ? "A dedicated and experienced team behind Vyakarni" : "व्याकरणी के पीछे समर्पित और अनुभवी व्यक्तियों की टीम")}</p>
-    </div>
-    <div className="grid md:grid-cols-3 gap-8">
-      {(currentContent.team || [
-        {
-          name: language === "english" ? "Satyen Srivastava" : "सत्येन श्रीवास्तव",
-          title: language === "english" ? "Founder & Chief Executive Officer" : "संस्थापक एवं मुख्य कार्यकारी अधिकारी",
-          bio: language === "english"
-            ? "Expert in AI technology, product innovation and promotion of Hindi language. A pioneer in Hindi AI."
-            : "AI तकनीक, उत्पाद नवाचार एवं हिंदी भाषा के प्रचार-प्रसार में गहरी विशेषज्ञता। हिंदी AI के क्षेत्र में अग्रणी।"
-        },
-        {
-          name: language === "english" ? "Aradhya Verma" : "आराध्या वर्मा",
-          title: language === "english" ? "Technical Director" : "तकनीकी निदेशक",
-          bio: language === "english"
-            ? "Expertise in machine learning, cloud architecture and system design. Building the platform with excellence."
-            : "मशीन लर्निंग, क्लाउड आर्किटेक्चर और सिस्टम डिजाइन में विशेषज्ञता। उत्कृष्टता के साथ प्लेटफॉर्म निर्माण।"
-        },
-        {
-          name: language === "english" ? "Rajeev Ranjan" : "राजीव रंजन",
-          title: language === "english" ? "Language Expert" : "भाषा विशेषज्ञ",
-          bio: language === "english"
-            ? "Renowned in the field of Hindi grammar, literature and linguistic purity. Guides the team in linguistic quality and excellence."
-            : "हिंदी व्याकरण, साहित्य और भाषा शुद्धि के क्षेत्र में विख्यात। टीम को भाषाई गुणवत्ता एवं उत्कृष्टता की दिशा में मार्गदर्शन।"
-        }
-      ]).map((member, idx) => (
-        <Card
-          key={member.name}
-          className="text-center hover:shadow-2xl transition-all duration-300 border-blue-100 group bg-white/70"
-        >
-          <CardHeader className="flex flex-col items-center">
-            <User className="h-16 w-16 text-purple-600 mb-4 rounded-full bg-purple-100 p-4 group-hover:scale-105 transition-transform" />
-            <CardTitle className="text-2xl font-semibold text-blue-700 mb-1">{member.name}</CardTitle>
-            <div className="text-md text-purple-700 mb-2 font-medium">{member.title}</div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600 text-base leading-relaxed">
-              {member.bio}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  </div>
-</section>
+        {/* Team Section */}
+        <section className="py-16 bg-gradient-to-br from-purple-50 via-white to-blue-50">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4 text-gray-800">{currentContent.teamTitle}</h2>
+              <p className="text-xl text-gray-600">{currentContent.teamDesc}</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {currentContent.team.map((member, idx) => (
+                <Card
+                  key={member.name}
+                  className="text-center hover:shadow-2xl transition-all duration-300 border-blue-100 group bg-white/70"
+                >
+                  <CardHeader className="flex flex-col items-center">
+                    <User className="h-16 w-16 text-purple-600 mb-4 rounded-full bg-purple-100 p-4 group-hover:scale-105 transition-transform" />
+                    <CardTitle className="text-2xl font-semibold text-blue-700 mb-1">{member.name}</CardTitle>
+                    <div className="text-md text-purple-700 mb-2 font-medium">{member.title}</div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 text-base leading-relaxed">
+                      {member.bio}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* Core Values */}
         <section className="py-16 bg-gradient-to-r from-gray-50 to-blue-50">
