@@ -40,14 +40,14 @@ const About = () => {
         bio: "AI तकनीक, उत्पाद नवाचार एवं हिंदी भाषा के प्रचार-प्रसार में गहरी विशेषज्ञता। हिंदी AI के क्षेत्र में अग्रणी।"
       },
       {
-        name: "आराध्या वर्मा",
+        name: "डा. शुभा जैन",
         title: "तकनीकी निदेशक",
-        bio: "मशीन लर्निंग, क्लाउड आर्किटेक्चर और सिस्टम डिजाइन में विशेषज्ञता। उत्कृष्टता के साथ प्लेटफॉर्म निर्माण।"
+        bio: "सिस्टम डिजाइन में विशेषज्ञता। उत्कृष्टता के साथ प्लेटफॉर्म निर्माण।टीम को भाषाई गुणवत्ता एवं उत्कृष्टता की दिशा में मार्गदर्शन।"
       },
       {
-        name: "राजीव रंजन",
-        title: "भाषा विशेषज्ञ",
-        bio: "हिंदी व्याकरण, साहित्य और भाषा शुद्धि के क्षेत्र में विख्यात। टीम को भाषाई गुणवत्ता एवं उत्कृष्टता की दिशा में मार्गदर्शन।"
+        name: "अमिताभ श्रीवास्तव",
+        title: "वरिष्ठ AI डेवलपर",
+        bio: "AI अनुसंधान और उन्नत तकनीकी विकास में विशेषज्ञता रखने वाले वरिष्ठ AI डेवलपर। मशीन लर्निंग और क्लाउड आर्किटेक्चर में विशेषज्ञता।"
       }
     ]
   };
@@ -79,17 +79,17 @@ const About = () => {
       {
         name: "Satyen Srivastava",
         title: "Founder & Chief Executive Officer",
-        bio: "Expert in AI technology, product innovation and promotion of Hindi language. A pioneer in Hindi AI."
+        bio: "Expertise in AI technology, product innovation, and promotion of the Hindi language. A pioneer in the field of Hindi AI."
       },
       {
-        name: "Aradhya Verma",
+        name: "Dr. Shubha Jain",
         title: "Technical Director",
-        bio: "Expertise in machine learning, cloud architecture and system design. Building the platform with excellence."
+        bio: "Expert in system design. Building platforms with excellence. Guides the team towards linguistic quality and excellence."
       },
       {
-        name: "Rajeev Ranjan",
-        title: "Language Expert",
-        bio: "Renowned in the field of Hindi grammar, literature and linguistic purity. Guides the team in linguistic quality and excellence."
+        name: "Amitabh Srivastav",
+        title: "Senior AI Developer",
+        bio: "Senior AI developer with expertise in AI research and advanced technological development. Specialist in machine learning and cloud architecture."
       }
     ]
   };
