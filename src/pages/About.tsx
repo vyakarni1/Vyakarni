@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star, Mail, User, AlertTriangle, XCircle, Briefcase, PenTool, Building, Server, Rocket } from "lucide-react";
+import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star, Mail, User, AlertTriangle, XCircle, Briefcase, PenTool, Building, Server, Rocket, Settings, Handshake, Cpu, Cloud, Scale, RefreshCw } from "lucide-react";
 import Layout from "@/components/Layout";
 
 const About = () => {
