@@ -25,7 +25,7 @@ serve(async (req) => {
       throw new Error('XAI API key not configured');
     }
 
-    console.log(`Processing text with Grok-3 for grammar correction`);
+    console.log(`Processing text with Vyakarni for grammar correction`);
 
     // Try different Grok-3 model names as per X.AI documentation
     const modelNames = ['grok-3', 'grok-3-fast', 'grok-3-beta'];
