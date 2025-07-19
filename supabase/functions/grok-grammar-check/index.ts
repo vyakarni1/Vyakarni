@@ -15,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { inputText, userTier = 'free' } = await req.json();
+    const { inputText } = await req.json();
 
     if (!inputText) {
       throw new Error('Input text is required');
@@ -25,15 +25,7 @@ serve(async (req) => {
       throw new Error('XAI API key not configured');
     }
 
-    // Dynamic word limit based on user tier
-    const wordLimit = userTier === 'paid' ? 1000 : 100;
-    const wordCount = inputText.trim().split(/\s+/).length;
-    
-    if (wordCount > wordLimit) {
-      throw new Error(`Text exceeds ${wordLimit} word limit for ${userTier} users. Current text has ${wordCount} words.`);
-    }
-
-    console.log(`Processing ${wordCount} words with Grok-3 for ${userTier} user`);
+    console.log(`Processing text with Grok-3 for grammar correction`);
 
     // Try different Grok-3 model names as per X.AI documentation
     const modelNames = ['grok-3', 'grok-3-fast', 'grok-3-beta'];
@@ -55,11 +47,9 @@ serve(async (req) => {
             messages: [
               {
                 role: 'system',
-                content: `You are an expert Hindi grammar correction AI.
+                content: `You are an expert Hindi grammar correction AI. Your task is to correct grammatical errors in Hindi text.
 
-Your task: Correct ONLY grammatical errors in the given Hindi text.
-
-CORRECTION RULES:
+Rules:
 1. Fix grammar mistakes (व्याकरण की त्रुटियाँ)
 2. Fix spelling errors (वर्तनी की गलतियाँ) 
 3. Fix punctuation errors (विराम चिह्न की त्रुटियाँ)
@@ -72,22 +62,7 @@ DO NOT:
 - Convert between formal/informal pronouns without grammatical necessity
 - Make stylistic changes
 
-OUTPUT FORMAT:
-Return a JSON object with this exact structure:
-{
-  "correctedText": "The fully corrected Hindi text here",
-  "corrections": [
-    {
-      "incorrect": "गलत शब्द या वाक्यांश",
-      "correct": "सही शब्द या वाक्यांश",
-      "reason": "सुधार का कारण हिंदी में",
-      "type": "grammar|spelling|punctuation|syntax",
-      "source": "ai"
-    }
-  ]
-}
-
-Return ONLY the JSON object, no additional text.`
+Return only the corrected Hindi text, nothing else.`
               },
               {
                 role: 'user',
@@ -126,36 +101,17 @@ Return ONLY the JSON object, no additional text.`
       throw new Error('Invalid response structure from Grok API');
     }
     
-    const aiResponse = data.choices[0].message.content?.trim();
+    const correctedText = data.choices[0].message.content?.trim();
     
-    if (!aiResponse) {
+    if (!correctedText) {
       console.error('No content in response:', data.choices[0].message);
       throw new Error('No corrected text received from Grok API');
     }
 
-    // Parse JSON response
-    let parsedResponse;
-    try {
-      const cleanedResponse = aiResponse.replace(/```json\s*|\s*```/g, '');
-      parsedResponse = JSON.parse(cleanedResponse);
-    } catch (parseError) {
-      console.error('Failed to parse AI response as JSON:', parseError);
-      console.error('AI response was:', aiResponse);
-      
-      // Fallback: treat entire response as corrected text
-      parsedResponse = {
-        correctedText: aiResponse,
-        corrections: []
-      };
-    }
-
-    const { correctedText, corrections = [] } = parsedResponse;
-    
-    console.log(`Grok correction completed: ${corrections.length} AI corrections found`);
+    console.log(`Grok correction completed successfully`);
 
     return new Response(JSON.stringify({ 
-      correctedText,
-      corrections: corrections.map(c => ({ ...c, source: 'ai' }))
+      correctedText
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

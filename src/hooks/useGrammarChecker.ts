@@ -1,24 +1,22 @@
 
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
-import { useRobustHighlighting } from "@/hooks/useRobustHighlighting";
-import { useGrokStyleProcessing } from "@/hooks/useGrokStyleProcessing";
 import { useProgressManagement } from "@/hooks/useProgressManagement";
 import { useTextOperations } from "@/hooks/useTextOperations";
-import { useEnhancedGrammarChecker } from "@/hooks/useEnhancedGrammarChecker";
+import { useSimplifiedGrammarChecker } from "@/hooks/useSimplifiedGrammarChecker";
+import { useSimplifiedStyleProcessing } from "@/hooks/useSimplifiedStyleProcessing";
 
 export const useGrammarChecker = () => {
   const { trackUsage } = useUsageStats();
-  const highlighting = useRobustHighlighting();
   
   const progressManagement = useProgressManagement();
   const textOperations = useTextOperations();
   
-  const grammarProcessing = useEnhancedGrammarChecker({
+  const grammarProcessing = useSimplifiedGrammarChecker({
     onProgressUpdate: progressManagement.updateProgress
   });
   
-  const styleProcessing = useGrokStyleProcessing({
+  const styleProcessing = useSimplifiedStyleProcessing({
     onProgressUpdate: progressManagement.updateProgress
   });
 
@@ -71,7 +69,6 @@ export const useGrammarChecker = () => {
     grammarProcessing.resetGrammarData();
     styleProcessing.resetStyleData();
     progressManagement.resetProgressState();
-    highlighting.clearHighlight();
   };
 
   const copyToClipboard = async () => {
@@ -87,11 +84,6 @@ export const useGrammarChecker = () => {
       : grammarProcessing.correctedText;
   };
 
-  // Get current corrections based on processing mode
-  const currentCorrections = textOperations.processingMode === 'style' 
-    ? styleProcessing.corrections 
-    : grammarProcessing.getAllCorrections();
-
   const wordCount = textOperations.getWordCount(textOperations.inputText);
   const charCount = textOperations.getCharCount(textOperations.inputText);
 
@@ -104,15 +96,20 @@ export const useGrammarChecker = () => {
     processingMode: textOperations.processingMode,
     progress: progressManagement.progress,
     currentStage: progressManagement.currentStage,
-    corrections: currentCorrections,
-    aiCorrections: grammarProcessing.aiCorrections,
-    dictionaryCorrections: grammarProcessing.dictionaryCorrections,
+    corrections: [], // No corrections tracking in simplified version
+    aiCorrections: [], // No AI corrections tracking
+    dictionaryCorrections: [], // No dictionary corrections tracking
     correctGrammar,
     enhanceStyle,
     resetText,
     copyToClipboard,
     getCurrentProcessedText,
-    highlighting,
+    highlighting: { // Empty highlighting object
+      segments: [],
+      highlightedIndex: null,
+      highlightCorrection: () => {},
+      clearHighlight: () => {}
+    },
     wordCount,
     charCount
   };

@@ -6,17 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { EnhancedProgress } from "@/components/ui/enhanced-progress";
 import { FloatingDots } from "@/components/ui/floating-dots";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CheckCircle, Copy, ArrowRight, Sparkles, Zap, BookOpen, Brain } from "lucide-react";
-import { Correction, ProcessingMode } from "@/types/grammarChecker";
+import { CheckCircle, Copy, ArrowRight, Sparkles, Zap } from "lucide-react";
+import { ProcessingMode } from "@/types/grammarChecker";
 import { useEnhancedLoading } from "@/hooks/useEnhancedLoading";
-import CorrectionsDropdown from './CorrectionsDropdown';
 
 interface CorrectedTextPanelProps {
   correctedText: string;
   enhancedText: string;
-  corrections: Correction[];
-  aiCorrections?: Correction[];
-  dictionaryCorrections?: Correction[];
   isLoading: boolean;
   processingMode: ProcessingMode;
   progress: number;
@@ -27,9 +23,6 @@ interface CorrectedTextPanelProps {
 const CorrectedTextPanel = ({ 
   correctedText,
   enhancedText,
-  corrections, 
-  aiCorrections = [],
-  dictionaryCorrections = [],
   isLoading, 
   processingMode,
   progress, 
@@ -75,22 +68,6 @@ const CorrectedTextPanel = ({
             <span className="sm:hidden">{isGrammarMode ? "सुधारा गया" : "शैली सुधारा"}</span>
           </CardTitle>
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* AI Corrections Badge */}
-            {isGrammarMode && aiCorrections.length > 0 && (
-              <Badge variant="secondary" className="bg-blue-100/20 text-white border-0 px-2 sm:px-3 py-1 text-xs flex items-center gap-1">
-                <Brain className="h-3 w-3" />
-                {aiCorrections.length} AI
-              </Badge>
-            )}
-            
-            {/* Dictionary Corrections Badge */}
-            {isGrammarMode && dictionaryCorrections.length > 0 && (
-              <Badge variant="secondary" className="bg-green-100/20 text-white border-0 px-2 sm:px-3 py-1 text-xs flex items-center gap-1">
-                <BookOpen className="h-3 w-3" />
-                {dictionaryCorrections.length} शब्दकोश
-              </Badge>
-            )}
-            
             {currentText && (
               <Badge variant="secondary" className="bg-white/20 text-white border-0 px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
                 {wordCount} शब्द
@@ -98,17 +75,6 @@ const CorrectedTextPanel = ({
             )}
           </div>
         </div>
-        
-        {/* Enhanced Corrections Dropdown */}
-        {isGrammarMode && (aiCorrections.length > 0 || dictionaryCorrections.length > 0) && (
-          <div className="mt-4 flex justify-end">
-            <CorrectionsDropdown 
-              aiCorrections={aiCorrections}
-              dictionaryCorrections={dictionaryCorrections}
-              corrections={corrections}
-            />
-          </div>
-        )}
       </CardHeader>
       
       <CardContent className="p-4 sm:p-8 flex-1 flex flex-col relative z-10">

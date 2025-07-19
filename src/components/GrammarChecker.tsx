@@ -16,14 +16,10 @@ const GrammarChecker = memo(() => {
     processingMode,
     progress,
     currentStage,
-    corrections,
-    aiCorrections,
-    dictionaryCorrections,
     correctGrammar,
     enhanceStyle,
     resetText,
     copyToClipboard,
-    highlighting,
     wordCount,
     charCount
   } = useGrammarChecker();
@@ -48,9 +44,6 @@ const GrammarChecker = memo(() => {
           <CorrectedTextPanel
             correctedText={correctedText}
             enhancedText={enhancedText}
-            corrections={corrections}
-            aiCorrections={aiCorrections}
-            dictionaryCorrections={dictionaryCorrections}
             isLoading={isLoading}
             processingMode={processingMode}
             progress={progress}

@@ -15,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { inputText, userTier = 'free' } = await req.json();
+    const { inputText } = await req.json();
 
     if (!inputText) {
       throw new Error('Input text is required');
@@ -25,15 +25,7 @@ serve(async (req) => {
       throw new Error('XAI API key not configured');
     }
 
-    // Dynamic word limit based on user tier
-    const wordLimit = userTier === 'paid' ? 1000 : 100;
-    const wordCount = inputText.trim().split(/\s+/).length;
-    
-    if (wordCount > wordLimit) {
-      throw new Error(`Text exceeds ${wordLimit} word limit for ${userTier} users. Current text has ${wordCount} words.`);
-    }
-
-    console.log(`Processing ${wordCount} words with Grok-3 for ${userTier} user`);
+    console.log(`Processing text with Grok-3 for style enhancement`);
 
     // Try different Grok-3 model names as per X.AI documentation
     const modelNames = ['grok-3', 'grok-3-fast', 'grok-3-beta'];
@@ -55,103 +47,26 @@ serve(async (req) => {
             messages: [
               {
                 role: 'system',
-                content: `You are an expert Hindi language stylist with deep understanding of natural Hindi expression and literary traditions. Your task is to enhance the writing style of Hindi text while making it sound more natural, fluent, and authentic to native Hindi speakers.
+                content: `You are an expert Hindi language stylist. Your task is to enhance the writing style of Hindi text while making it sound more natural, fluent, and eloquent.
 
-NATURAL HINDI STYLE ENHANCEMENT PRINCIPLES:
+Guidelines:
+1. Use more sophisticated yet natural vocabulary
+2. Improve sentence flow and rhythm
+3. Make text more engaging and eloquent
+4. Enhance clarity through better expression
+5. Add literary grace while maintaining naturalness
 
-1. **Authentic Expression Patterns**:
-   - Use natural Hindi sentence structures that flow organically
-   - Employ traditional Hindi storytelling and expression patterns
-   - Create rhythm and flow that matches natural Hindi speech patterns
+Maintain:
+- Original meaning completely
+- Same level of formality/informality
+- Original tone and intent
+- Cultural appropriateness
 
-2. **Natural Vocabulary Enhancement**:
-   - Replace simple words with more sophisticated yet commonly understood alternatives
-   - Choose words that Hindi speakers naturally use in elevated conversation
-   - Avoid overly sanskritized words unless contextually appropriate
-   - Use expressions familiar and comfortable to Hindi speakers
-
-3. **Conversational Authenticity**:
-   - Make text sound like how educated Hindi speakers naturally communicate
-   - Use natural Hindi discourse markers and transitions (जैसे कि, वैसे, वास्तव में, निश्चित रूप से, etc.)
-   - Maintain conversational flow even in formal writing
-   - Include appropriate connecting words that Hindi speakers commonly use
-
-4. **Cultural and Regional Sensitivity**:
-   - Use expressions and references familiar to Hindi speakers
-   - Incorporate natural Hindi idioms and phrases where appropriate
-   - Avoid direct translations from English that sound unnatural
-   - Respect regional variations while maintaining standard Hindi
-
-5. **Enhanced Engagement and Eloquence**:
-   - Add literary elements that feel natural in Hindi context
-   - Improve sentence variety while maintaining natural length
-   - Create engaging flow without losing authenticity
-   - Use rhetorical devices common in Hindi literature
-
-6. **Natural Flow and Rhythm**:
-   - Ensure sentences flow naturally from one to another
-   - Use natural Hindi punctuation patterns
-   - Create rhythm that sounds pleasant when read aloud
-   - Maintain natural breathing patterns in sentence structure
-
-STYLE ENHANCEMENT GUIDELINES:
-- **Vocabulary**: Choose sophisticated yet natural words that Hindi speakers use
-- **Sentence Structure**: Vary structure while following natural Hindi patterns
-- **Tone**: Enhance elegance while maintaining the original register
-- **Clarity**: Improve clarity through natural expression, not complex words
-- **Engagement**: Make text more interesting using authentic Hindi techniques
-- **Naturalness**: Above all, ensure the enhanced text sounds genuinely Hindi
-
-STRICT PRESERVATION RULES:
-- Maintain the original meaning completely and precisely
-- Keep the same level of formality/informality as the original
-- Preserve the original tone and intent
-- Don't change the core message or purpose
-- Maintain cultural appropriateness and context
-
-QUALITY STANDARDS FOR ENHANCED TEXT:
-- Must sound like it was originally written by a skilled Hindi writer
-- Should flow naturally when read aloud
-- Must use vocabulary that educated Hindi speakers find comfortable
-- Should demonstrate natural Hindi literary grace
-- Must feel authentic, not artificial or over-stylized
-
-ENHANCEMENT CATEGORIES:
-1. **vocabulary** - sophisticated word choices while maintaining naturalness
-2. **flow** - improved sentence connections and transitions
-3. **eloquence** - added literary grace and sophistication
-4. **structure** - varied sentence patterns for better rhythm
-5. **engagement** - enhanced interest and readability
-
-RESPONSE FORMAT:
-You must respond with a valid JSON object in this exact format:
-{
-  "enhancedText": "The complete enhanced text in Hindi",
-  "enhancements": [
-    {
-      "original": "original phrase or word",
-      "enhanced": "enhanced phrase or word", 
-      "reason": "explanation of the enhancement in Hindi",
-      "type": "vocabulary|flow|eloquence|structure|engagement",
-      "source": "ai"
-    }
-  ]
-}
-
-FINAL RESULT EXPECTATIONS:
-The enhanced text should:
-- Be more sophisticated yet natural
-- Flow better and be more engaging
-- Sound authentically Hindi, not translated
-- Use elegant but familiar vocabulary
-- Maintain perfect clarity and readability
-- Feel like elevated natural Hindi expression
-
-Return ONLY the JSON object, nothing else. The text should sound beautifully natural and authentically Hindi.`
+Return only the enhanced Hindi text, nothing else.`
               },
               {
                 role: 'user',
-                content: `Please enhance the style of this Hindi text to make it more eloquent, engaging, and naturally fluent while keeping the meaning intact:\n\n${inputText}`
+                content: `Please enhance the style of this Hindi text to make it more eloquent and engaging:\n\n${inputText}`
               }
             ],
             temperature: 0.7,
@@ -186,36 +101,17 @@ Return ONLY the JSON object, nothing else. The text should sound beautifully nat
       throw new Error('Invalid response structure from Grok API');
     }
     
-    const aiResponse = data.choices[0].message.content?.trim();
+    const enhancedText = data.choices[0].message.content?.trim();
     
-    if (!aiResponse) {
+    if (!enhancedText) {
       console.error('No content in response:', data.choices[0].message);
       throw new Error('No enhanced text received from Grok API');
     }
 
-    // Parse JSON response
-    let parsedResponse;
-    try {
-      const cleanedResponse = aiResponse.replace(/```json\s*|\s*```/g, '');
-      parsedResponse = JSON.parse(cleanedResponse);
-    } catch (parseError) {
-      console.error('Failed to parse AI response as JSON:', parseError);
-      console.error('AI response was:', aiResponse);
-      
-      // Fallback: treat entire response as enhanced text
-      parsedResponse = {
-        enhancedText: aiResponse,
-        enhancements: []
-      };
-    }
-
-    const { enhancedText, enhancements = [] } = parsedResponse;
-    
-    console.log(`Grok style enhancement completed: ${enhancements.length} enhancements found`);
+    console.log(`Grok style enhancement completed successfully`);
 
     return new Response(JSON.stringify({ 
-      enhancedText,
-      enhancements: enhancements.map(e => ({ ...e, source: 'ai' }))
+      enhancedText
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
