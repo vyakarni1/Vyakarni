@@ -617,6 +617,115 @@ const About = () => {
           </div>
         </section>
 
+        {/* Current Stage & Readiness */}
+<section className="py-16 bg-white">
+  <div className="container mx-auto px-6">
+    <div className="text-center mb-12">
+      <h2 className="text-4xl font-bold mb-4 text-gray-800">
+        {language === "english" ? "Current Stage & Readiness" : "वर्तमान स्थिति और तत्परता"}
+      </h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        {language === "english"
+          ? "Vyakarni is in the final stretch of its product journey—moving confidently from validation to launch. With our platform built and AI engine operational, we are focused on refinement, scalability, and reliability to support a rapidly expanding user base."
+          : "व्याकरणी अपने उत्पाद सफर के अंतिम चरण में है—सत्यापन से लॉन्च की दिशा में आत्मविश्वास से अग्रसर। हमारा मंच विकसित हो चुका है और AI इंजन सक्रिय है। अब हमारा ध्यान परिष्करण, स्केलेबिलिटी और विश्वसनीयता पर है ताकि बढ़ते उपयोगकर्ताओं का समर्थन किया जा सके।"}
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-3 gap-6">
+      {/* Product Readiness */}
+      <Card className="border-teal-200 bg-teal-50">
+        <CardHeader>
+          <Zap className="h-8 w-8 text-teal-600 mb-2" />
+          <CardTitle className="text-xl text-teal-800">
+            {language === "english" ? "Product Validation" : "उत्पाद सत्यापन"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "AI models and platform are fully developed and in use by early adopters across our target segments."
+            : "AI मॉडल और मंच पूरी तरह से विकसित हैं और लक्षित उपयोगकर्ताओं द्वारा प्रारंभिक प्रयोग में हैं।"}
+        </CardContent>
+      </Card>
+
+      {/* User Testing */}
+      <Card className="border-orange-200 bg-orange-50">
+        <CardHeader>
+          <Users className="h-8 w-8 text-orange-600 mb-2" />
+          <CardTitle className="text-xl text-orange-800">
+            {language === "english" ? "Robust User Testing" : "सशक्त उपयोगकर्ता परीक्षण"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Actively gathering feedback and fine-tuning features based on real-world use cases."
+            : "वास्तविक उपयोग मामलों के आधार पर सक्रिय रूप से प्रतिक्रिया प्राप्त कर सुविधाओं को परिष्कृत किया जा रहा है।"}
+        </CardContent>
+      </Card>
+
+      {/* Infrastructure Scaling */}
+      <Card className="border-blue-200 bg-blue-50">
+        <CardHeader>
+          <Server className="h-8 w-8 text-blue-600 mb-2" />
+          <CardTitle className="text-xl text-blue-800">
+            {language === "english" ? "Scalable Infrastructure" : "स्केलेबल अवसंरचना"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Focused on backend optimisation, stress testing, and performance reliability to support growth."
+            : "बैकएंड अनुकूलन, दबाव परीक्षण और प्रदर्शन की विश्वसनीयता सुनिश्चित करने पर केंद्रित।"}
+        </CardContent>
+      </Card>
+
+      {/* Launch Readiness */}
+      <Card className="border-indigo-200 bg-indigo-50">
+        <CardHeader>
+          <Rocket className="h-8 w-8 text-indigo-600 mb-2" />
+          <CardTitle className="text-xl text-indigo-800">
+            {language === "english" ? "Launch Preparation" : "लॉन्च की तैयारी"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "With validation nearly complete, we are readying for a confident, impactful launch."
+            : "सत्यापन लगभग पूर्ण है और हम एक आत्मविश्वासपूर्ण, प्रभावशाली लॉन्च की तैयारी कर रहे हैं।"}
+        </CardContent>
+      </Card>
+
+      {/* Secure Compute */}
+      <Card className="border-pink-200 bg-pink-50">
+        <CardHeader>
+          <Shield className="h-8 w-8 text-pink-600 mb-2" />
+          <CardTitle className="text-xl text-pink-800">
+            {language === "english" ? "High-Performance Compute" : "उच्च-प्रदर्शन कंप्यूट संसाधन"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Accessing secure, scalable infrastructure to support real-time AI corrections at scale."
+            : "वास्तविक समय AI सुधार के लिए सुरक्षित और स्केलेबल कंप्यूट अवसंरचना का उपयोग।"}
+        </CardContent>
+      </Card>
+
+      {/* Vision Beyond Launch */}
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <TrendingUp className="h-8 w-8 text-green-600 mb-2" />
+          <CardTitle className="text-xl text-green-800">
+            {language === "english" ? "Built for Growth" : "विकास के लिए निर्मित"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-gray-700">
+          {language === "english"
+            ? "Laying strong technical foundations to support continuous improvement and scale post-launch."
+            : "लॉन्च के बाद निरंतर सुधार और विस्तार हेतु सुदृढ़ तकनीकी नींव रखी जा रही है।"}
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</section>
+
+
         {/* Statistics Section */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-6">
