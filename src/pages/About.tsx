@@ -98,9 +98,9 @@ const About = () => {
 
   // Team member images
   const teamImages = [
-    "https://github.com/vyakarni1/Vyakarni/blob/main/Satyen%20Srivastava.jpeg?raw=true", // First team member
-    "https://github.com/vyakarni1/Vyakarni/blob/main/Shubha2.jpeg?raw=true", // Second team member  
-    "https://github.com/vyakarni1/Vyakarni/blob/main/Untitled%20design%20(5).jpeg?raw=true", // Third team member
+    "https://github.com/vyakarni1/Vyakarni/blob/main/2.png?raw=true", // First team member
+    "https://github.com/vyakarni1/Vyakarni/blob/main/3.png?raw=true", // Second team member  
+    "https://github.com/vyakarni1/Vyakarni/blob/main/1.png?raw=true", // Third team member
   ];
 
   return (
