@@ -3,8 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import GlobalLanguageToggle from "@/components/GlobalLanguageToggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface HeaderProps {
   variant?: "default" | "transparent";
@@ -12,7 +11,7 @@ interface HeaderProps {
 
 const Header = ({ variant = "default" }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { language } = useLanguage();
+  const [language, setLanguage] = useState<"english" | "hindi">("hindi");
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -45,6 +44,29 @@ const Header = ({ variant = "default" }: HeaderProps) => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerClasses}`}>
+      {/* Language Toggle */}
+      <div className="absolute top-2 right-4 z-60 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-lg border border-gray-200">
+        <ToggleGroup
+          type="single"
+          value={language}
+          onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
+          className="gap-1"
+        >
+          <ToggleGroupItem
+            value="hindi"
+            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+          >
+            हिंदी
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="english"
+            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+          >
+            English
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       <div className="container mx-auto px-6">
         <nav className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -64,32 +86,27 @@ const Header = ({ variant = "default" }: HeaderProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <div className="flex items-center space-x-6">
-              <Link 
-                to="/about" 
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
-              >
-                {currentContent.about}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
-              >
-                {currentContent.contact}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link 
-                to="/privacy" 
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
-              >
-                {currentContent.privacy}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            </div>
-            
-            {/* Language Toggle */}
-            <GlobalLanguageToggle />
+            <Link 
+              to="/about" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
+            >
+              {currentContent.about}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+            <Link 
+              to="/contact" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
+            >
+              {currentContent.contact}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+            <Link 
+              to="/privacy" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
+            >
+              {currentContent.privacy}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
             
             <div className="flex space-x-3">
               <Link to="/login">
@@ -139,12 +156,6 @@ const Header = ({ variant = "default" }: HeaderProps) => {
               >
                 {currentContent.privacy}
               </Link>
-              
-              {/* Language Toggle for Mobile */}
-              <div className="py-2">
-                <GlobalLanguageToggle />
-              </div>
-              
               <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full transition-all duration-200">

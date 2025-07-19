@@ -1,160 +1,307 @@
+
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
 import Layout from "@/components/Layout";
-import { useLanguage } from "@/contexts/LanguageContext";
+
+interface ContactFormData {
+  name: string;
+  email: string;
+  message: string;
+}
 
 const Contact = () => {
-  const { language } = useLanguage();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: ""
-  });
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [language, setLanguage] = useState<"english" | "hindi">("hindi");
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success(language === "english" ? "Message sent successfully!" : "संदेश सफलतापूर्वक भेजा गया!");
-      
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: ""
-      });
-    } catch (error) {
-      toast.error(language === "english" ? "Failed to send message." : "संदेश भेजने में विफल।");
-    }
+  const hindiContent = {
+    pageTitle: "हमसे संपर्क करयें",
+    pageDescription: "हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करयें।",
+    sendMessageTitle: "संदेश भेजें",
+    loginRequired: "संदेश भेजने के लिये कृपया लॉगिन करयें",
+    loginButton: "लॉगिन करयें",
+    nameLabel: "पूरा नाम",
+    namePlaceholder: "आपका नाम",
+    nameRequired: "नाम आवश्यक है",
+    emailLabel: "ईमेल पता",
+    emailPlaceholder: "आपका ईमेल",
+    emailRequired: "ईमेल आवश्यक है",
+    emailValid: "वैध ईमेल दर्ज करयें",
+    messageLabel: "संदेश",
+    messagePlaceholder: "आपका संदेश यहाँ लिखें...",
+    messageRequired: "संदेश आवश्यक है",
+    sendButton: "संदेश भेजें",
+    sending: "भेजा जा रहा है...",
+    contactDetailsTitle: "संपर्क हेतु विवरण",
+    workingHoursTitle: "कार्यसमय",
+    mondayFriday: "सोमवार - शुक्रवार",
+    weekend: "शनिवार एवं रविवार",
+    holiday: "अवकाश",
+    holidayNote: "राजपत्रित अवकाशों पर सेवा उपलब्ध नहीं होंगी।",
+    successMessage: "आपका संदेश सफलतापूर्वक भेज दिया गया है! हम जल्द ही आपसे संपर्क करयेंगे।",
+    errorMessage: "संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करयें।",
+    genericError: "कुछ गलत हुआ है। कृपया पुनः प्रयास करयें।"
   };
 
   const englishContent = {
-    title: "Contact Us",
-    description: "We'd love to hear from you! Reach out using the form below or through our contact details.",
-    formName: "Name",
-    formEmail: "Email",
-    formSubject: "Subject",
-    formMessage: "Message",
-    formButton: "Send Message",
-    contactInfo: "Contact Information",
-    address: "123 Tech Park, New City, India",
-    phone: "+91 9876543210",
-    hours: "Mon - Fri: 9am - 6pm"
-  };
-
-  const hindiContent = {
-    title: "संपर्क करें",
-    description: "हम आपसे सुनना पसंद करेंगे! नीचे दिए गए फॉर्म या हमारे संपर्क विवरण के माध्यम से पहुंचें।",
-    formName: "नाम",
-    formEmail: "ईमेल",
-    formSubject: "विषय",
-    formMessage: "संदेश",
-    formButton: "संदेश भेजें",
-    contactInfo: "संपर्क जानकारी",
-    address: "123 टेक पार्क, नया शहर, भारत",
-    phone: "+91 9876543210",
-    hours: "सोम - शुक्र: सुबह 9 बजे - शाम 6 बजे"
+    pageTitle: "Contact Us",
+    pageDescription: "Our team is ready to assist you. Feel free to share your questions or suggestions.",
+    sendMessageTitle: "Send Message",
+    loginRequired: "Please login to send a message",
+    loginButton: "Login",
+    nameLabel: "Full Name",
+    namePlaceholder: "Your name",
+    nameRequired: "Name is required",
+    emailLabel: "Email Address",
+    emailPlaceholder: "Your email",
+    emailRequired: "Email is required",
+    emailValid: "Enter a valid email",
+    messageLabel: "Message",
+    messagePlaceholder: "Write your message here...",
+    messageRequired: "Message is required",
+    sendButton: "Send Message",
+    sending: "Sending...",
+    contactDetailsTitle: "Contact Details",
+    workingHoursTitle: "Working Hours",
+    mondayFriday: "Monday - Friday",
+    weekend: "Saturday & Sunday",
+    holiday: "Closed",
+    holidayNote: "Services will not be available on public holidays.",
+    successMessage: "Your message has been sent successfully! We will contact you soon.",
+    errorMessage: "Error sending message. Please try again.",
+    genericError: "Something went wrong. Please try again."
   };
 
   const currentContent = language === "english" ? englishContent : hindiContent;
 
+  const onSubmit = async (data: ContactFormData) => {
+    if (!user) {
+      toast.error(currentContent.loginRequired);
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: data.name,
+          email: data.email,
+          message: data.message,
+        });
+
+      if (error) {
+        console.error('Error submitting contact form:', error);
+        toast.error(currentContent.errorMessage);
+        return;
+      }
+
+      toast.success(currentContent.successMessage);
+      reset();
+    } catch (error) {
+      console.error('Error in contact form submission:', error);
+      toast.error(currentContent.genericError);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Layout>
-      <div className="container mx-auto py-12 px-6">
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gray-50 py-4">
-            <CardTitle className="text-2xl font-semibold">{currentContent.title}</CardTitle>
-            <p className="text-gray-600">{currentContent.description}</p>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* Language Toggle */}
+        <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
+          <ToggleGroup
+            type="single"
+            value={language}
+            onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
+            className="gap-1"
+          >
+            <ToggleGroupItem
+              value="hindi"
+              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+            >
+              हिंदी
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="english"
+              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+            >
+              English
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              {currentContent.pageTitle}
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              {currentContent.pageDescription}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
             {/* Contact Form */}
-            <div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Input 
-                    type="text" 
-                    name="name" 
-                    placeholder={currentContent.formName} 
-                    value={formData.name} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                </div>
-                <div>
-                  <Input 
-                    type="email" 
-                    name="email" 
-                    placeholder={currentContent.formEmail} 
-                    value={formData.email} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                </div>
-                <div>
-                  <Input 
-                    type="text" 
-                    name="subject" 
-                    placeholder={currentContent.formSubject} 
-                    value={formData.subject} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                </div>
-                <div>
-                  <Textarea 
-                    name="message" 
-                    placeholder={currentContent.formMessage} 
-                    rows={4} 
-                    value={formData.message} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                </div>
-                <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3">{currentContent.formButton}</Button>
-              </form>
-            </div>
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-gray-900 flex items-center">
+                  <Send className="mr-2 h-6 w-6" />
+                  {currentContent.sendMessageTitle}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!user ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-600 mb-4">{currentContent.loginRequired}</p>
+                    <Button asChild>
+                      <a href="/login">{currentContent.loginButton}</a>
+                    </Button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div>
+                      <Label htmlFor="name">{currentContent.nameLabel}</Label>
+                      <Input
+                        id="name"
+                        {...register("name", { required: currentContent.nameRequired })}
+                        placeholder={currentContent.namePlaceholder}
+                        className="mt-1"
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email">{currentContent.emailLabel}</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        {...register("email", { 
+                          required: currentContent.emailRequired,
+                          pattern: {
+                            value: /^\S+@\S+$/i,
+                            message: currentContent.emailValid
+                          }
+                        })}
+                        placeholder={currentContent.emailPlaceholder}
+                        className="mt-1"
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="message">{currentContent.messageLabel}</Label>
+                      <Textarea
+                        id="message"
+                        {...register("message", { required: currentContent.messageRequired })}
+                        placeholder={currentContent.messagePlaceholder}
+                        rows={6}
+                        className="mt-1"
+                      />
+                      {errors.message && (
+                        <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                      )}
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" 
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? currentContent.sending : currentContent.sendButton}
+                    </Button>
+                  </form>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Contact Information */}
-            <div>
-              <h3 className="text-xl font-semibold mb-4">{currentContent.contactInfo}</h3>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <MapPin className="h-5 w-5 text-gray-500" />
-                  <span>{currentContent.address}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Phone className="h-5 w-5 text-gray-500" />
-                  <span>{currentContent.phone}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5 text-gray-500" />
-                  <span>support@vyakarni.com</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-5 w-5 text-gray-500" />
-                  <span>{currentContent.hours}</span>
-                </div>
-              </div>
+            <div className="space-y-8">
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-gray-900">{currentContent.contactDetailsTitle}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-blue-100 p-3 rounded-full">
+                      <Mail className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">
+                        {language === "english" ? "Email" : "ईमेल"}
+                      </h3>
+                      <p className="text-gray-600">support@vyakarni.com</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <Phone className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">
+                        {language === "english" ? "Phone" : "फोन"}
+                      </h3>
+                      <p className="text-gray-600">+91 98765 43210</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-purple-100 p-3 rounded-full">
+                      <MapPin className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">
+                        {language === "english" ? "Address" : "पता"}
+                      </h3>
+                      <p className="text-gray-600">
+                        {language === "english" ? "Vyakarni, Sector 143, Noida" : "व्याकरणी, सेक्टर 143, नॉएडा"}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-gray-900">{currentContent.workingHoursTitle}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{currentContent.mondayFriday}</span>
+                      <span className="font-semibold">10:00 AM - 6:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{currentContent.weekend}</span>
+                      <span className="font-semibold">{currentContent.holiday}</span>
+                    </div>
+                    <div className="mt-4 text-sm text-gray-500">
+                      {currentContent.holidayNote}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </Layout>
   );
