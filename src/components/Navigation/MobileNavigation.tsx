@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import TranslationToggle from "./TranslationToggle";
 
 interface MobileNavigationProps {
   user: any;
@@ -57,6 +58,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
             >
               प्राइसिंग
             </Link>
+            <TranslationToggle variant="mobile" />
             <div className="pt-3 border-t border-gray-200">
               <div className="px-3 py-2 text-sm text-gray-600">
                 नमस्ते, {profile?.name || user.email?.split('@')[0]}
@@ -99,6 +101,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
                 </Link>
               </>
             )}
+            <TranslationToggle variant="mobile" />
             <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
               <Link to="/login" onClick={handleLinkClick}>
                 <Button variant="outline" size="sm" className="w-full transition-all duration-200">

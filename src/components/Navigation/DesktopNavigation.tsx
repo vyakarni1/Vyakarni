@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import AuthButtons from "./AuthButtons";
 import NotificationDropdown from "./NotificationDropdown";
+import TranslationToggle from "./TranslationToggle";
 
 interface DesktopNavigationProps {
   user: any;
@@ -45,6 +46,7 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
             प्राइसिंग
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
+          <TranslationToggle variant="desktop" />
           <NotificationDropdown />
           <AuthButtons user={user} profile={profile} variant={variant} onLogout={onLogout} />
         </>
@@ -75,6 +77,7 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
               </Link>
             </>
           )}
+          <TranslationToggle variant="desktop" />
           <AuthButtons user={user} profile={profile} variant={variant} onLogout={onLogout} />
         </>
       )}
