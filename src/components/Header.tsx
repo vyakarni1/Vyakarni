@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface HeaderProps {
   variant?: "default" | "transparent";
@@ -10,6 +11,7 @@ interface HeaderProps {
 
 const Header = ({ variant = "default" }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [language, setLanguage] = useState<"english" | "hindi">("hindi");
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -19,8 +21,52 @@ const Header = ({ variant = "default" }: HeaderProps) => {
     ? "bg-transparent" 
     : "bg-white/80 backdrop-blur-md shadow-sm border-b";
 
+  const content = {
+    english: {
+      brand: "Vyakarni",
+      about: "About Us",
+      contact: "Contact",
+      privacy: "Privacy",
+      login: "Login",
+      register: "Register"
+    },
+    hindi: {
+      brand: "व्याकरणी",
+      about: "हमारे बारे में",
+      contact: "संपर्क",
+      privacy: "गोपनीयता",
+      login: "लॉगिन",
+      register: "रजिस्टर करें"
+    }
+  };
+
+  const currentContent = content[language];
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerClasses}`}>
+      {/* Language Toggle */}
+      <div className="absolute top-2 right-4 z-60 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-lg border border-gray-200">
+        <ToggleGroup
+          type="single"
+          value={language}
+          onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
+          className="gap-1"
+        >
+          <ToggleGroupItem
+            value="hindi"
+            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+          >
+            हिंदी
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="english"
+            className="text-xs px-2 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+          >
+            English
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       <div className="container mx-auto px-6">
         <nav className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -30,11 +76,11 @@ const Header = ({ variant = "default" }: HeaderProps) => {
           >
             <img 
               src="/lovable-uploads/1bf69a70-2442-4bb2-8681-6877bdaeec2d.png" 
-              alt="व्याकरणी Logo" 
+              alt={`${currentContent.brand} Logo`}
               className="h-8 w-8"
             />
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              व्याकरणी
+              {currentContent.brand}
             </span>
           </Link>
 
@@ -44,33 +90,33 @@ const Header = ({ variant = "default" }: HeaderProps) => {
               to="/about" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
             >
-              हमारे बारे में
+              {currentContent.about}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link 
               to="/contact" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
             >
-              संपर्क
+              {currentContent.contact}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link 
               to="/privacy" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
             >
-              गोपनीयता
+              {currentContent.privacy}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             
             <div className="flex space-x-3">
               <Link to="/login">
                 <Button variant="outline" size="sm" className="transition-all duration-200 hover:scale-105">
-                  लॉगिन
+                  {currentContent.login}
                 </Button>
               </Link>
               <Link to="/register">
                 <Button size="sm" className="transition-all duration-200 hover:scale-105 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  रजिस्टर करें
+                  {currentContent.register}
                 </Button>
               </Link>
             </div>
@@ -94,31 +140,31 @@ const Header = ({ variant = "default" }: HeaderProps) => {
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                हमारे बारे में
+                {currentContent.about}
               </Link>
               <Link 
                 to="/contact" 
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                संपर्क
+                {currentContent.contact}
               </Link>
               <Link 
                 to="/privacy" 
                 className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                गोपनीयता
+                {currentContent.privacy}
               </Link>
               <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full transition-all duration-200">
-                    लॉगिन
+                    {currentContent.login}
                   </Button>
                 </Link>
                 <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button size="sm" className="w-full transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600">
-                    रजिस्टर करें
+                    {currentContent.register}
                   </Button>
                 </Link>
               </div>
