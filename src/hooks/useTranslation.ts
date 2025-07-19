@@ -86,12 +86,22 @@ export const useTranslation = () => {
       
       for (const batch of batches) {
         await Promise.all(batch.map(async (element) => {
+          // Skip if element is no longer in the DOM
+          if (!document.contains(element)) {
+            return;
+          }
+
           const originalText = element.getAttribute('data-original') || element.textContent;
           
           if (originalText && originalText.trim()) {
             // Store original text if not already stored
             if (!element.getAttribute('data-original')) {
-              element.setAttribute('data-original', originalText);
+              try {
+                element.setAttribute('data-original', originalText);
+              } catch (error) {
+                console.warn('Could not set data-original attribute:', error);
+                return;
+              }
             }
 
             try {
@@ -109,16 +119,44 @@ export const useTranslation = () => {
               }
 
               if (data?.translatedText) {
-                // Handle elements with mixed content (text + child elements)
-                if (element.children.length > 0) {
-                  // Replace only direct text nodes
-                  Array.from(element.childNodes).forEach((node: ChildNode) => {
-                    if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
-                      node.textContent = data.translatedText;
+                // Double-check element is still in DOM before modifying
+                if (!document.contains(element)) {
+                  return;
+                }
+
+                try {
+                  // Handle elements with mixed content more safely
+                  if (element.children.length > 0) {
+                    // Find and replace only direct text nodes
+                    const walker = document.createTreeWalker(
+                      element,
+                      NodeFilter.SHOW_TEXT,
+                      {
+                        acceptNode: (node) => {
+                          // Only accept direct child text nodes
+                          return node.parentNode === element ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+                        }
+                      }
+                    );
+
+                    const textNodes = [];
+                    let node;
+                    while (node = walker.nextNode()) {
+                      if (node.textContent?.trim()) {
+                        textNodes.push(node);
+                      }
                     }
-                  });
-                } else {
-                  element.textContent = data.translatedText;
+
+                    textNodes.forEach(textNode => {
+                      if (document.contains(textNode)) {
+                        textNode.textContent = data.translatedText;
+                      }
+                    });
+                  } else {
+                    element.textContent = data.translatedText;
+                  }
+                } catch (domError) {
+                  console.warn('DOM modification failed:', domError);
                 }
               }
             } catch (error) {
