@@ -99,8 +99,8 @@ const About = () => {
   // Team member images
   const teamImages = [
     "https://github.com/vyakarni1/Vyakarni/blob/main/Satyen%20Srivastava.jpeg?raw=true", // First team member
-    "/lovable-uploads/photo-1581091226825-a6a2a5aee158", // Second team member  
-    "/lovable-uploads/photo-1581092795360-fd1ca04f0952", // Third team member
+    "https://github.com/vyakarni1/Vyakarni/blob/main/Shubha2.jpeg?raw=true", // Second team member  
+    "https://github.com/vyakarni1/Vyakarni/blob/main/Untitled%20design%20(5).jpeg?raw=true", // Third team member
   ];
 
   return (
