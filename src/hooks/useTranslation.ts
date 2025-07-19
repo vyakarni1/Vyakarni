@@ -18,46 +18,122 @@ export const useTranslation = () => {
     const savedLanguage = localStorage.getItem('preferred-language');
     if (savedLanguage === 'en') {
       setIsTranslated(true);
-      // Apply translation to current page
-      translatePageContent('en');
+      // Apply translation to current page after a short delay
+      setTimeout(() => translatePageContent('en'), 100);
     }
-  }, []);
+  }, [location.pathname]);
+
+  // Selectors for elements to translate (excluding inputs, code, etc.)
+  const getTranslatableElements = () => {
+    const selectors = [
+      'h1, h2, h3, h4, h5, h6',           // Headings
+      'p',                                 // Paragraphs
+      'span:not([class*="lucide"])',      // Spans (excluding icons)
+      'button',                           // Buttons
+      'a',                                // Links
+      'label',                            // Labels
+      'div[data-translate]',              // Explicitly marked divs
+      '[data-translate]'                  // Any element with data-translate
+    ].join(', ');
+
+    const elements = document.querySelectorAll(selectors);
+    
+    // Filter out elements that shouldn't be translated
+    return Array.from(elements).filter(element => {
+      // Skip if empty or only whitespace
+      const text = element.textContent?.trim();
+      if (!text) return false;
+      
+      // Skip if contains only numbers or special characters
+      if (/^[\d\s\-\+\(\)\[\]\{\}\.\,\!\?\:\;]+$/.test(text)) return false;
+      
+      // Skip if it's an input or textarea
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') return false;
+      
+      // Skip if it's inside a code block or pre tag
+      if (element.closest('code, pre, .code')) return false;
+      
+      // Skip if it contains other elements (composite elements)
+      const hasChildElements = element.children.length > 0;
+      if (hasChildElements && !element.hasAttribute('data-translate')) {
+        // Only translate if it has direct text content
+        const directText = Array.from(element.childNodes)
+          .filter(node => node.nodeType === Node.TEXT_NODE)
+          .map(node => node.textContent?.trim())
+          .join('').trim();
+        return directText.length > 0;
+      }
+      
+      return true;
+    });
+  };
 
   const translatePageContent = async (targetLanguage: 'hi' | 'en') => {
     if (!shouldTranslate) return;
 
-    const elementsToTranslate = document.querySelectorAll('[data-translate]');
+    setIsLoading(true);
     
-    for (const element of elementsToTranslate) {
-      const originalText = element.getAttribute('data-original') || element.textContent;
+    try {
+      const elementsToTranslate = getTranslatableElements();
+      console.log(`Found ${elementsToTranslate.length} elements to translate`);
       
-      if (originalText) {
-        // Store original text if not already stored
-        if (!element.getAttribute('data-original')) {
-          element.setAttribute('data-original', originalText);
-        }
-
-        try {
-          const { data, error } = await supabase.functions.invoke('translate-text', {
-            body: {
-              text: originalText,
-              targetLanguage,
-              sourceLanguage: targetLanguage === 'en' ? 'hi' : 'en'
-            }
-          });
-
-          if (error) {
-            console.error('Translation error:', error);
-            continue;
-          }
-
-          if (data?.translatedText) {
-            element.textContent = data.translatedText;
-          }
-        } catch (error) {
-          console.error('Translation request failed:', error);
-        }
+      // Group elements into batches for better performance
+      const batchSize = 10;
+      const batches = [];
+      for (let i = 0; i < elementsToTranslate.length; i += batchSize) {
+        batches.push(elementsToTranslate.slice(i, i + batchSize));
       }
+      
+      for (const batch of batches) {
+        await Promise.all(batch.map(async (element) => {
+          const originalText = element.getAttribute('data-original') || element.textContent;
+          
+          if (originalText && originalText.trim()) {
+            // Store original text if not already stored
+            if (!element.getAttribute('data-original')) {
+              element.setAttribute('data-original', originalText);
+            }
+
+            try {
+              const { data, error } = await supabase.functions.invoke('translate-text', {
+                body: {
+                  text: originalText.trim(),
+                  targetLanguage,
+                  sourceLanguage: targetLanguage === 'en' ? 'hi' : 'en'
+                }
+              });
+
+              if (error) {
+                console.error('Translation error:', error);
+                return;
+              }
+
+              if (data?.translatedText) {
+                // Handle elements with mixed content (text + child elements)
+                if (element.children.length > 0) {
+                  // Replace only direct text nodes
+                  Array.from(element.childNodes).forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+                      node.textContent = data.translatedText;
+                    }
+                  });
+                } else {
+                  element.textContent = data.translatedText;
+                }
+              }
+            } catch (error) {
+              console.error('Translation request failed:', error);
+            }
+          }
+        }));
+        
+        // Small delay between batches to avoid overwhelming the API
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    } catch (error) {
+      console.error('Translation process failed:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,22 +141,15 @@ export const useTranslation = () => {
     if (!shouldTranslate || isLoading) return;
 
     console.log('Toggling translation, current state:', isTranslated);
-    setIsLoading(true);
     
-    try {
-      const newLanguage = isTranslated ? 'hi' : 'en';
-      
-      await translatePageContent(newLanguage);
-      
-      setIsTranslated(!isTranslated);
-      localStorage.setItem('preferred-language', newLanguage);
-      
-      console.log('Translation completed, new language:', newLanguage);
-    } catch (error) {
-      console.error('Translation toggle failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    const newLanguage = isTranslated ? 'hi' : 'en';
+    
+    await translatePageContent(newLanguage);
+    
+    setIsTranslated(!isTranslated);
+    localStorage.setItem('preferred-language', newLanguage);
+    
+    console.log('Translation completed, new language:', newLanguage);
   };
 
   return {

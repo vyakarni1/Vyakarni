@@ -8,8 +8,8 @@ const HowItWorksSection = () => {
     <section className="bg-gradient-to-r from-blue-50 to-cyan-50 py-20">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">व्याकरणी कैसे कार्य करता है?</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold text-gray-800 mb-4" data-translate>व्याकरणी कैसे कार्य करता है?</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto" data-translate>
             मात्र तीन सरल चरणों में अपने हिंदी पाठ को सुधारें।
           </p>
         </div>
@@ -22,8 +22,8 @@ const HowItWorksSection = () => {
               </div>
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce"></div>
             </div>
-            <h3 className="text-2xl font-semibold mb-3 text-gray-800">वेबसाइट पर रजिस्टर करें</h3>
-            <p className="text-gray-600 leading-relaxed">निःशुल्क खाता बनायें एवं अविलम्ब कार्य आरम्भ करें। कोई गुप्त शुल्क नहीं।</p>
+            <h3 className="text-2xl font-semibold mb-3 text-gray-800" data-translate>वेबसाइट पर रजिस्टर करें</h3>
+            <p className="text-gray-600 leading-relaxed" data-translate>निःशुल्क खाता बनायें एवं अविलम्ब कार्य आरम्भ करें। कोई गुप्त शुल्क नहीं।</p>
           </div>
           
           <div className="text-center group">
@@ -33,8 +33,8 @@ const HowItWorksSection = () => {
               </div>
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-cyan-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce delay-75"></div>
             </div>
-            <h3 className="text-2xl font-semibold mb-3 text-gray-800">अपना पाठ लिखें</h3>
-            <p className="text-gray-600 leading-relaxed">अपने हिंदी पाठ की प्रविष्टि करें एवं तीव्र गति से सुधारा गया परिणाम प्राप्त करें।</p>
+            <h3 className="text-2xl font-semibold mb-3 text-gray-800" data-translate>अपना पाठ लिखें</h3>
+            <p className="text-gray-600 leading-relaxed" data-translate>अपने हिंदी पाठ की प्रविष्टि करें एवं तीव्र गति से सुधारा गया परिणाम प्राप्त करें।</p>
           </div>
           
           <div className="text-center group">
@@ -44,15 +44,15 @@ const HowItWorksSection = () => {
               </div>
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-indigo-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-bounce delay-150"></div>
             </div>
-            <h3 className="text-2xl font-semibold mb-3 text-gray-800">परिणाम प्राप्त करें</h3>
-            <p className="text-gray-600 leading-relaxed">व्याकरण, शब्द-चयन, विराम चिह्न, वाक्य-विन्यास एवं भाषा-सौष्ठव को उन्नत करें।</p>
+            <h3 className="text-2xl font-semibold mb-3 text-gray-800" data-translate>परिणाम प्राप्त करें</h3>
+            <p className="text-gray-600 leading-relaxed" data-translate>व्याकरण, शब्द-चयन, विराम चिह्न, वाक्य-विन्यास एवं भाषा-सौष्ठव को उन्नत करें।</p>
           </div>
         </div>
         
         <div className="text-center mt-12">
           <Link to="/register">
             <Button size="lg" className="bg-gradient-blue-primary hover:bg-gradient-blue-secondary text-white px-8 py-3 transform hover:scale-105 transition-all duration-300 shadow-lg">
-              अभी प्रयोग करें
+              <span data-translate>अभी प्रयोग करें</span>
               <Sparkles className="h-5 w-5 ml-2" />
             </Button>
           </Link>

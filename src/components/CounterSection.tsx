@@ -65,8 +65,8 @@ const CounterSection = () => {
     <section className="bg-gradient-blue-primary py-16 text-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">हमारी उपलब्धियाँ</h2>
-          <p className="text-xl opacity-90">आँकड़े जो हमारी उपलब्धियों को दर्शाते हैं।</p>
+          <h2 className="text-4xl font-bold mb-4" data-translate>हमारी उपलब्धियाँ</h2>
+          <p className="text-xl opacity-90" data-translate>आँकड़े जो हमारी उपलब्धियों को दर्शाते हैं।</p>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -80,7 +80,7 @@ const CounterSection = () => {
               <div className="text-3xl md:text-4xl font-bold mb-2">
                 {stat.value}{stat.suffix}
               </div>
-              <div className="text-lg opacity-90">{stat.label}</div>
+              <div className="text-lg opacity-90" data-translate>{stat.label}</div>
             </div>
           ))}
         </div>
