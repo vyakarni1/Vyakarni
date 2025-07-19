@@ -351,6 +351,111 @@ const About = () => {
           </div>
         </section>
 
+        {/* Problems We Solve */}
+<section className="py-16 bg-white">
+  <div className="container mx-auto px-6">
+    <div className="text-center mb-12">
+      <h2 className="text-4xl font-bold mb-4 text-gray-800">
+        {language === "english" ? "Problems We Solve" : "हम जिन समस्याओं का समाधान करते हैं"}
+      </h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        {language === "english"
+          ? "Vyakarni solves key challenges faced by Hindi users across educational, professional, and creative domains by offering real-time, automated corrections and elegant enhancements."
+          : "व्याकरणी हिंदी उपयोगकर्ताओं द्वारा शैक्षिक, पेशेवर और रचनात्मक क्षेत्रों में झेली जा रही प्रमुख चुनौतियों का समाधान करता है, वह भी त्वरित, स्वचालित सुधारों और परिष्कृत प्रस्तुति के माध्यम से।"}
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-8">
+      <Card className="border-red-200 bg-red-50">
+        <CardHeader>
+          <AlertTriangle className="h-8 w-8 text-red-600 mb-2" />
+          <CardTitle className="text-2xl text-red-800">
+            {language === "english" ? "Key Challenges" : "मुख्य चुनौतियाँ"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex items-start">
+              <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Grammar & Syntax Errors: Many Hindi writers, even fluent speakers, struggle with correct grammar, verb forms, and sentence construction."
+                : "व्याकरण एवं वाक्य संरचना की त्रुटियाँ: अनेक हिंदी लेखक, चाहे वे धाराप्रवाह ही क्यों न हों, व्याकरण, क्रिया रूपों और वाक्य निर्माण में त्रुटियाँ करते हैं।"}
+            </li>
+            <li className="flex items-start">
+              <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Spelling Mistakes: Frequent spelling errors reduce the clarity and professionalism of Hindi communication."
+                : "वर्तनी की गलतियाँ: बार-बार होने वाली वर्तनी की त्रुटियाँ हिंदी संप्रेषण की स्पष्टता एवं व्यावसायिकता को प्रभावित करती हैं।"}
+            </li>
+            <li className="flex items-start">
+              <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Inconsistent Word Usage: Users often mix colloquial and formal Hindi, or use words incorrectly due to regional influences."
+                : "शब्द प्रयोग में असंगति: उपयोगकर्ता प्रायः बोलचाल की और औपचारिक हिंदी को मिलाकर प्रयोग करते हैं, या क्षेत्रीय प्रभावों के कारण शब्दों का प्रयोग गलत करते हैं।"}
+            </li>
+            <li className="flex items-start">
+              <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Inelegant Expression: It is difficult for most people to write polished, high-quality Hindi suited for academic, business, or creative use."
+                : "असौंदर्यपूर्ण अभिव्यक्ति: अधिकांश लोगों के लिए उच्च गुणवत्ता वाली, परिष्कृत हिंदी लिखना कठिन होता है, जो शैक्षणिक, व्यावसायिक या रचनात्मक उपयोग के योग्य हो।"}
+            </li>
+            <li className="flex items-start">
+              <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Low Confidence: Learners and professionals feel unsure about the correctness of their Hindi, especially in important documents or public communication."
+                : "आत्मविश्वास की कमी: विद्यार्थी और पेशेवर अपने हिंदी लेखन की शुद्धता को लेकर अनिश्चित रहते हैं, विशेषकर महत्वपूर्ण दस्तावेज़ों या सार्वजनिक संवाद में।"}
+            </li>
+            <li className="flex items-start">
+              <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Digital Limitation: Lack of reliable, automated tools for Hindi correction restricts digital communication and content creation."
+                : "डिजिटल सीमा: हिंदी सुधार हेतु विश्वसनीय, स्वचालित उपकरणों की कमी डिजिटल संचार और कंटेंट निर्माण को सीमित करती है।"}
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <CheckCircle className="h-8 w-8 text-green-600 mb-2" />
+          <CardTitle className="text-2xl text-green-800">
+            {language === "english" ? "How Vyakarni Helps" : "व्याकरणी कैसे मदद करता है"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Instant grammar and spelling correction using advanced AI."
+                : "उन्नत AI के माध्यम से त्वरित व्याकरण एवं वर्तनी सुधार।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Improves sentence structure and language elegance automatically."
+                : "स्वतः वाक्य संरचना एवं भाषा की अभिव्यक्ति को परिष्कृत करता है।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Bridges the gap between casual and formal Hindi writing."
+                : "अनौपचारिक और औपचारिक हिंदी लेखन के बीच की खाई को पाटता है।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Enhances user confidence in Hindi writing for any context."
+                : "किसी भी संदर्भ में हिंदी लेखन हेतु उपयोगकर्ता के आत्मविश्वास को बढ़ाता है।"}
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</section>
+
+
         {/* Core Values */}
         <section className="py-16 bg-gradient-to-r from-gray-50 to-blue-50">
           <div className="container mx-auto px-6">
