@@ -78,7 +78,7 @@ export const useTranslation = () => {
       console.log(`Found ${elementsToTranslate.length} elements to translate`);
       
       // Group elements into batches for better performance
-      const batchSize = 10;
+      const batchSize = 5; // Reduced batch size to minimize conflicts
       const batches = [];
       for (let i = 0; i < elementsToTranslate.length; i += batchSize) {
         batches.push(elementsToTranslate.slice(i, i + batchSize));
@@ -119,45 +119,48 @@ export const useTranslation = () => {
               }
 
               if (data?.translatedText) {
-                // Double-check element is still in DOM before modifying
-                if (!document.contains(element)) {
-                  return;
-                }
+                // Use requestAnimationFrame to avoid conflicts with React's rendering
+                requestAnimationFrame(() => {
+                  // Final check that element is still in DOM
+                  if (!document.contains(element)) {
+                    return;
+                  }
 
-                try {
-                  // Handle elements with mixed content more safely
-                  if (element.children.length > 0) {
-                    // Find and replace only direct text nodes
-                    const walker = document.createTreeWalker(
-                      element,
-                      NodeFilter.SHOW_TEXT,
-                      {
-                        acceptNode: (node) => {
-                          // Only accept direct child text nodes
-                          return node.parentNode === element ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
-                        }
-                      }
-                    );
-
-                    const textNodes = [];
-                    let node;
-                    while (node = walker.nextNode()) {
-                      if (node.textContent?.trim()) {
-                        textNodes.push(node);
+                  try {
+                    // Avoid manipulating elements with children to prevent React conflicts
+                    if (element.children.length === 0) {
+                      element.textContent = data.translatedText;
+                    } else {
+                      // For elements with children, only modify if they have direct text content
+                      const hasDirectText = Array.from(element.childNodes).some(
+                        (node): node is ChildNode => (node as ChildNode).nodeType === Node.TEXT_NODE && (node as ChildNode).textContent?.trim() !== ''
+                      );
+                      
+                      if (hasDirectText) {
+                        // Create a safe wrapper to avoid React conflicts
+                        const textSpan = document.createElement('span');
+                        textSpan.textContent = data.translatedText;
+                        textSpan.setAttribute('data-translation', 'true');
+                        
+                        // Replace text nodes more safely
+                        Array.from(element.childNodes).forEach((node) => {
+                          const childNode = node as ChildNode;
+                          if (childNode.nodeType === Node.TEXT_NODE && childNode.textContent?.trim()) {
+                            try {
+                              if (document.contains(childNode) && childNode.parentNode === element) {
+                                element.replaceChild(textSpan.cloneNode(true), childNode);
+                              }
+                            } catch (replaceError) {
+                              console.warn('Safe text replacement failed:', replaceError);
+                            }
+                          }
+                        });
                       }
                     }
-
-                    textNodes.forEach(textNode => {
-                      if (document.contains(textNode)) {
-                        textNode.textContent = data.translatedText;
-                      }
-                    });
-                  } else {
-                    element.textContent = data.translatedText;
+                  } catch (domError) {
+                    console.warn('DOM modification failed:', domError);
                   }
-                } catch (domError) {
-                  console.warn('DOM modification failed:', domError);
-                }
+                });
               }
             } catch (error) {
               console.error('Translation request failed:', error);
@@ -165,8 +168,8 @@ export const useTranslation = () => {
           }
         }));
         
-        // Small delay between batches to avoid overwhelming the API
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Longer delay between batches to reduce conflicts
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
     } catch (error) {
       console.error('Translation process failed:', error);
