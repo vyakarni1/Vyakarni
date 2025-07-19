@@ -454,6 +454,72 @@ const About = () => {
     </div>
   </div>
 </section>
+{/* Target Audience */}
+<section className="py-16 bg-white">
+  <div className="container mx-auto px-6">
+    <div className="text-center mb-12">
+      <h2 className="text-4xl font-bold mb-4 text-gray-800">
+        {language === "english" ? "Target Audience" : "हमारा लक्षित उपयोगकर्ता समूह"}
+      </h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        {language === "english"
+          ? "Vyakarni is designed for everyone who cares about writing grammatically correct, polished, and expressive Hindi – whether in academics, work, content creation, or personal communication."
+          : "व्याकरणी उन सभी के लिए बनाया गया है जो शुद्ध, परिष्कृत और भावपूर्ण हिंदी लेखन में रुचि रखते हैं – चाहे वह शैक्षिक हो, कार्य से संबंधित हो, रचनात्मक हो या व्यक्तिगत संवाद।"}
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-8">
+      <Card className="border-yellow-200 bg-yellow-50">
+        <CardHeader>
+          <Users className="h-8 w-8 text-yellow-600 mb-2" />
+          <CardTitle className="text-2xl text-yellow-800">
+            {language === "english" ? "Who Can Use Vyakarni?" : "कौन उपयोग कर सकता है व्याकरणी?"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Students & Educators: Those learning Hindi or teaching it, who wish to write and submit error-free work."
+                : "छात्र एवं शिक्षक: जो हिंदी सीख रहे हैं या पढ़ा रहे हैं, और त्रुटिरहित लेखन करना चाहते हैं।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Professionals & Businesses: Anyone creating official documents, presentations, emails, or reports in Hindi."
+                : "पेशेवर एवं व्यवसाय: जो हिंदी में दस्तावेज़, प्रस्तुतियाँ, ईमेल या रिपोर्ट तैयार करते हैं।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Content Creators & Writers: Authors, poets, journalists, bloggers, and media professionals publishing in Hindi."
+                : "सामग्री निर्माता एवं लेखक: लेखक, कवि, पत्रकार, ब्लॉगर एवं हिंदी में प्रकाशित करने वाले मीडिया पेशेवर।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Institutions & Organisations: Government offices, NGOs, educational institutions, and enterprises with a need for high-quality Hindi communication."
+                : "संस्थान एवं संगठन: सरकारी कार्यालय, एनजीओ, शैक्षिक संस्थान एवं व्यवसायिक संगठन जिनमें स्तरीय हिंदी संप्रेषण की आवश्यकता है।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Diaspora & Global Hindi Speakers: Hindi speakers worldwide who wish to maintain and enhance their written Hindi for personal or professional purposes."
+                : "प्रवासी एवं वैश्विक हिंदी भाषी: जो विश्वभर में हिंदी बोलते हैं और अपनी लिखित हिंदी को व्यक्तिगत या पेशेवर कारणों से सुधारना चाहते हैं।"}
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+              {language === "english"
+                ? "Anyone wishing to improve Hindi writing skills: From school children to senior citizens, Vyakarni is accessible to all who value correct and expressive Hindi."
+                : "जो भी हिंदी लेखन कौशल सुधारना चाहता है: स्कूल के बच्चों से लेकर वरिष्ठ नागरिकों तक, व्याकरणी हर उस व्यक्ति के लिए सुलभ है जो शुद्ध और भावपूर्ण हिंदी को महत्व देता है।"}
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</section>
 
 
         {/* Core Values */}
