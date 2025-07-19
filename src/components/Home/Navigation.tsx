@@ -23,12 +23,12 @@ const Navigation = () => {
           <div className="space-x-4">
             <Link to="/login">
               <Button variant="outline" className="hover:bg-blue-50 hover:border-blue-300 transition-all duration-300">
-                लॉगिन
+                लॉगिन(Login)
               </Button>
             </Link>
             <Link to="/register">
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
-                रजिस्टर करें
+                रजिस्टर करें(Register)
               </Button>
             </Link>
           </div>
