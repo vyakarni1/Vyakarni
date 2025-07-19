@@ -1,14 +1,14 @@
 
 import { Languages, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useGoogleTranslate } from '@/hooks/useGoogleTranslate';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface TranslationToggleProps {
   variant?: 'desktop' | 'mobile';
 }
 
 const TranslationToggle = ({ variant = 'desktop' }: TranslationToggleProps) => {
-  const { isTranslated, isLoading, shouldTranslate, isInitialized, toggleTranslation } = useGoogleTranslate();
+  const { isTranslated, isLoading, shouldTranslate, isInitialized, toggleTranslation } = useTranslation();
 
   if (!shouldTranslate) {
     return null;
@@ -21,8 +21,8 @@ const TranslationToggle = ({ variant = 'desktop' }: TranslationToggleProps) => {
       ) : (
         <Languages className="h-4 w-4" />
       )}
-      <span className={variant === 'mobile' ? 'ml-2' : 'ml-1 hidden sm:inline'}>
-        {!isInitialized ? 'लोड हो रहा...' : (isTranslated ? 'English' : 'हिंदी')}
+      <span className={variant === 'mobile' ? 'ml-2' : 'ml-1 hidden sm:inline'} data-translate data-original={isTranslated ? 'हिंदी' : 'English'}>
+        {!isInitialized ? 'लोड हो रहा...' : (isTranslated ? 'हिंदी' : 'English')}
       </span>
     </>
   );

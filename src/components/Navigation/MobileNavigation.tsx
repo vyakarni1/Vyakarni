@@ -35,33 +35,33 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              डैशबोर्ड
+              <span data-translate data-original="डैशबोर्ड">डैशबोर्ड</span>
             </Link>
             <Link 
               to="/grammar-checker" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              व्याकरण जाँच
+              <span data-translate data-original="व्याकरण जाँच">व्याकरण जाँच</span>
             </Link>
             <Link 
               to="/profile" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              प्रोफाइल
+              <span data-translate data-original="प्रोफाइल">प्रोफाइल</span>
             </Link>
             <Link 
               to="/pricing" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              प्राइसिंग
+              <span data-translate data-original="प्राइसिंग">प्राइसिंग</span>
             </Link>
             <TranslationToggle variant="mobile" />
             <div className="pt-3 border-t border-gray-200">
               <div className="px-3 py-2 text-sm text-gray-600">
-                नमस्ते, {profile?.name || user.email?.split('@')[0]}
+                <span data-translate data-original="नमस्ते">नमस्ते</span>, {profile?.name || user.email?.split('@')[0]}
               </div>
               <Button 
                 variant="outline" 
@@ -70,7 +70,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
                 className="w-full justify-start mt-2"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                लॉग आउट
+                <span data-translate data-original="लॉग आउट">लॉग आउट</span>
               </Button>
             </div>
           </>
@@ -83,21 +83,21 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
                   className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                   onClick={handleLinkClick}
                 >
-                  हमारे बारे में
+                  <span data-translate data-original="हमारे बारे में">हमारे बारे में</span>
                 </Link>
                 <Link 
                   to="/contact" 
                   className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                   onClick={handleLinkClick}
                 >
-                  संपर्क
+                  <span data-translate data-original="संपर्क">संपर्क</span>
                 </Link>
                 <Link 
                   to="/pricing" 
                   className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
                   onClick={handleLinkClick}
                 >
-                  प्राइसिंग
+                  <span data-translate data-original="प्राइसिंग">प्राइसिंग</span>
                 </Link>
               </>
             )}
@@ -105,12 +105,12 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
             <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
               <Link to="/login" onClick={handleLinkClick}>
                 <Button variant="outline" size="sm" className="w-full transition-all duration-200">
-                  लॉगिन
+                  <span data-translate data-original="लॉगिन">लॉगिन</span>
                 </Button>
               </Link>
               <Link to="/register" onClick={handleLinkClick}>
                 <Button size="sm" className="w-full transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600">
-                  रजिस्टर करयें
+                  <span data-translate data-original="रजिस्टर करें">रजिस्टर करें</span>
                 </Button>
               </Link>
             </div>
