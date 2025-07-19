@@ -74,31 +74,27 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
           </>
         ) : (
           <>
-            {!isHome && (
-              <>
-                <Link 
-                  to="/about" 
-                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
-                  onClick={handleLinkClick}
-                >
-                  हमारे बारे में
-                </Link>
-                <Link 
-                  to="/contact" 
-                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
-                  onClick={handleLinkClick}
-                >
-                  संपर्क
-                </Link>
-                <Link 
-                  to="/pricing" 
-                  className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
-                  onClick={handleLinkClick}
-                >
-                  प्राइसिंग
-                </Link>
-              </>
-            )}
+            <Link 
+              to="/about" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
+              onClick={handleLinkClick}
+            >
+              हमारे बारे में
+            </Link>
+            <Link 
+              to="/contact" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
+              onClick={handleLinkClick}
+            >
+              संपर्क
+            </Link>
+            <Link 
+              to="/pricing" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
+              onClick={handleLinkClick}
+            >
+              प्राइसिंग
+            </Link>
             <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
               <Link to="/login" onClick={handleLinkClick}>
                 <Button variant="outline" size="sm" className="w-full transition-all duration-200">

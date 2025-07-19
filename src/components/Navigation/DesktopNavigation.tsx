@@ -50,31 +50,27 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
         </>
       ) : (
         <>
-          {!isHome && (
-            <>
-              <Link 
-                to="/about" 
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
-              >
-                हमारे बारे में
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
-              >
-                संपर्क
-                <span className="absolute -bottom-1 left-0 w-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link 
-                to="/pricing" 
-                className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
-              >
-                प्राइसिंग
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            </>
-          )}
+          <Link 
+            to="/about" 
+            className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
+          >
+            हमारे बारे में
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+          </Link>
+          <Link 
+            to="/contact" 
+            className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
+          >
+            संपर्क
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+          </Link>
+          <Link 
+            to="/pricing" 
+            className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
+          >
+            प्राइसिंग
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+          </Link>
           <AuthButtons user={user} profile={profile} variant={variant} onLogout={onLogout} />
         </>
       )}
