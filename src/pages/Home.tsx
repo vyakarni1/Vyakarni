@@ -67,7 +67,40 @@ const Home = () => {
         description: "व्याकरण, शब्द-चयन, विराम चिह्न, वाक्य-विन्यास एवं भाषा-सौष्ठव को उन्नत करें।"
       },
       buttonText: "अभी प्रयोग करें"
-    }
+    },
+    usp: {
+      title: "व्याकरणी को क्यों चुनें?",
+      description: "हमारे अनोखे लाभ जो हमें विशेष रूप से स्वीकार्य बनाते हैं।"
+    },
+    counter: {
+      title: "हमारी उपलब्धियाँ",
+      description: "आँकड़े जो हमारी उपलब्धियों को दर्शाते हैं।"
+    },
+    pricing: {
+      title: "शब्द क्रेडिट प्लान",
+      description: "एक बार खरीदें और स्थायी रूप से उपयोग करें।",
+      subtitle: "एक बार भुगतान • कोई समाप्ति नहीं • स्थायी एक्सेस"
+    },
+    testimonials: {
+      title: "उपयोगकर्ताओं के विचार",
+      description: "देखिये कि हमारे उपयोगकर्ता व्याकरणी के विषय में क्या कह रहे हैं।"
+    },
+    faq: {
+      title: "प्रायः पूछे जाने वाले प्रश्न",
+      description: "व्याकरणी के सन्दर्भ में प्रश्नोत्तरी"
+    },
+    cta: {
+      title: "आज ही अपनी हिंदी लेखन में",
+      subtitle: "त्वरित सुधार लायें!",
+      description: "व्याकरणी के साथ हिंदी लेखन सुधार का आरम्भ करें और देखें कि कैसे AI आपकी लेखन गुणवत्ता को एक नवीन उच्चतर स्तर पर ले जा सकती है।",
+      startButton: "निःशुल्क आरम्भ करें",
+      joinButton: "व्याकरणी अभियान में जुड़ें",
+      freeSignup: "निःशुल्क साइन अप",
+      noCreditCard: "कोई क्रेडिट कार्ड नहीं",
+      instantStart: "तत्काल प्रारंभ",
+      missionText: "व्याकरणी हमारे लिये एक अभियान है। एक ऐसा अभियान जिसके माध्यम से हम लोगों को हिंदी भाषा में दक्ष बनाने का प्रयास करेंगे। 'सर्वजन हिताय' की मूल भावना के साथ प्रारंभ किया गया यह अभियान सर्वजन के सहयोग की अनुपस्थिति में पूर्ण न हो सकेगा। व्याकरणी के इस महा-अभियान से किसी भी रूप में जुड़ने के लिये आप हमें हमारे ई-मेल support@vyakarni.com पर संपर्क कर सकते हैं।"
+    },
+    marquee: "☆ श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆ Beta Version V-1.0"
   };
 
   const englishContent = {
@@ -116,7 +149,40 @@ const Home = () => {
         description: "Improve grammar, word choice, punctuation, sentence structure, and language elegance."
       },
       buttonText: "Try Now"
-    }
+    },
+    usp: {
+      title: "Why Choose Vyakarni?",
+      description: "Our unique advantages that make us specially acceptable."
+    },
+    counter: {
+      title: "Our Achievements",
+      description: "Statistics that reflect our accomplishments."
+    },
+    pricing: {
+      title: "Word Credit Plans",
+      description: "Buy once and use permanently.",
+      subtitle: "One-time payment • No expiry • Permanent access"
+    },
+    testimonials: {
+      title: "User Reviews",
+      description: "See what our users are saying about Vyakarni."
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      description: "Q&A about Vyakarni"
+    },
+    cta: {
+      title: "Bring instant improvement to",
+      subtitle: "your Hindi writing today!",
+      description: "Start improving your Hindi writing with Vyakarni and see how AI can take your writing quality to a new higher level.",
+      startButton: "Start Free",
+      joinButton: "Join Vyakarni Mission",
+      freeSignup: "Free signup",
+      noCreditCard: "No credit card",
+      instantStart: "Instant start",
+      missionText: "Vyakarni is a mission for us. A mission through which we will strive to make people proficient in the Hindi language. This mission started with the basic spirit of 'Sarvajanahitaya' cannot be completed without the cooperation of everyone. To join this great mission of Vyakarni in any form, you can contact us at our email support@vyakarni.com."
+    },
+    marquee: "☆ Use Google Chrome Version 137.0.7151.56 (Latest Build) (64-bit) for best results ☆ Beta Version V-1.0"
   };
 
   const currentContent = language === "english" ? englishContent : hindiContent;
@@ -166,7 +232,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <UnifiedNavigation variant="home" />
-      <MarqueeBar />
+      <MarqueeBar content={currentContent.marquee} />
       
       {/* Language Toggle */}
       <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
@@ -194,13 +260,13 @@ const Home = () => {
       <div className="pt-24">
         <HeroSection content={currentContent.hero} />
         <FeaturesSection content={currentContent.features} />
-        <USPSection />
-        <CounterSection />
+        <USPSection content={currentContent.usp} language={language} />
+        <CounterSection content={currentContent.counter} language={language} />
         <HowItWorksSection content={currentContent.howItWorks} />
-        <PricingPreviewSection />
-        <TestimonialsSection />
-        <FAQSection />
-        <CTABanner />
+        <PricingPreviewSection content={currentContent.pricing} language={language} />
+        <TestimonialsSection content={currentContent.testimonials} language={language} />
+        <FAQSection content={currentContent.faq} language={language} />
+        <CTABanner content={currentContent.cta} />
         <Footer />
       </div>
     </div>

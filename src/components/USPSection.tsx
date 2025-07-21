@@ -2,8 +2,53 @@
 import { Shield, Zap, Users, Award, Clock, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
-const USPSection = () => {
-  const usps = [
+interface USPSectionProps {
+  content: {
+    title: string;
+    description: string;
+  };
+  language: "english" | "hindi";
+}
+
+const USPSection = ({ content, language }: USPSectionProps) => {
+  const usps = language === "english" ? [
+    {
+      icon: Zap,
+      title: '5 to 10 seconds results',
+      description: 'World\'s fastest language correction and refinement.',
+      gradient: 'from-blue-400 to-cyan-500'
+    },
+    {
+      icon: Shield,
+      title: '100% secure data',
+      description: 'Completely encrypted data, no storage.',
+      gradient: 'from-blue-500 to-blue-600'
+    },
+    {
+      icon: Award,
+      title: '99% accuracy',
+      description: '99% accurate text and grammar correction with AI power.',
+      gradient: 'from-cyan-400 to-blue-500'
+    },
+    {
+      icon: Users,
+      title: '10,000+ satisfied users',
+      description: 'Accepted among students, teachers, writers and professional users.',
+      gradient: 'from-blue-600 to-indigo-600'
+    },
+    {
+      icon: Clock,
+      title: '24/7 available',
+      description: 'Always available language assistant, anywhere-anytime.',
+      gradient: 'from-sky-400 to-blue-500'
+    },
+    {
+      icon: CheckCircle,
+      title: 'Free to start',
+      description: 'No credit card, start free trial today.',
+      gradient: 'from-blue-400 to-cyan-400'
+    }
+  ] : [
     {
       icon: Zap,
       title: '5 से 10 सेकेंड में परिणाम',
@@ -54,9 +99,9 @@ const USPSection = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
-            व्याकरणी को क्यों चुनें?
+            {content.title}
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">हमारे अनोखे लाभ जो हमें विशेष रूप से स्वीकार्य बनाते हैं।</p>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">{content.description}</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

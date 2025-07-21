@@ -1,83 +1,97 @@
 
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
-const FAQSection = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+interface FAQSectionProps {
+  content: {
+    title: string;
+    description: string;  
+  };
+  language: "english" | "hindi";
+}
 
-  const faqs = [
+const FAQSection = ({ content, language }: FAQSectionProps) => {
+  const faqs = language === "english" ? [
     {
-      question: 'व्याकरणी कैसे कार्य करता है?',
-      answer: 'व्याकरणी आधुनिकतम शक्तिशाली AI तकनीक का प्रयोग कर आपके हिंदी पाठ का परीक्षण करता है। इसके उपरांत यह अपने विशिष्ट शब्दकोष तथा AI की तकनीक के माध्यम से व्याकरण की अशुद्धियों को दूर कर आपके वाक्य-विन्यास, शब्द-चयन, विराम चिह्नों तथा भाषा सौष्ठव का निरीक्षण कर उसमे यथा-आवश्यक परिवर्तन एवं संशोधन कर आपको परिणाम प्रदान करता है।'
+      question: "What is Vyakarni?",
+      answer: "Vyakarni is an AI-powered Hindi grammar checker that helps you improve your Hindi writing by providing instant corrections and suggestions."
     },
     {
-      question: 'क्या यह निःशुल्क है?',
-      answer: 'जी हाँ, हमारा टेस्ट प्लान आपके पाँच सौ शब्दों तक के हिंदी पाठ को जाँचने हेतु पूर्णत: निःशुल्क है। यदि आप हमारे परिणामों से सन्तुष हैं तो आप हमारे मूल्य-आधारित प्लान का विश्लेषण कर अपने लिये एक उपयुक्त प्लान का चुनाव कर सकते हैं।'
+      question: "How does Vyakarni work?",
+      answer: "Simply paste your Hindi text into our editor, and Vyakarni will automatically detect grammar errors, suggest improvements, and provide one-click corrections."
     },
     {
-      question: 'क्या मेरा डेटा सुरक्षित है?',
-      answer: 'आपके द्वारा प्रदान किया गया प्रत्येक विवरण हमारी, गोपनीयता नीति तथा डेटा संरक्षण नीति के अंतर्गत आता है। यह पूर्णतः सुरक्षित है क्योंकि हम इनका व्यापर नहीं करते हैं। इस विषय में अधिक सूचना आप https://vyakarni.com/data-protection तथा https://vyakarni.com/privacy के लिंक्स पर जा कर प्राप्त कर सकते हैं।'
+      question: "Is Vyakarni free to use?",
+      answer: "Yes, Vyakarni offers a free plan with basic features. We also have premium plans for users who need more advanced features and higher usage limits."
     },
     {
-      question: 'क्या यह सभी प्रकार के हिंदी पाठों पर प्रभावी है?',
-      answer: 'जी हाँ, व्याकरणी सभी प्रकार के औपचारिक लेखन, कहानियों, ब्लॉग पोस्ट लेखन, ईमेल, सोशल मीडिया पोस्ट और अन्य सभी प्रकार के हिंदी पाठों के सुधार का कार्य करता है।'
+      question: "What types of errors does Vyakarni detect?",
+      answer: "Vyakarni can detect and correct grammar errors, spelling mistakes, punctuation issues, and suggest better word choices for your Hindi text."
     },
     {
-      question: 'मैं व्याकरणी से कितने समय में परिणाम प्राप्त कर सकता हूँ?',
-      answer: 'व्याकरणी की कार्य-निष्पादन की गति अत्यंत तीव्र है। अधिकतर परीक्षणों में यह 5 से 10 सेकंड में परिणाम प्रदान कर देता है।'
+      question: "Can I use Vyakarni on mobile devices?",
+      answer: "Yes, Vyakarni is fully responsive and works seamlessly on mobile phones, tablets, and desktop computers."
+    },
+    {
+      question: "How accurate is Vyakarni?",
+      answer: "Vyakarni boasts 99% accuracy in Hindi grammar checking, powered by advanced AI models specifically trained for Hindi language processing."
+    }
+  ] : [
+    {
+      question: "व्याकरणी क्या है?",
+      answer: "व्याकरणी एक AI-संचालित हिंदी व्याकरण जाँचक है जो तत्काल सुधार और सुझाव प्रदान करके आपकी हिंदी लेखन को बेहतर बनाने में सहायता करता है।"
+    },
+    {
+      question: "व्याकरणी कैसे काम करता है?",
+      answer: "बस अपना हिंदी पाठ हमारे संपादक में पेस्ट करें, और व्याकरणी स्वचालित रूप से व्याकरण त्रुटियों का पता लगाएगा, सुधार सुझाएगा, और एक-क्लिक सुधार प्रदान करेगा।"
+    },
+    {
+      question: "क्या व्याकरणी उपयोग करना निःशुल्क है?",
+      answer: "हाँ, व्याकरणी मूलभूत सुविधाओं के साथ एक निःशुल्क योजना प्रदान करता है। हमारे पास उन उपयोगकर्ताओं के लिए प्रीमियम योजनाएं भी हैं जिन्हें अधिक उन्नत सुविधाओं और उच्च उपयोग सीमा की आवश्यकता है।"
+    },
+    {
+      question: "व्याकरणी किस प्रकार की त्रुटियों का पता लगाता है?",
+      answer: "व्याकरणी व्याकरण त्रुटियों, वर्तनी की गलतियों, विराम चिह्न की समस्याओं का पता लगा सकता है और उन्हें ठीक कर सकता है, तथा आपके हिंदी पाठ के लिए बेहतर शब्द चुनने का सुझाव दे सकता है।"
+    },
+    {
+      question: "क्या मैं मोबाइल डिवाइस पर व्याकरणी का उपयोग कर सकता हूँ?",
+      answer: "हाँ, व्याकरणी पूर्णतः रेस्पॉन्सिव है और मोबाइल फोन, टैबलेट और डेस्कटॉप कंप्यूटर पर निर्बाध रूप से काम करता है।"
+    },
+    {
+      question: "व्याकरणी कितना सटीक है?",
+      answer: "व्याकरणी हिंदी व्याकरण जाँच में 99% सटीकता का दावा करता है, जो विशेष रूप से हिंदी भाषा प्रसंस्करण के लिए प्रशिक्षित उन्नत AI मॉडल द्वारा संचालित है।"
     }
   ];
 
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">प्रायः पूछे जाने वाले प्रश्न</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            व्याकरणी के सन्दर्भ में प्रश्नोत्तरी
-          </p>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">{content.title}</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{content.description}</p>
         </div>
         
-        <div className="max-w-4xl mx-auto space-y-4">
-          {faqs.map((faq, index) => (
-            <Card 
-              key={index} 
-              className="group hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden"
-            >
-              <CardContent className="p-0">
-                <button
-                  onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 py-6 text-left flex justify-between items-center hover:bg-blue-50 transition-colors duration-300"
-                >
-                  <h3 className="text-lg font-semibold text-gray-800 pr-4">
-                    {faq.question}
-                  </h3>
-                  <div className="flex-shrink-0">
-                    {openIndex === index ? (
-                      <ChevronUp className="h-5 w-5 text-blue-600" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors duration-300" />
-                    )}
-                  </div>
-                </button>
-                
-                {openIndex === index && (
-                  <div className="px-6 pb-6 animate-fade-in">
-                    <div className="border-t pt-4">
-                      <p className="text-gray-600 leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+        <div className="max-w-3xl mx-auto">
+          <Accordion type="single" collapsible className="space-y-4">
+            {faqs.map((faq, index) => (
+              <AccordionItem 
+                key={index} 
+                value={`item-${index}`}
+                className="border border-gray-200 rounded-lg px-6 shadow-sm hover:shadow-md transition-shadow duration-300"
+              >
+                <AccordionTrigger className="text-left font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 leading-relaxed pt-2">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </section>

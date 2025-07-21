@@ -2,7 +2,15 @@
 import { useEffect, useState } from 'react';
 import { Users, FileText, CheckCircle, Clock } from 'lucide-react';
 
-const CounterSection = () => {
+interface CounterSectionProps {
+  content: {
+    title: string;
+    description: string;
+  };
+  language: "english" | "hindi";
+}
+
+const CounterSection = ({ content, language }: CounterSectionProps) => {
   const [counters, setCounters] = useState({
     users: 0,
     texts: 0,
@@ -34,7 +42,32 @@ const CounterSection = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const stats = [
+  const stats = language === "english" ? [
+    {
+      icon: Users,
+      value: counters.users.toLocaleString('en-US'),
+      label: 'Satisfied Users',
+      suffix: '+'
+    },
+    {
+      icon: FileText,
+      value: counters.texts.toLocaleString('en-US'),
+      label: 'Texts Checked',
+      suffix: '+'
+    },
+    {
+      icon: CheckCircle,
+      value: counters.corrections,
+      label: 'Accurate Correction',
+      suffix: '%'
+    },
+    {
+      icon: Clock,
+      value: '24/7',
+      label: 'Service Available',
+      suffix: ''
+    }
+  ] : [
     {
       icon: Users,
       value: counters.users.toLocaleString('hi-IN'),
@@ -65,8 +98,8 @@ const CounterSection = () => {
     <section className="bg-gradient-blue-primary py-16 text-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">हमारी उपलब्धियाँ</h2>
-          <p className="text-xl opacity-90">आँकड़े जो हमारी उपलब्धियों को दर्शाते हैं।</p>
+          <h2 className="text-4xl font-bold mb-4">{content.title}</h2>
+          <p className="text-xl opacity-90">{content.description}</p>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">

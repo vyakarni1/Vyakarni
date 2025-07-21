@@ -8,6 +8,15 @@ import DiscountBadge from './DiscountBadge';
 import { useWordCredits } from '@/hooks/useWordCredits';
 import { useAuth } from '@/components/AuthProvider';
 
+interface PricingPreviewSectionProps {
+  content: {
+    title: string;
+    description: string;
+    subtitle: string;
+  };
+  language: "english" | "hindi";
+}
+
 function getPlanIcon(planType: string) {
   switch (planType) {
     case 'free':
@@ -34,18 +43,48 @@ function getPlanColor(planType: string) {
   }
 }
 
-const PricingPreviewSection = () => {
+const PricingPreviewSection = ({ content, language }: PricingPreviewSectionProps) => {
   const { plans, loading, getWordCreditPlans, getDiscountInfo } = useWordCredits();
   const { user } = useAuth();
+
+  const labels = language === "english" ? {
+    loading: "Loading plans...",
+    mostPopular: "Most Popular",
+    words: "words",
+    permanentAccess: "Permanent access • No expiry",
+    freeText: "Free",
+    oneTime: "One-time payment | 18% GST additional",
+    total: "Total",
+    grammarCheck: "Hindi grammar check",
+    oneClickCorrection: "One-click sentence correction",
+    viewAllOptions: "View All Options",
+    freeOnSignup: "Get on signup",
+    buyNow: "Buy Now",
+    signup: "Sign Up"
+  } : {
+    loading: "प्लान लोड हो रहे हैं...",
+    mostPopular: "सबसे लोकप्रिय",
+    words: "शब्द",
+    permanentAccess: "स्थायी एक्सेस • कोई समाप्ति नहीं",
+    freeText: "निःशुल्क",
+    oneTime: "एक बार भुगतान | 18% GST अतिरिक्त",
+    total: "कुल",
+    grammarCheck: "हिंदी व्याकरण जाँच",
+    oneClickCorrection: "एक-क्लिक वाक्य सुधार",
+    viewAllOptions: "सभी विकल्प देखें",
+    freeOnSignup: "साइनअप पर मिलता है",
+    buyNow: "अभी खरीदें",
+    signup: "साइनअप करें"
+  };
 
   if (loading) {
     return (
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">प्लान चुनें</h2>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">{content.title}</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
-              एक बार खरीदें और स्थायी रूप से उपयोग करें।
+              {content.description}
             </p>
           </div>
           <div className="flex items-center justify-center">
@@ -62,13 +101,13 @@ const PricingPreviewSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">शब्द क्रेडिट प्लान</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">{content.title}</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
-            एक बार खरीदें और स्थायी रूप से उपयोग करें।
+            {content.description}
           </p>
           <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
             <Calculator className="h-4 w-4" />
-            <span>एक बार भुगतान • कोई समाप्ति नहीं • स्थायी एक्सेस</span>
+            <span>{content.subtitle}</span>
           </div>
         </div>
 
@@ -94,7 +133,7 @@ const PricingPreviewSection = () => {
                   {/* Popular Badge */}
                   {plan.plan_type === 'basic' && (
                     <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
-                      सबसे लोकप्रिय
+                      {labels.mostPopular}
                     </div>
                   )}
 
@@ -107,10 +146,10 @@ const PricingPreviewSection = () => {
                     {/* Word Credits Display */}
                     <div className="text-center mb-2">
                       <div className="text-lg font-semibold text-blue-600">
-                        {plan.words_included.toLocaleString()} शब्द
+                        {plan.words_included.toLocaleString()} {labels.words}
                       </div>
                       <div className="text-xs text-gray-500">
-                        स्थायी एक्सेस • कोई समाप्ति नहीं
+                        {labels.permanentAccess}
                       </div>
                     </div>
 
@@ -120,22 +159,22 @@ const PricingPreviewSection = () => {
                           <div className="flex items-center justify-center space-x-2">
                             {discountInfo.hasDiscount && (
                               <span className="text-lg text-gray-500 line-through">
-                                ₹{discountInfo.originalPrice.toLocaleString('hi-IN')}
+                                ₹{discountInfo.originalPrice.toLocaleString(language === 'hindi' ? 'hi-IN' : 'en-US')}
                               </span>
                             )}
                             <span className="text-2xl font-bold text-gray-900">
-                              ₹{plan.price_before_gst.toLocaleString('hi-IN')}
+                              ₹{plan.price_before_gst.toLocaleString(language === 'hindi' ? 'hi-IN' : 'en-US')}
                             </span>
                           </div>
                           <Badge variant="outline" className="text-xs">
-                            एक बार भुगतान | 18% GST अतिरिक्त
+                            {labels.oneTime}
                           </Badge>
                           <div className="text-xs text-gray-600">
-                            कुल: ₹{totalPrice.toFixed(0)}
+                            {labels.total}: ₹{totalPrice.toFixed(0)}
                           </div>
                         </div>
                       ) : (
-                        <div className="text-2xl font-bold text-green-600">निःशुल्क</div>
+                        <div className="text-2xl font-bold text-green-600">{labels.freeText}</div>
                       )}
                     </div>
                   </CardHeader>
@@ -155,15 +194,15 @@ const PricingPreviewSection = () => {
                         <>
                           <div className="flex items-center space-x-3">
                             <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                            <span className="text-sm text-gray-700">हिंदी व्याकरण जाँच</span>
+                            <span className="text-sm text-gray-700">{labels.grammarCheck}</span>
                           </div>
                           <div className="flex items-center space-x-3">
                             <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                            <span className="text-sm text-gray-700">एक-क्लिक वाक्य सुधार</span>
+                            <span className="text-sm text-gray-700">{labels.oneClickCorrection}</span>
                           </div>
                           <div className="flex items-center space-x-3">
                             <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                            <span className="text-sm text-gray-700">स्थायी एक्सेस</span>
+                            <span className="text-sm text-gray-700">{labels.permanentAccess}</span>
                           </div>
                         </>
                       )}
@@ -176,8 +215,8 @@ const PricingPreviewSection = () => {
                         asChild
                       >
                         <Link to={user ? "/pricing" : "/register"}>
-                          {plan.plan_type === 'free' ? "साइनअप पर मिलता है" : 
-                           user ? "अभी खरीदें" : "साइनअप करें"}
+                          {plan.plan_type === 'free' ? labels.freeOnSignup : 
+                           user ? labels.buyNow : labels.signup}
                         </Link>
                       </Button>
                     </div>
@@ -191,7 +230,7 @@ const PricingPreviewSection = () => {
         <div className="text-center mt-12">
           <Link to="/pricing">
             <Button variant="outline" size="lg" className="hover:bg-blue-50 hover:border-blue-300 transition-all duration-300">
-              सभी विकल्प देखें
+              {labels.viewAllOptions}
             </Button>
           </Link>
         </div>

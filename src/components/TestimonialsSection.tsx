@@ -2,8 +2,38 @@
 import { Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
-const TestimonialsSection = () => {
-  const testimonials = [
+interface TestimonialsSectionProps {
+  content: {
+    title: string;
+    description: string;
+  };
+  language: "english" | "hindi";
+}
+
+const TestimonialsSection = ({ content, language }: TestimonialsSectionProps) => {
+  const testimonials = language === "english" ? [
+    {
+      name: 'Shilpa Kayastha',
+      role: 'Professor',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b047?w=100&h=100&fit=crop&crop=face',
+      content: 'Vyakarni has greatly improved my writing quality. Now I don\'t think twice before writing in Hindi because Vyakarni is my assistant.',
+      rating: 5
+    },
+    {
+      name: 'Shashank Singh',
+      role: 'Student',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b047?w=100&h=100&fit=crop&crop=face',
+      content: 'As a student, the biggest convenience for me is that it is always available for me and this increases my confidence.',
+      rating: 5
+    },
+    {
+      name: 'Adarsh Nigam',
+      role: 'Consultant',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+      content: 'Vyakarni is extremely beneficial for a business user. It not only does correction work, but the main thing is that it can be used anywhere and anytime for quick needs.',
+      rating: 5
+    }
+  ] : [
     {
       name: 'शिल्पा कायस्था',
       role: 'प्राध्यापिका',
@@ -31,9 +61,9 @@ const TestimonialsSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">उपयोगकर्ताओं के विचार</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">{content.title}</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            देखिये कि हमारे उपयोगकर्ता व्याकरणी के विषय में क्या कह रहे हैं।
+            {content.description}
           </p>
         </div>
         
