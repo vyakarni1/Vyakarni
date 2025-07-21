@@ -5,9 +5,13 @@ import { useProgressManagement } from "@/hooks/useProgressManagement";
 import { useTextOperations } from "@/hooks/useTextOperations";
 import { useSimplifiedGrammarChecker } from "@/hooks/useSimplifiedGrammarChecker";
 import { useSimplifiedStyleProcessing } from "@/hooks/useSimplifiedStyleProcessing";
+import { callGrokTextComparisonAPI } from "@/services/grammarApi";
+import { useState } from "react";
+import { Correction } from "@/types/grammarChecker";
 
 export const useGrammarChecker = () => {
   const { trackUsage } = useUsageStats();
+  const [corrections, setCorrections] = useState<Correction[]>([]);
   
   const progressManagement = useProgressManagement();
   const textOperations = useTextOperations();
@@ -20,12 +24,34 @@ export const useGrammarChecker = () => {
     onProgressUpdate: progressManagement.updateProgress
   });
 
+  const generateCorrections = async (originalText: string, processedText: string, processingType: string) => {
+    try {
+      progressManagement.updateProgress(85, 'सुधार विश्लेषण');
+      
+      const correctionData = await callGrokTextComparisonAPI(
+        originalText, 
+        processedText, 
+        processingType
+      );
+      
+      setCorrections(correctionData || []);
+      progressManagement.updateProgress(100, 'पूर्ण!');
+      
+      console.log('Generated corrections:', correctionData);
+    } catch (error) {
+      console.error('Error generating corrections:', error);
+      // Don't show error toast for corrections as it's supplementary
+      setCorrections([]);
+    }
+  };
+
   const correctGrammar = async () => {
     if (!textOperations.validateInput(textOperations.inputText)) {
       return;
     }
 
     textOperations.setProcessingMode('grammar');
+    setCorrections([]); // Reset corrections
     
     try {
       const result = await grammarProcessing.processGrammarCorrection(textOperations.inputText);
@@ -33,6 +59,13 @@ export const useGrammarChecker = () => {
       if (result) {
         // Track usage after successful processing
         trackUsage('correction');
+        
+        // Generate corrections comparison (4th step)
+        await generateCorrections(
+          textOperations.inputText,
+          grammarProcessing.correctedText,
+          'grammar_check'
+        );
         
         toast.success("व्याकरण सुधार पूर्ण हुआ!");
       }
@@ -48,6 +81,7 @@ export const useGrammarChecker = () => {
     }
 
     textOperations.setProcessingMode('style');
+    setCorrections([]); // Reset corrections
     
     try {
       const result = await styleProcessing.processStyleEnhancement(textOperations.inputText);
@@ -55,6 +89,13 @@ export const useGrammarChecker = () => {
       if (result) {
         // Track usage after successful processing
         trackUsage('enhancement');
+        
+        // Generate corrections comparison (4th step)
+        await generateCorrections(
+          textOperations.inputText,
+          styleProcessing.enhancedText,
+          'style_enhance'
+        );
         
         toast.success("शैली सुधार पूर्ण हुआ!");
       }
@@ -69,6 +110,7 @@ export const useGrammarChecker = () => {
     grammarProcessing.resetGrammarData();
     styleProcessing.resetStyleData();
     progressManagement.resetProgressState();
+    setCorrections([]); // Reset corrections
   };
 
   const copyToClipboard = async () => {
@@ -92,19 +134,17 @@ export const useGrammarChecker = () => {
     setInputText: textOperations.setInputText,
     correctedText: grammarProcessing.correctedText,
     enhancedText: styleProcessing.enhancedText,
+    corrections,
     isLoading: progressManagement.isLoading,
     processingMode: textOperations.processingMode,
     progress: progressManagement.progress,
     currentStage: progressManagement.currentStage,
-    corrections: [], // No corrections tracking in simplified version
-    aiCorrections: [], // No AI corrections tracking
-    dictionaryCorrections: [], // No dictionary corrections tracking
     correctGrammar,
     enhanceStyle,
     resetText,
     copyToClipboard,
     getCurrentProcessedText,
-    highlighting: { // Empty highlighting object
+    highlighting: { // Empty highlighting object for compatibility
       segments: [],
       highlightedIndex: null,
       highlightCorrection: () => {},
