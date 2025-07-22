@@ -28,6 +28,28 @@ export const useGrammarChecker = () => {
     try {
       progressManagement.updateProgress(85, 'सुधार विश्लेषण');
       
+      // Validate that both texts are available
+      if (!originalText || !processedText) {
+        console.warn('Cannot generate corrections: missing text', { originalText: !!originalText, processedText: !!processedText });
+        setCorrections([]);
+        progressManagement.updateProgress(100, 'पूर्ण!');
+        return;
+      }
+      
+      // Skip if texts are identical
+      if (originalText.trim() === processedText.trim()) {
+        console.log('Texts are identical, no corrections needed');
+        setCorrections([]);
+        progressManagement.updateProgress(100, 'पूर्ण!');
+        return;
+      }
+      
+      console.log('Generating corrections comparison:', { 
+        originalLength: originalText.length, 
+        processedLength: processedText.length,
+        processingType 
+      });
+      
       const correctionData = await callGrokTextComparisonAPI(
         originalText, 
         processedText, 
@@ -42,6 +64,7 @@ export const useGrammarChecker = () => {
       console.error('Error generating corrections:', error);
       // Don't show error toast for corrections as it's supplementary
       setCorrections([]);
+      progressManagement.updateProgress(100, 'पूर्ण!');
     }
   };
 
@@ -61,11 +84,14 @@ export const useGrammarChecker = () => {
         trackUsage('correction');
         
         // Generate corrections comparison (4th step)
-        await generateCorrections(
-          textOperations.inputText,
-          grammarProcessing.correctedText,
-          'grammar_check'
-        );
+        // Wait a moment to ensure the text is set
+        setTimeout(async () => {
+          await generateCorrections(
+            textOperations.inputText,
+            grammarProcessing.correctedText,
+            'grammar_check'
+          );
+        }, 100);
         
         toast.success("व्याकरण सुधार पूर्ण हुआ!");
       }
@@ -91,11 +117,14 @@ export const useGrammarChecker = () => {
         trackUsage('enhancement');
         
         // Generate corrections comparison (4th step)
-        await generateCorrections(
-          textOperations.inputText,
-          styleProcessing.enhancedText,
-          'style_enhance'
-        );
+        // Wait a moment to ensure the text is set
+        setTimeout(async () => {
+          await generateCorrections(
+            textOperations.inputText,
+            styleProcessing.enhancedText,
+            'style_enhance'
+          );
+        }, 100);
         
         toast.success("शैली सुधार पूर्ण हुआ!");
       }
