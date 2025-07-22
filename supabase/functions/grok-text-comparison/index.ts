@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const xaiApiKey = Deno.env.get('XAI_API_KEY');
+const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,14 +22,14 @@ serve(async (req) => {
 
     console.log('Comparing texts for highlighting:', { originalText, finalText, processingType });
 
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${xaiApiKey}`,
+        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'grok-3',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
@@ -101,7 +101,7 @@ Analyze all differences and return the JSON structure with corrections array.`
     });
 
     if (!response.ok) {
-      throw new Error(`Grok API error: ${response.status}`);
+      throw new Error(`OpenAI API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -110,15 +110,15 @@ Analyze all differences and return the JSON structure with corrections array.`
     // Remove any markdown code blocks if present
     aiResponse = aiResponse.replace(/```json\s*|\s*```/g, '');
     
-    console.log('Grok comparison response:', aiResponse);
+    console.log('OpenAI comparison response:', aiResponse);
 
     // Parse the JSON response
     let parsedResponse;
     try {
       parsedResponse = JSON.parse(aiResponse);
     } catch (parseError) {
-      console.error('Failed to parse Grok response as JSON:', parseError);
-      console.error('Grok response was:', aiResponse.substring(0, 1000) + '...[truncated]');
+      console.error('Failed to parse OpenAI response as JSON:', parseError);
+      console.error('OpenAI response was:', aiResponse.substring(0, 1000) + '...[truncated]');
       
       // Try to extract whatever corrections we can from partial JSON
       try {
