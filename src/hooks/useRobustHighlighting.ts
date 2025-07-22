@@ -6,7 +6,7 @@ export interface HighlightedSegment {
   isHighlighted: boolean;
   type: 'incorrect' | 'correct' | 'normal';
   correctionIndex?: number;
-  source?: 'gpt' | 'dictionary';
+  source?: 'gpt' | 'dictionary' | 'grok';
 }
 
 export const useRobustHighlighting = () => {
