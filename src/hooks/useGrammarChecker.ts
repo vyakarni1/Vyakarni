@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import { useUsageStats } from "@/hooks/useUsageStats";
 import { useProgressManagement } from "@/hooks/useProgressManagement";
@@ -83,15 +82,12 @@ export const useGrammarChecker = () => {
         // Track usage after successful processing
         trackUsage('correction');
         
-        // Generate corrections comparison (4th step)
-        // Wait a moment to ensure the text is set
-        setTimeout(async () => {
-          await generateCorrections(
-            textOperations.inputText,
-            grammarProcessing.correctedText,
-            'grammar_check'
-          );
-        }, 100);
+        // Generate corrections comparison using the actual result text
+        await generateCorrections(
+          textOperations.inputText,
+          result,
+          'grammar_check'
+        );
         
         toast.success("व्याकरण सुधार पूर्ण हुआ!");
       }
@@ -116,15 +112,12 @@ export const useGrammarChecker = () => {
         // Track usage after successful processing
         trackUsage('enhancement');
         
-        // Generate corrections comparison (4th step)
-        // Wait a moment to ensure the text is set
-        setTimeout(async () => {
-          await generateCorrections(
-            textOperations.inputText,
-            styleProcessing.enhancedText,
-            'style_enhance'
-          );
-        }, 100);
+        // Generate corrections comparison using the actual result text
+        await generateCorrections(
+          textOperations.inputText,
+          result,
+          'style_enhance'
+        );
         
         toast.success("शैली सुधार पूर्ण हुआ!");
       }
