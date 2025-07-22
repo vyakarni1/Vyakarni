@@ -85,7 +85,7 @@ export const useGrammarChecker = () => {
         // Generate corrections comparison using the actual result text
         await generateCorrections(
           textOperations.inputText,
-          result,
+          result.correctedText,
           'grammar_check'
         );
         
@@ -115,7 +115,7 @@ export const useGrammarChecker = () => {
         // Generate corrections comparison using the actual result text
         await generateCorrections(
           textOperations.inputText,
-          result,
+          result.enhancedText,
           'style_enhance'
         );
         
