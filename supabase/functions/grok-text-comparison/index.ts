@@ -96,7 +96,7 @@ Analyze all differences and return the JSON structure with corrections array.`
           }
         ],
         temperature: 0.1,
-        max_tokens: 3000,
+        max_tokens: 8000,
       }),
     });
 
@@ -118,8 +118,29 @@ Analyze all differences and return the JSON structure with corrections array.`
       parsedResponse = JSON.parse(aiResponse);
     } catch (parseError) {
       console.error('Failed to parse Grok response as JSON:', parseError);
-      console.error('Grok response was:', aiResponse);
-      throw new Error('Invalid JSON response from Grok');
+      console.error('Grok response was:', aiResponse.substring(0, 1000) + '...[truncated]');
+      
+      // Try to extract whatever corrections we can from partial JSON
+      try {
+        // If the response starts with { and contains "corrections", try to fix it
+        if (aiResponse.startsWith('{') && aiResponse.includes('"corrections"')) {
+          // Find the last complete correction object
+          const lastCompleteMatch = aiResponse.lastIndexOf('"}');
+          if (lastCompleteMatch > -1) {
+            const truncatedResponse = aiResponse.substring(0, lastCompleteMatch + 2) + ']}';
+            parsedResponse = JSON.parse(truncatedResponse);
+            console.log('Successfully parsed truncated response');
+          } else {
+            throw new Error('Cannot recover from truncated response');
+          }
+        } else {
+          throw new Error('Response format is not recoverable');
+        }
+      } catch (recoveryError) {
+        console.error('Could not recover from truncated response:', recoveryError);
+        // Return empty corrections array as fallback
+        parsedResponse = { corrections: [] };
+      }
     }
 
     const { corrections = [] } = parsedResponse;
