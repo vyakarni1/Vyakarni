@@ -13,7 +13,7 @@ const FeaturesSection = () => {
           </p>
         </div>
       </div>
-    </>
+
       <div className="grid md:grid-cols-3 gap-8 mt-20">
         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 border-2 text-center p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
           <div className="bg-gradient-to-br from-blue-500 to-indigo-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -45,6 +45,7 @@ const FeaturesSection = () => {
           </p>
         </Card>
       </div>
+    </>
   );
 };
 export default FeaturesSection;
