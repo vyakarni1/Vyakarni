@@ -6,6 +6,14 @@ import { Zap, Crown, BookOpen } from "lucide-react";
 const FeaturesSection = () => {
   return (
     <>
+      <div className="mt-16 text-center">
+        <div className="inline-block px-8 py-4 bg-gradient-to-r from-slate-50/80 to-gray-50/80 backdrop-blur-sm border border-slate-200/50 rounded-full shadow-sm hover:shadow-md transition-shadow duration-300">
+          <p className="text-slate-600 text-sm leading-relaxed max-w-4xl">
+            यद्यपि व्याकरणी उच्च सटीकता प्रदान करने का प्रयास करता है, तथापि इसमें यदा-कदा त्रुटियाँ संभव हैं। अंतिम प्रयोग से पूर्व प्राप्त परिणाम की समीक्षा करना अनुशंसित है।
+          </p>
+        </div>
+      </div>
+    </>
       <div className="grid md:grid-cols-3 gap-8 mt-20">
         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 border-2 text-center p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
           <div className="bg-gradient-to-br from-blue-500 to-indigo-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -37,16 +45,6 @@ const FeaturesSection = () => {
           </p>
         </Card>
       </div>
-
-      {/* Disclaimer Line */}
-      <div className="mt-16 text-center">
-        <div className="inline-block px-8 py-4 bg-gradient-to-r from-slate-50/80 to-gray-50/80 backdrop-blur-sm border border-slate-200/50 rounded-full shadow-sm hover:shadow-md transition-shadow duration-300">
-          <p className="text-slate-600 text-sm leading-relaxed max-w-4xl">
-            यद्यपि व्याकरणी उच्च सटीकता प्रदान करने का प्रयास करता है, तथापि इसमें यदा-कदा त्रुटियाँ संभव हैं। अंतिम प्रयोग से पूर्व प्राप्त परिणाम की समीक्षा करना अनुशंसित है।
-          </p>
-        </div>
-      </div>
-    </>
   );
 };
 export default FeaturesSection;
