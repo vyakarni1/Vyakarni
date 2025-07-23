@@ -750,6 +750,42 @@ export type Database = {
         }
         Relationships: []
       }
+      text_corrections: {
+        Row: {
+          corrected_text: string
+          corrections_data: Json | null
+          created_at: string
+          id: string
+          original_text: string
+          processing_type: string
+          updated_at: string
+          user_id: string
+          words_used: number
+        }
+        Insert: {
+          corrected_text: string
+          corrections_data?: Json | null
+          created_at?: string
+          id?: string
+          original_text: string
+          processing_type: string
+          updated_at?: string
+          user_id: string
+          words_used?: number
+        }
+        Update: {
+          corrected_text?: string
+          corrections_data?: Json | null
+          created_at?: string
+          id?: string
+          original_text?: string
+          processing_type?: string
+          updated_at?: string
+          user_id?: string
+          words_used?: number
+        }
+        Relationships: []
+      }
       user_login_activity: {
         Row: {
           created_at: string | null
