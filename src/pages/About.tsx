@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,10 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Target, Users, Award, Heart, BookOpen, Zap, Shield, Globe, TrendingUp, Clock, CheckCircle, Star, Mail, User, AlertTriangle, XCircle, Briefcase, PenTool, Building, Server, Rocket, Settings, Handshake, Cpu, Cloud, Scale, RefreshCw } from "lucide-react";
 import Layout from "@/components/Layout";
-
 const About = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
-
   const hindiContent = {
     heroTitle: "हमारे विषय में",
     heroDescription: "हम आधुनिक AI तकनीक के साथ हिंदी भाषा को डिजिटल युग में आगे बढ़ाने के लिये प्रतिबद्ध हैं। हमारा लक्ष्य प्रत्येक व्यक्ति को शुद्ध और प्रभावशाली हिंदी लिखने में सहायता प्रदान करना है।",
@@ -33,25 +30,20 @@ const About = () => {
     joinUsText2: "व्याकरणी के इस महा-अभियान से किसी भी रूप में जुड़ने के लिये आप हमें हमारे ई-मेल support@vyakarni.com पर संपर्क कर सकते हैं।",
     getStartedButton: "तत्काल आरम्भ करें",
     joinCampaignButton: "व्याकरणी अभियान में जुड़ें",
-    team: [
-      {
-        name: "सत्येन श्रीवास्तव",
-        title: "संस्थापक एवं मुख्य कार्यकारी अधिकारी",
-        bio: "AI तकनीक, उत्पाद नवाचार एवं हिंदी भाषा के प्रचार-प्रसार में गहरी विशेषज्ञता। हिंदी AI के क्षेत्र में अग्रणी।"
-      },
-      {
-        name: "डा. शुभा जैन",
-        title: "तकनीकी निदेशक",
-        bio: "सिस्टम डिजाइन में विशेषज्ञता। उत्कृष्टता के साथ प्लेटफॉर्म निर्माण।टीम को भाषाई गुणवत्ता एवं उत्कृष्टता की दिशा में मार्गदर्शन।"
-      },
-      {
-        name: "अमिताभ श्रीवास्तव",
-        title: "वरिष्ठ AI डेवलपर",
-        bio: "AI अनुसंधान और उन्नत तकनीकी विकास में विशेषज्ञता रखने वाले वरिष्ठ AI डेवलपर। मशीन लर्निंग और क्लाउड आर्किटेक्चर में विशेषज्ञता।"
-      }
-    ]
+    team: [{
+      name: "सत्येन श्रीवास्तव",
+      title: "संस्थापक एवं मुख्य कार्यकारी अधिकारी",
+      bio: "AI तकनीक, उत्पाद नवाचार एवं हिंदी भाषा के प्रचार-प्रसार में गहरी विशेषज्ञता। हिंदी AI के क्षेत्र में अग्रणी।"
+    }, {
+      name: "डा. शुभा जैन",
+      title: "तकनीकी निदेशक",
+      bio: "सिस्टम डिजाइन में विशेषज्ञता। उत्कृष्टता के साथ प्लेटफॉर्म निर्माण।टीम को भाषाई गुणवत्ता एवं उत्कृष्टता की दिशा में मार्गदर्शन।"
+    }, {
+      name: "अमिताभ श्रीवास्तव",
+      title: "वरिष्ठ AI डेवलपर",
+      bio: "AI अनुसंधान और उन्नत तकनीकी विकास में विशेषज्ञता रखने वाले वरिष्ठ AI डेवलपर। मशीन लर्निंग और क्लाउड आर्किटेक्चर में विशेषज्ञता।"
+    }]
   };
-
   const englishContent = {
     heroTitle: "About Us",
     heroDescription: "We are committed to advancing the Hindi language in the digital age with modern AI technology. Our goal is to help every individual write pure and effective Hindi.",
@@ -75,59 +67,33 @@ const About = () => {
     joinUsText2: "To join this great campaign of Vyakarni in any form, you can contact us at our email support@vyakarni.com.",
     getStartedButton: "Get Started Now",
     joinCampaignButton: "Join Vyakarni Campaign",
-    team: [
-      {
-        name: "Satyen Srivastava",
-        title: "Founder & Chief Executive Officer",
-        bio: "Expertise in AI technology, product innovation, and promotion of the Hindi language. A pioneer in the field of Hindi AI."
-      },
-      {
-        name: "Dr. Shubha Jain",
-        title: "Technical Director",
-        bio: "Expert in system design. Building platforms with excellence. Guides the team towards linguistic quality and excellence."
-      },
-      {
-        name: "Amitabh Srivastav",
-        title: "Senior AI Developer",
-        bio: "Senior AI developer with expertise in AI research and advanced technological development. Specialist in machine learning and cloud architecture."
-      }
-    ]
+    team: [{
+      name: "Satyen Srivastava",
+      title: "Founder & Chief Executive Officer",
+      bio: "Expertise in AI technology, product innovation, and promotion of the Hindi language. A pioneer in the field of Hindi AI."
+    }, {
+      name: "Dr. Shubha Jain",
+      title: "Technical Director",
+      bio: "Expert in system design. Building platforms with excellence. Guides the team towards linguistic quality and excellence."
+    }, {
+      name: "Amitabh Srivastav",
+      title: "Senior AI Developer",
+      bio: "Senior AI developer with expertise in AI research and advanced technological development. Specialist in machine learning and cloud architecture."
+    }]
   };
-
   const currentContent = language === "english" ? englishContent : hindiContent;
 
   // Team member images
-  const teamImages = [
-    "https://github.com/vyakarni1/Vyakarni/blob/main/2.png?raw=true", // First team member
-    "https://github.com/vyakarni1/Vyakarni/blob/main/3.png?raw=true", // Second team member  
-    "https://github.com/vyakarni1/Vyakarni/blob/main/1.png?raw=true", // Third team member
+  const teamImages = ["https://github.com/vyakarni1/Vyakarni/blob/main/2.png?raw=true",
+  // First team member
+  "https://github.com/vyakarni1/Vyakarni/blob/main/3.png?raw=true",
+  // Second team member  
+  "https://github.com/vyakarni1/Vyakarni/blob/main/1.png?raw=true" // Third team member
   ];
-
-  return (
-    <Layout>
+  return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         {/* Language Toggle */}
-        <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
-          <ToggleGroup
-            type="single"
-            value={language}
-            onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
-            className="gap-1"
-          >
-            <ToggleGroupItem
-              value="hindi"
-              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-            >
-              हिंदी
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="english"
-              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-            >
-              English
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+        
 
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
@@ -204,24 +170,15 @@ const About = () => {
                   <ul className="space-y-3 text-gray-700">
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      {language === "english" 
-                        ? "Refining and enhancing language according to the needs of the digital age."
-                        : "डिजिटल युग की आवश्यकताओं के अनुरूप भाषा का शोधन एवं संवर्धन करना।"
-                      }
+                      {language === "english" ? "Refining and enhancing language according to the needs of the digital age." : "डिजिटल युग की आवश्यकताओं के अनुरूप भाषा का शोधन एवं संवर्धन करना।"}
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      {language === "english"
-                        ? "Making people understand that they can express themselves easily and simply in Hindi through Vyakarni."
-                        : "लोगों को यह समझाना कि वे व्याकरणी के माध्यम से स्वयं को सहजता एवं सरलता के साथ हिंदी में अभिव्यक्त कर सकते हैं।"
-                      }
+                      {language === "english" ? "Making people understand that they can express themselves easily and simply in Hindi through Vyakarni." : "लोगों को यह समझाना कि वे व्याकरणी के माध्यम से स्वयं को सहजता एवं सरलता के साथ हिंदी में अभिव्यक्त कर सकते हैं।"}
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      {language === "english"
-                        ? "Encouraging the use of quality Hindi for various traditional components like story writing, novel writing, etc., and modern components like blog writing and audio story writing."
-                        : "हिंदी लेखन के विभिन्न पारंपरिक घटकों जैसे कि कथा-लेखन, उपन्यास लेखन इत्यादि तथा आधुनिक घटकों जैसे कि ब्लॉग-लेखन, तथा ऑडियो स्टोरी लेखन हेतु स्तरीय हिंदी के प्रयोग को प्रोत्साहित करना।"
-                      }
+                      {language === "english" ? "Encouraging the use of quality Hindi for various traditional components like story writing, novel writing, etc., and modern components like blog writing and audio story writing." : "हिंदी लेखन के विभिन्न पारंपरिक घटकों जैसे कि कथा-लेखन, उपन्यास लेखन इत्यादि तथा आधुनिक घटकों जैसे कि ब्लॉग-लेखन, तथा ऑडियो स्टोरी लेखन हेतु स्तरीय हिंदी के प्रयोग को प्रोत्साहित करना।"}
                     </li>
                   </ul>
                 </CardContent>
@@ -236,24 +193,15 @@ const About = () => {
                   <ul className="space-y-3 text-gray-700">
                     <li className="flex items-start">
                       <Star className="h-5 w-5 text-purple-600 mr-2 mt-0.5" />
-                      {language === "english"
-                        ? "Providing support to the increasing use of Hindi in the business sector and promoting its usage."
-                        : "व्यवसायिक क्षेत्र में हिंदी के बढ़ते उपयोग को संबल प्रदान कर इसके प्रयोग को बढ़ाना।"  
-                      }
+                      {language === "english" ? "Providing support to the increasing use of Hindi in the business sector and promoting its usage." : "व्यवसायिक क्षेत्र में हिंदी के बढ़ते उपयोग को संबल प्रदान कर इसके प्रयोग को बढ़ाना।"}
                     </li>
                     <li className="flex items-start">
                       <Star className="h-5 w-5 text-purple-600 mr-2 mt-0.5" />
-                      {language === "english"
-                        ? "Continuously improving the results obtained through the power of AI by removing errors in Hindi usage."
-                        : "AI की शक्ति द्वारा हिंदी प्रयोग की त्रुटियों को दूर करते हुये इसके द्वारा प्राप्त परिणामों में उत्तरोत्तर सुधार करना।"
-                      }
+                      {language === "english" ? "Continuously improving the results obtained through the power of AI by removing errors in Hindi usage." : "AI की शक्ति द्वारा हिंदी प्रयोग की त्रुटियों को दूर करते हुये इसके द्वारा प्राप्त परिणामों में उत्तरोत्तर सुधार करना।"}
                     </li>
                     <li className="flex items-start">
                       <Star className="h-5 w-5 text-purple-600 mr-2 mt-0.5" />
-                      {language === "english"
-                        ? "Creating a medium for communication and expression in Hindi for those we call Gen-Z and Gen-Alpha."
-                        : "जिन्हें हम जेन-जी और जेन-अल्फा कहते हैं, उनके लिये हिंदी भाषा में संवाद एवं अभिव्यक्ति का एक माध्यम निर्मित करना।"
-                      }
+                      {language === "english" ? "Creating a medium for communication and expression in Hindi for those we call Gen-Z and Gen-Alpha." : "जिन्हें हम जेन-जी और जेन-अल्फा कहते हैं, उनके लिये हिंदी भाषा में संवाद एवं अभिव्यक्ति का एक माध्यम निर्मित करना।"}
                     </li>
                   </ul>
                 </CardContent>
@@ -262,16 +210,14 @@ const About = () => {
           </div>
         </section>
         {/* What We Do */}
-<section className="py-16 bg-white">
+      <section className="py-16 bg-white">
   <div className="container mx-auto px-6">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-bold mb-4 text-gray-800">
         {language === "english" ? "What We Do" : "हम क्या करते हैं?"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english"
-          ? "Vyakarni is an advanced AI-powered Hindi writing assistant. We help individuals, students, professionals, writers, educators, and organisations write grammatically correct, elegant, and impactful Hindi. Our tool automatically corrects grammar, spelling, punctuation, sentence structure, and enhances language style, making every Hindi sentence precise, natural, and refined."
-          : "व्याकरणी एक उन्नत AI-सक्षम हिंदी लेखन सहायक है। हम व्यक्तियों, छात्रों, पेशेवरों, लेखकों, शिक्षकों और संगठनों को व्याकरण की दृष्टि से शुद्ध, सुरुचिपूर्ण एवं प्रभावशाली हिंदी लिखने में सहायता प्रदान करते हैं। हमारा उपकरण स्वतः ही व्याकरण, वर्तनी, विराम चिह्न, वाक्य संरचना की त्रुटियाँ सुधारता है और भाषा की शैली को परिष्कृत करता है, जिससे प्रत्येक हिंदी वाक्य शुद्ध, स्वाभाविक एवं परिमार्जित बनता है।"}
+        {language === "english" ? "Vyakarni is an advanced AI-powered Hindi writing assistant. We help individuals, students, professionals, writers, educators, and organisations write grammatically correct, elegant, and impactful Hindi. Our tool automatically corrects grammar, spelling, punctuation, sentence structure, and enhances language style, making every Hindi sentence precise, natural, and refined." : "व्याकरणी एक उन्नत AI-सक्षम हिंदी लेखन सहायक है। हम व्यक्तियों, छात्रों, पेशेवरों, लेखकों, शिक्षकों और संगठनों को व्याकरण की दृष्टि से शुद्ध, सुरुचिपूर्ण एवं प्रभावशाली हिंदी लिखने में सहायता प्रदान करते हैं। हमारा उपकरण स्वतः ही व्याकरण, वर्तनी, विराम चिह्न, वाक्य संरचना की त्रुटियाँ सुधारता है और भाषा की शैली को परिष्कृत करता है, जिससे प्रत्येक हिंदी वाक्य शुद्ध, स्वाभाविक एवं परिमार्जित बनता है।"}
       </p>
     </div>
 
@@ -287,34 +233,26 @@ const About = () => {
           <ul className="space-y-3 text-gray-700">
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Automatic correction of grammar, spelling, punctuation, and sentence structure."
-                : "व्याकरण, वर्तनी, विराम चिह्न, और वाक्य संरचना की स्वतः सुधार सुविधा।"}
+              {language === "english" ? "Automatic correction of grammar, spelling, punctuation, and sentence structure." : "व्याकरण, वर्तनी, विराम चिह्न, और वाक्य संरचना की स्वतः सुधार सुविधा।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Language style enhancement for refined and elegant expression."
-                : "शब्द चयन और शैली को परिष्कृत करने की क्षमता, जिससे अभिव्यक्ति और अधिक सुंदर एवं प्रभावशाली बनती है।"}
+              {language === "english" ? "Language style enhancement for refined and elegant expression." : "शब्द चयन और शैली को परिष्कृत करने की क्षमता, जिससे अभिव्यक्ति और अधिक सुंदर एवं प्रभावशाली बनती है।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Helps students, professionals, educators, and organisations write better Hindi effortlessly."
-                : "छात्रों, पेशेवरों, शिक्षकों और संगठनों को बिना प्रयास के बेहतर हिंदी लिखने में सहायता करता है।"}
+              {language === "english" ? "Helps students, professionals, educators, and organisations write better Hindi effortlessly." : "छात्रों, पेशेवरों, शिक्षकों और संगठनों को बिना प्रयास के बेहतर हिंदी लिखने में सहायता करता है।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Makes Hindi writing impactful, natural, and grammatically accurate."
-                : "हिंदी लेखन को प्रभावशाली, स्वाभाविक और व्याकरण की दृष्टि से सटीक बनाता है।"}
+              {language === "english" ? "Makes Hindi writing impactful, natural, and grammatically accurate." : "हिंदी लेखन को प्रभावशाली, स्वाभाविक और व्याकरण की दृष्टि से सटीक बनाता है।"}
             </li>
           </ul>
         </CardContent>
       </Card>
     </div>
   </div>
-</section>
+      </section>
 
         {/* Team Section */}
         <section className="py-16 bg-gradient-to-br from-purple-50 via-white to-blue-50">
@@ -324,18 +262,10 @@ const About = () => {
               <p className="text-xl text-gray-600">{currentContent.teamDesc}</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              {currentContent.team.map((member, idx) => (
-                <Card
-                  key={member.name}
-                  className="text-center hover:shadow-2xl transition-all duration-300 border-blue-100 group bg-white/70"
-                >
+              {currentContent.team.map((member, idx) => <Card key={member.name} className="text-center hover:shadow-2xl transition-all duration-300 border-blue-100 group bg-white/70">
                   <CardHeader className="flex flex-col items-center">
                     <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-105 transition-transform">
-                      <img 
-                        src={teamImages[idx]} 
-                        alt={member.name}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={teamImages[idx]} alt={member.name} className="w-full h-full object-cover" />
                     </div>
                     <CardTitle className="text-2xl font-semibold text-blue-700 mb-1">{member.name}</CardTitle>
                     <div className="text-md text-purple-700 mb-2 font-medium">{member.title}</div>
@@ -345,23 +275,20 @@ const About = () => {
                       {member.bio}
                     </p>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
         </section>
 
         {/* Problems We Solve */}
-<section className="py-16 bg-white">
+      <section className="py-16 bg-white">
   <div className="container mx-auto px-6">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-bold mb-4 text-gray-800">
         {language === "english" ? "Problems We Solve" : "हम जिन समस्याओं का समाधान करते हैं"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english"
-          ? "Vyakarni solves key challenges faced by Hindi users across educational, professional, and creative domains by offering real-time, automated corrections and elegant enhancements."
-          : "व्याकरणी हिंदी उपयोगकर्ताओं द्वारा शैक्षिक, पेशेवर और रचनात्मक क्षेत्रों में झेली जा रही प्रमुख चुनौतियों का समाधान करता है, वह भी त्वरित, स्वचालित सुधारों और परिष्कृत प्रस्तुति के माध्यम से।"}
+        {language === "english" ? "Vyakarni solves key challenges faced by Hindi users across educational, professional, and creative domains by offering real-time, automated corrections and elegant enhancements." : "व्याकरणी हिंदी उपयोगकर्ताओं द्वारा शैक्षिक, पेशेवर और रचनात्मक क्षेत्रों में झेली जा रही प्रमुख चुनौतियों का समाधान करता है, वह भी त्वरित, स्वचालित सुधारों और परिष्कृत प्रस्तुति के माध्यम से।"}
       </p>
     </div>
 
@@ -377,39 +304,27 @@ const About = () => {
           <ul className="space-y-3 text-gray-700">
             <li className="flex items-start">
               <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Grammar & Syntax Errors: Many Hindi writers, even fluent speakers, struggle with correct grammar, verb forms, and sentence construction."
-                : "व्याकरण एवं वाक्य संरचना की त्रुटियाँ: अनेक हिंदी लेखक, चाहे वे धाराप्रवाह ही क्यों न हों, व्याकरण, क्रिया रूपों और वाक्य निर्माण में त्रुटियाँ करते हैं।"}
+              {language === "english" ? "Grammar & Syntax Errors: Many Hindi writers, even fluent speakers, struggle with correct grammar, verb forms, and sentence construction." : "व्याकरण एवं वाक्य संरचना की त्रुटियाँ: अनेक हिंदी लेखक, चाहे वे धाराप्रवाह ही क्यों न हों, व्याकरण, क्रिया रूपों और वाक्य निर्माण में त्रुटियाँ करते हैं।"}
             </li>
             <li className="flex items-start">
               <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Spelling Mistakes: Frequent spelling errors reduce the clarity and professionalism of Hindi communication."
-                : "वर्तनी की गलतियाँ: बार-बार होने वाली वर्तनी की त्रुटियाँ हिंदी संप्रेषण की स्पष्टता एवं व्यावसायिकता को प्रभावित करती हैं।"}
+              {language === "english" ? "Spelling Mistakes: Frequent spelling errors reduce the clarity and professionalism of Hindi communication." : "वर्तनी की गलतियाँ: बार-बार होने वाली वर्तनी की त्रुटियाँ हिंदी संप्रेषण की स्पष्टता एवं व्यावसायिकता को प्रभावित करती हैं।"}
             </li>
             <li className="flex items-start">
               <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Inconsistent Word Usage: Users often mix colloquial and formal Hindi, or use words incorrectly due to regional influences."
-                : "शब्द प्रयोग में असंगति: उपयोगकर्ता प्रायः बोलचाल की और औपचारिक हिंदी को मिलाकर प्रयोग करते हैं, या क्षेत्रीय प्रभावों के कारण शब्दों का प्रयोग गलत करते हैं।"}
+              {language === "english" ? "Inconsistent Word Usage: Users often mix colloquial and formal Hindi, or use words incorrectly due to regional influences." : "शब्द प्रयोग में असंगति: उपयोगकर्ता प्रायः बोलचाल की और औपचारिक हिंदी को मिलाकर प्रयोग करते हैं, या क्षेत्रीय प्रभावों के कारण शब्दों का प्रयोग गलत करते हैं।"}
             </li>
             <li className="flex items-start">
               <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Inelegant Expression: It is difficult for most people to write polished, high-quality Hindi suited for academic, business, or creative use."
-                : "असौंदर्यपूर्ण अभिव्यक्ति: अधिकांश लोगों के लिए उच्च गुणवत्ता वाली, परिष्कृत हिंदी लिखना कठिन होता है, जो शैक्षणिक, व्यावसायिक या रचनात्मक उपयोग के योग्य हो।"}
+              {language === "english" ? "Inelegant Expression: It is difficult for most people to write polished, high-quality Hindi suited for academic, business, or creative use." : "असौंदर्यपूर्ण अभिव्यक्ति: अधिकांश लोगों के लिए उच्च गुणवत्ता वाली, परिष्कृत हिंदी लिखना कठिन होता है, जो शैक्षणिक, व्यावसायिक या रचनात्मक उपयोग के योग्य हो।"}
             </li>
             <li className="flex items-start">
               <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Low Confidence: Learners and professionals feel unsure about the correctness of their Hindi, especially in important documents or public communication."
-                : "आत्मविश्वास की कमी: विद्यार्थी और पेशेवर अपने हिंदी लेखन की शुद्धता को लेकर अनिश्चित रहते हैं, विशेषकर महत्वपूर्ण दस्तावेज़ों या सार्वजनिक संवाद में।"}
+              {language === "english" ? "Low Confidence: Learners and professionals feel unsure about the correctness of their Hindi, especially in important documents or public communication." : "आत्मविश्वास की कमी: विद्यार्थी और पेशेवर अपने हिंदी लेखन की शुद्धता को लेकर अनिश्चित रहते हैं, विशेषकर महत्वपूर्ण दस्तावेज़ों या सार्वजनिक संवाद में।"}
             </li>
             <li className="flex items-start">
               <XCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Digital Limitation: Lack of reliable, automated tools for Hindi correction restricts digital communication and content creation."
-                : "डिजिटल सीमा: हिंदी सुधार हेतु विश्वसनीय, स्वचालित उपकरणों की कमी डिजिटल संचार और कंटेंट निर्माण को सीमित करती है।"}
+              {language === "english" ? "Digital Limitation: Lack of reliable, automated tools for Hindi correction restricts digital communication and content creation." : "डिजिटल सीमा: हिंदी सुधार हेतु विश्वसनीय, स्वचालित उपकरणों की कमी डिजिटल संचार और कंटेंट निर्माण को सीमित करती है।"}
             </li>
           </ul>
         </CardContent>
@@ -426,45 +341,35 @@ const About = () => {
           <ul className="space-y-3 text-gray-700">
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Instant grammar and spelling correction using advanced AI."
-                : "उन्नत AI के माध्यम से त्वरित व्याकरण एवं वर्तनी सुधार।"}
+              {language === "english" ? "Instant grammar and spelling correction using advanced AI." : "उन्नत AI के माध्यम से त्वरित व्याकरण एवं वर्तनी सुधार।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Improves sentence structure and language elegance automatically."
-                : "स्वतः वाक्य संरचना एवं भाषा की अभिव्यक्ति को परिष्कृत करता है।"}
+              {language === "english" ? "Improves sentence structure and language elegance automatically." : "स्वतः वाक्य संरचना एवं भाषा की अभिव्यक्ति को परिष्कृत करता है।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Bridges the gap between casual and formal Hindi writing."
-                : "अनौपचारिक और औपचारिक हिंदी लेखन के बीच की खाई को पाटता है।"}
+              {language === "english" ? "Bridges the gap between casual and formal Hindi writing." : "अनौपचारिक और औपचारिक हिंदी लेखन के बीच की खाई को पाटता है।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english"
-                ? "Enhances user confidence in Hindi writing for any context."
-                : "किसी भी संदर्भ में हिंदी लेखन हेतु उपयोगकर्ता के आत्मविश्वास को बढ़ाता है।"}
+              {language === "english" ? "Enhances user confidence in Hindi writing for any context." : "किसी भी संदर्भ में हिंदी लेखन हेतु उपयोगकर्ता के आत्मविश्वास को बढ़ाता है।"}
             </li>
           </ul>
         </CardContent>
       </Card>
     </div>
   </div>
-</section>
-{/* Target Audience */}
-<section className="py-16 bg-white">
+      </section>
+      {/* Target Audience */}
+      <section className="py-16 bg-white">
   <div className="container mx-auto px-6">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-bold mb-4 text-gray-800">
         {language === "english" ? "Target Audience" : "हमारा लक्षित उपयोगकर्ता समूह"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english"
-          ? "Vyakarni is designed for everyone who cares about writing grammatically correct, polished, and expressive Hindi – whether in academics, work, content creation, or personal communication."
-          : "व्याकरणी उन सभी के लिए बनाया गया है जो शुद्ध, परिष्कृत और भावपूर्ण हिंदी लेखन में रुचि रखते हैं – चाहे वह शैक्षिक हो, कार्य से संबंधित हो, रचनात्मक हो या व्यक्तिगत संवाद।"}
+        {language === "english" ? "Vyakarni is designed for everyone who cares about writing grammatically correct, polished, and expressive Hindi – whether in academics, work, content creation, or personal communication." : "व्याकरणी उन सभी के लिए बनाया गया है जो शुद्ध, परिष्कृत और भावपूर्ण हिंदी लेखन में रुचि रखते हैं – चाहे वह शैक्षिक हो, कार्य से संबंधित हो, रचनात्मक हो या व्यक्तिगत संवाद।"}
       </p>
     </div>
 
@@ -478,9 +383,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Those learning Hindi or teaching it, who wish to write and submit error-free work."
-            : "जो हिंदी सीख रहे हैं या पढ़ा रहे हैं, और त्रुटिरहित लेखन करना चाहते हैं।"}
+          {language === "english" ? "Those learning Hindi or teaching it, who wish to write and submit error-free work." : "जो हिंदी सीख रहे हैं या पढ़ा रहे हैं, और त्रुटिरहित लेखन करना चाहते हैं।"}
         </CardContent>
       </Card>
 
@@ -493,9 +396,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Anyone creating official documents, presentations, emails, or reports in Hindi."
-            : "जो हिंदी में दस्तावेज़, प्रस्तुतियाँ, ईमेल या रिपोर्ट तैयार करते हैं।"}
+          {language === "english" ? "Anyone creating official documents, presentations, emails, or reports in Hindi." : "जो हिंदी में दस्तावेज़, प्रस्तुतियाँ, ईमेल या रिपोर्ट तैयार करते हैं।"}
         </CardContent>
       </Card>
 
@@ -508,9 +409,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Authors, poets, journalists, bloggers, and media professionals publishing in Hindi."
-            : "लेखक, कवि, पत्रकार, ब्लॉगर एवं हिंदी में प्रकाशित करने वाले मीडिया पेशेवर।"}
+          {language === "english" ? "Authors, poets, journalists, bloggers, and media professionals publishing in Hindi." : "लेखक, कवि, पत्रकार, ब्लॉगर एवं हिंदी में प्रकाशित करने वाले मीडिया पेशेवर।"}
         </CardContent>
       </Card>
 
@@ -523,9 +422,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Government offices, NGOs, educational institutions, and enterprises with a need for high-quality Hindi communication."
-            : "सरकारी कार्यालय, एनजीओ, शैक्षिक संस्थान एवं व्यवसायिक संगठन जिनमें स्तरीय हिंदी संप्रेषण की आवश्यकता है।"}
+          {language === "english" ? "Government offices, NGOs, educational institutions, and enterprises with a need for high-quality Hindi communication." : "सरकारी कार्यालय, एनजीओ, शैक्षिक संस्थान एवं व्यवसायिक संगठन जिनमें स्तरीय हिंदी संप्रेषण की आवश्यकता है।"}
         </CardContent>
       </Card>
 
@@ -538,9 +435,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Hindi speakers worldwide who wish to maintain and enhance their written Hindi for personal or professional purposes."
-            : "जो विश्वभर में हिंदी बोलते हैं और अपनी लिखित हिंदी को व्यक्तिगत या पेशेवर कारणों से सुधारना चाहते हैं।"}
+          {language === "english" ? "Hindi speakers worldwide who wish to maintain and enhance their written Hindi for personal or professional purposes." : "जो विश्वभर में हिंदी बोलते हैं और अपनी लिखित हिंदी को व्यक्तिगत या पेशेवर कारणों से सुधारना चाहते हैं।"}
         </CardContent>
       </Card>
 
@@ -549,20 +444,16 @@ const About = () => {
         <CardHeader>
           <Heart className="h-8 w-8 text-indigo-600 mb-2" />
           <CardTitle className="text-xl text-indigo-800">
-            {language === "english"
-              ? "Anyone Wishing to Improve Hindi Writing"
-              : "हिंदी लेखन सुधारने की इच्छा रखने वाला कोई भी व्यक्ति"}
+            {language === "english" ? "Anyone Wishing to Improve Hindi Writing" : "हिंदी लेखन सुधारने की इच्छा रखने वाला कोई भी व्यक्ति"}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "From school children to senior citizens, Vyakarni is accessible to all who value correct and expressive Hindi."
-            : "स्कूल के बच्चों से लेकर वरिष्ठ नागरिकों तक, व्याकरणी हर उस व्यक्ति के लिए सुलभ है जो शुद्ध और भावपूर्ण हिंदी को महत्व देता है।"}
+          {language === "english" ? "From school children to senior citizens, Vyakarni is accessible to all who value correct and expressive Hindi." : "स्कूल के बच्चों से लेकर वरिष्ठ नागरिकों तक, व्याकरणी हर उस व्यक्ति के लिए सुलभ है जो शुद्ध और भावपूर्ण हिंदी को महत्व देता है।"}
         </CardContent>
       </Card>
     </div>
   </div>
-</section>
+      </section>
 
 
         {/* Core Values */}
@@ -618,16 +509,14 @@ const About = () => {
         </section>
 
         {/* Current Stage & Readiness */}
-<section className="py-16 bg-white">
+      <section className="py-16 bg-white">
   <div className="container mx-auto px-6">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-bold mb-4 text-gray-800">
         {language === "english" ? "Current Stage & Readiness" : "वर्तमान स्थिति और तत्परता"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english"
-          ? "Vyakarni is in the final stretch of its product journey—moving confidently from validation to launch. With our platform built and AI engine operational, we are focused on refinement, scalability, and reliability to support a rapidly expanding user base."
-          : "व्याकरणी अपने उत्पाद सफर के अंतिम चरण में है—सत्यापन से लॉन्च की दिशा में आत्मविश्वास से अग्रसर। हमारा मंच विकसित हो चुका है और AI इंजन सक्रिय है। अब हमारा ध्यान परिष्करण, स्केलेबिलिटी और विश्वसनीयता पर है ताकि बढ़ते उपयोगकर्ताओं का समर्थन किया जा सके।"}
+        {language === "english" ? "Vyakarni is in the final stretch of its product journey—moving confidently from validation to launch. With our platform built and AI engine operational, we are focused on refinement, scalability, and reliability to support a rapidly expanding user base." : "व्याकरणी अपने उत्पाद सफर के अंतिम चरण में है—सत्यापन से लॉन्च की दिशा में आत्मविश्वास से अग्रसर। हमारा मंच विकसित हो चुका है और AI इंजन सक्रिय है। अब हमारा ध्यान परिष्करण, स्केलेबिलिटी और विश्वसनीयता पर है ताकि बढ़ते उपयोगकर्ताओं का समर्थन किया जा सके।"}
       </p>
     </div>
 
@@ -641,9 +530,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "AI models and platform are fully developed and in use by early adopters across our target segments."
-            : "AI मॉडल और मंच पूरी तरह से विकसित हैं और लक्षित उपयोगकर्ताओं द्वारा प्रारंभिक प्रयोग में हैं।"}
+          {language === "english" ? "AI models and platform are fully developed and in use by early adopters across our target segments." : "AI मॉडल और मंच पूरी तरह से विकसित हैं और लक्षित उपयोगकर्ताओं द्वारा प्रारंभिक प्रयोग में हैं।"}
         </CardContent>
       </Card>
 
@@ -656,9 +543,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Actively gathering feedback and fine-tuning features based on real-world use cases."
-            : "वास्तविक उपयोग मामलों के आधार पर सक्रिय रूप से प्रतिक्रिया प्राप्त कर सुविधाओं को परिष्कृत किया जा रहा है।"}
+          {language === "english" ? "Actively gathering feedback and fine-tuning features based on real-world use cases." : "वास्तविक उपयोग मामलों के आधार पर सक्रिय रूप से प्रतिक्रिया प्राप्त कर सुविधाओं को परिष्कृत किया जा रहा है।"}
         </CardContent>
       </Card>
 
@@ -671,9 +556,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Focused on backend optimisation, stress testing, and performance reliability to support growth."
-            : "बैकएंड अनुकूलन, दबाव परीक्षण और प्रदर्शन की विश्वसनीयता सुनिश्चित करने पर केंद्रित।"}
+          {language === "english" ? "Focused on backend optimisation, stress testing, and performance reliability to support growth." : "बैकएंड अनुकूलन, दबाव परीक्षण और प्रदर्शन की विश्वसनीयता सुनिश्चित करने पर केंद्रित।"}
         </CardContent>
       </Card>
 
@@ -686,9 +569,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "With validation nearly complete, we are readying for a confident, impactful launch."
-            : "सत्यापन लगभग पूर्ण है और हम एक आत्मविश्वासपूर्ण, प्रभावशाली लॉन्च की तैयारी कर रहे हैं।"}
+          {language === "english" ? "With validation nearly complete, we are readying for a confident, impactful launch." : "सत्यापन लगभग पूर्ण है और हम एक आत्मविश्वासपूर्ण, प्रभावशाली लॉन्च की तैयारी कर रहे हैं।"}
         </CardContent>
       </Card>
 
@@ -701,9 +582,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Accessing secure, scalable infrastructure to support real-time AI corrections at scale."
-            : "वास्तविक समय AI सुधार के लिए सुरक्षित और स्केलेबल कंप्यूट अवसंरचना का उपयोग।"}
+          {language === "english" ? "Accessing secure, scalable infrastructure to support real-time AI corrections at scale." : "वास्तविक समय AI सुधार के लिए सुरक्षित और स्केलेबल कंप्यूट अवसंरचना का उपयोग।"}
         </CardContent>
       </Card>
 
@@ -716,14 +595,12 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english"
-            ? "Laying strong technical foundations to support continuous improvement and scale post-launch."
-            : "लॉन्च के बाद निरंतर सुधार और विस्तार हेतु सुदृढ़ तकनीकी नींव रखी जा रही है।"}
+          {language === "english" ? "Laying strong technical foundations to support continuous improvement and scale post-launch." : "लॉन्च के बाद निरंतर सुधार और विस्तार हेतु सुदृढ़ तकनीकी नींव रखी जा रही है।"}
         </CardContent>
       </Card>
     </div>
   </div>
-</section>
+      </section>
 
 
         {/* Statistics Section */}
@@ -802,78 +679,52 @@ const About = () => {
         </section>
 
         {/* AI Development & Infrastructure – Sphere Layout */}
-<section className="py-16 bg-white">
+      <section className="py-16 bg-white">
   <div className="container mx-auto px-6">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-bold mb-4 text-gray-800">
         {language === "english" ? "AI Development & Infrastructure" : "AI विकास और अवसंरचना"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english"
-          ? "From API reliance to building fine-tuned Hindi AI models, Vyakarni is scaling its own intelligent engine with secure, high-performance infrastructure."
-          : "API पर निर्भरता से आगे बढ़ते हुए, व्याकरणी अब सुरक्षित और उच्च-प्रदर्शन अवसंरचना के साथ हिंदी AI मॉडल विकसित कर रहा है।"}
+        {language === "english" ? "From API reliance to building fine-tuned Hindi AI models, Vyakarni is scaling its own intelligent engine with secure, high-performance infrastructure." : "API पर निर्भरता से आगे बढ़ते हुए, व्याकरणी अब सुरक्षित और उच्च-प्रदर्शन अवसंरचना के साथ हिंदी AI मॉडल विकसित कर रहा है।"}
       </p>
     </div>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
-      {[
-        {
-          icon: <Settings className="h-8 w-8 mb-2" />,
-          title: language === "english" ? "Custom AI Models" : "स्वनिर्मित AI मॉडल",
-          desc: language === "english"
-            ? "Tailored for Hindi grammar and elegance"
-            : "हिंदी व्याकरण और सौंदर्य के अनुरूप।",
-        },
-        {
-          icon: <Handshake className="h-8 w-8 mb-2" />,
-          title: language === "english" ? "Open Source Collaboration" : "ओपन-सोर्स सहयोग",
-          desc: language === "english"
-            ? "Working with the community to refine models"
-            : "समुदाय के साथ मिलकर मॉडल सुधार।",
-        },
-        {
-          icon: <Cpu className="h-8 w-8 mb-2" />,
-          title: language === "english" ? "Model Training" : "मॉडल प्रशिक्षण",
-          desc: language === "english"
-            ? "Real-world data, real-time feedback"
-            : "वास्तविक डेटा और प्रतिक्रिया पर आधारित।",
-        },
-        {
-          icon: <Cloud className="h-8 w-8 mb-2" />,
-          title: language === "english" ? "Cloud Infrastructure" : "क्लाउड अवसंरचना",
-          desc: language === "english"
-            ? "Secure & scalable compute environments"
-            : "सुरक्षित और स्केलेबल कंप्यूट संसाधन।",
-        },
-        {
-          icon: <Scale className="h-8 w-8 mb-2" />,
-          title: language === "english" ? "Built for Scale" : "विस्तार के लिए निर्मित",
-          desc: language === "english"
-            ? "From learners to large enterprises"
-            : "सीखने वालों से लेकर संगठनों तक।",
-        },
-        {
-          icon: <RefreshCw className="h-8 w-8 mb-2" />,
-          title: language === "english" ? "Continuous Learning" : "निरंतर सुधार",
-          desc: language === "english"
-            ? "Evolving with Hindi language trends"
-            : "हिंदी भाषा प्रवृत्तियों के साथ विकसित।",
-        },
-      ].map((item, index) => (
-        <div
-          key={index}
-          className="flex flex-col items-center justify-center text-center w-56 h-56 rounded-full bg-gray-50 border border-gray-200 shadow-md hover:shadow-xl transition duration-300 hover:bg-blue-50 p-6 group"
-        >
+      {[{
+              icon: <Settings className="h-8 w-8 mb-2" />,
+              title: language === "english" ? "Custom AI Models" : "स्वनिर्मित AI मॉडल",
+              desc: language === "english" ? "Tailored for Hindi grammar and elegance" : "हिंदी व्याकरण और सौंदर्य के अनुरूप।"
+            }, {
+              icon: <Handshake className="h-8 w-8 mb-2" />,
+              title: language === "english" ? "Open Source Collaboration" : "ओपन-सोर्स सहयोग",
+              desc: language === "english" ? "Working with the community to refine models" : "समुदाय के साथ मिलकर मॉडल सुधार।"
+            }, {
+              icon: <Cpu className="h-8 w-8 mb-2" />,
+              title: language === "english" ? "Model Training" : "मॉडल प्रशिक्षण",
+              desc: language === "english" ? "Real-world data, real-time feedback" : "वास्तविक डेटा और प्रतिक्रिया पर आधारित।"
+            }, {
+              icon: <Cloud className="h-8 w-8 mb-2" />,
+              title: language === "english" ? "Cloud Infrastructure" : "क्लाउड अवसंरचना",
+              desc: language === "english" ? "Secure & scalable compute environments" : "सुरक्षित और स्केलेबल कंप्यूट संसाधन।"
+            }, {
+              icon: <Scale className="h-8 w-8 mb-2" />,
+              title: language === "english" ? "Built for Scale" : "विस्तार के लिए निर्मित",
+              desc: language === "english" ? "From learners to large enterprises" : "सीखने वालों से लेकर संगठनों तक।"
+            }, {
+              icon: <RefreshCw className="h-8 w-8 mb-2" />,
+              title: language === "english" ? "Continuous Learning" : "निरंतर सुधार",
+              desc: language === "english" ? "Evolving with Hindi language trends" : "हिंदी भाषा प्रवृत्तियों के साथ विकसित।"
+            }].map((item, index) => <div key={index} className="flex flex-col items-center justify-center text-center w-56 h-56 rounded-full bg-gray-50 border border-gray-200 shadow-md hover:shadow-xl transition duration-300 hover:bg-blue-50 p-6 group">
           <div className="text-blue-600 group-hover:scale-110 transition duration-300">
             {item.icon}
           </div>
           <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-700">{item.title}</h3>
           <p className="text-sm text-gray-600 mt-2">{item.desc}</p>
-        </div>
-      ))}
+        </div>)}
     </div>
   </div>
-</section>
+      </section>
 
 
         {/* Call to Action */}
@@ -904,8 +755,6 @@ const About = () => {
           </div>
         </section>
       </div>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default About;
