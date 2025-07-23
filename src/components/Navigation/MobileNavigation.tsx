@@ -79,31 +79,31 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              हमारे बारे में(About Us)
+              हमारे बारे में
             </Link>
             <Link 
               to="/contact" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              संपर्क(Contact Us)
+              संपर्क
             </Link>
             <Link 
               to="/pricing" 
               className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
               onClick={handleLinkClick}
             >
-              प्राइसिंग(Pricing)
+              प्राइसिंग
             </Link>
             <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
               <Link to="/login" onClick={handleLinkClick}>
                 <Button variant="outline" size="sm" className="w-full transition-all duration-200">
-                  लॉगिन(Login)
+                  लॉगिन
                 </Button>
               </Link>
               <Link to="/register" onClick={handleLinkClick}>
                 <Button size="sm" className="w-full transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600">
-                  रजिस्टर करयें(Register)
+                  रजिस्टर करयें
                 </Button>
               </Link>
             </div>
