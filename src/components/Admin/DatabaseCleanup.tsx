@@ -189,7 +189,6 @@ const DatabaseCleanup = () => {
               </div>
             </div>
 
-            {/* Show errors if any */}
             {(!lastResult.totalSuccess) && (
               <Alert variant="destructive">
                 <XCircle className="h-4 w-4" />
@@ -212,9 +211,9 @@ const DatabaseCleanup = () => {
                 </AlertDescription>
               </Alert>
             )}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
