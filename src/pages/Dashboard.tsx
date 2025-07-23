@@ -9,7 +9,6 @@ import Footer from "@/components/Footer";
 import { useWordCredits } from "@/hooks/useWordCredits";
 import { useProfile } from "@/hooks/useProfile";
 import UnifiedNavigation from "@/components/UnifiedNavigation";
-import MarqueeBar from "@/components/MarqueeBar";
 import DashboardWelcome from "@/components/Dashboard/DashboardWelcome";
 import DashboardActionCards from "@/components/Dashboard/DashboardActionCards";
 import DashboardFooterStats from "@/components/Dashboard/DashboardFooterStats";
@@ -44,7 +43,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <UnifiedNavigation variant="default" />
-<MarqueeBar />
       <div className="container mx-auto px-6 py-8 pt-32">
         <DashboardWelcome 
           profile={profile} 

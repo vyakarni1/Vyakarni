@@ -13,7 +13,6 @@ import PricingPreviewSection from "@/components/PricingPreviewSection";
 import FAQSection from "@/components/FAQSection";
 import USPSection from "@/components/USPSection";
 import CTABanner from "@/components/CTABanner";
-import MarqueeBar from "@/components/MarqueeBar";
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -97,7 +96,6 @@ const Home = () => {
       instantStart: "तत्काल प्रारंभ",
       missionText: "व्याकरणी हमारे लिये एक अभियान है। एक ऐसा अभियान जिसके माध्यम से हम लोगों को हिंदी भाषा में दक्ष बनाने का प्रयास करेंगे। 'सर्वजन हिताय' की मूल भावना के साथ प्रारंभ किया गया यह अभियान सर्वजन के सहयोग की अनुपस्थिति में पूर्ण न हो सकेगा। व्याकरणी के इस महा-अभियान से किसी भी रूप में जुड़ने के लिये आप हमें हमारे ई-मेल support@vyakarni.com पर संपर्क कर सकते हैं।"
     },
-    marquee: "☆ श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆ Beta Version V-1.0"
   };
   const englishContent = {
     hero: {
@@ -226,7 +224,6 @@ const Home = () => {
   }, [searchParams, setSearchParams, navigate, language]);
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <UnifiedNavigation variant="home" />
-      <MarqueeBar />
       
       {/* Language Toggle */}
       <div className="fixed top-40 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
