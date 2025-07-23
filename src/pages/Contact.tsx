@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,21 +11,27 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import Layout from "@/components/Layout";
-
 interface ContactFormData {
   name: string;
   email: string;
   message: string;
 }
-
 const Contact = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
-
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: {
+      errors
+    }
+  } = useForm<ContactFormData>();
   const hindiContent = {
-    pageTitle: "हमसे संपर्क करें",
+    pageTitle: "हमसे संपर्क करयें",
     pageDescription: "हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करयें।",
     sendMessageTitle: "संदेश भेजें",
     loginRequired: "संदेश भेजने के लिये कृपया लॉगिन करयें",
@@ -53,7 +58,6 @@ const Contact = () => {
     errorMessage: "संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करयें।",
     genericError: "कुछ गलत हुआ है। कृपया पुनः प्रयास करयें।"
   };
-
   const englishContent = {
     pageTitle: "Contact Us",
     pageDescription: "Our team is ready to assist you. Feel free to share your questions or suggestions.",
@@ -82,32 +86,26 @@ const Contact = () => {
     errorMessage: "Error sending message. Please try again.",
     genericError: "Something went wrong. Please try again."
   };
-
   const currentContent = language === "english" ? englishContent : hindiContent;
-
   const onSubmit = async (data: ContactFormData) => {
     if (!user) {
       toast.error(currentContent.loginRequired);
       return;
     }
-
     setIsSubmitting(true);
-    
     try {
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert({
-          name: data.name,
-          email: data.email,
-          message: data.message,
-        });
-
+      const {
+        error
+      } = await supabase.from('contact_submissions').insert({
+        name: data.name,
+        email: data.email,
+        message: data.message
+      });
       if (error) {
         console.error('Error submitting contact form:', error);
         toast.error(currentContent.errorMessage);
         return;
       }
-
       toast.success(currentContent.successMessage);
       reset();
     } catch (error) {
@@ -117,32 +115,10 @@ const Contact = () => {
       setIsSubmitting(false);
     }
   };
-
-  return (
-    <Layout>
+  return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         {/* Language Toggle */}
-        <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
-          <ToggleGroup
-            type="single"
-            value={language}
-            onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
-            className="gap-1"
-          >
-            <ToggleGroupItem
-              value="hindi"
-              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-            >
-              हिंदी
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="english"
-              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-            >
-              English
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+        
 
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
@@ -164,71 +140,44 @@ const Contact = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {!user ? (
-                  <div className="text-center py-8">
+                {!user ? <div className="text-center py-8">
                     <p className="text-gray-600 mb-4">{currentContent.loginRequired}</p>
                     <Button asChild>
                       <a href="/login">{currentContent.loginButton}</a>
                     </Button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                  </div> : <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div>
                       <Label htmlFor="name">{currentContent.nameLabel}</Label>
-                      <Input
-                        id="name"
-                        {...register("name", { required: currentContent.nameRequired })}
-                        placeholder={currentContent.namePlaceholder}
-                        className="mt-1"
-                      />
-                      {errors.name && (
-                        <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-                      )}
+                      <Input id="name" {...register("name", {
+                    required: currentContent.nameRequired
+                  })} placeholder={currentContent.namePlaceholder} className="mt-1" />
+                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
                     </div>
 
                     <div>
                       <Label htmlFor="email">{currentContent.emailLabel}</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        {...register("email", { 
-                          required: currentContent.emailRequired,
-                          pattern: {
-                            value: /^\S+@\S+$/i,
-                            message: currentContent.emailValid
-                          }
-                        })}
-                        placeholder={currentContent.emailPlaceholder}
-                        className="mt-1"
-                      />
-                      {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                      )}
+                      <Input id="email" type="email" {...register("email", {
+                    required: currentContent.emailRequired,
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: currentContent.emailValid
+                    }
+                  })} placeholder={currentContent.emailPlaceholder} className="mt-1" />
+                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
                     </div>
 
                     <div>
                       <Label htmlFor="message">{currentContent.messageLabel}</Label>
-                      <Textarea
-                        id="message"
-                        {...register("message", { required: currentContent.messageRequired })}
-                        placeholder={currentContent.messagePlaceholder}
-                        rows={6}
-                        className="mt-1"
-                      />
-                      {errors.message && (
-                        <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
-                      )}
+                      <Textarea id="message" {...register("message", {
+                    required: currentContent.messageRequired
+                  })} placeholder={currentContent.messagePlaceholder} rows={6} className="mt-1" />
+                      {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>}
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" 
-                      disabled={isSubmitting}
-                    >
+                    <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" disabled={isSubmitting}>
                       {isSubmitting ? currentContent.sending : currentContent.sendButton}
                     </Button>
-                  </form>
-                )}
+                  </form>}
               </CardContent>
             </Card>
 
@@ -303,8 +252,6 @@ const Contact = () => {
           </div>
         </div>
       </div>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Contact;
