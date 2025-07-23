@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -14,6 +13,7 @@ import MarqueeBar from "@/components/MarqueeBar";
 import DashboardWelcome from "@/components/Dashboard/DashboardWelcome";
 import DashboardActionCards from "@/components/Dashboard/DashboardActionCards";
 import DashboardFooterStats from "@/components/Dashboard/DashboardFooterStats";
+import TextHistoryCard from "@/components/Dashboard/TextHistoryCard";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -66,6 +66,11 @@ const Dashboard = () => {
             📊 शब्द उपयोग की जानकारी
           </h2>
           <WordUsageStatsCards />
+        </div>
+
+        {/* Text History Section */}
+        <div className="mb-8">
+          <TextHistoryCard />
         </div>
 
         <DashboardActionCards 
