@@ -10,7 +10,7 @@ const MarqueeBar = ({ content }: MarqueeBarProps) => {
   const [fadeClass, setFadeClass] = useState('opacity-100');
   
   const texts = [
-    "मात्र सीमित समय के लिये – सुनहरा एवं आकर्षक आरंभिक ऑफ़र उपलब्ध! शीघ्रता करें!",
+    "मात्र सीमित समय के लिये – सुनहरा एवं आकर्षक आरंभिक ऑफ़र उपलब्ध! शीघ्रता करें! | For a limited time only – a golden and attractive introductory offer is available! Hurry up!",
     "श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆ Beta Version V-1.0"
   ];
   
