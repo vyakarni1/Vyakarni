@@ -232,7 +232,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <UnifiedNavigation variant="home" />
-      <MarqueeBar content={currentContent.marquee} />
+      <MarqueeBar />
       
       {/* Language Toggle */}
       <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
