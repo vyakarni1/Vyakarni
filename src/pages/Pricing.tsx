@@ -73,7 +73,7 @@ const Pricing = () => {
               शब्द क्रेडिट खरीदें
             </h1>
             <h2 className="text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-5 my-[12px] py-[8px]">
-              यद्यपि व्याकरणी उच्च सटीकता प्रदान करने का प्रयास करता है, तथापि इसमें यदा-कदा त्रुटियाँ संभव हैं। अंतिम प्रयोग से पूर्व प्राप्त परिणाम की समीक्षा करना अनुशंसित है।
+              सुनहरे आरंभिक ऑफर का लाभ उठायें!
             </h2>
             <p className="text-xl text-gray-600 mb-4">एक बार खरीदें और 120 दिनों तक निर्बाध उपयोग करें</p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-4">
