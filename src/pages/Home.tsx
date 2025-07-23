@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -15,12 +14,10 @@ import FAQSection from "@/components/FAQSection";
 import USPSection from "@/components/USPSection";
 import CTABanner from "@/components/CTABanner";
 import MarqueeBar from "@/components/MarqueeBar";
-
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
-
   const hindiContent = {
     hero: {
       title: "AI के साथ हिंदी लेखन",
@@ -102,7 +99,6 @@ const Home = () => {
     },
     marquee: "☆ श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆ Beta Version V-1.0"
   };
-
   const englishContent = {
     hero: {
       title: "Improve Hindi Writing",
@@ -184,17 +180,17 @@ const Home = () => {
     },
     marquee: "☆ Use Google Chrome Version 137.0.7151.56 (Latest Build) (64-bit) for best results ☆ Beta Version V-1.0"
   };
-
   const currentContent = language === "english" ? englishContent : hindiContent;
-
   useEffect(() => {
     const error = searchParams.get('error');
     const errorCode = searchParams.get('error_code');
     const errorDescription = searchParams.get('error_description');
-
     if (error && errorCode) {
-      console.log('Auth error detected:', { error, errorCode, errorDescription });
-      
+      console.log('Auth error detected:', {
+        error,
+        errorCode,
+        errorDescription
+      });
       if (errorCode === 'otp_expired') {
         toast.error(language === "english" ? "Password reset link has expired" : "पासवर्ड रीसेट लिंक की समय सीमा समाप्त हो गई है", {
           description: language === "english" ? "Please request a new password reset link" : "कृपया नया पासवर्ड रीसेट लिंक मांगें",
@@ -219,39 +215,26 @@ const Home = () => {
           duration: 6000
         });
       }
-
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('error');
       newSearchParams.delete('error_code');
       newSearchParams.delete('error_description');
-      
-      setSearchParams(newSearchParams, { replace: true });
+      setSearchParams(newSearchParams, {
+        replace: true
+      });
     }
   }, [searchParams, setSearchParams, navigate, language]);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       <UnifiedNavigation variant="home" />
       <MarqueeBar />
       
       {/* Language Toggle */}
-      <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
-        <ToggleGroup
-          type="single"
-          value={language}
-          onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
-          className="gap-1"
-        >
-          <ToggleGroupItem
-            value="hindi"
-            className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-          >
+      <div className="fixed top-40 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
+        <ToggleGroup type="single" value={language} onValueChange={value => value && setLanguage(value as "english" | "hindi")} className="gap-1">
+          <ToggleGroupItem value="hindi" className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white">
             हिंदी
           </ToggleGroupItem>
-          <ToggleGroupItem
-            value="english"
-            className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-          >
+          <ToggleGroupItem value="english" className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white">
             English
           </ToggleGroupItem>
         </ToggleGroup>
@@ -269,8 +252,6 @@ const Home = () => {
         <CTABanner content={currentContent.cta} />
         <Footer />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Home;
