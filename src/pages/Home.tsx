@@ -100,7 +100,19 @@ const Home = () => {
       instantStart: "तत्काल प्रारंभ",
       missionText: "व्याकरणी हमारे लिये एक अभियान है। एक ऐसा अभियान जिसके माध्यम से हम लोगों को हिंदी भाषा में दक्ष बनाने का प्रयास करेंगे। 'सर्वजन हिताय' की मूल भावना के साथ प्रारंभ किया गया यह अभियान सर्वजन के सहयोग की अनुपस्थिति में पूर्ण न हो सकेगा। व्याकरणी के इस महा-अभियान से किसी भी रूप में जुड़ने के लिये आप हमें हमारे ई-मेल support@vyakarni.com पर संपर्क कर सकते हैं।"
     },
-    marquee: "☆ श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆ Beta Version V-1.0"
+   const Home = () => {
+  return (
+    <div>
+      <MarqueeBar />
+      {/* Your existing content with proper spacing */}
+      <main className="pt-20">
+        {/* Rest of your home page content */}
+      </main>
+    </div>
+  );
+};
+
+export default Home;RetryClaude does not have the ability to run the code it generates yet.Claude can make mistakes. Please double-check responses. marquee: "☆ श्रेष्ठतम परिणामों के लिये गूगल क्रोम के Version 137.0.7151.56 (Latest Build) (64-bit) का प्रयोग करें ☆ Beta Version V-1.0"
   };
 
   const englishContent = {
