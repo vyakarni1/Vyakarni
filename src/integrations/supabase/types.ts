@@ -173,6 +173,45 @@ export type Database = {
         }
         Relationships: []
       }
+      email_logs: {
+        Row: {
+          created_at: string | null
+          email_type: string
+          error_message: string | null
+          id: string
+          recipient_email: string
+          resend_id: string | null
+          sent_at: string | null
+          status: string
+          subject: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_type: string
+          error_message?: string | null
+          id?: string
+          recipient_email: string
+          resend_id?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          recipient_email?: string
+          resend_id?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       email_templates: {
         Row: {
           body_html: string
@@ -365,12 +404,14 @@ export type Database = {
           created_at: string | null
           email: string
           email_preferences: Json | null
+          email_verification_completed_at: string | null
           id: string
           name: string | null
           phone: string | null
           preferred_language: Database["public"]["Enums"]["app_language"] | null
           privacy_settings: Json | null
           updated_at: string | null
+          welcome_email_sent_at: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -378,6 +419,7 @@ export type Database = {
           created_at?: string | null
           email: string
           email_preferences?: Json | null
+          email_verification_completed_at?: string | null
           id: string
           name?: string | null
           phone?: string | null
@@ -386,6 +428,7 @@ export type Database = {
             | null
           privacy_settings?: Json | null
           updated_at?: string | null
+          welcome_email_sent_at?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -393,6 +436,7 @@ export type Database = {
           created_at?: string | null
           email?: string
           email_preferences?: Json | null
+          email_verification_completed_at?: string | null
           id?: string
           name?: string | null
           phone?: string | null
@@ -401,6 +445,7 @@ export type Database = {
             | null
           privacy_settings?: Json | null
           updated_at?: string | null
+          welcome_email_sent_at?: string | null
         }
         Relationships: []
       }
