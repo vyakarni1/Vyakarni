@@ -1,48 +1,40 @@
 
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Search, Download, Database, FileText } from "lucide-react";
-import { dictionaryService, type WordReplacement, type DictionaryTableData } from "@/services/dictionaryService";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Search, Download, RefreshCw } from "lucide-react";
+import { dictionaryService, DictionaryTableData, WordReplacement } from "@/services/dictionaryService";
 import { useToast } from "@/hooks/use-toast";
 
 export function DictionaryDataTable() {
-  const [tableData, setTableData] = useState<DictionaryTableData>({
+  const [data, setData] = useState<DictionaryTableData>({
     entries: [],
     totalCount: 0,
     page: 1,
     pageSize: 50
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [dictionaryType, setDictionaryType] = useState<'grammar' | 'style'>('grammar');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
 
-  const loadTableData = async (page: number = 1, search: string = "") => {
+  const loadData = async () => {
     setIsLoading(true);
     try {
-      const data = await dictionaryService.getDictionaryTableData(page, 50, search);
-      setTableData(data);
+      const result = await dictionaryService.getDictionaryTableData(
+        data.page,
+        data.pageSize,
+        searchTerm,
+        dictionaryType
+      );
+      setData(result);
     } catch (error) {
-      console.error("Error loading dictionary table data:", error);
+      console.error("Error loading dictionary data:", error);
       toast({
         title: "Error",
         description: "Failed to load dictionary data",
@@ -54,106 +46,98 @@ export function DictionaryDataTable() {
   };
 
   useEffect(() => {
-    loadTableData(currentPage, searchTerm);
-  }, [currentPage]);
-
-  const handleSearch = () => {
-    setCurrentPage(1);
-    loadTableData(1, searchTerm);
-  };
+    loadData();
+  }, [searchTerm, dictionaryType, data.page]);
 
   const handleExport = async (format: 'csv' | 'json') => {
+    setIsExporting(true);
     try {
-      const exportData = await dictionaryService.exportDictionary(format);
-      const blob = new Blob([exportData], { 
-        type: format === 'json' ? 'application/json' : 'text/csv' 
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `dictionary-export.${format}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const exportData = await dictionaryService.exportDictionary(format, dictionaryType);
       
+      const blob = new Blob([exportData], {
+        type: format === 'csv' ? 'text/csv' : 'application/json'
+      });
+      
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${dictionaryType}-dictionary.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
       toast({
         title: "Export Successful",
-        description: `Dictionary exported as ${format.toUpperCase()}`,
+        description: `${dictionaryType} dictionary exported as ${format.toUpperCase()}`,
       });
     } catch (error) {
       toast({
         title: "Export Failed",
-        description: "Failed to export dictionary data",
+        description: "Failed to export dictionary",
         variant: "destructive",
       });
+    } finally {
+      setIsExporting(false);
     }
   };
 
-  const getSourceBadge = (source: string) => {
-    if (source === 'google_sheets') {
-      return <Badge variant="default" className="bg-green-100 text-green-800">
-        <Database className="h-3 w-3 mr-1" />
-        Google Sheets
-      </Badge>;
-    }
-    return <Badge variant="secondary" className="bg-gray-100 text-gray-800">
-      <FileText className="h-3 w-3 mr-1" />
-      Static Fallback
-    </Badge>;
+  const handlePageChange = (newPage: number) => {
+    setData(prev => ({ ...prev, page: newPage }));
   };
-
-  const totalPages = Math.ceil(tableData.totalCount / tableData.pageSize);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Dictionary Entries</span>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleExport('csv')}
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleExport('json')}
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export JSON
-            </Button>
-          </div>
-        </CardTitle>
+        <CardTitle>Dictionary Entries</CardTitle>
+        <CardDescription>
+          Browse and manage dictionary entries for {dictionaryType} corrections
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Search */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search original or replacement words..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="pl-10"
-            />
+        {/* Filters and Controls */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-2 flex-1">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search words..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={dictionaryType} onValueChange={(value: 'grammar' | 'style') => setDictionaryType(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Dictionary Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="grammar">Grammar Dictionary</SelectItem>
+                <SelectItem value="style">Style Dictionary</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Button onClick={handleSearch} disabled={isLoading}>
-            Search
-          </Button>
+          
+          <div className="flex gap-2">
+            <Button onClick={loadData} variant="outline" size="sm" disabled={isLoading}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button onClick={() => handleExport('csv')} variant="outline" size="sm" disabled={isExporting}>
+              <Download className="h-4 w-4 mr-2" />
+              CSV
+            </Button>
+            <Button onClick={() => handleExport('json')} variant="outline" size="sm" disabled={isExporting}>
+              <Download className="h-4 w-4 mr-2" />
+              JSON
+            </Button>
+          </div>
         </div>
 
-        {/* Results Summary */}
-        <div className="text-sm text-muted-foreground">
-          Showing {tableData.entries.length} of {tableData.totalCount} entries
-          {searchTerm && ` for "${searchTerm}"`}
+        {/* Stats */}
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <span>Total entries: {data.totalCount}</span>
+          <Badge variant="outline">{dictionaryType} dictionary</Badge>
         </div>
 
         {/* Table */}
@@ -161,53 +145,33 @@ export function DictionaryDataTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[30%]">Original Word</TableHead>
-                <TableHead className="w-[30%]">Replacement</TableHead>
-                <TableHead className="w-[20%]">Source</TableHead>
-                <TableHead className="w-[20%]">Last Updated</TableHead>
+                <TableHead>Original</TableHead>
+                <TableHead>Replacement</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Source</TableHead>
+                <TableHead>Created</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell>
-                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : tableData.entries.length === 0 ? (
+              {data.entries.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                    {searchTerm ? 'No entries found matching your search.' : 'No dictionary entries available.'}
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    {isLoading ? 'Loading...' : 'No dictionary entries found'}
                   </TableCell>
                 </TableRow>
               ) : (
-                tableData.entries.map((entry, index) => (
-                  <TableRow key={entry.id || `${entry.original}-${index}`}>
-                    <TableCell className="font-medium">
-                      {entry.original}
-                    </TableCell>
+                data.entries.map((entry: WordReplacement) => (
+                  <TableRow key={entry.id}>
+                    <TableCell className="font-medium">{entry.original}</TableCell>
+                    <TableCell>{entry.replacement}</TableCell>
                     <TableCell>
-                      {entry.replacement}
+                      <Badge variant={entry.dictionary_type === 'grammar' ? 'default' : 'secondary'}>
+                        {entry.dictionary_type}
+                      </Badge>
                     </TableCell>
+                    <TableCell>{entry.source || 'google_sheets'}</TableCell>
                     <TableCell>
-                      {getSourceBadge(entry.source || 'unknown')}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {entry.updated_at 
-                        ? new Date(entry.updated_at).toLocaleDateString('hi-IN')
-                        : 'Unknown'
-                      }
+                      {entry.created_at ? new Date(entry.created_at).toLocaleDateString('hi-IN') : '-'}
                     </TableCell>
                   </TableRow>
                 ))
@@ -217,42 +181,29 @@ export function DictionaryDataTable() {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-                    className={currentPage <= 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                  />
-                </PaginationItem>
-                
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  const pageNum = Math.max(1, currentPage - 2) + i;
-                  if (pageNum > totalPages) return null;
-                  
-                  return (
-                    <PaginationItem key={pageNum}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(pageNum)}
-                        isActive={pageNum === currentPage}
-                        className="cursor-pointer"
-                      >
-                        {pageNum}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-                
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
-                    className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+        {data.totalCount > data.pageSize && (
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-muted-foreground">
+              Showing {((data.page - 1) * data.pageSize) + 1} to {Math.min(data.page * data.pageSize, data.totalCount)} of {data.totalCount} entries
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(data.page - 1)}
+                disabled={data.page <= 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(data.page + 1)}
+                disabled={data.page * data.pageSize >= data.totalCount}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>
