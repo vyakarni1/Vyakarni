@@ -23,6 +23,7 @@ const Contact = () => {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
 
   const hindiContent = {
