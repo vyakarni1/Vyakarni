@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.8';
 
 const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
 
@@ -14,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { originalText, finalText, processingType } = await req.json();
+    const { originalText, finalText, processingType, textHistoryId } = await req.json();
 
     if (!originalText || !finalText) {
       throw new Error('Original text and final text are required');
@@ -146,6 +147,25 @@ Analyze all differences and return the JSON structure with corrections array.`
     const { corrections = [] } = parsedResponse;
     
     console.log('Parsed corrections:', corrections);
+
+    // Update text history with corrections if textHistoryId is provided
+    if (textHistoryId && corrections.length > 0) {
+      try {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+        );
+        
+        await supabase
+          .from('text_corrections')
+          .update({ corrections_data: corrections })
+          .eq('id', textHistoryId);
+          
+        console.log('Updated text history with corrections');
+      } catch (updateError) {
+        console.error('Failed to update text history:', updateError);
+      }
+    }
 
     return new Response(JSON.stringify({ corrections }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

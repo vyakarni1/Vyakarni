@@ -2,6 +2,8 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { applySimplifiedDictionaryCorrections } from '@/utils/simplifiedDictionaryCorrections';
+import { useWordLimits } from './useWordLimits';
+import { useTextHistory } from './useTextHistory';
 
 interface UseSimplifiedStyleProcessingProps {
   onProgressUpdate?: (progress: number, stage: string) => void;
@@ -10,16 +12,26 @@ interface UseSimplifiedStyleProcessingProps {
 export const useSimplifiedStyleProcessing = ({ onProgressUpdate }: UseSimplifiedStyleProcessingProps = {}) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [enhancedText, setEnhancedText] = useState('');
+  const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
+  const { saveTextCorrection } = useTextHistory();
 
   const processStyleEnhancement = useCallback(async (inputText: string) => {
     if (!inputText.trim()) {
       throw new Error('कृपया शैली सुधार के लिए कुछ पाठ लिखें');
     }
 
+    // Check word limits before processing
+    if (!checkAndEnforceWordLimit(inputText)) {
+      throw new Error('शब्द सीमा पार हो गई या पर्याप्त बैलेंस नहीं है');
+    }
+
     console.log(`Starting simplified style enhancement`);
     setIsProcessing(true);
     
     try {
+      // Calculate word count for tracking
+      const wordCount = inputText.trim().split(/\s+/).filter(word => word.length > 0).length;
+      
       // Step 1: Vyakarni Processing (0-60%)
       onProgressUpdate?.(20, 'Vyakarni से शैली सुधार...');
       
@@ -43,20 +55,32 @@ export const useSimplifiedStyleProcessing = ({ onProgressUpdate }: UseSimplified
       const finalText = await applySimplifiedDictionaryCorrections(aiEnhancedText);
       onProgressUpdate?.(90, 'अंतिम सुधार...');
 
-      // Step 3: Display (90-100%)
+      // Step 3: Track word usage and save text history
+      await trackWordUsage(inputText, 'style_enhancement');
+      
+      // Save text correction to history
+      const textHistoryId = await saveTextCorrection({
+        originalText: inputText,
+        correctedText: finalText,
+        processingType: 'style',
+        correctionsData: [], // Will be populated by comparison function
+        wordsUsed: wordCount,
+      });
+
+      // Step 4: Display (90-100%)
       setEnhancedText(finalText);
       onProgressUpdate?.(100, 'पूर्ण!');
 
       console.log(`Simplified style enhancement completed successfully`);
 
-      return { enhancedText: finalText };
+      return { enhancedText: finalText, textHistoryId };
     } catch (error) {
       console.error('Simplified style processing error:', error);
       throw error;
     } finally {
       setIsProcessing(false);
     }
-  }, [onProgressUpdate]);
+  }, [onProgressUpdate, checkAndEnforceWordLimit, trackWordUsage, saveTextCorrection]);
 
   const resetStyleData = () => {
     setEnhancedText('');

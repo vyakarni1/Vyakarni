@@ -116,14 +116,15 @@ export const callGrokDictionaryApplyAPI = async (correctedText: string, wordRepl
   return data.textWithDictionary;
 };
 
-export const callGrokTextComparisonAPI = async (originalText: string, finalText: string, processingType: string = 'grammar_check') => {
-  console.log('Comparing texts for highlighting with Grok:', { originalText, finalText, processingType });
+export const callGrokTextComparisonAPI = async (originalText: string, finalText: string, processingType: string = 'grammar_check', textHistoryId?: string) => {
+  console.log('Comparing texts for highlighting with Grok:', { originalText, finalText, processingType, textHistoryId });
   
   const { data, error } = await supabase.functions.invoke('grok-text-comparison', {
     body: {
       originalText,
       finalText,
-      processingType
+      processingType,
+      textHistoryId
     }
   });
 

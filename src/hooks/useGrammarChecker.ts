@@ -23,7 +23,7 @@ export const useGrammarChecker = () => {
     onProgressUpdate: progressManagement.updateProgress
   });
 
-  const generateCorrections = async (originalText: string, processedText: string, processingType: string) => {
+  const generateCorrections = async (originalText: string, processedText: string, processingType: string, textHistoryId?: string) => {
     try {
       progressManagement.updateProgress(85, 'सुधार विश्लेषण');
       
@@ -46,13 +46,15 @@ export const useGrammarChecker = () => {
       console.log('Generating corrections comparison:', { 
         originalLength: originalText.length, 
         processedLength: processedText.length,
-        processingType 
+        processingType,
+        textHistoryId
       });
       
       const correctionData = await callGrokTextComparisonAPI(
         originalText, 
         processedText, 
-        processingType
+        processingType,
+        textHistoryId
       );
       
       setCorrections(correctionData || []);
@@ -86,7 +88,8 @@ export const useGrammarChecker = () => {
         await generateCorrections(
           textOperations.inputText,
           result.correctedText,
-          'grammar_check'
+          'grammar_check',
+          result.textHistoryId
         );
         
         toast.success("व्याकरण सुधार पूर्ण हुआ!");
@@ -116,7 +119,8 @@ export const useGrammarChecker = () => {
         await generateCorrections(
           textOperations.inputText,
           result.enhancedText,
-          'style_enhance'
+          'style_enhance',
+          result.textHistoryId
         );
         
         toast.success("शैली सुधार पूर्ण हुआ!");

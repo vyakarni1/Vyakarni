@@ -2,6 +2,8 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { applySimplifiedDictionaryCorrections } from '@/utils/simplifiedDictionaryCorrections';
+import { useWordLimits } from './useWordLimits';
+import { useTextHistory } from './useTextHistory';
 
 interface UseSimplifiedGrammarCheckerProps {
   onProgressUpdate?: (progress: number, stage: string) => void;
@@ -10,16 +12,26 @@ interface UseSimplifiedGrammarCheckerProps {
 export const useSimplifiedGrammarChecker = ({ onProgressUpdate }: UseSimplifiedGrammarCheckerProps = {}) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [correctedText, setCorrectedText] = useState('');
+  const { checkAndEnforceWordLimit, trackWordUsage } = useWordLimits();
+  const { saveTextCorrection } = useTextHistory();
 
   const processGrammarCorrection = useCallback(async (inputText: string) => {
     if (!inputText.trim()) {
       throw new Error('कृपया सुधार के लिए कुछ पाठ लिखें');
     }
 
+    // Check word limits before processing
+    if (!checkAndEnforceWordLimit(inputText)) {
+      throw new Error('शब्द सीमा पार हो गई या पर्याप्त बैलेंस नहीं है');
+    }
+
     console.log(`Starting simplified grammar correction`);
     setIsProcessing(true);
     
     try {
+      // Calculate word count for tracking
+      const wordCount = inputText.trim().split(/\s+/).filter(word => word.length > 0).length;
+      
       // Step 1: Vyakarni Processing (0-60%)
       onProgressUpdate?.(20, 'Vyakarni से व्याकरण सुधार...');
       
@@ -43,20 +55,32 @@ export const useSimplifiedGrammarChecker = ({ onProgressUpdate }: UseSimplifiedG
       const finalText = await applySimplifiedDictionaryCorrections(aiCorrectedText);
       onProgressUpdate?.(90, 'अंतिम सुधार...');
 
-      // Step 3: Display (90-100%)
+      // Step 3: Track word usage and save text history
+      await trackWordUsage(inputText, 'grammar_check');
+      
+      // Save text correction to history
+      const textHistoryId = await saveTextCorrection({
+        originalText: inputText,
+        correctedText: finalText,
+        processingType: 'grammar',
+        correctionsData: [], // Will be populated by comparison function
+        wordsUsed: wordCount,
+      });
+
+      // Step 4: Display (90-100%)
       setCorrectedText(finalText);
       onProgressUpdate?.(100, 'पूर्ण!');
 
       console.log(`Simplified grammar correction completed successfully`);
 
-      return { correctedText: finalText };
+      return { correctedText: finalText, textHistoryId };
     } catch (error) {
       console.error('Simplified grammar processing error:', error);
       throw error;
     } finally {
       setIsProcessing(false);
     }
-  }, [onProgressUpdate]);
+  }, [onProgressUpdate, checkAndEnforceWordLimit, trackWordUsage, saveTextCorrection]);
 
   const resetGrammarData = () => {
     setCorrectedText('');
