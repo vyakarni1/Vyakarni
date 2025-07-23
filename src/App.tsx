@@ -1,121 +1,107 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./components/AuthProvider";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Disclaimer from "./pages/Disclaimer";
-import RefundPolicy from "./pages/RefundPolicy";
-import DataProtection from "./pages/DataProtection";
-import OtherPolicies from "./pages/OtherPolicies";
-import PricingPolicy from "./pages/PricingPolicy";
-import ShippingPolicy from "./pages/ShippingPolicy";
-import Index from "./pages/Index";
-import Pricing from "./pages/Pricing";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Billing from "@/pages/Billing";
-import AdminRoute from "./components/AdminRoute";
-import Admin from "./pages/Admin";
-import AdminUsers from "./pages/AdminUsers";
-import AdminDictionary from "./pages/AdminDictionary";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import Pricing from './pages/Pricing';
+import Contact from './pages/Contact';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
+import GrammarChecker from './pages/GrammarChecker';
+import StyleChecker from './pages/StyleChecker';
+import WordCounter from './pages/WordCounter';
+import ProtectedRoute from './components/ProtectedRoute';
+import AccountSettings from './pages/AccountSettings';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminRoute from './components/AdminRoute';
+import UserManagement from './pages/Admin/UserManagement';
+import SubscriptionManagement from './pages/Admin/SubscriptionManagement';
+import DictionaryManagement from './pages/Admin/DictionaryManagement';
+import AnalyticsDashboard from './pages/Admin/AnalyticsDashboard';
+import { Toaster } from "@/components/ui/toaster"
 
-const queryClient = new QueryClient();
+import AdminCleanup from "@/pages/AdminCleanup";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
+    <Router>
+      <div className="min-h-screen bg-background font-sans antialiased">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/grammar-checker" element={
+            <ProtectedRoute>
+              <GrammarChecker />
+            </ProtectedRoute>
+          } />
+          <Route path="/style-checker" element={
+            <ProtectedRoute>
+              <StyleChecker />
+            </ProtectedRoute>
+          } />
+          <Route path="/word-counter" element={
+            <ProtectedRoute>
+              <WordCounter />
+            </ProtectedRoute>
+          } />
+          <Route path="/account-settings" element={
+            <ProtectedRoute>
+              <AccountSettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/users" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <UserManagement />
+              </AdminRoute>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/subscriptions" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <SubscriptionManagement />
+              </AdminRoute>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/dictionary" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <DictionaryManagement />
+              </AdminRoute>
+            </ProtectedRoute>
+          } />
+           <Route path="/admin/analytics" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <AnalyticsDashboard />
+              </AdminRoute>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/cleanup" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <AdminCleanup />
+              </AdminRoute>
+            </ProtectedRoute>
+          } />
+        </Routes>
         <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/disclaimer" element={<Disclaimer />} />
-              <Route path="/refund-policy" element={<RefundPolicy />} />
-              <Route path="/pricing-policy" element={<PricingPolicy />} />
-              <Route path="/shipping-policy" element={<ShippingPolicy />} />
-              <Route path="/data-protection" element={<DataProtection />} />
-              <Route path="/other-policies" element={<OtherPolicies />} />
-              <Route path="/pricing" element={<Pricing />} />
-              
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/grammar-checker" 
-                element={
-                  <ProtectedRoute>
-                    <Index />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
-              
-              <Route 
-                path="/admin" 
-                element={
-                  <AdminRoute>
-                    <Admin />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/users" 
-                element={
-                  <AdminRoute>
-                    <AdminUsers />
-                  </AdminRoute>
-                } 
-              />
-              <Route 
-                path="/admin/dictionary" 
-                element={
-                  <AdminRoute>
-                    <AdminDictionary />
-                  </AdminRoute>
-                } 
-              />
-              
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+      </div>
+    </Router>
   );
 }
 
