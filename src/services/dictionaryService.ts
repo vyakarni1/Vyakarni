@@ -9,6 +9,7 @@ export interface WordReplacement {
   is_active?: boolean;
   created_at?: string;
   updated_at?: string;
+  dictionary_type?: 'grammar' | 'style';
 }
 
 export interface DictionarySyncStatus {
@@ -18,6 +19,7 @@ export interface DictionarySyncStatus {
   total_records: number | null;
   error_message: string | null;
   created_at: string | null;
+  dictionary_type: 'grammar' | 'style';
 }
 
 export interface DictionaryTableData {
@@ -29,8 +31,10 @@ export interface DictionaryTableData {
 
 export class DictionaryService {
   private static instance: DictionaryService;
-  private cachedDictionary: WordReplacement[] | null = null;
-  private cacheTimestamp: number = 0;
+  private cachedGrammarDictionary: WordReplacement[] | null = null;
+  private cachedStyleDictionary: WordReplacement[] | null = null;
+  private grammarCacheTimestamp: number = 0;
+  private styleCacheTimestamp: number = 0;
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   static getInstance(): DictionaryService {
@@ -41,37 +45,62 @@ export class DictionaryService {
   }
 
   /**
-   * Get dictionary from database only (Google Sheets sync)
+   * Get dictionary from database (supports both grammar and style types)
    * No fallback to static dictionary
    */
-  async getDictionary(): Promise<WordReplacement[]> {
+  async getDictionary(type: 'grammar' | 'style' = 'grammar'): Promise<WordReplacement[]> {
     try {
       // Check if we have valid cached data
       const now = Date.now();
-      if (this.cachedDictionary && (now - this.cacheTimestamp) < this.CACHE_DURATION) {
-        console.log(`Using cached dictionary with ${this.cachedDictionary.length} entries`);
-        return this.cachedDictionary;
+      const cachedData = type === 'grammar' ? this.cachedGrammarDictionary : this.cachedStyleDictionary;
+      const cacheTimestamp = type === 'grammar' ? this.grammarCacheTimestamp : this.styleCacheTimestamp;
+      
+      if (cachedData && (now - cacheTimestamp) < this.CACHE_DURATION) {
+        console.log(`Using cached ${type} dictionary with ${cachedData.length} entries`);
+        return cachedData;
       }
 
-      // Get dictionary from database only
-      const dbDictionary = await this.getDictionaryFromDB();
+      // Get dictionary from database by type
+      const dbDictionary = await this.getDictionaryFromDB(type);
       
       if (dbDictionary.length > 0) {
-        console.log(`Loaded ${dbDictionary.length} dictionary entries from database`);
-        this.cachedDictionary = dbDictionary;
-        this.cacheTimestamp = now;
+        console.log(`Loaded ${dbDictionary.length} ${type} dictionary entries from database`);
+        
+        // Update appropriate cache
+        if (type === 'grammar') {
+          this.cachedGrammarDictionary = dbDictionary;
+          this.grammarCacheTimestamp = now;
+        } else {
+          this.cachedStyleDictionary = dbDictionary;
+          this.styleCacheTimestamp = now;
+        }
+        
         return dbDictionary;
       }
 
       // If no database entries, return empty array (no fallback)
-      console.warn('No dictionary entries found in database. Dictionary will be empty until sync is performed.');
+      console.warn(`No ${type} dictionary entries found in database. Dictionary will be empty until sync is performed.`);
       return [];
       
     } catch (error) {
-      console.error('Error loading dictionary from database:', error);
+      console.error(`Error loading ${type} dictionary from database:`, error);
       // Return empty array instead of fallback
       return [];
     }
+  }
+
+  /**
+   * Get grammar dictionary specifically
+   */
+  async getGrammarDictionary(): Promise<WordReplacement[]> {
+    return this.getDictionary('grammar');
+  }
+
+  /**
+   * Get style dictionary specifically
+   */
+  async getStyleDictionary(): Promise<WordReplacement[]> {
+    return this.getDictionary('style');
   }
 
   /**
@@ -80,13 +109,15 @@ export class DictionaryService {
   async getDictionaryTableData(
     page: number = 1, 
     pageSize: number = 50, 
-    searchTerm: string = ''
+    searchTerm: string = '',
+    type: 'grammar' | 'style' = 'grammar'
   ): Promise<DictionaryTableData> {
     try {
       let query = supabase
         .from('word_dictionary')
         .select('*', { count: 'exact' })
-        .eq('is_active', true);
+        .eq('is_active', true)
+        .eq('dictionary_type', type);
 
       // Add search filter if provided
       if (searchTerm) {
@@ -113,7 +144,11 @@ export class DictionaryService {
 
       // Return database entries or empty array
       return {
-        entries: (dbEntries || []).map(entry => ({ ...entry, source: 'google_sheets' })),
+        entries: (dbEntries || []).map(entry => ({ 
+          ...entry, 
+          source: 'google_sheets',
+          dictionary_type: entry.dictionary_type as 'grammar' | 'style'
+        })),
         totalCount: count || 0,
         page,
         pageSize
@@ -134,41 +169,53 @@ export class DictionaryService {
   /**
    * Get dictionary from database (Google Sheets cache)
    */
-  private async getDictionaryFromDB(): Promise<WordReplacement[]> {
+  private async getDictionaryFromDB(type: 'grammar' | 'style' = 'grammar'): Promise<WordReplacement[]> {
     const { data, error } = await supabase
       .from('word_dictionary')
       .select('*')
       .eq('is_active', true)
+      .eq('dictionary_type', type)
       .order('created_at', { ascending: true });
 
     if (error) {
-      console.error('Error fetching dictionary from database:', error);
+      console.error(`Error fetching ${type} dictionary from database:`, error);
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(entry => ({
+      ...entry,
+      dictionary_type: entry.dictionary_type as 'grammar' | 'style'
+    }));
   }
 
   /**
    * Trigger manual sync from Google Sheets
    */
-  async syncFromGoogleSheets(sheetId?: string): Promise<{ success: boolean; message: string }> {
+  async syncFromGoogleSheets(
+    sheetId?: string, 
+    type: 'grammar' | 'style' = 'grammar'
+  ): Promise<{ success: boolean; message: string }> {
     try {
       const { data, error } = await supabase.functions.invoke('sync-dictionary', {
-        body: sheetId ? { sheetId } : {}
+        body: { sheetId, dictionaryType: type }
       });
 
       if (error) {
         throw error;
       }
 
-      // Clear cache to force reload
-      this.cachedDictionary = null;
-      this.cacheTimestamp = 0;
+      // Clear appropriate cache to force reload
+      if (type === 'grammar') {
+        this.cachedGrammarDictionary = null;
+        this.grammarCacheTimestamp = 0;
+      } else {
+        this.cachedStyleDictionary = null;
+        this.styleCacheTimestamp = 0;
+      }
 
       return data;
     } catch (error) {
-      console.error('Error syncing dictionary:', error);
+      console.error(`Error syncing ${type} dictionary:`, error);
       return {
         success: false,
         message: error.message || 'Unknown error occurred during sync'
@@ -179,23 +226,27 @@ export class DictionaryService {
   /**
    * Get sync status information
    */
-  async getSyncStatus(): Promise<DictionarySyncStatus | null> {
+  async getSyncStatus(type: 'grammar' | 'style' = 'grammar'): Promise<DictionarySyncStatus | null> {
     try {
       const { data, error } = await supabase
         .from('dictionary_sync_status')
         .select('*')
+        .eq('dictionary_type', type)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('Error fetching sync status:', error);
+        console.error(`Error fetching ${type} sync status:`, error);
         return null;
       }
 
-      return data;
+      return data ? {
+        ...data,
+        dictionary_type: data.dictionary_type as 'grammar' | 'style'
+      } : null;
     } catch (error) {
-      console.error('Error getting sync status:', error);
+      console.error(`Error getting ${type} sync status:`, error);
       return null;
     }
   }
@@ -203,15 +254,15 @@ export class DictionaryService {
   /**
    * Get dictionary statistics
    */
-  async getDictionaryStats(): Promise<{
+  async getDictionaryStats(type: 'grammar' | 'style' = 'grammar'): Promise<{
     totalEntries: number;
     databaseEntries: number;
     staticEntries: number;
     lastSync: string | null;
   }> {
     try {
-      const currentDictionary = await this.getDictionary();
-      const syncStatus = await this.getSyncStatus();
+      const currentDictionary = await this.getDictionary(type);
+      const syncStatus = await this.getSyncStatus(type);
 
       return {
         totalEntries: currentDictionary.length,
@@ -220,7 +271,7 @@ export class DictionaryService {
         lastSync: syncStatus?.last_sync_at || null
       };
     } catch (error) {
-      console.error('Error getting dictionary stats:', error);
+      console.error(`Error getting ${type} dictionary stats:`, error);
       return {
         totalEntries: 0,
         databaseEntries: 0,
@@ -233,38 +284,48 @@ export class DictionaryService {
   /**
    * Export dictionary data
    */
-  async exportDictionary(format: 'csv' | 'json' = 'csv'): Promise<string> {
+  async exportDictionary(
+    format: 'csv' | 'json' = 'csv', 
+    type: 'grammar' | 'style' = 'grammar'
+  ): Promise<string> {
     try {
-      const allEntries = await this.getDictionary();
+      const allEntries = await this.getDictionary(type);
       
       if (format === 'json') {
         return JSON.stringify(allEntries, null, 2);
       }
       
       // CSV format
-      const headers = ['Original', 'Replacement', 'Source'];
+      const headers = ['Original', 'Replacement', 'Type', 'Source'];
       const csvRows = [
         headers.join(','),
         ...allEntries.map(entry => [
           `"${entry.original}"`,
           `"${entry.replacement}"`,
+          `"${type}"`,
           `"${entry.source || 'google_sheets'}"`
         ].join(','))
       ];
       
       return csvRows.join('\n');
     } catch (error) {
-      console.error('Error exporting dictionary:', error);
-      throw new Error('Failed to export dictionary');
+      console.error(`Error exporting ${type} dictionary:`, error);
+      throw new Error(`Failed to export ${type} dictionary`);
     }
   }
 
   /**
    * Clear dictionary cache
    */
-  clearCache(): void {
-    this.cachedDictionary = null;
-    this.cacheTimestamp = 0;
+  clearCache(type?: 'grammar' | 'style'): void {
+    if (!type || type === 'grammar') {
+      this.cachedGrammarDictionary = null;
+      this.grammarCacheTimestamp = 0;
+    }
+    if (!type || type === 'style') {
+      this.cachedStyleDictionary = null;
+      this.styleCacheTimestamp = 0;
+    }
   }
 }
 

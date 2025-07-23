@@ -146,6 +146,7 @@ export type Database = {
       dictionary_sync_status: {
         Row: {
           created_at: string | null
+          dictionary_type: string
           error_message: string | null
           id: string
           last_sync_at: string | null
@@ -154,6 +155,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          dictionary_type?: string
           error_message?: string | null
           id?: string
           last_sync_at?: string | null
@@ -162,6 +164,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          dictionary_type?: string
           error_message?: string | null
           id?: string
           last_sync_at?: string | null
@@ -1077,6 +1080,7 @@ export type Database = {
       word_dictionary: {
         Row: {
           created_at: string | null
+          dictionary_type: string
           id: string
           is_active: boolean | null
           original: string
@@ -1086,6 +1090,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          dictionary_type?: string
           id?: string
           is_active?: boolean | null
           original: string
@@ -1095,6 +1100,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          dictionary_type?: string
           id?: string
           is_active?: boolean | null
           original?: string

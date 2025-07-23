@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { applySimplifiedDictionaryCorrections } from '@/utils/simplifiedDictionaryCorrections';
+import { applyStyleEnhancementDictionaryCorrections } from '@/utils/styleEnhancementDictionaryCorrections';
 import { useWordLimits } from './useWordLimits';
 import { useTextHistory } from './useTextHistory';
 
@@ -51,8 +51,8 @@ export const useSimplifiedStyleProcessing = ({ onProgressUpdate }: UseSimplified
       const aiEnhancedText = grokData.enhancedText;
       onProgressUpdate?.(60, 'शब्दकोश लागू कर रहे हैं...');
 
-      // Step 2: Dictionary Application (60-90%)
-      const finalText = await applySimplifiedDictionaryCorrections(aiEnhancedText);
+      // Step 2: Style Dictionary Application (60-90%)
+      const finalText = await applyStyleEnhancementDictionaryCorrections(aiEnhancedText);
       onProgressUpdate?.(90, 'अंतिम सुधार...');
 
       // Step 3: Track word usage and save text history

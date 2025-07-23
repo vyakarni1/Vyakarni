@@ -16,25 +16,36 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // Get request body for manual sync or use default sheet ID - moved outside try block for error handler access
+  const { sheetId, range = 'A:B', dictionaryType = 'grammar' } = await req.json().catch(() => ({}))
+
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
-
-    // Get request body for manual sync or use default sheet ID
-    const { sheetId, range = 'A:B' } = await req.json().catch(() => ({}))
     
     const googleSheetsApiKey = Deno.env.get('GOOGLE_SHEETS_API_KEY')
     const defaultSheetId = Deno.env.get('GOOGLE_SHEETS_DICTIONARY_ID')
+    
+    // For style dictionary, use a different environment variable if available
+    const styleSheetId = Deno.env.get('GOOGLE_SHEETS_STYLE_DICTIONARY_ID')
     
     if (!googleSheetsApiKey) {
       throw new Error('GOOGLE_SHEETS_API_KEY environment variable is required')
     }
 
-    const finalSheetId = sheetId || defaultSheetId
+    let finalSheetId = sheetId
     if (!finalSheetId) {
-      throw new Error('Sheet ID is required either in request body or GOOGLE_SHEETS_DICTIONARY_ID env var')
+      if (dictionaryType === 'style' && styleSheetId) {
+        finalSheetId = styleSheetId
+      } else {
+        finalSheetId = defaultSheetId
+      }
+    }
+    
+    if (!finalSheetId) {
+      throw new Error(`Sheet ID is required for ${dictionaryType} dictionary. Set GOOGLE_SHEETS_DICTIONARY_ID env var or provide sheetId in request.`)
     }
 
     // Update sync status to in_progress
@@ -42,7 +53,8 @@ serve(async (req) => {
       .from('dictionary_sync_status')
       .insert({
         sync_status: 'in_progress',
-        total_records: 0
+        total_records: 0,
+        dictionary_type: dictionaryType
       })
 
     if (statusError) {
@@ -75,16 +87,16 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Processing ${dictionaryEntries.length} dictionary entries`)
+    console.log(`Processing ${dictionaryEntries.length} ${dictionaryType} dictionary entries`)
 
-    // Clear existing dictionary entries
+    // Clear existing dictionary entries for this type only
     const { error: deleteError } = await supabaseClient
       .from('word_dictionary')
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000') // Delete all rows
+      .eq('dictionary_type', dictionaryType)
 
     if (deleteError) {
-      console.error('Error clearing existing dictionary:', deleteError)
+      console.error(`Error clearing existing ${dictionaryType} dictionary:`, deleteError)
       throw deleteError
     }
 
@@ -101,7 +113,8 @@ serve(async (req) => {
           original: entry.original,
           replacement: entry.replacement,
           source: 'google_sheets',
-          is_active: true
+          is_active: true,
+          dictionary_type: dictionaryType
         })))
 
       if (insertError) {
@@ -118,19 +131,20 @@ serve(async (req) => {
       .insert({
         last_sync_at: new Date().toISOString(),
         sync_status: 'success',
-        total_records: totalInserted
+        total_records: totalInserted,
+        dictionary_type: dictionaryType
       })
 
     if (finalStatusError) {
       console.error('Error updating final sync status:', finalStatusError)
     }
 
-    console.log(`Successfully synced ${totalInserted} dictionary entries`)
+    console.log(`Successfully synced ${totalInserted} ${dictionaryType} dictionary entries`)
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Successfully synced ${totalInserted} dictionary entries`,
+        message: `Successfully synced ${totalInserted} ${dictionaryType} dictionary entries`,
         totalRecords: totalInserted
       }),
       {
@@ -154,7 +168,8 @@ serve(async (req) => {
         .insert({
           sync_status: 'failed',
           error_message: error.message,
-          total_records: 0
+          total_records: 0,
+          dictionary_type: dictionaryType
         })
     } catch (statusError) {
       console.error('Error updating failed sync status:', statusError)
