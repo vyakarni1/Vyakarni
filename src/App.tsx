@@ -1,97 +1,121 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Pricing from './pages/Pricing';
-import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import TextEditor from './pages/TextEditor';
-import ProtectedRoute from './components/ProtectedRoute';
-import Profile from './pages/Profile';
-import Admin from './pages/Admin';
-import AdminRoute from './components/AdminRoute';
-import AdminUsers from './pages/AdminUsers';
-import AdminDictionary from './pages/AdminDictionary';
-import { Toaster } from "@/components/ui/toaster"
-import Billing from './pages/Billing';
-import NotFound from './pages/NotFound';
-import About from './pages/About';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./components/AuthProvider";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Disclaimer from "./pages/Disclaimer";
+import RefundPolicy from "./pages/RefundPolicy";
+import DataProtection from "./pages/DataProtection";
+import OtherPolicies from "./pages/OtherPolicies";
+import PricingPolicy from "./pages/PricingPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import Index from "./pages/Index";
+import Pricing from "./pages/Pricing";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Billing from "@/pages/Billing";
+import AdminRoute from "./components/AdminRoute";
+import Admin from "./pages/Admin";
+import AdminUsers from "./pages/AdminUsers";
+import AdminDictionary from "./pages/AdminDictionary";
 
-import AdminCleanup from "@/pages/AdminCleanup";
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-background font-sans antialiased">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/text-editor" element={
-            <ProtectedRoute>
-              <TextEditor />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } />
-          <Route path="/billing" element={
-            <ProtectedRoute>
-              <Billing />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <Admin />
-              </AdminRoute>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/users" element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <AdminUsers />
-              </AdminRoute>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/dictionary" element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <AdminDictionary />
-              </AdminRoute>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/cleanup" element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <AdminCleanup />
-              </AdminRoute>
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
         <Toaster />
-      </div>
-    </Router>
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/refund-policy" element={<RefundPolicy />} />
+              <Route path="/pricing-policy" element={<PricingPolicy />} />
+              <Route path="/shipping-policy" element={<ShippingPolicy />} />
+              <Route path="/data-protection" element={<DataProtection />} />
+              <Route path="/other-policies" element={<OtherPolicies />} />
+              <Route path="/pricing" element={<Pricing />} />
+              
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/grammar-checker" 
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+              
+              <Route 
+                path="/admin" 
+                element={
+                  <AdminRoute>
+                    <Admin />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/users" 
+                element={
+                  <AdminRoute>
+                    <AdminUsers />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/dictionary" 
+                element={
+                  <AdminRoute>
+                    <AdminDictionary />
+                  </AdminRoute>
+                } 
+              />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 

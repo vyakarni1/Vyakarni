@@ -1,12 +1,11 @@
 
 project_id = "yvgrgystclritaigvnmh"
 
-[api]
-enabled = true
-port = 54321
-schemas = ["public", "graphql_public"]
-extra_search_path = ["public", "extensions"]
-max_rows = 1000
+[functions.razorpay-payment]
+verify_jwt = false
+
+[functions.sync-dictionary]
+verify_jwt = false
 
 [functions.send-welcome-email]
 verify_jwt = false
@@ -15,7 +14,4 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-bulk-welcome-emails]
-verify_jwt = false
-
-[functions.database-cleanup]
 verify_jwt = false

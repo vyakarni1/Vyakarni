@@ -27,13 +27,6 @@ const Login = () => {
     }
   }, [user, loading, navigate]);
 
-  // Add effect to handle already authenticated users on mount
-  useEffect(() => {
-    if (user && !loading) {
-      navigate("/dashboard");
-    }
-  }, [user, loading, navigate]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
