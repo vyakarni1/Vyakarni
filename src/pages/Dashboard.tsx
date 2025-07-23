@@ -44,8 +44,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <UnifiedNavigation variant="default" />
-      <MarqueeBar content="💡 डैशबोर्ड में आपके शब्द क्रेडिट्स और उपयोग की जानकारी देखें | View your word credits and usage stats in the dashboard 💡" />
-
+<MarqueeBar />
       <div className="container mx-auto px-6 py-8 pt-32">
         <DashboardWelcome 
           profile={profile} 
