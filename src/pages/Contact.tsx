@@ -23,11 +23,10 @@ const Contact = () => {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
 
   const hindiContent = {
-    pageTitle: "हमसे संपर्क करयें",
+    pageTitle: "हमसे संपर्क करें",
     pageDescription: "हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करयें।",
     sendMessageTitle: "संदेश भेजें",
     loginRequired: "संदेश भेजने के लिये कृपया लॉगिन करयें",
@@ -122,47 +121,28 @@ const Contact = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-       {/* Language Toggle Dropdown */}
-<div className="fixed top-20 right-4 z-40">
-  {/* This button toggles the visibility of the language options */}
-  <button
-    onClick={() => setIsLanguageOpen(!isLanguageOpen)}
-    className="w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-    aria-label="Toggle Language Selector"
-  >
-    <span className="text-xl">🌐</span>
-  </button>
-
-  {/* The dropdown menu appears only when isLanguageOpen is true */}
-  {isLanguageOpen && (
-    <div className="absolute top-full right-0 mt-2 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
-      <ToggleGroup
-        type="single"
-        value={language}
-        onValueChange={(value) => {
-          if (value) {
-            setLanguage(value as "english" | "hindi");
-            setIsLanguageOpen(false); // Close dropdown on selection
-          }
-        }}
-        className="gap-1"
-      >
-        <ToggleGroupItem
-          value="hindi"
-          className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-        >
-          हिंदी
-        </ToggleGroupItem>
-        <ToggleGroupItem
-          value="english"
-          className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
-        >
-          English
-        </ToggleGroupItem>
-      </ToggleGroup>
-    </div>
-  )}
-</div>
+        {/* Language Toggle */}
+        <div className="fixed top-20 right-4 z-40 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-gray-200">
+          <ToggleGroup
+            type="single"
+            value={language}
+            onValueChange={(value) => value && setLanguage(value as "english" | "hindi")}
+            className="gap-1"
+          >
+            <ToggleGroupItem
+              value="hindi"
+              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+            >
+              हिंदी
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="english"
+              className="text-sm px-3 py-1 data-[state=on]:bg-blue-600 data-[state=on]:text-white"
+            >
+              English
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
 
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
