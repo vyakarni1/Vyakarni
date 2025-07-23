@@ -45,7 +45,7 @@ const AuthButtons = ({ user, profile, variant, onLogout }: AuthButtonsProps) => 
           size="sm" 
           className={`transition-all duration-200 ${isHome ? 'hover:bg-blue-50 hover:border-blue-300 transition-all duration-300' : 'hover:scale-105'}`}
         >
-          लॉगिन(Login)
+          लॉगिन
         </Button>
       </Link>
       <Link to="/register">
@@ -53,7 +53,7 @@ const AuthButtons = ({ user, profile, variant, onLogout }: AuthButtonsProps) => 
           size="sm" 
           className={`transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 ${isHome ? 'transform hover:scale-105 transition-all duration-300 shadow-lg' : 'hover:scale-105'}`}
         >
-          रजिस्टर करें(Register)
+          रजिस्टर करें
         </Button>
       </Link>
     </div>
