@@ -21,28 +21,28 @@ const DesktopNavigation = ({ user, profile, variant, onLogout }: DesktopNavigati
             to="/dashboard" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            डैशबोर्ड(Dashboard)
+            डैशबोर्ड
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/grammar-checker" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            व्याकरण जाँच(Grammar Check)
+            व्याकरण जाँच
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/profile" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            प्रोफाइल(Profile)
+            प्रोफाइल
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/pricing" 
             className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group"
           >
-            प्राइसिंग(Pricing)
+            प्राइसिंग
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <NotificationDropdown />
