@@ -8,8 +8,8 @@ const FeaturesSection = () => {
     <>
       <div className="mt-16 text-center">
         <div className="inline-block px-8 py-4 bg-gradient-to-r from-slate-50/80 to-gray-50/80 backdrop-blur-sm border border-slate-200/50 rounded-full shadow-sm hover:shadow-md transition-shadow duration-300">
-          <p className="text-slate-200 text-sm leading-relaxed max-w-4xl">
-सुनहरे आरंभिक ऑफर का लाभ उठायें!
+          <p className="text-slate-600 text-sm leading-relaxed max-w-4xl">
+            सुनहरे आरंभिक ऑफर का लाभ उठायें!
           </p>
         </div>
       </div>
