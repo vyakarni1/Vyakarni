@@ -232,28 +232,26 @@ export const runDatabaseCleanup = async (): Promise<CleanupSummary> => {
  */
 export const getDatabaseSizeInfo = async () => {
   try {
-    const tables = [
-      'profiles',
-      'user_word_credits',
-      'user_subscriptions',
-      'word_usage_history',
-      'razorpay_webhook_logs',
-      'dictionary_sync_status',
-      'analytics_cache',
-      'password_reset_tokens'
-    ];
-    
     const sizeInfo: Record<string, number> = {};
     
-    for (const table of tables) {
-      const { data, error } = await supabase
-        .from(table)
-        .select('id', { count: 'exact' });
-      
-      if (!error) {
-        sizeInfo[table] = data?.length || 0;
-      }
-    }
+    // Get count for each table individually to avoid TypeScript issues
+    const { count: profilesCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+    const { count: creditsCount } = await supabase.from('user_word_credits').select('*', { count: 'exact', head: true });
+    const { count: subscriptionsCount } = await supabase.from('user_subscriptions').select('*', { count: 'exact', head: true });
+    const { count: usageCount } = await supabase.from('word_usage_history').select('*', { count: 'exact', head: true });
+    const { count: webhookCount } = await supabase.from('razorpay_webhook_logs').select('*', { count: 'exact', head: true });
+    const { count: syncCount } = await supabase.from('dictionary_sync_status').select('*', { count: 'exact', head: true });
+    const { count: cacheCount } = await supabase.from('analytics_cache').select('*', { count: 'exact', head: true });
+    const { count: tokenCount } = await supabase.from('password_reset_tokens').select('*', { count: 'exact', head: true });
+    
+    sizeInfo['profiles'] = profilesCount || 0;
+    sizeInfo['user_word_credits'] = creditsCount || 0;
+    sizeInfo['user_subscriptions'] = subscriptionsCount || 0;
+    sizeInfo['word_usage_history'] = usageCount || 0;
+    sizeInfo['razorpay_webhook_logs'] = webhookCount || 0;
+    sizeInfo['dictionary_sync_status'] = syncCount || 0;
+    sizeInfo['analytics_cache'] = cacheCount || 0;
+    sizeInfo['password_reset_tokens'] = tokenCount || 0;
     
     return { success: true, sizes: sizeInfo };
   } catch (error) {

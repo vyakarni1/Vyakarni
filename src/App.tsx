@@ -4,20 +4,23 @@ import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
-import Signup from './pages/Signup';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import GrammarChecker from './pages/GrammarChecker';
-import StyleChecker from './pages/StyleChecker';
-import WordCounter from './pages/WordCounter';
+import TextEditor from './pages/TextEditor';
 import ProtectedRoute from './components/ProtectedRoute';
-import AccountSettings from './pages/AccountSettings';
-import AdminDashboard from './pages/AdminDashboard';
+import Profile from './pages/Profile';
+import Admin from './pages/Admin';
 import AdminRoute from './components/AdminRoute';
-import UserManagement from './pages/Admin/UserManagement';
-import SubscriptionManagement from './pages/Admin/SubscriptionManagement';
-import DictionaryManagement from './pages/Admin/DictionaryManagement';
-import AnalyticsDashboard from './pages/Admin/AnalyticsDashboard';
+import AdminUsers from './pages/AdminUsers';
+import AdminDictionary from './pages/AdminDictionary';
 import { Toaster } from "@/components/ui/toaster"
+import Billing from './pages/Billing';
+import NotFound from './pages/NotFound';
+import About from './pages/About';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 import AdminCleanup from "@/pages/AdminCleanup";
 
@@ -29,65 +32,51 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
           } />
-          <Route path="/grammar-checker" element={
+          <Route path="/text-editor" element={
             <ProtectedRoute>
-              <GrammarChecker />
+              <TextEditor />
             </ProtectedRoute>
           } />
-          <Route path="/style-checker" element={
+          <Route path="/profile" element={
             <ProtectedRoute>
-              <StyleChecker />
+              <Profile />
             </ProtectedRoute>
           } />
-          <Route path="/word-counter" element={
+          <Route path="/billing" element={
             <ProtectedRoute>
-              <WordCounter />
-            </ProtectedRoute>
-          } />
-          <Route path="/account-settings" element={
-            <ProtectedRoute>
-              <AccountSettings />
+              <Billing />
             </ProtectedRoute>
           } />
           <Route path="/admin" element={
             <ProtectedRoute>
               <AdminRoute>
-                <AdminDashboard />
+                <Admin />
               </AdminRoute>
             </ProtectedRoute>
           } />
           <Route path="/admin/users" element={
             <ProtectedRoute>
               <AdminRoute>
-                <UserManagement />
-              </AdminRoute>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/subscriptions" element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <SubscriptionManagement />
+                <AdminUsers />
               </AdminRoute>
             </ProtectedRoute>
           } />
           <Route path="/admin/dictionary" element={
             <ProtectedRoute>
               <AdminRoute>
-                <DictionaryManagement />
-              </AdminRoute>
-            </ProtectedRoute>
-          } />
-           <Route path="/admin/analytics" element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <AnalyticsDashboard />
+                <AdminDictionary />
               </AdminRoute>
             </ProtectedRoute>
           } />
@@ -98,6 +87,7 @@ function App() {
               </AdminRoute>
             </ProtectedRoute>
           } />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
       </div>
