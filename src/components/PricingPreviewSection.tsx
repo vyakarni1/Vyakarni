@@ -65,7 +65,7 @@ const PricingPreviewSection = ({ content, language }: PricingPreviewSectionProps
     loading: "प्लान लोड हो रहे हैं...",
     mostPopular: "सबसे लोकप्रिय",
     words: "शब्द",
-    permanentAccess: "स्थायी एक्सेस • कोई समाप्ति नहीं",
+    permanentAccess: "निरंतर सुलभ • सुगम प्रवेश",
     freeText: "निःशुल्क",
     oneTime: "एक बार भुगतान | 18% GST अतिरिक्त",
     total: "कुल",
