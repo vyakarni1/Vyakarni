@@ -58,8 +58,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(session);
           setUser(session.user);
           
-          // For Google OAuth, ensure profile exists after successful login
-          if (event === 'SIGNED_IN' && session.user.app_metadata?.provider === 'google') {
+          // For OAuth (Google/Facebook), ensure profile exists after successful login
+          if (event === 'SIGNED_IN' && ['google', 'facebook'].includes(session.user.app_metadata?.provider)) {
             setTimeout(async () => {
               try {
                 // Check if profile exists
@@ -70,13 +70,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                   .single();
                 
                 if (!profile) {
-                  console.log('Creating profile for Google user');
-                  // Create profile if it doesn't exist
-                  await supabase.from('profiles').insert({
+                  console.log(`Creating profile for ${session.user.app_metadata?.provider} user`);
+                  // Create profile if it doesn't exist - this will trigger welcome email via database trigger
+                  const { error: insertError } = await supabase.from('profiles').insert({
                     id: session.user.id,
-                    name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
+                    name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.user_metadata?.first_name,
                     email: session.user.email,
                   });
+                  
+                  if (insertError) {
+                    console.error(`Error creating profile for ${session.user.app_metadata?.provider} user:`, insertError);
+                  } else {
+                    console.log(`Profile created for ${session.user.app_metadata?.provider} user - welcome email will be sent automatically`);
+                  }
+                } else {
+                  console.log(`Profile already exists for ${session.user.app_metadata?.provider} user`);
                 }
               } catch (error) {
                 console.error('Error handling Google user profile:', error);
