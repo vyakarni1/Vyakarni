@@ -108,7 +108,7 @@ const Pricing = () => {
                           {plan.words_included.toLocaleString()} शब्द
                         </div>
                         <div className="text-xs text-gray-500">
-                          स्थायी एक्सेस • कोई समाप्ति नहीं
+                          निरंतर सुलभ • सुगम प्रवेश
                         </div>
                       </div>
 
@@ -123,7 +123,7 @@ const Pricing = () => {
                               </span>
                             </div>
                             <Badge variant="outline" className="text-xs">
-                              एक बार भुगतान | 18% GST अतिरिक्त
+                              कृपया भुगतान करिये | 18% GST अतिरिक्त
                             </Badge>
                             <div className="text-xs text-gray-600">
                               कुल: ₹{totalPrice.toFixed(0)}
