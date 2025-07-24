@@ -108,7 +108,7 @@ const Pricing = () => {
                           {plan.words_included.toLocaleString()} शब्द
                         </div>
                         <div className="text-xs text-gray-500">
-                          निरंतर सुलभ • सुगम प्रवेश
+                          सुगम प्रवेश • निरंतर सुलभ
                         </div>
                       </div>
 
