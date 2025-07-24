@@ -31,18 +31,18 @@ const Contact = () => {
     }
   } = useForm<ContactFormData>();
   const hindiContent = {
-    pageTitle: "हमसे संपर्क करयें",
-    pageDescription: "हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करयें।",
+    pageTitle: "हमसे संपर्क करें",
+    pageDescription: "हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करें।",
     sendMessageTitle: "संदेश भेजें",
-    loginRequired: "संदेश भेजने के लिये कृपया लॉगिन करयें",
-    loginButton: "लॉगिन करयें",
+    loginRequired: "संदेश भेजने के लिये कृपया लॉगिन करें",
+    loginButton: "लॉगिन करें",
     nameLabel: "पूरा नाम",
     namePlaceholder: "आपका नाम",
     nameRequired: "नाम आवश्यक है",
     emailLabel: "ईमेल पता",
     emailPlaceholder: "आपका ईमेल",
     emailRequired: "ईमेल आवश्यक है",
-    emailValid: "वैध ईमेल दर्ज करयें",
+    emailValid: "वैध ईमेल दर्ज करें",
     messageLabel: "संदेश",
     messagePlaceholder: "आपका संदेश यहाँ लिखें...",
     messageRequired: "संदेश आवश्यक है",
@@ -54,9 +54,9 @@ const Contact = () => {
     weekend: "शनिवार एवं रविवार",
     holiday: "अवकाश",
     holidayNote: "राजपत्रित अवकाशों पर सेवा उपलब्ध नहीं होंगी।",
-    successMessage: "आपका संदेश सफलतापूर्वक भेज दिया गया है! हम जल्द ही आपसे संपर्क करयेंगे।",
-    errorMessage: "संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करयें।",
-    genericError: "कुछ गलत हुआ है। कृपया पुनः प्रयास करयें।"
+    successMessage: "आपका संदेश सफलतापूर्वक भेज दिया गया है! हम शीघ्र ही आपसे संपर्क करेंगे।",
+    errorMessage: "संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करें।",
+    genericError: "कुछ त्त्रुटि हो गयी है। कृपया पुनः प्रयास करें।"
   };
   const englishContent = {
     pageTitle: "Contact Us",
