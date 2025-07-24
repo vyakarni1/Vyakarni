@@ -27,10 +27,10 @@ const TextHistoryCard = () => {
   const handleDelete = async (id: string) => {
     const success = await deleteTextCorrection(id);
     if (success) {
-      toast.success('इतिहास आइटम सफलतापूर्वक हटाया गया');
+      toast.success('इतिहास सूची सफलतापूर्वक हटाया गया');
       getTextHistory(10, 0); // Refresh the list
     } else {
-      toast.error('इतिहास आइटम हटाने में त्रुटि');
+      toast.error('इतिहास सूची हटाने में त्रुटि');
     }
   };
 
@@ -182,7 +182,7 @@ const TextHistoryCard = () => {
               onClick={() => getTextHistory(textHistory.length + 10, 0)}
               disabled={loading}
             >
-              और दिखाएं
+              और दिखायें
             </Button>
           </div>
         )}
