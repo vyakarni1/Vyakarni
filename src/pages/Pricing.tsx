@@ -202,7 +202,7 @@ const Pricing = () => {
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">शब्द-सीमा कितने दिनों के लिये वैध होती है?</h3>
-                <p className="text-gray-600 text-sm">हमारी नवीनतम नीतियों के अनुसार शब्द-सीमा 120 दिनों (चार माह) के लिये वैध है। यद्यपि यह अवधि कंपनी के दिशा-निर्देशों के अनुरूप परिवर्तनीय है।</p>
+                <p className="text-gray-600 text-sm">हमारी नवीनतम नीतियों के अनुसार शब्द-सीमा 180 दिनों (छः माह) के लिये वैध है। यद्यपि यह अवधि कंपनी के दिशा-निर्देशों के अनुरूप परिवर्तनीय है।</p>
               </div>
               <div className="p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-2">क्या प्रति माह शब्द प्रयोग के कुछ बंधन हैं?</h3>
