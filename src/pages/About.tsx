@@ -11,8 +11,8 @@ const About = () => {
     heroTitle: "हमारे विषय में",
     heroDescription: "हम आधुनिक AI तकनीक के साथ हिंदी भाषा को डिजिटल युग में आगे बढ़ाने के लिये प्रतिबद्ध हैं। हमारा लक्ष्य प्रत्येक व्यक्ति को शुद्ध और प्रभावशाली हिंदी लिखने में सहायता प्रदान करना है।",
     ourStoryTitle: "हमारी कहानी",
-    ourStoryText1: "व्याकरणी की आवश्यकता लम्बे समय से अनुभव की जा रही थी। यूँ तो अनुवाद इत्यादि के तो अनेक प्लेटफॉर्म्स उपलब्ध हैं, किन्तु भाषा-शोधन का कोई समर्पित प्लेटफार्म उपलब्ध नही था। हिंदी भाषा के प्रति हमारा प्रेम हमें निरंतर ऐसे किसी प्लेटफार्म के निर्माण हेतु आंदोलित करता रहता था।",
-    ourStoryText2: "आज जब यह प्लेटफार्म साकार हो कर हमारे सम्मुख उपस्थित है तो यह हमें अत्यंत संतोष और गौरव का अनुभव देता है तथा इसे आपके साथ साझा करना हमारे इस अनुभव को बहुगुणित कर रहा है।",
+    ourStoryText1: "व्याकरणी की आवश्यकता लम्बे समय से अनुभव की जा रही थी। यूँ तो अनुवाद इत्यादि के अनेक प्लेटफॉर्म्स उपलब्ध हैं, किन्तु भाषा-सुधार का कोई समर्पित प्लेटफार्म उपलब्ध नही था। हिंदी भाषा के प्रति हमारा प्रेम हमें निरंतर ऐसे किसी प्लेटफार्म के निर्माण हेतु आंदोलित करता रहता था।",
+    ourStoryText2: "आज जब यह प्लेटफार्म साकार हो कर हमारे सम्मुख उपस्थित है तो यह हमें अत्यंत संतोष और गौरव का अनुभव दे रहा है तथा इसे आपके साथ साझा करना हमारे इस अनुभव को बहुगुणित कर रहा है।",
     missionVisionTitle: "हमारा ध्येय और दृष्टिकोण",
     missionVisionDesc: "हिंदी भाषा में लोगों की अभिव्यक्ति की क्षमता में वृद्धि करने वाला एक आधुनिक डिजिटल प्लेटफार्म निर्मित कर उसे लोगों के प्रयोग हेतु एक सशक्त विकल्प के रूप में प्रस्तुत करना।",
     missionTitle: "हमारा ध्येय",
@@ -217,7 +217,7 @@ const About = () => {
         {language === "english" ? "What We Do" : "हम क्या करते हैं?"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english" ? "Vyakarni is an advanced AI-powered Hindi writing assistant. We help individuals, students, professionals, writers, educators, and organisations write grammatically correct, elegant, and impactful Hindi. Our tool automatically corrects grammar, spelling, punctuation, sentence structure, and enhances language style, making every Hindi sentence precise, natural, and refined." : "व्याकरणी एक उन्नत AI-सक्षम हिंदी लेखन सहायक है। हम व्यक्तियों, छात्रों, पेशेवरों, लेखकों, शिक्षकों और संगठनों को व्याकरण की दृष्टि से शुद्ध, सुरुचिपूर्ण एवं प्रभावशाली हिंदी लिखने में सहायता प्रदान करते हैं। हमारा उपकरण स्वतः ही व्याकरण, वर्तनी, विराम चिह्न, वाक्य संरचना की त्रुटियाँ सुधारता है और भाषा की शैली को परिष्कृत करता है, जिससे प्रत्येक हिंदी वाक्य शुद्ध, स्वाभाविक एवं परिमार्जित बनता है।"}
+        {language === "english" ? "Vyakarni is an advanced AI-powered Hindi writing assistant. We help individuals, students, professionals, writers, educators, and organisations write grammatically correct, elegant, and impactful Hindi. Our tool automatically corrects grammar, spelling, punctuation, sentence structure, and enhances language style, making every Hindi sentence precise, natural, and refined." : "व्याकरणी एक उन्नत AI-सक्षम हिंदी लेखन सहायक है। हम व्यवसायिक व्यक्तियों, छात्रों, लेखकों, शिक्षकों, विभिन्न वर्ग के लोगों और संगठनों को व्याकरण की दृष्टि से शुद्ध, सुरुचिपूर्ण एवं प्रभावशाली हिंदी लिखने में सहायता प्रदान करते हैं। हमारा उपकरण स्वतः ही व्याकरण, वर्तनी, विराम चिह्न, वाक्य संरचना की त्रुटियाँ सुधारता है और भाषा की शैली को परिष्कृत करता है, जिससे प्रत्येक हिंदी वाक्य शुद्ध, स्वाभाविक एवं परिमार्जित बनता है।"}
       </p>
     </div>
 
@@ -226,7 +226,7 @@ const About = () => {
         <CardHeader>
           <CheckCircle className="h-8 w-8 text-green-600 mb-2" />
           <CardTitle className="text-2xl text-green-800">
-            {language === "english" ? "Key Capabilities" : "मुख्य क्षमताएँ"}
+            {language === "english" ? "Key Capabilities" : "मुख्य क्षमतायें"}
           </CardTitle>
         </CardHeader>
         <CardContent>
