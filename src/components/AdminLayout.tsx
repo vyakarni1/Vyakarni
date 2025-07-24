@@ -35,6 +35,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: BarChart3 
     },
     { 
+      name: "ईमेल प्रबंधन", 
+      href: "/admin/emails", 
+      icon: Mail 
+    },
+    { 
       name: "संपर्क संदेश", 
       href: "/admin/contacts", 
       icon: Mail 

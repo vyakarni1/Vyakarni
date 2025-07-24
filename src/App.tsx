@@ -30,6 +30,7 @@ import AdminRoute from "./components/AdminRoute";
 import Admin from "./pages/Admin";
 import AdminUsers from "./pages/AdminUsers";
 import AdminDictionary from "./pages/AdminDictionary";
+import AdminEmailManagement from "./pages/AdminEmailManagement";
 
 const queryClient = new QueryClient();
 
@@ -106,6 +107,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminDictionary />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/emails" 
+                element={
+                  <AdminRoute>
+                    <AdminEmailManagement />
                   </AdminRoute>
                 } 
               />

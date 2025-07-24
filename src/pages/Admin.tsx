@@ -1,9 +1,45 @@
 
+import { useState, useEffect } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, TrendingUp, MessageSquare, CreditCard } from "lucide-react";
+import { Users, TrendingUp, MessageSquare, CreditCard, Mail, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Admin = () => {
+  const [emailStats, setEmailStats] = useState({
+    sent: 0,
+    pending: 0
+  });
+
+  useEffect(() => {
+    const fetchEmailStats = async () => {
+      try {
+        // Get sent emails count
+        const { count: sentCount } = await supabase
+          .from('email_logs')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'sent');
+
+        // Get pending users count
+        const { count: pendingCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .is('welcome_email_sent_at', null);
+
+        setEmailStats({
+          sent: sentCount || 0,
+          pending: pendingCount || 0
+        });
+      } catch (error) {
+        console.error('Error fetching email stats:', error);
+      }
+    };
+
+    fetchEmailStats();
+  }, []);
+
   // Mock data - will be replaced with real data later
   const stats = [
     {
@@ -28,10 +64,10 @@ const Admin = () => {
       color: "text-purple-600"
     },
     {
-      title: "संपर्क संदेश",
-      value: "23",
-      change: "नया",
-      icon: MessageSquare,
+      title: "स्वागत ईमेल भेजे गए",
+      value: emailStats.sent.toString(),
+      change: `${emailStats.pending} प्रतीक्षित`,
+      icon: Mail,
       color: "text-orange-600"
     }
   ];
@@ -118,6 +154,36 @@ const Admin = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Email Management Quick Action */}
+        {emailStats.pending > 0 && (
+          <Card className="border-orange-200 bg-orange-50">
+            <CardHeader>
+              <CardTitle className="text-orange-800 flex items-center">
+                <Mail className="w-5 h-5 mr-2" />
+                स्वागत ईमेल प्रबंधन
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-orange-700">
+                    {emailStats.pending} उपयोगकर्ताओं को अभी भी स्वागत ईमेल नहीं मिला है
+                  </p>
+                  <p className="text-sm text-orange-600 mt-1">
+                    बल्क ईमेल भेजने के लिए ईमेल प्रबंधन पर जाएं
+                  </p>
+                </div>
+                <Link to="/admin/emails">
+                  <Button className="bg-orange-600 hover:bg-orange-700 text-white">
+                    ईमेल प्रबंधन
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </AdminLayout>
   );
