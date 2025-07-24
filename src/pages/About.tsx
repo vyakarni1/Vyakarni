@@ -516,7 +516,7 @@ const About = () => {
         {language === "english" ? "Current Stage & Readiness" : "वर्तमान स्थिति और तत्परता"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english" ? "Vyakarni is in the final stretch of its product journey—moving confidently from validation to launch. With our platform built and AI engine operational, we are focused on refinement, scalability, and reliability to support a rapidly expanding user base." : "व्याकरणी अपने उत्पाद सफर के अंतिम चरण में है—सत्यापन से लॉन्च की दिशा में आत्मविश्वास से अग्रसर। हमारा मंच विकसित हो चुका है और AI इंजन सक्रिय है। अब हमारा ध्यान परिष्करण, स्केलेबिलिटी और विश्वसनीयता पर है ताकि बढ़ते उपयोगकर्ताओं का समर्थन किया जा सके।"}
+        {language === "english" ? "Vyakarni is in the final stretch of its product journey—moving confidently from validation to launch. With our platform built and AI engine operational, we are focused on refinement, scalability, and reliability to support a rapidly expanding user base." : "व्याकरणी अपनी उत्पाद यात्रा के विशिष्ट चरण में है—सत्यापन से लॉन्च की दिशा में आत्मविश्वास से अग्रसर। हमारा मंच विकसित हो चुका है और AI इंजन सक्रिय है। अब हमारा ध्यान परिष्करण, स्केलेबिलिटी और विश्वसनीयता पर है ताकि हम अपने निरंतर बढ़ते उपयोगकर्ताओं का पूर्ण समर्थन कर सकें।"}
       </p>
     </div>
 
@@ -565,11 +565,11 @@ const About = () => {
         <CardHeader>
           <Rocket className="h-8 w-8 text-indigo-600 mb-2" />
           <CardTitle className="text-xl text-indigo-800">
-            {language === "english" ? "Launch Preparation" : "लॉन्च की तैयारी"}
+            {language === "english" ? "Launch Preparation" : "नूतन लक्ष्य"}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english" ? "With validation nearly complete, we are readying for a confident, impactful launch." : "सत्यापन लगभग पूर्ण है और हम एक आत्मविश्वासपूर्ण, प्रभावशाली लॉन्च की तैयारी कर रहे हैं।"}
+          {language === "english" ? "With validation nearly complete, we are readying for a confident, impactful launch." : "हमारे उपयोगकर्ताओं का अडिग और अविचल समर्थन हमें नये अनुसंधान के ओर प्रेरित करता है। हम शीघ्र ही प्लेटफार्म पर नये फफीचर्स जोड़ने जा रहे हैं।"}
         </CardContent>
       </Card>
 
@@ -591,7 +591,7 @@ const About = () => {
         <CardHeader>
           <TrendingUp className="h-8 w-8 text-green-600 mb-2" />
           <CardTitle className="text-xl text-green-800">
-            {language === "english" ? "Built for Growth" : "विकास के लिए निर्मित"}
+            {language === "english" ? "Built for Growth" : "विकास के लिये निर्मित"}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
@@ -709,7 +709,7 @@ const About = () => {
               desc: language === "english" ? "Secure & scalable compute environments" : "सुरक्षित और स्केलेबल कंप्यूट संसाधन।"
             }, {
               icon: <Scale className="h-8 w-8 mb-2" />,
-              title: language === "english" ? "Built for Scale" : "विस्तार के लिए निर्मित",
+              title: language === "english" ? "Built for Scale" : "विस्तार के लिये निर्मित",
               desc: language === "english" ? "From learners to large enterprises" : "सीखने वालों से लेकर संगठनों तक।"
             }, {
               icon: <RefreshCw className="h-8 w-8 mb-2" />,
