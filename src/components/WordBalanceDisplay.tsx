@@ -82,7 +82,7 @@ const WordBalanceDisplay = () => {
             <div className="flex items-center space-x-2">
               <AlertTriangle className="h-4 w-4 text-orange-600 flex-shrink-0" />
               <p className="text-sm text-orange-800">
-                आपके शब्द कम हो रहे हैं! अधिक शब्द खरीदने के लिए 
+                आपके शब्द कम हो रहे हैं! अधिक शब्द खरीदने के लिये 
                 <Link to="/pricing" className="font-semibold underline ml-1">
                   यहाँ क्लिक करें
                 </Link>
@@ -96,7 +96,7 @@ const WordBalanceDisplay = () => {
             <div className="flex items-center space-x-2">
               <Coins className="h-4 w-4 text-blue-600 flex-shrink-0" />
               <p className="text-sm text-blue-800">
-                प्रीमियम प्लान खरीदें और अधिक फीचर्स पाएं! 
+                प्रीमियम प्लान खरीदें और अधिक फीचर्स पायें! 
                 <Link to="/pricing" className="font-semibold underline ml-1">
                   प्लान देखें
                 </Link>
