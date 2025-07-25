@@ -57,6 +57,13 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
             >
               प्राइसिंग
             </Link>
+            <Link 
+              to="/blog" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
+              onClick={handleLinkClick}
+            >
+              ब्लॉग
+            </Link>
             <div className="pt-3 border-t border-gray-200">
               <div className="px-3 py-2 text-sm text-gray-600">
                 नमस्ते, {profile?.name || user.email?.split('@')[0]}
@@ -94,6 +101,13 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
               onClick={handleLinkClick}
             >
               प्राइसिंग
+            </Link>
+            <Link 
+              to="/blog" 
+              className="text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2"
+              onClick={handleLinkClick}
+            >
+              ब्लॉग
             </Link>
             <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
               <Link to="/login" onClick={handleLinkClick}>

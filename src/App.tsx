@@ -31,6 +31,9 @@ import Admin from "./pages/Admin";
 import AdminUsers from "./pages/AdminUsers";
 import AdminDictionary from "./pages/AdminDictionary";
 import AdminEmailManagement from "./pages/AdminEmailManagement";
+import AdminBlog from "./pages/AdminBlog";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +62,8 @@ function App() {
               <Route path="/data-protection" element={<DataProtection />} />
               <Route path="/other-policies" element={<OtherPolicies />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               
               <Route 
                 path="/dashboard" 
@@ -115,6 +120,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminEmailManagement />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/blog" 
+                element={
+                  <AdminRoute>
+                    <AdminBlog />
                   </AdminRoute>
                 } 
               />

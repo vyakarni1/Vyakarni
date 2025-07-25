@@ -7,7 +7,8 @@ import {
   BarChart3,
   Mail,
   Shield,
-  BookOpen
+  BookOpen,
+  PenTool
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -33,6 +34,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: "एनालिटिक्स", 
       href: "/admin/analytics", 
       icon: BarChart3 
+    },
+    { 
+      name: "ब्लॉग प्रबंधन", 
+      href: "/admin/blog", 
+      icon: PenTool 
     },
     { 
       name: "ईमेल प्रबंधन", 
