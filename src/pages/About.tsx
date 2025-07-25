@@ -11,14 +11,14 @@ const About = () => {
     heroTitle: "हमारे विषय में",
     heroDescription: "हम आधुनिक AI तकनीक के साथ हिंदी भाषा को डिजिटल युग में आगे बढ़ाने के लिये प्रतिबद्ध हैं। हमारा लक्ष्य प्रत्येक व्यक्ति को शुद्ध और प्रभावशाली हिंदी लिखने में सहायता प्रदान करना है।",
     ourStoryTitle: "हमारी कहानी",
-    ourStoryText1: "व्याकरणी की आवश्यकता लम्बे समय से अनुभव की जा रही थी। यूँ तो अनुवाद इत्यादि के अनेक प्लेटफॉर्म्स उपलब्ध हैं, किन्तु भाषा-सुधार का कोई समर्पित प्लेटफार्म उपलब्ध नही था। हिंदी भाषा के प्रति हमारा प्रेम हमें निरंतर ऐसे किसी प्लेटफार्म के निर्माण हेतु आंदोलित करता रहता था।",
-    ourStoryText2: "आज जब यह प्लेटफार्म साकार हो कर हमारे सम्मुख उपस्थित है तो यह हमें अत्यंत संतोष और गौरव का अनुभव दे रहा है तथा इसे आपके साथ साझा करना हमारे इस अनुभव को बहुगुणित कर रहा है।",
+    ourStoryText1: "व्याकरणी की आवश्यकता लम्बे समय से अनुभव की जा रही थी। यूँ तो अनुवाद इत्यादि के अनेक डिजिटल पटल (प्लेटफार्म)) उपलब्ध हैं, किन्तु भाषा-सुधार का कोई समर्पित पटल उपलब्ध नही था। हिंदी भाषा के प्रति हमारा प्रेम हमें निरंतर ऐसे किसी मंच के निर्माण हेतु आंदोलित करता रहता था।",
+    ourStoryText2: "आज जब यह पटल साकार हो कर हमारे सम्मुख उपस्थित है, तो यह हमें अत्यंत संतोष और गौरव का अनुभव दे रहा है तथा इसे आपके साथ साझा करना हमारे इस अनुभव को बहुगुणित कर रहा है।",
     missionVisionTitle: "हमारा ध्येय और दृष्टिकोण",
-    missionVisionDesc: "हिंदी भाषा में लोगों की अभिव्यक्ति की क्षमता में वृद्धि करने वाला एक आधुनिक डिजिटल प्लेटफार्म निर्मित कर उसे लोगों के प्रयोग हेतु एक सशक्त विकल्प के रूप में प्रस्तुत करना।",
+    missionVisionDesc: "हिंदी भाषा में लोगों की अभिव्यक्ति की क्षमता में वृद्धि करने वाला एक आधुनिक डिजिटल पटल निर्मित कर उसे लोगों के प्रयोग हेतु एक सशक्त विकल्प के रूप में प्रस्तुत करना।",
     missionTitle: "हमारा ध्येय",
     visionTitle: "हमारा दृष्टिकोण",
-    teamTitle: "हमारी टीम",
-    teamDesc: "व्याकरणी के पसाथ समर्पित और अनुभवी व्यक्तियों की टीम",
+    teamTitle: "हमारे दक्ष सदस्य",
+    teamDesc: "हम हिंदी भाषा के प्रति समर्पित और अनुभवी व्यक्तियों का एक दल हैं, जो डिजिटल पटल पर हिंदी में संभावनाओं के अनेक द्वार खोले हेतु सतत् कार्यरत है।",
     coreValuesTitle: "हमारी मूल्य-प्रणाली",
     coreValuesDesc: "हिंदी भाषा के प्रति हमारी प्रतिबद्धता को व्यक्त करने वाले कुछ कारक",
     achievementsTitle: "हमारी उपलब्धियाँ",
@@ -143,7 +143,7 @@ const About = () => {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600">
-                      {language === "english" ? "Expression enhancement through AI usage" : "AI के प्रयोग से अभिव्यक्ति का संवर्धन"}  
+                      {language === "english" ? "Expression enhancement through AI usage" : "AI के प्रयोग से अभिव्यक्ति में सहजता"}  
                     </p>
                   </CardContent>
                 </Card>
@@ -170,7 +170,7 @@ const About = () => {
                   <ul className="space-y-3 text-gray-700">
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      {language === "english" ? "Refining and enhancing language according to the needs of the digital age." : "डिजिटल युग की आवश्यकताओं के अनुरूप भाषा का शोधन एवं संवर्धन करना।"}
+                      {language === "english" ? "Refining and enhancing language according to the needs of the digital age." : "डिजिटल युग की आवश्यकताओं के अनुरूप भाषा का संशोधन एवं उसका संवर्धन करना।"}
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
@@ -178,7 +178,7 @@ const About = () => {
                     </li>
                     <li className="flex items-start">
                       <CheckCircle className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
-                      {language === "english" ? "Encouraging the use of quality Hindi for various traditional components like story writing, novel writing, etc., and modern components like blog writing and audio story writing." : "हिंदी लेखन के विभिन्न पारंपरिक घटकों जैसे कि कथा-लेखन, उपन्यास लेखन इत्यादि तथा आधुनिक घटकों जैसे कि ब्लॉग-लेखन, तथा ऑडियो स्टोरी लेखन हेतु स्तरीय हिंदी के प्रयोग को प्रोत्साहित करना।"}
+                      {language === "english" ? "Encouraging the use of quality Hindi for various traditional components like story writing, novel writing, etc., and modern components like blog writing and audio story writing." : "हिंदी लेखन के विभिन्न पारंपरिक घटकों जैसे कि कथा-लेखन एवं उपन्यास-लेखन इत्यादि तथा आधुनिक घटकों जैसे कि ब्लॉग-लेखन तथा ऑडियो स्टोरी-लेखन हेतु स्तरीय हिंदी के प्रयोग को प्रोत्साहित करना।"}
                     </li>
                   </ul>
                 </CardContent>
@@ -217,7 +217,7 @@ const About = () => {
         {language === "english" ? "What We Do" : "हम क्या करते हैं?"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english" ? "Vyakarni is an advanced AI-powered Hindi writing assistant. We help individuals, students, professionals, writers, educators, and organisations write grammatically correct, elegant, and impactful Hindi. Our tool automatically corrects grammar, spelling, punctuation, sentence structure, and enhances language style, making every Hindi sentence precise, natural, and refined." : "व्याकरणी एक उन्नत AI-सक्षम हिंदी लेखन सहायक है। हम व्यवसायिक व्यक्तियों, छात्रों, लेखकों, शिक्षकों, विभिन्न वर्ग के लोगों और संगठनों को व्याकरण की दृष्टि से शुद्ध, सुरुचिपूर्ण एवं प्रभावशाली हिंदी लिखने में सहायता प्रदान करते हैं। हमारा उपकरण स्वतः ही व्याकरण, वर्तनी, विराम चिह्न, वाक्य संरचना की त्रुटियाँ सुधारता है और भाषा की शैली को परिष्कृत करता है, जिससे प्रत्येक हिंदी वाक्य शुद्ध, स्वाभाविक एवं परिमार्जित बनता है।"}
+        {language === "english" ? "Vyakarni is an advanced AI-powered Hindi writing assistant. We help individuals, students, professionals, writers, educators, and organisations write grammatically correct, elegant, and impactful Hindi. Our tool automatically corrects grammar, spelling, punctuation, sentence structure, and enhances language style, making every Hindi sentence precise, natural, and refined." : "व्याकरणी एक उन्नत AI-सक्षम हिंदी लेखन सहायक है। हम व्यवसायिक व्यक्तियों, छात्रों, लेखकों, शिक्षकों, विभिन्न वर्ग के लोगों और संगठनों को व्याकरण की दृष्टि से शुद्ध, सुरुचिपूर्ण एवं प्रभावशाली हिंदी लिखने में सहायता प्रदान करते हैं। हमारा यह टूल स्वतः ही व्याकरण, वर्तनी, विराम चिह्न, वाक्य संरचना की त्रुटियाँ सुधारता है और भाषा की शैली को परिष्कृत करता है, जिससे प्रत्येक हिंदी वाक्य शुद्ध, स्वाभाविक एवं परिमार्जित बनता है।"}
       </p>
     </div>
 
@@ -233,11 +233,11 @@ const About = () => {
           <ul className="space-y-3 text-gray-700">
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english" ? "Automatic correction of grammar, spelling, punctuation and sentence structure." : "व्याकरण, वर्तनी, विराम चिह्न और वाक्य संरचना की स्वतः सुधार सुविधा।"}
+              {language === "english" ? "Automatic correction of grammar, spelling, punctuation and sentence structure." : "व्याकरण, वर्तनी, विराम चिह्न और वाक्य संरचना में स्वतः सुधार करता है।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english" ? "Language style enhancement for refined and elegant expression." : "शब्द चयन और शैली को परिष्कृत करने की क्षमता, जिससे अभिव्यक्ति और अधिक सुंदर एवं प्रभावशाली बनती है।"}
+              {language === "english" ? "Language style enhancement for refined and elegant expression." : "भाषा-सौष्ठव, शब्द चयन और भाषा-शैली को परिष्कृत करने की क्षमता रखता है, जिससे अभिव्यक्ति और अधिक सुंदर एवं प्रभावोत्पादक बनती है।"}
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
@@ -245,7 +245,7 @@ const About = () => {
             </li>
             <li className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5" />
-              {language === "english" ? "Makes Hindi writing impactful, natural, and grammatically accurate." : "हिंदी लेखन को प्रभावशाली, स्वाभाविक और व्याकरण की दृष्टि से सटीक बनाता है।"}
+              {language === "english" ? "Makes Hindi writing impactful, natural, and grammatically accurate." : "हिंदी लेखन को प्रभावी, स्वाभाविक और व्याकरण की दृष्टि से सटीक बनाता है।"}
             </li>
           </ul>
         </CardContent>
@@ -285,7 +285,7 @@ const About = () => {
   <div className="container mx-auto px-6">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-bold mb-4 text-gray-800">
-        {language === "english" ? "Problems We Solve" : "हम जिन समस्याओं का समाधान करते हैं"}
+        {language === "english" ? "Problems We Solve" : "हम किन समस्याओं का समाधान करते हैं?"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
         {language === "english" ? "Vyakarni solves key challenges faced by Hindi users across educational, professional, and creative domains by offering real-time, automated corrections and elegant enhancements." : "व्याकरणी हिंदी उपयोगकर्ताओं द्वारा शैक्षिक, व्यवसायिक और रचनात्मक क्षेत्रों में अनुभव की जा रही प्रमुख चुनौतियों का समाधान करती है, वह भी त्वरित, स्वचालित सुधारों और परिष्कृत प्रस्तुति के माध्यम से।"}
@@ -516,7 +516,7 @@ const About = () => {
         {language === "english" ? "Current Stage & Readiness" : "वर्तमान स्थिति और तत्परता"}
       </h2>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        {language === "english" ? "Vyakarni is in the final stretch of its product journey—moving confidently from validation to launch. With our platform built and AI engine operational, we are focused on refinement, scalability, and reliability to support a rapidly expanding user base." : "व्याकरणी अपनी उत्पाद यात्रा के विशिष्ट चरण में है—सत्यापन से लॉन्च की दिशा में आत्मविश्वास से अग्रसर। हमारा मंच विकसित हो चुका है और AI इंजन सक्रिय है। अब हमारा ध्यान परिष्करण, स्केलेबिलिटी और विश्वसनीयता पर है ताकि हम अपने निरंतर बढ़ते उपयोगकर्ताओं का पूर्ण समर्थन कर सकें।"}
+        {language === "english" ? "Vyakarni is in the final stretch of its product journey—moving confidently from validation to launch. With our platform built and AI engine operational, we are focused on refinement, scalability and reliability to support a rapidly expanding user base." : "व्याकरणी की यात्रा सतत् है। इस समय व्याकरणी अपनी उत्पाद यात्रा के विशिष्ट चरण में है— लॉन्च से स्थायित्व की दिशा में आत्मविश्वास से अग्रसर। हमारा मंच विकसित हो चुका है और AI इंजन सक्रिय है। अब हमारा ध्यान परिष्करण, विस्तार(स्केलेबिलिटी) और विश्वसनीयता पर है, जिससे हम अपने निरंतर बढ़ते उपयोगकर्ताओं की अपेक्षाओं पर खरे उतर सकें।"}
       </p>
     </div>
 
@@ -582,7 +582,7 @@ const About = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-700">
-          {language === "english" ? "Accessing secure, scalable infrastructure to support real-time AI corrections at scale." : "वास्तविक समय AI सुधार के लिए सुरक्षित और स्केलेबल कंप्यूट अवसंरचना का उपयोग।"}
+          {language === "english" ? "Accessing secure, scalable infrastructure to support real-time AI corrections at scale." : "वास्तविक समय (रियल टाइम) AI सुधार के लिये सुरक्षित और स्केलेबल कंप्यूट अवसंरचना का उपयोग।"}
         </CardContent>
       </Card>
 

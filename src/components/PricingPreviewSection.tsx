@@ -67,7 +67,7 @@ const PricingPreviewSection = ({ content, language }: PricingPreviewSectionProps
     words: "शब्द",
     permanentAccess: "सुगम प्रवेश • निरंतर सुलभ",
     freeText: "निःशुल्क",
-    oneTime: "एक बार भुगतान | 18% GST अतिरिक्त",
+    oneTime: "कृपया भुगतान करिये  | 18% GST अतिरिक्त",
     total: "कुल",
     grammarCheck: "हिंदी व्याकरण जाँच",
     oneClickCorrection: "एक-क्लिक वाक्य सुधार",

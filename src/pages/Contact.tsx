@@ -32,7 +32,7 @@ const Contact = () => {
   } = useForm<ContactFormData>();
   const hindiContent = {
     pageTitle: "हमसे संपर्क करें",
-    pageDescription: "हमारी टीम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करें।",
+    pageDescription: "हम आपकी सहायता के लिये तत्पर है। अपने प्रश्न या सुझाव निःसंकोच साझा करें।",
     sendMessageTitle: "संदेश भेजें",
     loginRequired: "संदेश भेजने के लिये कृपया लॉगिन करें",
     loginButton: "लॉगिन करें",

@@ -58,7 +58,7 @@ export const WelcomeEmail = ({ userName, userEmail }: WelcomeEmailProps) => (
 
           <Text style={helpText}>
             <strong>क्या आपको कुछ सहायता चाहिये?</strong><br />
-            हमारी टीम सदा आपकी सेवा में तत्पर है।
+            हमारे समर्पित सदस्य सदा आपकी सेवा में तत्पर है।
           </Text>
 
           <Section style={linksSection}>
