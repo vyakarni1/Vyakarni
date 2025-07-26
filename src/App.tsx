@@ -32,6 +32,8 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminDictionary from "./pages/AdminDictionary";
 import AdminEmailManagement from "./pages/AdminEmailManagement";
 import AdminBlog from "./pages/AdminBlog";
+import AdminBlogCreate from "./pages/AdminBlogCreate";
+import AdminBlogEdit from "./pages/AdminBlogEdit";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 
@@ -128,6 +130,22 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminBlog />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/blog/create" 
+                element={
+                  <AdminRoute>
+                    <AdminBlogCreate />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/blog/edit/:id" 
+                element={
+                  <AdminRoute>
+                    <AdminBlogEdit />
                   </AdminRoute>
                 } 
               />
