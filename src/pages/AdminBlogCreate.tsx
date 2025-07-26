@@ -26,6 +26,7 @@ const AdminBlogCreate = () => {
   const [tags, setTags] = useState("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [metaKeywords, setMetaKeywords] = useState("");
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
@@ -86,6 +87,7 @@ const AdminBlogCreate = () => {
           category_id: categoryId || null,
           meta_title: metaTitle.trim() || null,
           meta_description: metaDescription.trim() || null,
+          meta_keywords: metaKeywords.trim() || null,
           published_at
         })
         .select()
@@ -221,6 +223,16 @@ const AdminBlogCreate = () => {
                     onChange={(e) => setMetaDescription(e.target.value)}
                     placeholder="SEO के लिए मेटा विवरण"
                     rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="metaKeywords">मेटा कीवर्ड्स</Label>
+                  <Input
+                    id="metaKeywords"
+                    value={metaKeywords}
+                    onChange={(e) => setMetaKeywords(e.target.value)}
+                    placeholder="SEO के लिए मेटा कीवर्ड्स (कॉमा से अलग करें)"
                   />
                 </div>
               </CardContent>
