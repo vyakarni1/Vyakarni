@@ -292,6 +292,7 @@ export type Database = {
           like_count: number
           meta_description: string | null
           meta_keywords: string | null
+          meta_title: string | null
           published_at: string | null
           slug: string
           status: string
@@ -311,6 +312,7 @@ export type Database = {
           like_count?: number
           meta_description?: string | null
           meta_keywords?: string | null
+          meta_title?: string | null
           published_at?: string | null
           slug: string
           status?: string
@@ -330,6 +332,7 @@ export type Database = {
           like_count?: number
           meta_description?: string | null
           meta_keywords?: string | null
+          meta_title?: string | null
           published_at?: string | null
           slug?: string
           status?: string
