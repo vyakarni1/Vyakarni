@@ -9,12 +9,11 @@ export const useWelcomeEmail = () => {
     try {
       setLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('send-welcome-email', {
-        body: {
-          userId,
-          userEmail, 
-          userName: userName || 'व्याकरणी यूज़र'
-        }
+      // Use the new safe database function
+      const { data, error } = await supabase.rpc('send_welcome_email_safe', {
+        user_uuid: userId,
+        user_email: userEmail,
+        user_name: userName || 'व्याकरणी यूज़र'
       });
 
       if (error) {
@@ -39,9 +38,8 @@ export const useWelcomeEmail = () => {
     try {
       setLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('send-bulk-welcome-emails', {
-        body: {}
-      });
+      // Use the new safe database function
+      const { data, error } = await supabase.rpc('send_bulk_welcome_emails_safe');
 
       if (error) {
         console.error('Error sending bulk welcome emails:', error);
@@ -50,7 +48,8 @@ export const useWelcomeEmail = () => {
       }
 
       console.log('Bulk welcome emails sent:', data);
-      toast.success(`बल्क स्वागत ईमेल भेजे गए: ${data?.successful || 0} सफल, ${data?.failed || 0} असफल`);
+      const result = data as { successful?: number; failed?: number; total_processed?: number } | null;
+      toast.success(`बल्क स्वागत ईमेल भेजे गए: ${result?.successful || 0} सफल, ${result?.failed || 0} असफल`);
       return true;
     } catch (error) {
       console.error('Error sending bulk welcome emails:', error);

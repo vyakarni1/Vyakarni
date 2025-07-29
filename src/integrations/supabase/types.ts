@@ -1697,6 +1697,14 @@ export type Database = {
         }
         Returns: string
       }
+      send_bulk_welcome_emails_safe: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      send_welcome_email_safe: {
+        Args: { user_uuid: string; user_email: string; user_name?: string }
+        Returns: boolean
+      }
       toggle_blog_post_like: {
         Args: { post_uuid: string; user_uuid: string }
         Returns: Json
