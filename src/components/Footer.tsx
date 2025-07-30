@@ -1,11 +1,22 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Github, Twitter, Mail, Heart } from "lucide-react";
+import { Github, Mail, Heart, Facebook, Instagram, Linkedin, MessageCircle, X } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const Footer = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
+
+  // Social media links - easy to modify
+  const socialLinks = [
+    { icon: X, href: "#", label: "X", hoverColor: "hover:text-blue-400" },
+    { icon: Facebook, href: "#", label: "Facebook", hoverColor: "hover:text-blue-600" },
+    { icon: Instagram, href: "#", label: "Instagram", hoverColor: "hover:text-pink-400" },
+    { icon: Linkedin, href: "#", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
+    { icon: MessageCircle, href: "#", label: "Discord", hoverColor: "hover:text-indigo-400" },
+    { icon: Github, href: "#", label: "GitHub", hoverColor: "hover:text-purple-400" },
+    { icon: Mail, href: "#", label: "Email", hoverColor: "hover:text-green-400" },
+  ];
 
   const content = {
     english: {
@@ -90,15 +101,19 @@ const Footer = () => {
               {currentContent.description}
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-all duration-200 hover:scale-110" aria-label="Twitter">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-purple-400 transition-all duration-200 hover:scale-110" aria-label="GitHub">
-                <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-green-400 transition-all duration-200 hover:scale-110" aria-label="Email">
-                <Mail className="h-5 w-5" />
-              </a>
+              {socialLinks.map((social, index) => {
+                const IconComponent = social.icon;
+                return (
+                  <a 
+                    key={index}
+                    href={social.href} 
+                    className={`text-gray-400 ${social.hoverColor} transition-all duration-200 hover:scale-110`} 
+                    aria-label={social.label}
+                  >
+                    <IconComponent className="h-5 w-5" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
