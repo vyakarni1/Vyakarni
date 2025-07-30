@@ -60,13 +60,16 @@ const AdminBlogCreate = () => {
   };
 
   const handleSave = async (publishStatus: string = status) => {
+    console.log('Attempting to save blog post...', { title, content, user: user?.id, publishStatus });
+    
     if (!title.trim() || !content.trim()) {
       toast.error('शीर्षक और सामग्री आवश्यक हैं');
       return;
     }
 
     if (!user?.id) {
-      toast.error('उपयोगकर्ता लॉगिन नहीं है');
+      console.error('User not authenticated:', user);
+      toast.error('उपयोगकर्ता लॉगिन नहीं है - कृपया फिर से लॉगिन करें');
       return;
     }
 
@@ -93,7 +96,12 @@ const AdminBlogCreate = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
+
+      console.log('Blog post saved successfully:', data);
 
       // Handle tags if provided
       if (tags.trim()) {
@@ -133,7 +141,13 @@ const AdminBlogCreate = () => {
       navigate('/admin/blog');
     } catch (error) {
       console.error('Error saving post:', error);
-      toast.error('पोस्ट सेव करने में त्रुटि');
+      if (error.message?.includes('permission')) {
+        toast.error('अनुमति की समस्या - कृपया एडमिन से संपर्क करें');
+      } else if (error.message?.includes('network')) {
+        toast.error('नेटवर्क की समस्या - कृपया दोबारा कोशिश करें');
+      } else {
+        toast.error(`पोस्ट सेव करने में त्रुटि: ${error.message || 'अज्ञात त्रुटि'}`);
+      }
     } finally {
       setSaving(false);
     }

@@ -128,6 +128,8 @@ const AdminBlogEdit = () => {
   };
 
   const handleSave = async (publishStatus: string = status) => {
+    console.log('Attempting to save blog post...', { title, content, id, publishStatus });
+    
     if (!title.trim() || !content.trim()) {
       toast.error('शीर्षक और सामग्री आवश्यक हैं');
       return;
@@ -161,7 +163,12 @@ const AdminBlogEdit = () => {
         .update(updateData)
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase update error:', error);
+        throw error;
+      }
+
+      console.log('Blog post updated successfully');
 
       // Handle tags
       // First, remove existing tag associations
@@ -208,7 +215,13 @@ const AdminBlogEdit = () => {
       navigate('/admin/blog');
     } catch (error) {
       console.error('Error updating post:', error);
-      toast.error('पोस्ट अपडेट करने में त्रुटि');
+      if (error.message?.includes('permission')) {
+        toast.error('अनुमति की समस्या - कृपया एडमिन से संपर्क करें');
+      } else if (error.message?.includes('network')) {
+        toast.error('नेटवर्क की समस्या - कृपया दोबारा कोशिश करें');
+      } else {
+        toast.error(`पोस्ट अपडेट करने में त्रुटि: ${error.message || 'अज्ञात त्रुटि'}`);
+      }
     } finally {
       setSaving(false);
     }
