@@ -44,7 +44,7 @@ const CurrentPlan = () => {
     } else if (balance.purchased_words >= 5000) {
       return { name: 'हॉबी टियर', type: 'hobby', badge: 'bg-blue-600 hover:bg-blue-700' };
     } else {
-      return { name: 'मुफ्त टियर', type: 'free', badge: 'bg-gray-600 hover:bg-gray-700' };
+      return { name: 'टेस्ट टियर', type: 'free', badge: 'bg-gray-600 hover:bg-gray-700' };
     }
   };
 
@@ -121,7 +121,7 @@ const CurrentPlan = () => {
               </p>
               {balance.purchased_words > 0 && (
                 <p className="text-xs text-green-600 mt-1">
-                  ✓ {balance.purchased_words.toLocaleString()} शब्द खरीदे गये (स्थायी)
+                  ✓ {balance.purchased_words.toLocaleString()} शब्द खरीदे गये
                 </p>
               )}
             </div>

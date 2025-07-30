@@ -151,7 +151,7 @@ const Pricing = () => {
                             </div>
                             <div className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                              <span className="text-sm text-gray-700">स्थायी एक्सेस</span>
+                              <span className="text-sm text-gray-700">त्वरित शब्द क्रेडिट</span>
                             </div>
                             <div className="flex items-center space-x-3">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
@@ -183,7 +183,7 @@ const Pricing = () => {
                       {/* Payment Button */}
                       <div className="pt-4">
                         <PaymentGatewaySelector wordPlan={plan} onPaymentSuccess={() => {
-                      toast.success("भुगतान सफल! शब्द क्रेडिट आपके खाते में जोड़ दिए गए हैं।");
+                      toast.success("भुगतान सफल! शब्द क्रेडिट आपके खाते में जोड़ दिये गये हैं।");
                       navigate("/billing");
                     }} />
                       </div>
