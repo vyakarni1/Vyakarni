@@ -46,12 +46,12 @@ export const WelcomeEmail = ({ userName, userEmail }: WelcomeEmailProps) => (
 
           <Section style={buttonContainer}>
             <Button style={button} href="https://vyakarni.com/dashboard">
-              अभी शुरू करें
+              अभी आरम्भ करें
             </Button>
           </Section>
 
           <Text style={paragraph}>
-            आपको <strong>500 शब्द नि:शुल्क</strong> मिले हैं! इनका उपयोग करके व्याकरणी की शक्ति का अनुभव करें।
+            आपको <strong>500 शब्द नि:शुल्क</strong> मिले हैं! इनका उपयोग कर व्याकरणी की शक्ति का अनुभव करें।
           </Text>
 
           <Hr style={hr} />
