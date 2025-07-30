@@ -69,7 +69,7 @@ const CurrentPlan = () => {
     const baseFeatures = [
       "हिंदी व्याकरण जाँच",
       "वाक्य सुधार सुझाव",
-      "स्थायी शब्द क्रेडिट"
+      "त्वरित शब्द क्रेडिट"
     ];
 
     if (currentTier.type === 'free') {
