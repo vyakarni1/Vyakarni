@@ -21,7 +21,7 @@ const AccountDeletion = () => {
     if (!user) return;
     
     if (confirmationText !== "DELETE") {
-      toast.error("कृपया पुष्टि के लिए 'DELETE' टाइप करें");
+      toast.error("कृपया पुष्टि के लिये 'DELETE' टाइप करें");
       return;
     }
 
@@ -60,7 +60,7 @@ const AccountDeletion = () => {
       <CardHeader>
         <CardTitle className="flex items-center text-red-600">
           <Trash2 className="h-5 w-5 mr-2" />
-          खाता हटाएं
+          खाता हटायें
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -70,9 +70,9 @@ const AccountDeletion = () => {
             <div className="space-y-2">
               <h4 className="font-medium text-red-800">चेतावनी: यह कार्य अपरिवर्तनीय है</h4>
               <ul className="text-sm text-red-700 space-y-1">
-                <li>• आपका सारा डेटा स्थायी रूप से हट जाएगा</li>
-                <li>• आपके सभी शब्द क्रेडिट समाप्त हो जाएंगे</li>
-                <li>• आपकी व्याकरण जांच का इतिहास हट जाएगा</li>
+                <li>• आपका सारा डेटा स्थायी रूप से हट जायेगा</li>
+                <li>• आपके सभी शब्द क्रेडिट समाप्त हो जायेंगे</li>
+                <li>• आपकी व्याकरण जाँच का इतिहास हट जायेगा</li>
                 <li>• यह कार्य वापस नहीं किया जा सकता</li>
               </ul>
             </div>
@@ -83,14 +83,14 @@ const AccountDeletion = () => {
           <AlertDialogTrigger asChild>
             <Button variant="destructive" className="w-full">
               <Trash2 className="h-4 w-4 mr-2" />
-              स्थायी रूप से खाता हटाएं
+              स्थायी रूप से खाता हटायें
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>क्या आप वाकई अपना खाता हटाना चाहते हैं?</AlertDialogTitle>
+              <AlertDialogTitle>क्या आप स्पष्टतः अपना खाता हटाना चाहते हैं?</AlertDialogTitle>
               <AlertDialogDescription>
-                यह कार्य अपरिवर्तनीय है। आपका सारा डेटा स्थायी रूप से हट जाएगा।
+                यह कार्य अपरिवर्तनीय है। आपका सारा डेटा स्थायी रूप से हट जायेगा।
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="space-y-4">
@@ -113,7 +113,7 @@ const AccountDeletion = () => {
                 disabled={isDeleting || confirmationText !== "DELETE"}
                 className="bg-red-600 hover:bg-red-700"
               >
-                {isDeleting ? "हटाया जा रहा है..." : "खाता हटाएं"}
+                {isDeleting ? "हटाया जा रहा है..." : "खाता हटायें"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

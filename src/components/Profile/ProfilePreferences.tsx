@@ -40,7 +40,7 @@ const ProfilePreferences = ({ profile, onProfileUpdate }: ProfilePreferencesProp
 
       <Button onClick={savePreferences} disabled={isLoading} className="w-full">
         <Settings className="h-4 w-4 mr-2" />
-        {isLoading ? "सहेजा जा रहा है..." : "प्राथमिकताएं सहेजें"}
+        {isLoading ? "सहेजा जा रहा है..." : "प्राथमिकतायें सहेजें"}
       </Button>
     </div>
   );

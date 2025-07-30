@@ -36,7 +36,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
       // For now, we'll simulate the API call
       const updatedProfile = { ...profile, ...data };
       onProfileUpdate(updatedProfile);
-      toast.success("प्रोफाइल सफलतापूर्वक अपडेट हो गई!");
+      toast.success("प्रोफाइल सफलतापूर्वक अपडेट हो गयी!");
       return true;
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -70,11 +70,11 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
         </TabsTrigger>
         <TabsTrigger value="preferences" className="flex items-center space-x-2">
           <Settings className="h-4 w-4" />
-          <span>प्राथमिकताएं</span>
+          <span>प्राथमिकतायें</span>
         </TabsTrigger>
         <TabsTrigger value="danger" className="flex items-center space-x-2">
           <Trash2 className="h-4 w-4" />
-          <span>खतरनाक क्षेत्र</span>
+          <span>संकटपूर्ण क्षेत्र</span>
         </TabsTrigger>
       </TabsList>
 
@@ -98,7 +98,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
               {isDirty && (
                 <div className="flex items-center text-amber-600 text-sm">
                   <AlertCircle className="h-4 w-4 mr-1" />
-                  असहेजे गए परिवर्तन
+                  असहेजे गये परिवर्तन
                 </div>
               )}
             </CardTitle>
@@ -139,7 +139,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
                   id="bio"
                   value={formData.bio}
                   onChange={(e) => updateField('bio', e.target.value)}
-                  placeholder="अपने बारे में कुछ बताएं..."
+                  placeholder="अपने बारे में कुछ बतायें..."
                   className={`min-h-[100px] ${errors.bio ? "border-red-500" : ""}`}
                 />
                 <div className="flex justify-between text-xs text-gray-500">
@@ -183,7 +183,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
               <div className="space-y-4">
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                   <p className="text-sm text-blue-800">
-                    अपना खाता पासवर्ड बदलने के लिए यहाँ क्लिक करें। सुरक्षा के लिए आपसे वर्तमान पासवर्ड पूछा जाएगा।
+                    अपना खाता पासवर्ड बदलने के लिये यहाँ क्लिक करें। सुरक्षा के लिये आपसे आपका वर्तमान पासवर्ड पूछा जायेगा।
                   </p>
                 </div>
                 <Button 

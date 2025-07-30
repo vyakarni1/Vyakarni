@@ -130,7 +130,7 @@ const UsageAnalytics = () => {
           <ul className="text-sm text-blue-700 space-y-1">
             <li>• छोटे टेक्स्ट को बार-बार जाँचने से बचें</li>
             <li>• एक साथ अधिक टेक्स्ट जाँचें ({currentTier.maxWordsPerCorrection} शब्द तक)</li>
-            <li>• आपके शब्द कभी समाप्त नहीं होते - स्थायी उपयोग</li>
+            <li>• आपके शब्द प्रयोग के अनुसार घटते हैं</li>
             <li>• अधिक शब्दों के लिये नया पैकेज खरीदें</li>
           </ul>
         </div>
