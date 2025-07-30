@@ -20,7 +20,7 @@ export interface InvoiceData {
 export const COMPANY_INFO: CompanyInfo = {
   name: 'SNS Innovation Labs Pvt. Ltd.',
   gstNo: '09ABHCS1973M1ZO',
-  address: 'B-2/316, Sector A, Jankipuram, Lucknow, PIN-226021',
+  address: 'B-2/316, Sector A, Jankipuram, Lucknow, U.P., India, PIN-226021',
   email: 'support@vyakarni.com'
 };
 
@@ -110,14 +110,14 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   doc.text('Payment Details:', 20, paymentY);
   doc.text(`Payment Method: ${data.transaction.payment_gateway || 'Online'}`, 20, paymentY + 10);
   doc.text(`Transaction ID: ${data.transaction.id}`, 20, paymentY + 20);
-  doc.text(`Status: ${data.transaction.status === 'success' ? 'Paid' : 'Pending'}`, 20, paymentY + 30);
+  doc.text(`Status: ${data.transaction.status === 'success' ? 'Paid' : 'Paid'}`, 20, paymentY + 30);
   
   // Terms and Conditions
   const termsY = paymentY + 50;
   doc.setFontSize(8);
   doc.text('Terms & Conditions:', 20, termsY);
   doc.text('1. This is a computer-generated invoice and does not require a signature.', 20, termsY + 8);
-  doc.text('2. All disputes subject to Lucknow jurisdiction.', 20, termsY + 16);
+  doc.text('2. All disputes subject to Lucknow jurisdiction Only.', 20, termsY + 16);
   doc.text('3. Payment terms: Immediate for online transactions.', 20, termsY + 24);
   
   // Footer
