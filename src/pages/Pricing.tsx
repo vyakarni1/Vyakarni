@@ -100,7 +100,7 @@ const Pricing = () => {
                       <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${getPlanColor(plan.plan_type)} text-white mb-4 mx-auto`}>
                         {getPlanIcon(plan.plan_type)}
                       </div>
-                      <CardTitle className="text-2xl font-bold text-gray-800">{plan.plan_name}</CardTitle>
+                      <CardTitle className="text-2xl font-bold text-gray-800">टेस्ट प्लान</CardTitle>
                       
                       {/* Word Credits Display */}
                       <div className="text-center mb-2">
