@@ -21,7 +21,7 @@ interface WelcomeEmailProps {
 export const WelcomeEmail = ({ userName, userEmail }: WelcomeEmailProps) => (
   <Html>
     <Head />
-    <Preview>व्याकरणी में आपका स्वागत है! आइए शुरू करते हैं।</Preview>
+    <Preview>व्याकरणी में आपका स्वागत है! आइये प्रारम्भ करते हैं।</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
