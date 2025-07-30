@@ -19,14 +19,14 @@ const EmailPreferences = ({ emailPreferences, onEmailPreferenceChange }: EmailPr
       <CardHeader>
         <CardTitle className="flex items-center">
           <Bell className="h-5 w-5 mr-2 text-green-500" />
-          ईमेल प्राथमिकताएं
+          ईमेल प्राथमिकतायें
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <Label>मार्केटिंग ईमेल</Label>
-            <p className="text-sm text-gray-500">नई सुविधाओं और ऑफर की जानकारी</p>
+            <p className="text-sm text-gray-500">नयी सुविधाओं और ऑफर की जानकारी</p>
           </div>
           <Switch
             checked={emailPreferences.marketing}

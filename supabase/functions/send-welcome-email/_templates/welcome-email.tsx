@@ -79,7 +79,7 @@ export const WelcomeEmail = ({ userName, userEmail }: WelcomeEmailProps) => (
         <Section style={footer}>
           <Text style={footerText}>
             यह ईमेल {userEmail} को भेजा गया है।<br />
-            व्याकरणी टीम द्वारा प्रेम के साथ बनाया गया।
+            टीम व्याकरणी
           </Text>
           
           <Text style={footerLink}>
