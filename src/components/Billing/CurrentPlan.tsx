@@ -80,7 +80,7 @@ const CurrentPlan = () => {
       ...baseFeatures,
       "समर्पित सहायता",
       "विस्तृत रिपोर्ट",
-      "उन्नत व्याकरण जाँच"
+      "उन्नत शैली सुधार"
     ];
 
     if (currentTier.type === 'hobby') {
