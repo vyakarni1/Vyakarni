@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { cleanupAuthState } from '@/utils/authUtils';
+import { useWelcomeEmail } from '@/hooks/useWelcomeEmail';
 
 interface AuthContextType {
   user: User | null;
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const { sendWelcomeEmail } = useWelcomeEmail();
 
   const signOut = async () => {
     try {
@@ -58,39 +60,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(session);
           setUser(session.user);
           
-          // For OAuth (Google/Facebook), ensure profile exists after successful login
-          if (event === 'SIGNED_IN' && ['google', 'facebook'].includes(session.user.app_metadata?.provider)) {
-            setTimeout(async () => {
-              try {
-                // Check if profile exists
-                const { data: profile } = await supabase
-                  .from('profiles')
-                  .select('id')
-                  .eq('id', session.user.id)
-                  .single();
+          // Handle welcome email and profile creation for all users
+          setTimeout(async () => {
+            try {
+              // Check if profile exists
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('id, welcome_email_sent_at')
+                .eq('id', session.user.id)
+                .single();
+              
+              if (!profile) {
+                console.log('Creating profile for new user');
+                // Create profile if it doesn't exist
+                const { error: insertError } = await supabase.from('profiles').insert({
+                  id: session.user.id,
+                  name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.user_metadata?.first_name,
+                  email: session.user.email,
+                });
                 
-                if (!profile) {
-                  console.log(`Creating profile for ${session.user.app_metadata?.provider} user`);
-                  // Create profile if it doesn't exist - this will trigger welcome email via database trigger
-                  const { error: insertError } = await supabase.from('profiles').insert({
-                    id: session.user.id,
-                    name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.user_metadata?.first_name,
-                    email: session.user.email,
-                  });
-                  
-                  if (insertError) {
-                    console.error(`Error creating profile for ${session.user.app_metadata?.provider} user:`, insertError);
-                  } else {
-                    console.log(`Profile created for ${session.user.app_metadata?.provider} user - welcome email will be sent automatically`);
-                  }
+                if (insertError) {
+                  console.error('Error creating profile:', insertError);
                 } else {
-                  console.log(`Profile already exists for ${session.user.app_metadata?.provider} user`);
+                  console.log('Profile created for new user');
+                  // Send welcome email for new user
+                  if (session.user.email) {
+                    console.log('Sending welcome email for new user');
+                    await sendWelcomeEmail(
+                      session.user.id, 
+                      session.user.email, 
+                      session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'व्याकरणी यूज़र'
+                    );
+                  }
                 }
-              } catch (error) {
-                console.error('Error handling Google user profile:', error);
+              } else if (session.user.email_confirmed_at && !profile.welcome_email_sent_at) {
+                // User exists but hasn't received welcome email yet and email is confirmed
+                console.log('Sending welcome email for existing user with confirmed email');
+                await sendWelcomeEmail(
+                  session.user.id, 
+                  session.user.email!, 
+                  session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'व्याकरणी यूज़र'
+                );
               }
-            }, 100);
-          }
+            } catch (error) {
+              console.error('Error handling user profile and welcome email:', error);
+            }
+          }, 100);
         } else {
           setSession(null);
           setUser(null);
