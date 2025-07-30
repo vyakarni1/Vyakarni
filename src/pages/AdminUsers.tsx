@@ -70,14 +70,15 @@ const AdminUsers = () => {
     <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">उपयोगकर्ता प्रबंधन</h1>
-            <p className="text-gray-600 mt-2">सभी उपयोगकर्ताओं को देखें और प्रबंधित करें</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">उपयोगकर्ता प्रबंधन</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">सभी उपयोगकर्ताओं को देखें और प्रबंधित करें</p>
           </div>
-          <Button className="flex items-center space-x-2">
+          <Button className="flex items-center space-x-2 flex-shrink-0 min-h-[44px]">
             <Plus className="h-4 w-4" />
-            <span>नया उपयोगकर्ता</span>
+            <span className="hidden sm:inline">नया उपयोगकर्ता</span>
+            <span className="sm:hidden">नया</span>
           </Button>
         </div>
 
@@ -100,14 +101,22 @@ const AdminUsers = () => {
 
         {/* User Sections with Tabs */}
         <Tabs defaultValue="regular" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="regular" className="flex items-center space-x-2">
-              <User className="h-4 w-4" />
-              <span>नियमित उपयोगकर्ता ({regularUsers?.length || 0})</span>
+          <TabsList className="grid w-full grid-cols-2 h-auto p-1">
+            <TabsTrigger value="regular" className="flex items-center justify-center space-x-1 sm:space-x-2 min-h-[44px] px-2 sm:px-4">
+              <User className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="text-xs sm:text-sm truncate">
+                <span className="hidden sm:inline">नियमित उपयोगकर्ता</span>
+                <span className="sm:hidden">नियमित</span>
+                <span className="ml-1">({regularUsers?.length || 0})</span>
+              </span>
             </TabsTrigger>
-            <TabsTrigger value="admin" className="flex items-center space-x-2">
-              <Crown className="h-4 w-4" />
-              <span>एडमिन उपयोगकर्ता ({adminUsers?.length || 0})</span>
+            <TabsTrigger value="admin" className="flex items-center justify-center space-x-1 sm:space-x-2 min-h-[44px] px-2 sm:px-4">
+              <Crown className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="text-xs sm:text-sm truncate">
+                <span className="hidden sm:inline">एडमिन उपयोगकर्ता</span>
+                <span className="sm:hidden">एडमिन</span>
+                <span className="ml-1">({adminUsers?.length || 0})</span>
+              </span>
             </TabsTrigger>
           </TabsList>
 
@@ -163,7 +172,7 @@ const AdminUsers = () => {
         </Tabs>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">कुल उपयोगकर्ता</CardTitle>

@@ -132,57 +132,68 @@ const EnhancedUserTable = ({
           <Table>
             <TableHeader>
               <TableRow className="border-b border-gray-200">
-                <TableHead className="w-12">
+                <TableHead className="w-8 sm:w-12 px-2 sm:px-4">
                   <Checkbox
                     checked={users.length > 0 && selectedUsers.length === users.length}
                     onCheckedChange={onSelectAll}
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center"
                   />
                 </TableHead>
-                <TableHead className="text-gray-700 font-semibold">उपयोगकर्ता</TableHead>
-                <TableHead className="text-gray-700 font-semibold">भूमिका और स्थिति</TableHead>
-                <TableHead className="text-gray-700 font-semibold">शब्द बैलेंस</TableHead>
-                <TableHead className="text-gray-700 font-semibold">प्रोफ़ाइल पूर्णता</TableHead>
-                <TableHead className="text-gray-700 font-semibold">निर्माण तिथि</TableHead>
-                <TableHead className="text-center text-gray-700 font-semibold">कार्य</TableHead>
+                <TableHead className="text-gray-700 font-semibold text-xs sm:text-sm min-w-[200px] px-2 sm:px-4">उपयोगकर्ता</TableHead>
+                <TableHead className="text-gray-700 font-semibold text-xs sm:text-sm min-w-[140px] px-2 sm:px-4 hidden sm:table-cell">भूमिका और स्थिति</TableHead>
+                <TableHead className="text-gray-700 font-semibold text-xs sm:text-sm min-w-[120px] px-2 sm:px-4 hidden md:table-cell">शब्द बैलेंस</TableHead>
+                <TableHead className="text-gray-700 font-semibold text-xs sm:text-sm min-w-[120px] px-2 sm:px-4 hidden lg:table-cell">प्रोफ़ाइल पूर्णता</TableHead>
+                <TableHead className="text-gray-700 font-semibold text-xs sm:text-sm min-w-[100px] px-2 sm:px-4 hidden xl:table-cell">निर्माण तिथि</TableHead>
+                <TableHead className="text-center text-gray-700 font-semibold text-xs sm:text-sm w-12 sm:w-16 px-2 sm:px-4">कार्य</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.map((user) => (
                 <TableRow key={user.id} className="hover:bg-gray-50/50 transition-all duration-200 border-b border-gray-100">
-                  <TableCell>
+                  <TableCell className="px-2 sm:px-4">
                     <Checkbox
                       checked={selectedUsers.includes(user.id)}
                       onCheckedChange={(checked) => onSelectUser(user.id, !!checked)}
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center"
                     />
                   </TableCell>
                   
                   {/* User Info */}
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-10 w-10 ring-2 ring-gray-200">
+                  <TableCell className="px-2 sm:px-4">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10 ring-1 sm:ring-2 ring-gray-200 flex-shrink-0">
                         <AvatarImage src={user.avatar_url} alt={getDisplayName(user)} />
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold">
+                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white font-semibold text-xs sm:text-sm">
                           {getAvatarFallback(user)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
-                        <div className="font-medium text-gray-900 truncate">{getDisplayName(user)}</div>
-                        <div className="flex items-center space-x-2 text-sm text-gray-500">
-                          <Mail className="h-3 w-3" />
+                        <div className="font-medium text-gray-900 truncate text-sm sm:text-base">{getDisplayName(user)}</div>
+                        <div className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-gray-500">
+                          <Mail className="h-2 w-2 sm:h-3 sm:w-3 flex-shrink-0" />
                           <span className="truncate">{user.email}</span>
                         </div>
                         {user.phone && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-500">
-                            <Phone className="h-3 w-3" />
-                            <span>{user.phone}</span>
+                          <div className="sm:hidden flex items-center space-x-1 text-xs text-gray-500">
+                            <Phone className="h-2 w-2 flex-shrink-0" />
+                            <span className="truncate">{user.phone}</span>
                           </div>
                         )}
+                        {/* Mobile-only role and status */}
+                        <div className="sm:hidden mt-1 flex items-center space-x-2">
+                          <Badge variant={getRoleBadgeVariant(user.role)} className="text-xs px-1 py-0">
+                            {user.role === 'admin' && <Crown className="h-2 w-2 mr-1" />}
+                            {user.role === 'user' && <User className="h-2 w-2 mr-1" />}
+                            {getRoleText(user.role)}
+                          </Badge>
+                          <div className={`h-1.5 w-1.5 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                        </div>
                       </div>
                     </div>
                   </TableCell>
                   
-                  {/* Role and Status */}
-                  <TableCell>
+                  {/* Role and Status - Hidden on mobile */}
+                  <TableCell className="hidden sm:table-cell px-2 sm:px-4">
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <Badge variant={getRoleBadgeVariant(user.role)} className="text-xs">
@@ -200,12 +211,12 @@ const EnhancedUserTable = ({
                     </div>
                   </TableCell>
                   
-                  {/* Word Balance */}
-                  <TableCell>
+                  {/* Word Balance - Hidden on mobile and tablet */}
+                  <TableCell className="hidden md:table-cell px-2 sm:px-4">
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <Coins className="h-4 w-4 text-yellow-600" />
-                        <span className={`font-semibold ${getWordBalanceColor(user.word_balance.total_words_available)}`}>
+                        <span className={`font-semibold text-sm ${getWordBalanceColor(user.word_balance.total_words_available)}`}>
                           {user.word_balance.total_words_available.toLocaleString()}
                         </span>
                       </div>
@@ -213,29 +224,25 @@ const EnhancedUserTable = ({
                         <div>मुफ्त: {user.word_balance.free_words}</div>
                         <div>खरीदे गए: {user.word_balance.purchased_words}</div>
                       </div>
-                      <div className="flex items-center space-x-1 text-xs text-gray-500">
-                        <TrendingUp className="h-3 w-3" />
-                        <span>आज इस्तेमाल: {user.usage_stats.words_used_today}</span>
-                      </div>
                     </div>
                   </TableCell>
                   
-                  {/* Profile Completion */}
-                  <TableCell>
+                  {/* Profile Completion - Hidden on mobile, tablet, and small desktop */}
+                  <TableCell className="hidden lg:table-cell px-2 sm:px-4">
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
-                        <Progress value={user.profile_completion} className="w-16 h-2" />
-                        <span className="text-sm font-medium">{user.profile_completion}%</span>
+                        <Progress value={user.profile_completion} className="w-12 sm:w-16 h-2" />
+                        <span className="text-xs sm:text-sm font-medium">{user.profile_completion}%</span>
                       </div>
                       <div className="text-xs text-gray-500">
-                        {user.profile_completion === 100 ? 'पूर्ण प्रोफ़ाइल' : 'अधूरी प्रोफ़ाइल'}
+                        {user.profile_completion === 100 ? 'पूर्ण' : 'अधूरी'}
                       </div>
                     </div>
                   </TableCell>
                   
-                  {/* Created Date */}
-                  <TableCell>
-                    <div className="text-sm text-gray-900">
+                  {/* Created Date - Hidden on mobile, tablet, and small desktop */}
+                  <TableCell className="hidden xl:table-cell px-2 sm:px-4">
+                    <div className="text-xs sm:text-sm text-gray-900">
                       {new Date(user.created_at).toLocaleDateString('hi-IN')}
                     </div>
                     <div className="text-xs text-gray-500">
@@ -244,30 +251,30 @@ const EnhancedUserTable = ({
                   </TableCell>
                   
                   {/* Actions */}
-                  <TableCell>
+                  <TableCell className="px-2 sm:px-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
-                          <MoreHorizontal className="h-4 w-4" />
+                        <Button variant="ghost" size="sm" className="h-8 w-8 sm:h-10 sm:w-10 p-0 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center">
+                          <MoreHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem onClick={() => onViewDetails(user)}>
+                      <DropdownMenuContent align="end" className="w-48 z-50 bg-background border shadow-lg">
+                        <DropdownMenuItem onClick={() => onViewDetails(user)} className="min-h-[44px] text-sm cursor-pointer">
                           <Eye className="h-4 w-4 mr-2" />
                           विवरण देखें
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onEditUser(user)}>
+                        <DropdownMenuItem onClick={() => onEditUser(user)} className="min-h-[44px] text-sm cursor-pointer">
                           <Edit className="h-4 w-4 mr-2" />
                           संपादित करें
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onManageCredits(user)}>
+                        <DropdownMenuItem onClick={() => onManageCredits(user)} className="min-h-[44px] text-sm cursor-pointer">
                           <Coins className="h-4 w-4 mr-2" />
                           क्रेडिट प्रबंधन
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           onClick={() => onDeleteUser(user.id)}
-                          className="text-red-600 focus:text-red-600"
+                          className="text-red-600 focus:text-red-600 min-h-[44px] text-sm cursor-pointer"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           हटाएं

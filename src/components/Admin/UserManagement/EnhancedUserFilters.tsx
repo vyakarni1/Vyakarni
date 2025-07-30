@@ -39,78 +39,78 @@ const EnhancedUserFilters = ({
 }: EnhancedUserFiltersProps) => {
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Filter className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-lg font-semibold text-gray-900">
+      <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center space-x-2 min-w-0 flex-1">
+            <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+            <CardTitle className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 truncate">
               उपयोगकर्ता फिल्टर और खोज
             </CardTitle>
-            <div className="flex items-center space-x-1 text-sm text-gray-500">
-              <Users className="h-4 w-4" />
+            <div className="hidden sm:flex items-center space-x-1 text-xs sm:text-sm text-gray-500">
+              <Users className="h-3 w-3 sm:h-4 sm:w-4" />
               <span>{totalUsers} उपयोगकर्ता</span>
             </div>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2 sm:gap-2 lg:gap-3">
             <Button 
               variant="outline" 
               size="sm" 
               onClick={() => onExport('csv')}
-              className="flex items-center space-x-1"
+              className="flex items-center space-x-1 min-h-[36px] sm:min-h-[40px]"
             >
-              <Download className="h-4 w-4" />
-              <span>CSV</span>
+              <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm">CSV</span>
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={() => onExport('json')}
-              className="flex items-center space-x-1"
+              className="flex items-center space-x-1 min-h-[36px] sm:min-h-[40px]"
             >
-              <Download className="h-4 w-4" />
-              <span>JSON</span>
+              <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm">JSON</span>
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={onRefresh}
               disabled={isLoading}
-              className="flex items-center space-x-1"
+              className="flex items-center space-x-1 min-h-[36px] sm:min-h-[40px]"
             >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span>रिफ्रेश</span>
+              <RefreshCw className={`h-3 w-3 sm:h-4 sm:w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <span className="text-xs sm:text-sm">रिफ्रेश</span>
             </Button>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+      <CardContent className="px-3 sm:px-6 py-3 sm:py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
           {/* Search */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">खोजें</label>
+          <div className="space-y-2 sm:col-span-2 lg:col-span-3 xl:col-span-2">
+            <label className="text-xs sm:text-sm font-medium text-gray-700">खोजें</label>
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
               <Input
                 placeholder="नाम या ID खोजें..."
                 value={filters.search}
                 onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-                className="pl-10"
+                className="pl-8 sm:pl-10 text-sm min-h-[44px]"
               />
             </div>
           </div>
 
           {/* Role Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">भूमिका</label>
+            <label className="text-xs sm:text-sm font-medium text-gray-700">भूमिका</label>
             <Select 
               value={filters.role} 
               onValueChange={(value) => onFiltersChange({ ...filters, role: value })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="min-h-[44px] text-sm">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-50">
                 <SelectItem value="all">सभी भूमिकाएं</SelectItem>
                 <SelectItem value="admin">एडमिन</SelectItem>
                 <SelectItem value="user">उपयोगकर्ता</SelectItem>
@@ -199,18 +199,18 @@ const EnhancedUserFilters = ({
         </div>
 
         {/* Sorting Options */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center space-x-4">
-            <label className="text-sm font-medium text-gray-700">क्रमबद्ध करें:</label>
-            <div className="flex space-x-2">
+        <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <label className="text-xs sm:text-sm font-medium text-gray-700 flex-shrink-0">क्रमबद्ध करें:</label>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 flex-1">
               <Select 
                 value={filters.sort_by} 
                 onValueChange={(value) => onFiltersChange({ ...filters, sort_by: value })}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="min-h-[44px] text-sm sm:w-auto">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-50">
                   <SelectItem value="name">नाम</SelectItem>
                   <SelectItem value="created_at">निर्माण दिनांक</SelectItem>
                   <SelectItem value="word_balance">शब्द बैलेंस</SelectItem>
@@ -222,10 +222,10 @@ const EnhancedUserFilters = ({
                 value={filters.sort_order} 
                 onValueChange={(value) => onFiltersChange({ ...filters, sort_order: value })}
               >
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="min-h-[44px] text-sm w-full sm:w-20">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-50">
                   <SelectItem value="asc">↑</SelectItem>
                   <SelectItem value="desc">↓</SelectItem>
                 </SelectContent>

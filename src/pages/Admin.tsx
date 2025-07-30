@@ -132,24 +132,24 @@ const Admin = () => {
     <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">डैशबोर्ड</h1>
-          <p className="text-muted-foreground mt-2">व्याकरणी एडमिन पैनल में आपका स्वागत है</p>
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">डैशबोर्ड</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">व्याकरणी एडमिन पैनल में आपका स्वागत है</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {stats.map((stat, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+                <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 truncate">
                   {stat.title}
                 </CardTitle>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color} flex-shrink-0`} />
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                <p className="text-xs text-green-600 mt-1">
+              <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate">{stat.value}</div>
+                <p className="text-xs text-green-600 mt-1 truncate">
                   {stat.change} पिछले माह से
                 </p>
               </CardContent>
@@ -158,7 +158,7 @@ const Admin = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <Card>
             <CardHeader>
               <CardTitle>हाल की गतिविधि</CardTitle>
