@@ -103,10 +103,10 @@ const NotificationDropdown = () => {
       setNotifications(prev => 
         prev.map(n => ({ ...n, read_status: true }))
       );
-      toast.success("सभी सूचनाएं पढ़ी गई");
+      toast.success("सभी सूचनायें पढ़ी गयीं");
     } catch (error) {
       console.error('Error marking all as read:', error);
-      toast.error("सूचनाएं अपडेट करने में त्रुटि");
+      toast.error("सूचनायें अपडेट करने में त्रुटि");
     }
   };
 
@@ -149,7 +149,7 @@ const NotificationDropdown = () => {
           <Card className="shadow-xl border-0">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">सूचनाएं</CardTitle>
+                <CardTitle className="text-lg">सूचनायें</CardTitle>
                 <div className="flex items-center space-x-2">
                   {unreadCount > 0 && (
                     <Button
