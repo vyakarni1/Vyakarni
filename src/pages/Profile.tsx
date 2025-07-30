@@ -118,7 +118,7 @@ const Profile = () => {
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                    <span className="text-sm text-gray-600">पसंदीदा भाषा</span>
+                    <span className="text-sm text-gray-600">चयनित भाषा</span>
                     <span className="text-blue-600 text-sm font-medium">
                       {profile.preferred_language === 'hindi' ? '🇮🇳 हिंदी' : '🇺🇸 English'}
                     </span>
