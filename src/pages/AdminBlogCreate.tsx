@@ -61,6 +61,35 @@ const AdminBlogCreate = () => {
       .trim();
   };
 
+  const generateUniqueSlug = async (baseTitle: string) => {
+    let slug = generateSlug(baseTitle);
+    let counter = 1;
+    
+    while (true) {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('id')
+        .eq('slug', slug)
+        .single();
+      
+      if (error && error.code === 'PGRST116') {
+        // No record found, slug is unique
+        break;
+      }
+      
+      if (data) {
+        // Slug exists, try with counter
+        slug = `${generateSlug(baseTitle)}-${counter}`;
+        counter++;
+      } else {
+        // Some other error, break and let it fail later
+        break;
+      }
+    }
+    
+    return slug;
+  };
+
   const handleSave = async (publishStatus: string = status) => {
     console.log('Attempting to save blog post...', { title, content, user: user?.id, isAdmin, publishStatus });
     
@@ -83,7 +112,7 @@ const AdminBlogCreate = () => {
 
     setSaving(true);
     try {
-      const slug = generateSlug(title);
+      const slug = await generateUniqueSlug(title);
       const published_at = publishStatus === 'published' ? new Date().toISOString() : null;
 
       const { data, error } = await supabase
