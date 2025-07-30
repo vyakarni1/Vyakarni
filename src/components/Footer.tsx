@@ -7,7 +7,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 const Footer = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
 
-  // Social media links - easy to modify
+  // Social media links - easy to modify links later
   const socialLinks = [
     { icon: X, href: "#", label: "X", hoverColor: "hover:text-blue-400" },
     { icon: Facebook, href: "#", label: "Facebook", hoverColor: "hover:text-blue-600" },
