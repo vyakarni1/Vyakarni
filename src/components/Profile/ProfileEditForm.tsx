@@ -191,7 +191,7 @@ const ProfileEditForm = ({ profile, onProfileUpdate }: ProfileEditFormProps) => 
                   onClick={() => setShowPasswordForm(true)}
                   className="w-full md:w-auto"
                 >
-                  पासवर्ड बदलें
+                  पासवर्ड परिवर्तित करें
                 </Button>
               </div>
             ) : (

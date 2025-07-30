@@ -88,7 +88,7 @@ const AccountDeletion = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>क्या आप स्पष्टतः अपना खाता हटाना चाहते हैं?</AlertDialogTitle>
+              <AlertDialogTitle>क्या आप वास्तव में अपना खाता हटाना चाहते हैं?</AlertDialogTitle>
               <AlertDialogDescription>
                 यह कार्य अपरिवर्तनीय है। आपका सारा डेटा स्थायी रूप से हट जायेगा।
               </AlertDialogDescription>
@@ -96,7 +96,7 @@ const AccountDeletion = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="confirmation">
-                  पुष्टि के लिए <strong>DELETE</strong> टाइप करें:
+                  पुष्टि के लिये <strong>DELETE</strong> टाइप करें:
                 </Label>
                 <Input
                   id="confirmation"
