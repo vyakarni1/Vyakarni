@@ -38,7 +38,8 @@ const adminNavItems = [
   { 
     name: "एनालिटिक्स", 
     href: "/admin/analytics", 
-    icon: BarChart3 
+    icon: BarChart3,
+    exact: false
   },
   { 
     name: "ब्लॉग प्रबंधन", 

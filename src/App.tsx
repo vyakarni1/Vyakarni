@@ -34,6 +34,9 @@ import AdminEmailManagement from "./pages/AdminEmailManagement";
 import AdminBlog from "./pages/AdminBlog";
 import AdminBlogCreate from "./pages/AdminBlogCreate";
 import AdminBlogEdit from "./pages/AdminBlogEdit";
+import AdminContacts from "./pages/AdminContacts";
+import AdminSettings from "./pages/AdminSettings";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 
@@ -146,6 +149,30 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminBlogEdit />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/contacts" 
+                element={
+                  <AdminRoute>
+                    <AdminContacts />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/settings" 
+                element={
+                  <AdminRoute>
+                    <AdminSettings />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/analytics" 
+                element={
+                  <AdminRoute>
+                    <AdminAnalytics />
                   </AdminRoute>
                 } 
               />
