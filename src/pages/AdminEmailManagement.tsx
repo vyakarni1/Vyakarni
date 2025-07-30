@@ -17,7 +17,7 @@ import {
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useWelcomeEmail } from '@/hooks/useWelcomeEmail';
-import AdminLayout from '@/components/AdminLayout';
+import AdminLayoutWithNavigation from '@/components/AdminLayoutWithNavigation';
 
 interface EmailLog {
   id: string;
@@ -143,16 +143,16 @@ const AdminEmailManagement = () => {
 
   if (loading) {
     return (
-      <AdminLayout>
+      <AdminLayoutWithNavigation>
         <div className="flex items-center justify-center h-64">
-          <RefreshCw className="w-8 h-8 animate-spin text-blue-600" />
+          <RefreshCw className="w-8 h-8 animate-spin text-primary" />
         </div>
-      </AdminLayout>
+      </AdminLayoutWithNavigation>
     );
   }
 
   return (
-    <AdminLayout>
+    <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -285,7 +285,7 @@ const AdminEmailManagement = () => {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AdminLayoutWithNavigation>
   );
 };
 

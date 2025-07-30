@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Eye, Edit, Trash2, BarChart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import AdminLayout from "@/components/AdminLayout";
+import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 
 interface BlogPost {
   id: string;
@@ -119,7 +119,7 @@ const AdminBlog = () => {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -289,7 +289,7 @@ const AdminBlog = () => {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </AdminLayoutWithNavigation>
   );
 };
 

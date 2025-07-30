@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import AdminLayout from "@/components/AdminLayout";
+import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 
 interface BlogCategory {
   id: string;
@@ -216,26 +216,26 @@ const AdminBlogEdit = () => {
 
   if (loading) {
     return (
-      <AdminLayout>
+      <AdminLayoutWithNavigation>
         <div className="flex items-center justify-center min-h-96">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </AdminLayout>
+      </AdminLayoutWithNavigation>
     );
   }
 
   if (!post) {
     return (
-      <AdminLayout>
+      <AdminLayoutWithNavigation>
         <div className="text-center py-8">
-          <p className="text-gray-600">पोस्ट नहीं मिली</p>
+          <p className="text-muted-foreground">पोस्ट नहीं मिली</p>
         </div>
-      </AdminLayout>
+      </AdminLayoutWithNavigation>
     );
   }
 
   return (
-    <AdminLayout>
+    <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -408,7 +408,7 @@ const AdminBlogEdit = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AdminLayoutWithNavigation>
   );
 };
 

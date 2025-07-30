@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import AdminLayout from "@/components/AdminLayout";
+import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 import { useAuth } from "@/components/AuthProvider";
 
 interface BlogCategory {
@@ -140,7 +140,7 @@ const AdminBlogCreate = () => {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -313,7 +313,7 @@ const AdminBlogCreate = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AdminLayoutWithNavigation>
   );
 };
 

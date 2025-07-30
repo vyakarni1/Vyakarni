@@ -1,5 +1,5 @@
 
-import AdminLayout from "@/components/AdminLayout";
+import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -58,16 +58,16 @@ const AdminUsers = () => {
 
   if (isLoading) {
     return (
-      <AdminLayout>
+      <AdminLayoutWithNavigation>
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
-      </AdminLayout>
+      </AdminLayoutWithNavigation>
     );
   }
 
   return (
-    <AdminLayout>
+    <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -206,7 +206,7 @@ const AdminUsers = () => {
           </Card>
         </div>
       </div>
-    </AdminLayout>
+    </AdminLayoutWithNavigation>
   );
 };
 

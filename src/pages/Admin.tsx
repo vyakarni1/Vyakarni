@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/AdminLayout";
+import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, TrendingUp, MessageSquare, CreditCard, Mail, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -73,12 +73,12 @@ const Admin = () => {
   ];
 
   return (
-    <AdminLayout>
+    <AdminLayoutWithNavigation>
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">डैशबोर्ड</h1>
-          <p className="text-gray-600 mt-2">व्याकरणी एडमिन पैनल में आपका स्वागत है</p>
+          <h1 className="text-3xl font-bold text-foreground">डैशबोर्ड</h1>
+          <p className="text-muted-foreground mt-2">व्याकरणी एडमिन पैनल में आपका स्वागत है</p>
         </div>
 
         {/* Stats Grid */}
@@ -185,7 +185,7 @@ const Admin = () => {
           </Card>
         )}
       </div>
-    </AdminLayout>
+    </AdminLayoutWithNavigation>
   );
 };
 

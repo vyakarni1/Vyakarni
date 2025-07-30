@@ -1,25 +1,23 @@
 
-import Layout from "@/components/Layout";
+import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 import { DictionaryManagement } from "@/components/Admin/DictionaryManagement";
 
 export default function AdminDictionary() {
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
+    <AdminLayoutWithNavigation>
+      <div className="space-y-6">
         {/* Admin Header */}
-        <div className="bg-white shadow-sm border-b">
-          <div className="container mx-auto px-6 py-4">
+        <div className="bg-card shadow-sm border rounded-lg">
+          <div className="px-6 py-4">
             <div className="flex items-center space-x-2">
-              <h1 className="text-2xl font-bold text-gray-900">Dictionary Management</h1>
+              <h1 className="text-2xl font-bold text-foreground">Dictionary Management</h1>
             </div>
-            <p className="text-gray-600 mt-1">Manage grammar and style dictionaries from Google Sheets</p>
+            <p className="text-muted-foreground mt-1">Manage grammar and style dictionaries from Google Sheets</p>
           </div>
         </div>
 
-        <div className="container mx-auto px-6 py-8">
-          <DictionaryManagement />
-        </div>
+        <DictionaryManagement />
       </div>
-    </Layout>
+    </AdminLayoutWithNavigation>
   );
 }
