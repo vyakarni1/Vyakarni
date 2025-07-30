@@ -10,6 +10,8 @@ import { ArrowLeft, Save, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
+import { useAuth } from "@/components/AuthProvider";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface BlogCategory {
   id: string;
@@ -44,6 +46,8 @@ interface BlogPost {
 const AdminBlogEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isAdmin, loading: roleLoading } = useUserRole();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -128,10 +132,22 @@ const AdminBlogEdit = () => {
   };
 
   const handleSave = async (publishStatus: string = status) => {
-    console.log('Attempting to save blog post...', { title, content, id, publishStatus });
+    console.log('Attempting to save blog post...', { title, content, id, user: user?.id, isAdmin, publishStatus });
     
     if (!title.trim() || !content.trim()) {
       toast.error('शीर्षक और सामग्री आवश्यक हैं');
+      return;
+    }
+
+    if (!user?.id) {
+      console.error('User not authenticated:', user);
+      toast.error('उपयोगकर्ता लॉगिन नहीं है - कृपया फिर से लॉगिन करें');
+      return;
+    }
+
+    if (!isAdmin) {
+      console.error('User is not admin:', { user: user?.id, isAdmin });
+      toast.error('केवल एडमिन ही ब्लॉग पोस्ट संपादित कर सकते हैं');
       return;
     }
 
@@ -227,11 +243,21 @@ const AdminBlogEdit = () => {
     }
   };
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <AdminLayoutWithNavigation>
         <div className="flex items-center justify-center min-h-96">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </AdminLayoutWithNavigation>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <AdminLayoutWithNavigation>
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">आपके पास ब्लॉग पोस्ट संपादित करने की अनुमति नहीं है</p>
         </div>
       </AdminLayoutWithNavigation>
     );

@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 import { useAuth } from "@/components/AuthProvider";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface BlogCategory {
   id: string;
@@ -31,6 +32,7 @@ const AdminBlogCreate = () => {
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isAdmin, loading: roleLoading } = useUserRole();
 
   useEffect(() => {
     fetchCategories();
@@ -60,7 +62,7 @@ const AdminBlogCreate = () => {
   };
 
   const handleSave = async (publishStatus: string = status) => {
-    console.log('Attempting to save blog post...', { title, content, user: user?.id, publishStatus });
+    console.log('Attempting to save blog post...', { title, content, user: user?.id, isAdmin, publishStatus });
     
     if (!title.trim() || !content.trim()) {
       toast.error('शीर्षक और सामग्री आवश्यक हैं');
@@ -70,6 +72,12 @@ const AdminBlogCreate = () => {
     if (!user?.id) {
       console.error('User not authenticated:', user);
       toast.error('उपयोगकर्ता लॉगिन नहीं है - कृपया फिर से लॉगिन करें');
+      return;
+    }
+
+    if (!isAdmin) {
+      console.error('User is not admin:', { user: user?.id, isAdmin });
+      toast.error('केवल एडमिन ही ब्लॉग पोस्ट कर सकते हैं');
       return;
     }
 
@@ -152,6 +160,27 @@ const AdminBlogCreate = () => {
       setSaving(false);
     }
   };
+
+  if (roleLoading) {
+    return (
+      <AdminLayoutWithNavigation>
+        <div className="flex items-center justify-center min-h-96">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="ml-2">एडमिन अनुमतियाँ जाँची जा रही हैं...</p>
+        </div>
+      </AdminLayoutWithNavigation>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <AdminLayoutWithNavigation>
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">आपके पास ब्लॉग पोस्ट बनाने की अनुमति नहीं है</p>
+        </div>
+      </AdminLayoutWithNavigation>
+    );
+  }
 
   return (
     <AdminLayoutWithNavigation>
