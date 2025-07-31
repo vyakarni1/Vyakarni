@@ -357,7 +357,7 @@ const BlogPost = () => {
         </header>
 
         {/* Post Content */}
-        <div className="prose prose-lg max-w-none mb-8">
+        <div className="blog-content mb-8">
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </div>
 

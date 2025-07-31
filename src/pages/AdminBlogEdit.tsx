@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -380,13 +381,10 @@ const AdminBlogEdit = () => {
 
                 <div>
                   <Label htmlFor="content">सामग्री *</Label>
-                  <Textarea
-                    id="content"
+                  <RichTextEditor
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="पोस्ट की मुख्य सामग्री लिखें"
-                    rows={15}
-                    className="min-h-96"
+                    onChange={setContent}
+                    placeholder="पोस्ट की मुख्य सामग्री लिखें..."
                   />
                 </div>
               </CardContent>
