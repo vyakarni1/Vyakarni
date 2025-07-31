@@ -61,6 +61,7 @@ const AdminBlogEdit = () => {
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [autoSaving, setAutoSaving] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -68,6 +69,33 @@ const AdminBlogEdit = () => {
       fetchCategories();
     }
   }, [id]);
+
+  // Auto-save content to localStorage to prevent loss during editing
+  useEffect(() => {
+    if (post && id) {
+      const draftKey = `blog-draft-edit-${id}`;
+      const draft = {
+        title,
+        content,
+        excerpt,
+        tags,
+        metaTitle,
+        metaDescription,
+        metaKeywords,
+        timestamp: Date.now()
+      };
+      
+      // Only save if content has changed from original
+      const hasChanges = title !== post.title || 
+                        content !== post.content || 
+                        excerpt !== (post.excerpt || '') ||
+                        tags !== (post.blog_post_tags?.map((pt: any) => pt.blog_tags.name).join(', ') || '');
+      
+      if (hasChanges) {
+        localStorage.setItem(draftKey, JSON.stringify(draft));
+      }
+    }
+  }, [title, content, excerpt, tags, metaTitle, metaDescription, metaKeywords, post, id]);
 
   const fetchPost = async () => {
     try {
@@ -258,6 +286,8 @@ const AdminBlogEdit = () => {
       }
 
       toast.success(`पोस्ट ${publishStatus === 'published' ? 'प्रकाशित' : 'अपडेट'} की गई`);
+      // Clear draft from localStorage on successful save
+      localStorage.removeItem(`blog-draft-edit-${id}`);
       navigate('/admin/blog');
     } catch (error) {
       console.error('Error updating post:', error);

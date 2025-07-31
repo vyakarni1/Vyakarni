@@ -30,6 +30,7 @@ const AdminBlogCreate = () => {
   const [metaKeywords, setMetaKeywords] = useState("");
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [saving, setSaving] = useState(false);
+  const [autoSaving, setAutoSaving] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin, loading: roleLoading } = useUserRole();
@@ -37,6 +38,45 @@ const AdminBlogCreate = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Auto-save content to localStorage to prevent loss
+  useEffect(() => {
+    const draftKey = 'blog-draft-create';
+    const savedDraft = localStorage.getItem(draftKey);
+    if (savedDraft && !title && !content && !excerpt) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setTitle(draft.title || '');
+        setContent(draft.content || '');
+        setExcerpt(draft.excerpt || '');
+        setTags(draft.tags || '');
+        setMetaTitle(draft.metaTitle || '');
+        setMetaDescription(draft.metaDescription || '');
+        setMetaKeywords(draft.metaKeywords || '');
+      } catch (error) {
+        console.error('Error loading draft:', error);
+      }
+    }
+  }, []);
+
+  // Save draft to localStorage on content change
+  useEffect(() => {
+    const draftKey = 'blog-draft-create';
+    const draft = {
+      title,
+      content,
+      excerpt,
+      tags,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      timestamp: Date.now()
+    };
+    
+    if (title || content || excerpt) {
+      localStorage.setItem(draftKey, JSON.stringify(draft));
+    }
+  }, [title, content, excerpt, tags, metaTitle, metaDescription, metaKeywords]);
 
   const fetchCategories = async () => {
     try {
@@ -175,6 +215,8 @@ const AdminBlogCreate = () => {
       }
 
       toast.success(`पोस्ट ${publishStatus === 'published' ? 'प्रकाशित' : 'सेव'} की गई`);
+      // Clear draft from localStorage on successful save
+      localStorage.removeItem('blog-draft-create');
       navigate('/admin/blog');
     } catch (error) {
       console.error('Error saving post:', error);
