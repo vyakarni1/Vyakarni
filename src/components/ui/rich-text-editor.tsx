@@ -33,17 +33,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       try {
         // Upload to Supabase storage
         const fileExt = file.name.split('.').pop();
-        const fileName = `blog-images/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         
         const { data, error } = await supabase.storage
-          .from('avatars')
+          .from('blog-images')
           .upload(fileName, file);
 
         if (error) throw error;
 
         // Get public URL
         const { data: urlData } = supabase.storage
-          .from('avatars')
+          .from('blog-images')
           .getPublicUrl(fileName);
 
         // Insert image into editor
