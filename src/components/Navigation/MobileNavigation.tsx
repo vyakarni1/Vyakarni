@@ -124,7 +124,7 @@ const MobileNavigation = ({ user, profile, variant, isOpen, onClose, onLogout }:
               </Link>
               <Link to="/register" onClick={handleLinkClick}>
                 <Button size="sm" className="w-full transition-all duration-200 bg-gradient-to-r from-blue-600 to-purple-600">
-                  रजिस्टर करयें
+                  रजिस्टर करें
                 </Button>
               </Link>
             </div>
