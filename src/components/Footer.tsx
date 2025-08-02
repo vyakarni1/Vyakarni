@@ -13,7 +13,7 @@ const Footer = () => {
     { icon: Facebook, href: "https://www.facebook.com/vyakarni", label: "Facebook", hoverColor: "hover:text-blue-600" },
     { icon: Instagram, href: "https://www.instagram.com/vyakarni", label: "Instagram", hoverColor: "hover:text-pink-400" },
     { icon: Linkedin, href: "https://www.linkedin.com/company/vyakarni", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
-    { icon: MessageCircle, href: "https://discord.gg/vyakarni", label: "Discord", hoverColor: "hover:text-indigo-400" },
+    { icon: MessageCircle, href: "https://discord.com/channels/1401251646717038734/1401251648701075538", label: "Discord", hoverColor: "hover:text-indigo-400" },
     { icon: Mail, href: "support@vyakarni.com", label: "Email", hoverColor: "hover:text-green-400" },
   ];
 
