@@ -1,8 +1,9 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Github, Mail, Heart, Facebook, Instagram, Linkedin, Gamepad2, X } from "lucide-react";
+import { Github, Mail, Heart, Facebook, Instagram, Linkedin, X } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import discordIcon from "@/assets/discord-icon.png";
 
 const Footer = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
@@ -13,7 +14,7 @@ const Footer = () => {
     { icon: Facebook, href: "https://www.facebook.com/vyakarni", label: "Facebook", hoverColor: "hover:text-blue-600" },
     { icon: Instagram, href: "https://www.instagram.com/vyakarni", label: "Instagram", hoverColor: "hover:text-pink-400" },
     { icon: Linkedin, href: "https://www.linkedin.com/company/vyakarni", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
-    { icon: Gamepad2, href: "https://discord.com/channels/1401251646717038734/1401251648701075538", label: "Discord", hoverColor: "hover:text-indigo-400" },
+    { icon: "custom", customIcon: discordIcon, href: "https://discord.com/channels/1401251646717038734/1401251648701075538", label: "Discord", hoverColor: "hover:text-indigo-400" },
     { icon: Mail, href: "support@vyakarni.com", label: "Email", hoverColor: "hover:text-green-400" },
   ];
 
@@ -101,7 +102,6 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => {
-                const IconComponent = social.icon;
                 return (
                   <a 
                     key={index}
@@ -109,7 +109,11 @@ const Footer = () => {
                     className={`text-gray-400 ${social.hoverColor} transition-all duration-200 hover:scale-110`} 
                     aria-label={social.label}
                   >
-                    <IconComponent className="h-5 w-5" />
+                    {social.icon === "custom" ? (
+                      <img src={social.customIcon} alt={social.label} className="h-5 w-5" />
+                    ) : (
+                      <social.icon className="h-5 w-5" />
+                    )}
                   </a>
                 );
               })}
