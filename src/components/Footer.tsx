@@ -9,13 +9,13 @@ const Footer = () => {
 
   // Social media links - easy to modify links later
   const socialLinks = [
-    { icon: X, href: "#", label: "X", hoverColor: "hover:text-blue-400" },
-    { icon: Facebook, href: "#", label: "Facebook", hoverColor: "hover:text-blue-600" },
-    { icon: Instagram, href: "#", label: "Instagram", hoverColor: "hover:text-pink-400" },
-    { icon: Linkedin, href: "#", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
-    { icon: MessageCircle, href: "#", label: "Discord", hoverColor: "hover:text-indigo-400" },
+    { icon: X, href: "https://x.com/vyakarni", label: "X", hoverColor: "hover:text-blue-400" },
+    { icon: Facebook, href: "https://www.facebook.com/vyakarni", label: "Facebook", hoverColor: "hover:text-blue-600" },
+    { icon: Instagram, href: "https://www.instagram.com/vyakarni", label: "Instagram", hoverColor: "hover:text-pink-400" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/vyakarni", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
+    { icon: MessageCircle, href: "9140384459", label: "Discord", hoverColor: "hover:text-indigo-400" },
     { icon: Github, href: "#", label: "GitHub", hoverColor: "hover:text-purple-400" },
-    { icon: Mail, href: "#", label: "Email", hoverColor: "hover:text-green-400" },
+    { icon: Mail, href: "support@vyakarni.com", label: "Email", hoverColor: "hover:text-green-400" },
   ];
 
   const content = {
