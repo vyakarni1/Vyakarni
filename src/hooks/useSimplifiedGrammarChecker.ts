@@ -33,7 +33,7 @@ export const useSimplifiedGrammarChecker = ({ onProgressUpdate }: UseSimplifiedG
       const wordCount = inputText.trim().split(/\s+/).filter(word => word.length > 0).length;
       
       // Step 1: Vyakarni Processing (0-60%)
-      onProgressUpdate?.(20, 'Vyakarni से व्याकरण सुधार...');
+      onProgressUpdate?.(20, 'व्याकरणी से व्याकरण सुधार...');
       
       const { data: grokData, error: grokError } = await supabase.functions.invoke('grok-grammar-check', {
         body: { inputText }
