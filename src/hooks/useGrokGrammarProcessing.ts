@@ -33,7 +33,7 @@ export const useGrokGrammarProcessing = ({ onProgressUpdate }: UseGrokGrammarPro
 
   const processGrammarCorrection = useCallback(async (inputText: string) => {
     if (!inputText.trim()) {
-      throw new Error('कृपया सुधार के लिए कुछ पाठ लिखें');
+      throw new Error('कृपया सुधार के लिये कुछ पाठ लिखें');
     }
 
     console.log('Starting grammar correction for text length:', inputText.length);

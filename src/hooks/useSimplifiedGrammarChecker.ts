@@ -17,12 +17,12 @@ export const useSimplifiedGrammarChecker = ({ onProgressUpdate }: UseSimplifiedG
 
   const processGrammarCorrection = useCallback(async (inputText: string) => {
     if (!inputText.trim()) {
-      throw new Error('कृपया सुधार के लिए कुछ पाठ लिखें');
+      throw new Error('कृपया सुधार के लिये कुछ पाठ लिखें');
     }
 
     // Check word limits before processing
     if (!checkAndEnforceWordLimit(inputText)) {
-      throw new Error('शब्द सीमा पार हो गई या पर्याप्त बैलेंस नहीं है');
+      throw new Error('शब्द सीमा पार हो गयी या पर्याप्त बैलेंस नहीं है');
     }
 
     console.log(`Starting simplified grammar correction`);

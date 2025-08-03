@@ -13,7 +13,7 @@ export const useGrokStyleProcessing = ({ onProgressUpdate }: UseGrokStyleProcess
 
   const processStyleEnhancement = useCallback(async (inputText: string) => {
     if (!inputText.trim()) {
-      throw new Error('कृपया शैली सुधार के लिए कुछ पाठ लिखें');
+      throw new Error('कृपया शैली सुधार के लिये कुछ पाठ लिखें');
     }
 
     setIsProcessing(true);
