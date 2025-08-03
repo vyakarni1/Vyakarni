@@ -14,7 +14,6 @@ const Footer = () => {
     { icon: Instagram, href: "https://www.instagram.com/vyakarni", label: "Instagram", hoverColor: "hover:text-pink-400" },
     { icon: Linkedin, href: "https://www.linkedin.com/company/vyakarni", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
     { icon: Gamepad2, href: "https://discord.com/channels/1401251646717038734/1401251648701075538", label: "Discord", hoverColor: "hover:text-indigo-400" },
-    { icon: Mail, href: "support@vyakarni.com", label: "Email", hoverColor: "hover:text-green-400" },
   ];
 
   const content = {
