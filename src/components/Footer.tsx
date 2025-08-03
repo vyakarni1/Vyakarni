@@ -1,21 +1,20 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Heart, Facebook, Instagram, Linkedin, X } from "lucide-react";
+import { Mail, Heart, Facebook, Instagram, Linkedin, X, Gamepad2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import discordIcon from "@/assets/discord-icon-lucide-style.png";
 
 const Footer = () => {
   const [language, setLanguage] = useState<"english" | "hindi">("hindi");
 
   // Social media links - easy to modify links later
   const socialLinks = [
-    { icon: X, href: "https://x.com/vyakarni", label: "X", hoverColor: "hover:text-blue-400", type: "lucide" as const },
-    { icon: Facebook, href: "https://www.facebook.com/vyakarni", label: "Facebook", hoverColor: "hover:text-blue-600", type: "lucide" as const },
-    { icon: Instagram, href: "https://www.instagram.com/vyakarni", label: "Instagram", hoverColor: "hover:text-pink-400", type: "lucide" as const },
-    { icon: Linkedin, href: "https://www.linkedin.com/company/vyakarni", label: "LinkedIn", hoverColor: "hover:text-blue-500", type: "lucide" as const },
-    { icon: discordIcon, href: "https://discord.com/channels/1401251646717038734/1401251648701075538", label: "Discord", hoverColor: "hover:text-indigo-400", type: "image" as const },
-    { icon: Mail, href: "support@vyakarni.com", label: "Email", hoverColor: "hover:text-green-400", type: "lucide" as const },
+    { icon: X, href: "https://x.com/vyakarni", label: "X", hoverColor: "hover:text-blue-400" },
+    { icon: Facebook, href: "https://www.facebook.com/vyakarni", label: "Facebook", hoverColor: "hover:text-blue-600" },
+    { icon: Instagram, href: "https://www.instagram.com/vyakarni", label: "Instagram", hoverColor: "hover:text-pink-400" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/vyakarni", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
+    { icon: Gamepad2, href: "https://discord.com/channels/1401251646717038734/1401251648701075538", label: "Discord", hoverColor: "hover:text-indigo-400" },
+    { icon: Mail, href: "support@vyakarni.com", label: "Email", hoverColor: "hover:text-green-400" },
   ];
 
   const content = {
@@ -109,11 +108,7 @@ const Footer = () => {
                     className={`text-gray-400 ${social.hoverColor} transition-all duration-200 hover:scale-110`} 
                     aria-label={social.label}
                   >
-                    {social.type === "image" ? (
-                      <img src={social.icon} alt={social.label} className="h-5 w-5" />
-                    ) : (
-                      <social.icon className="h-5 w-5" />
-                    )}
+                    <social.icon className="h-5 w-5" />
                   </a>
                 );
               })}
