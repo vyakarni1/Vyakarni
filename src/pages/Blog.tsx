@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -109,8 +110,59 @@ const Blog = () => {
     });
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "व्याकरणी ब्लॉग",
+    "description": "हिंदी व्याकरण, भाषा सुधार, लेखन कला एवं अन्य अनेकानेक विषयों पर नवीनतम विवरण तथा रोचक सूचनायें",
+    "url": "https://vyakarni.com/blog",
+    "inLanguage": "hi",
+    "publisher": {
+      "@type": "Organization",
+      "name": "व्याकरणी",
+      "url": "https://vyakarni.com"
+    },
+    "mainEntity": filteredPosts.slice(0, 5).map(post => ({
+      "@type": "BlogPosting",
+      "headline": post.title,
+      "description": post.excerpt,
+      "url": `https://vyakarni.com/blog/${post.slug}`,
+      "datePublished": post.published_at,
+      "inLanguage": "hi",
+      "author": {
+        "@type": "Person",
+        "name": post.profiles?.name || "व्याकरणी टीम"
+      }
+    }))
+  };
+
   return (
-    <Layout>
+    <>
+      <Helmet>
+        <title>व्याकरणी ब्लॉग - हिंदी व्याकरण और भाषा सुधार की जानकारी</title>
+        <meta name="description" content="हिंदी व्याकरण, भाषा सुधार, लेखन कला एवं अन्य अनेकानेक विषयों पर नवीनतम विवरण तथा रोचक सूचनायें प्राप्त करें। व्याकरणी के विशेषज्ञों द्वारा लिखित गुणवत्तापूर्ण सामग्री।" />
+        <meta name="keywords" content="हिंदी व्याकरण, भाषा सुधार, लेखन कला, हिंदी ब्लॉग, व्याकरण जाँच, हिंदी भाषा, लेखन टिप्स, व्याकरणी" />
+        <link rel="canonical" href="https://vyakarni.com/blog" />
+        
+        {/* Open Graph tags */}
+        <meta property="og:title" content="व्याकरणी ब्लॉग - हिंदी व्याकरण और भाषा सुधार की जानकारी" />
+        <meta property="og:description" content="हिंदी व्याकरण, भाषा सुधार, लेखन कला एवं अन्य अनेकानेक विषयों पर नवीनतम विवरण तथा रोचक सूचनायें प्राप्त करें।" />
+        <meta property="og:url" content="https://vyakarni.com/blog" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="व्याकरणी" />
+        
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="व्याकरणी ब्लॉग - हिंदी व्याकरण और भाषा सुधार की जानकारी" />
+        <meta name="twitter:description" content="हिंदी व्याकरण, भाषा सुधार, लेखन कला एवं अन्य अनेकानेक विषयों पर नवीनतम विवरण तथा रोचक सूचनायें।" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      </Helmet>
+      
+      <Layout>
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <div className="text-center mb-12">
@@ -289,6 +341,7 @@ const Blog = () => {
         )}
       </div>
     </Layout>
+    </>
   );
 };
 
