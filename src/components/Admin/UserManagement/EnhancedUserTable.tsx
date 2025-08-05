@@ -23,7 +23,8 @@ import {
   Phone,
   Mail,
   Coins,
-  TrendingUp
+  TrendingUp,
+  FileText
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -68,6 +69,7 @@ interface EnhancedUserTableProps {
   onDeleteUser: (userId: string) => void;
   onViewDetails: (user: UserWithDetails) => void;
   onManageCredits: (user: UserWithDetails) => void;
+  onViewCorrections: (user: UserWithDetails) => void;
 }
 
 const EnhancedUserTable = ({
@@ -79,6 +81,7 @@ const EnhancedUserTable = ({
   onDeleteUser,
   onViewDetails,
   onManageCredits,
+  onViewCorrections,
 }: EnhancedUserTableProps) => {
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
@@ -270,6 +273,10 @@ const EnhancedUserTable = ({
                         <DropdownMenuItem onClick={() => onManageCredits(user)} className="min-h-[44px] text-sm cursor-pointer">
                           <Coins className="h-4 w-4 mr-2" />
                           क्रेडिट प्रबंधन
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onViewCorrections(user)} className="min-h-[44px] text-sm cursor-pointer">
+                          <FileText className="h-4 w-4 mr-2" />
+                          सुधार इतिहास देखें
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 

@@ -1,4 +1,5 @@
 
+import React, { useState } from 'react';
 import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { useAdvancedUserManagement } from "@/hooks/useAdvancedUserManagement";
 import EnhancedUserFilters from "@/components/Admin/UserManagement/EnhancedUserFilters";
 import EnhancedBulkActions from "@/components/Admin/UserManagement/EnhancedBulkActions";
 import EnhancedUserTable from "@/components/Admin/UserManagement/EnhancedUserTable";
+import { UserCorrectionHistoryDialog } from "@/components/Admin/UserCorrections";
 
 const AdminUsers = () => {
   const {
@@ -29,6 +31,10 @@ const AdminUsers = () => {
     isBulkUpdating,
     exportUsers,
   } = useAdvancedUserManagement();
+
+  // State for corrections dialog
+  const [correctionsDialogOpen, setCorrectionsDialogOpen] = useState(false);
+  const [selectedUserForCorrections, setSelectedUserForCorrections] = useState<any>(null);
 
   const handleSelectAll = (checked: boolean, userType: 'admin' | 'regular') => {
     const targetUsers = userType === 'admin' ? adminUsers : regularUsers;
@@ -54,6 +60,11 @@ const AdminUsers = () => {
 
   const refreshData = () => {
     setFilters({ ...filters });
+  };
+
+  const handleViewCorrections = (user: any) => {
+    setSelectedUserForCorrections(user);
+    setCorrectionsDialogOpen(true);
   };
 
   if (isLoading) {
@@ -140,6 +151,7 @@ const AdminUsers = () => {
                   onDeleteUser={(userId) => handleBulkAction('delete', { userIds: [userId] })}
                   onViewDetails={(user) => console.log('View details:', user)}
                   onManageCredits={(user) => console.log('Manage credits:', user)}
+                  onViewCorrections={handleViewCorrections}
                 />
               </CardContent>
             </Card>
@@ -165,6 +177,7 @@ const AdminUsers = () => {
                   onDeleteUser={(userId) => handleBulkAction('delete', { userIds: [userId] })}
                   onViewDetails={(user) => console.log('View admin details:', user)}
                   onManageCredits={(user) => console.log('Manage admin credits:', user)}
+                  onViewCorrections={handleViewCorrections}
                 />
               </CardContent>
             </Card>
@@ -214,6 +227,17 @@ const AdminUsers = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* User Corrections Dialog */}
+        {selectedUserForCorrections && (
+          <UserCorrectionHistoryDialog
+            open={correctionsDialogOpen}
+            onOpenChange={setCorrectionsDialogOpen}
+            userId={selectedUserForCorrections.id}
+            userName={selectedUserForCorrections.name || 'अनाम उपयोगकर्ता'}
+            userEmail={selectedUserForCorrections.email}
+          />
+        )}
       </div>
     </AdminLayoutWithNavigation>
   );
