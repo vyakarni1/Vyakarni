@@ -33,13 +33,15 @@ export const useAdminInvoices = () => {
   });
 
   const fetchInvoices = async () => {
-    let query = supabase
-      .from('payment_transactions')
-      .select(`
-        *,
-        profiles!inner(name, email, phone)
-      `)
-      .order('created_at', { ascending: false });
+    try {
+      console.log('Fetching invoices for admin...');
+      let query = supabase
+        .from('payment_transactions')
+        .select(`
+          *,
+          profiles(name, email, phone)
+        `)
+        .order('created_at', { ascending: false });
 
     // Apply filters
     if (filters.search) {
@@ -97,14 +99,23 @@ export const useAdminInvoices = () => {
       query = query.lte('amount', filters.maxAmount);
     }
 
-    const { data, error } = await query;
+      const { data, error } = await query;
 
-    if (error) throw error;
+      if (error) {
+        console.error('Error fetching invoices:', error);
+        throw error;
+      }
 
-    return data?.map(transaction => ({
-      ...transaction,
-      userInfo: transaction.profiles
-    })) || [];
+      console.log('Fetched invoices data:', data?.length || 0, 'transactions');
+      
+      return data?.map(transaction => ({
+        ...transaction,
+        userInfo: transaction.profiles
+      })) || [];
+    } catch (error) {
+      console.error('Failed to fetch invoices:', error);
+      throw error;
+    }
   };
 
   const { data: invoices = [], isLoading, error, refetch } = useQuery({
