@@ -9,7 +9,8 @@ import {
   Shield,
   BookOpen,
   PenTool,
-  MessageSquare
+  MessageSquare,
+  Receipt
 } from "lucide-react";
 import {
   Sidebar,
@@ -55,6 +56,11 @@ const adminNavItems = [
     name: "संपर्क संदेश", 
     href: "/admin/contacts", 
     icon: MessageSquare 
+  },
+  { 
+    name: "इनवॉयस प्रबंधन", 
+    href: "/admin/invoices", 
+    icon: Receipt 
   },
   { 
     name: "शब्दकोश प्रबंधन", 

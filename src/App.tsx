@@ -35,6 +35,7 @@ import AdminBlog from "./pages/AdminBlog";
 import AdminBlogCreate from "./pages/AdminBlogCreate";
 import AdminBlogEdit from "./pages/AdminBlogEdit";
 import AdminContacts from "./pages/AdminContacts";
+import AdminInvoices from "./pages/AdminInvoices";
 import AdminSettings from "./pages/AdminSettings";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import Blog from "./pages/Blog";
@@ -157,6 +158,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminContacts />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/invoices" 
+                element={
+                  <AdminRoute>
+                    <AdminInvoices />
                   </AdminRoute>
                 } 
               />
