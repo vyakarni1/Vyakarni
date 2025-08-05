@@ -59,10 +59,11 @@ const UserCorrectionHistoryDialog: React.FC<UserCorrectionHistoryDialogProps> = 
 
   useEffect(() => {
     if (open && userId) {
+      console.log('Dialog opened for user:', userId, userName);
       loadData();
       loadStats();
     }
-  }, [open, userId, filters, currentPage]);
+  }, [open, userId, currentPage]); // Removed filters dependency to prevent infinite loop
 
   const loadData = async () => {
     await getTextCorrections(userId, filters, pageSize, currentPage * pageSize);
@@ -76,6 +77,10 @@ const UserCorrectionHistoryDialog: React.FC<UserCorrectionHistoryDialogProps> = 
   const handleFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
     setCurrentPage(0);
+    // Manually trigger data reload when filters change
+    if (userId) {
+      getTextCorrections(userId, newFilters, pageSize, 0);
+    }
   };
 
   const totalPages = Math.ceil(totalCount / pageSize);
@@ -121,14 +126,14 @@ const UserCorrectionHistoryDialog: React.FC<UserCorrectionHistoryDialogProps> = 
           </div>
         </DialogHeader>
 
-        <div className="flex-1 flex gap-6 min-h-0">
+        <div className="flex-1 flex gap-6 min-h-0 overflow-hidden">
           {/* Left Panel - Stats */}
-          <div className="w-80 flex-shrink-0">
+          <div className="w-80 flex-shrink-0 overflow-y-auto">
             <CorrectionStats stats={stats} loading={loading} />
           </div>
 
           {/* Right Panel - Corrections List */}
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
             {showFilters && (
               <div className="mb-4">
                 <CorrectionFilters 
@@ -138,9 +143,9 @@ const UserCorrectionHistoryDialog: React.FC<UserCorrectionHistoryDialogProps> = 
               </div>
             )}
 
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 overflow-hidden">
               <ScrollArea className="h-full">
-                <div className="space-y-4 pr-4">
+                <div className="space-y-4 pr-4 pb-4">
                   {loading ? (
                     <div className="flex items-center justify-center py-12">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

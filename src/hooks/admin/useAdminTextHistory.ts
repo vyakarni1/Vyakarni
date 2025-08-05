@@ -42,6 +42,7 @@ export const useAdminTextHistory = () => {
     offset: number = 0
   ): Promise<AdminTextCorrection[]> => {
     try {
+      console.log('Fetching corrections for user:', userId, 'with filters:', filters);
       setLoading(true);
       
       let query = supabase
@@ -94,6 +95,7 @@ export const useAdminTextHistory = () => {
         return [];
       }
 
+      console.log('Found corrections:', data?.length, 'total count:', count);
       setTotalCount(count || 0);
       
       // Get user profile separately
@@ -110,6 +112,7 @@ export const useAdminTextHistory = () => {
         user_email: userProfile.data?.email,
       })) as AdminTextCorrection[];
       
+      console.log('Processed corrections data:', typedData);
       setCorrections(typedData);
       return typedData;
     } catch (error) {
