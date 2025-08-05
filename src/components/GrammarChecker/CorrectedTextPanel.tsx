@@ -65,7 +65,7 @@ const CorrectedTextPanel = ({
               className: `h-5 w-5 sm:h-6 sm:w-6 transition-all duration-300 ${isLoading ? 'animate-bounce' : ''}` 
             })}
             <span className="hidden sm:inline">{headerTitle}</span>
-            <span className="sm:hidden">{isGrammarMode ? "सुधारा गया" : "शैली सुधारा"}</span>
+            <span className="sm:hidden">{isGrammarMode ? "सुधारा गया पाठ" : "शैली सुधारा गया"}</span>
           </CardTitle>
           <div className="flex items-center space-x-2 sm:space-x-3">
             {currentText && (
