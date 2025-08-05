@@ -27,7 +27,7 @@ const PlanInfoCard = () => {
     plan_name: 'Free',
     plan_type: 'free',
     max_words_per_correction: 1000,
-    features: ['व्याकरण सुधार', 'वर्तनी जांच', '1000 शब्द प्रति सुधार']
+    features: ['व्याकरण सुधार', 'वर्तनी जाँच', '1000 शब्द प्रति सुधार']
   };
 
   const getPlanIcon = () => {
@@ -104,7 +104,7 @@ const PlanInfoCard = () => {
         </div>
 
         <div className="space-y-2">
-          <h4 className="font-medium text-gray-700">सुविधाएं:</h4>
+          <h4 className="font-medium text-gray-700">सुविधायें:</h4>
           <div className="flex flex-wrap gap-2">
             {currentPlan.features.slice(0, 3).map((feature, index) => (
               <Badge key={index} variant="outline" className="text-xs">
