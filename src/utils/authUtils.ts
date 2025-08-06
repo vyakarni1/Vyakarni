@@ -29,6 +29,17 @@ export const isProductionDomain = () => {
 };
 
 export const getAppUrl = () => {
-  // Always use production URL for auth redirects to ensure consistency
-  return 'https://vyakarni.com';
+  // Use current hostname for auth redirects
+  const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
+  const port = window.location.port;
+  
+  // Handle different environments
+  if (hostname === 'vyakarni.com') {
+    return 'https://vyakarni.com';
+  } else if (hostname.includes('lovable.app')) {
+    return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+  } else {
+    return `${protocol}//${hostname}${port ? `:${port}` : ''}`;
+  }
 };
