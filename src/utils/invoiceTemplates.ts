@@ -91,12 +91,12 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   } else if (totalAmount === 11798.82) {
     baseAmount = 9999.00; // Professional Plan
   } else {
-    baseAmount = Number((totalAmount / 1.18).toFixed(2)); // Fallback calculation
+    baseAmount = 999.00; // Default to Hobby plan
   }
   
-  const cgst = Number((baseAmount * 0.09).toFixed(2)); // 9% CGST
-  const sgst = Number((baseAmount * 0.09).toFixed(2)); // 9% SGST
-  const calculatedTotal = Number((baseAmount + cgst + sgst).toFixed(2));
+  const cgst = baseAmount * 0.09; // 9% CGST
+  const sgst = baseAmount * 0.09; // 9% SGST
+  const calculatedTotal = baseAmount + cgst + sgst;
   
   doc.text('Vyakarni Word Credits Purchase', 25, rowY);
   doc.text(new Date(data.transaction.created_at).toLocaleDateString('en-IN'), 90, rowY);
