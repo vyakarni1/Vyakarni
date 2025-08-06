@@ -86,12 +86,10 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   
   // Set exact base amounts based on plan type
   let baseAmount: number;
-  if (totalAmount === 1178.82) {
-    baseAmount = 999.00; // Hobby Plan
-  } else if (totalAmount === 11798.82) {
+  if (totalAmount > 10000) {
     baseAmount = 9999.00; // Professional Plan
   } else {
-    baseAmount = 999.00; // Default to Hobby plan
+    baseAmount = 999.00; // Hobby Plan
   }
   
   const cgst = baseAmount * 0.09; // 9% CGST
