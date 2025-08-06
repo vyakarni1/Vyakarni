@@ -47,18 +47,26 @@ const AdminUserCorrections = () => {
 
   // Load initial corrections and stats
   useEffect(() => {
+    console.log('Loading initial data...');
     loadInitialCorrections();
     loadStats();
   }, []);
 
-  // Reload when filters change
+  // Reload when filters change (only if filters are active)
   useEffect(() => {
-    if (filters.search || filters.processingType !== 'all' || filters.dateRange.from || filters.userEmail) {
+    const hasActiveFilters = filters.search || 
+                           filters.processingType !== 'all' || 
+                           filters.dateRange.from || 
+                           filters.userEmail;
+    
+    if (hasActiveFilters) {
+      console.log('Filters changed, reloading...', filters);
       loadCorrections();
     }
   }, [filters]);
 
   const loadInitialCorrections = async () => {
+    console.log('Loading initial 10 corrections...');
     const params = {
       sortBy: 'newest',
       page: 0,
@@ -66,6 +74,7 @@ const AdminUserCorrections = () => {
     };
     
     const data = await getTextCorrections(params);
+    console.log('Initial corrections loaded:', data.length);
     setLoadedCount(data.length);
   };
 
@@ -268,7 +277,25 @@ const AdminUserCorrections = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {corrections && corrections.length > 0 ? (
+            <div className="text-center py-4 mb-4">
+              <p className="text-sm text-muted-foreground">
+                कुल {totalCount} सुधार रिकॉर्ड में से {corrections.length} दिखाए जा रहे हैं
+              </p>
+              {/* Debug info */}
+              <div className="mt-2 p-2 bg-muted rounded text-xs">
+                <p>Debug: corrections.length = {corrections.length}</p>
+                <p>totalCount = {totalCount}</p>
+                <p>loading = {loading.toString()}</p>
+                <p>loadedCount = {loadedCount}</p>
+              </div>
+            </div>
+            
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-2">डेटा लोड हो रहा है...</span>
+              </div>
+            ) : corrections && corrections.length > 0 ? (
               <div className="space-y-4">
                 {corrections.map((correction, index) => (
                   <CorrectionCard
@@ -311,6 +338,16 @@ const AdminUserCorrections = () => {
                     : "अभी तक कोई सुधार रिकॉर्ड नहीं है।"
                   }
                 </p>
+                <div className="mt-4 p-4 bg-muted rounded text-sm">
+                  <p>Debug Information:</p>
+                  <p>• totalCount: {totalCount}</p>
+                  <p>• corrections.length: {corrections.length}</p>
+                  <p>• loadedCount: {loadedCount}</p>
+                  <p>• loading: {loading.toString()}</p>
+                  <p>• filters.processingType: {filters.processingType}</p>
+                  <p>• Has search: {!!filters.search}</p>
+                  <p>• Has userEmail: {!!filters.userEmail}</p>
+                </div>
               </div>
             )}
           </CardContent>

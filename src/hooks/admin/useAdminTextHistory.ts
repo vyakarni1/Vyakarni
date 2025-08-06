@@ -44,7 +44,7 @@ export const useAdminTextHistory = () => {
     } = {}
   ): Promise<AdminTextCorrection[]> => {
     try {
-      console.log('Fetching corrections with params:', params);
+      console.log('useAdminTextHistory: Fetching corrections with params:', params);
       setLoading(true);
       
       let query = supabase
@@ -116,7 +116,7 @@ export const useAdminTextHistory = () => {
         return [];
       }
 
-      console.log('Found corrections:', data?.length, 'total count:', count);
+      console.log('useAdminTextHistory: Found corrections:', data?.length, 'total count:', count);
       setTotalCount(count || 0);
       
       const typedData = (data || []).map(item => ({
@@ -126,7 +126,7 @@ export const useAdminTextHistory = () => {
         user_email: (item as any).profiles?.email,
       })) as AdminTextCorrection[];
       
-      console.log('Processed corrections data:', typedData);
+      console.log('useAdminTextHistory: Processed corrections data:', typedData.length, 'items');
       
       if (params.append) {
         setCorrections(prev => [...prev, ...typedData]);
