@@ -79,8 +79,13 @@ export const useAdminTextHistory = () => {
           query = query.in('user_id', userIds);
         } else {
           // No users found, return empty
-          setCorrections([]);
-          setTotalCount(0);
+          console.log('useAdminTextHistory: No users found for email:', params.userEmail);
+          if (params.append) {
+            // Don't modify existing data if appending
+          } else {
+            setCorrections([]);
+            setTotalCount(0);
+          }
           return [];
         }
       }
@@ -112,12 +117,16 @@ export const useAdminTextHistory = () => {
         .range(offset, offset + limit - 1);
 
       if (error) {
-        console.error('Error fetching text corrections:', error);
+        console.error('useAdminTextHistory: Error fetching text corrections:', error);
         return [];
       }
 
+      console.log('useAdminTextHistory: Raw data received:', data);
       console.log('useAdminTextHistory: Found corrections:', data?.length, 'total count:', count);
-      setTotalCount(count || 0);
+      
+      if (!params.append) {
+        setTotalCount(count || 0);
+      }
       
       const typedData = (data || []).map(item => ({
         ...item,
@@ -127,15 +136,22 @@ export const useAdminTextHistory = () => {
       })) as AdminTextCorrection[];
       
       console.log('useAdminTextHistory: Processed corrections data:', typedData.length, 'items');
+      console.log('useAdminTextHistory: First item example:', typedData[0]);
       
       if (params.append) {
-        setCorrections(prev => [...prev, ...typedData]);
+        console.log('useAdminTextHistory: Appending to existing corrections');
+        setCorrections(prev => {
+          const newData = [...prev, ...typedData];
+          console.log('useAdminTextHistory: New total after append:', newData.length);
+          return newData;
+        });
       } else {
+        console.log('useAdminTextHistory: Setting new corrections data');
         setCorrections(typedData);
       }
       return typedData;
     } catch (error) {
-      console.error('Error in getTextCorrections:', error);
+      console.error('useAdminTextHistory: Error in getTextCorrections:', error);
       return [];
     } finally {
       setLoading(false);

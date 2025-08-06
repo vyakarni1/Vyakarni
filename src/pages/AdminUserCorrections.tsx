@@ -45,12 +45,15 @@ const AdminUserCorrections = () => {
     userEmail: ''
   });
 
-  // Load initial corrections and stats
+  // Load initial corrections and stats on mount
   useEffect(() => {
-    console.log('Loading initial data...');
-    loadInitialCorrections();
-    loadStats();
-  }, []);
+    console.log('AdminUserCorrections: Component mounted, loading initial data...');
+    const loadInitial = async () => {
+      await loadInitialCorrections();
+      await loadStats();
+    };
+    loadInitial();
+  }, []); // Empty dependency array - only run on mount
 
   // Reload when filters change (only if filters are active)
   useEffect(() => {
@@ -60,22 +63,26 @@ const AdminUserCorrections = () => {
                            filters.userEmail;
     
     if (hasActiveFilters) {
-      console.log('Filters changed, reloading...', filters);
+      console.log('AdminUserCorrections: Filters changed, reloading...', filters);
       loadCorrections();
     }
   }, [filters]);
 
   const loadInitialCorrections = async () => {
-    console.log('Loading initial 10 corrections...');
+    console.log('AdminUserCorrections: Loading initial 10 corrections...');
     const params = {
       sortBy: 'newest',
       page: 0,
       limit: 10
     };
     
-    const data = await getTextCorrections(params);
-    console.log('Initial corrections loaded:', data.length);
-    setLoadedCount(data.length);
+    try {
+      const data = await getTextCorrections(params);
+      console.log('AdminUserCorrections: Initial corrections loaded:', data.length);
+      setLoadedCount(data.length);
+    } catch (error) {
+      console.error('AdminUserCorrections: Error loading initial corrections:', error);
+    }
   };
 
   const loadCorrections = async () => {
