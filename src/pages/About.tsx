@@ -708,7 +708,7 @@ const About = () => {
                 <BookOpen className="h-8 w-8 text-green-600 mx-auto mt-2" />
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-purple-600 mb-2">99%</div>
+                <div className="text-4xl font-bold text-purple-600 mb-2">98%</div>
                 <div className="text-gray-600">{language === "english" ? "Accurate Corrections" : "सटीक सुधार"}</div>
                 <Award className="h-8 w-8 text-purple-600 mx-auto mt-2" />
               </div>
