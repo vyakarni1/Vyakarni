@@ -82,7 +82,8 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   
   // Transaction Row
   const rowY = tableStartY + 15;
-  const baseAmount = Number(data.transaction.amount); // Transaction amount is the base amount
+  const totalAmount = Number(data.transaction.amount);
+  const baseAmount = Number((totalAmount / 1.18).toFixed(2)); // Calculate base from total (removing 18% tax)
   const cgst = Number((baseAmount * 0.09).toFixed(2)); // 9% CGST
   const sgst = Number((baseAmount * 0.09).toFixed(2)); // 9% SGST
   const calculatedTotal = Number((baseAmount + cgst + sgst).toFixed(2));
