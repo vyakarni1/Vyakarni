@@ -83,7 +83,17 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   // Transaction Row
   const rowY = tableStartY + 15;
   const totalAmount = Number(data.transaction.amount);
-  const baseAmount = Number((totalAmount / 1.18).toFixed(2)); // Calculate base from total (removing 18% tax)
+  
+  // Set exact base amounts based on plan type
+  let baseAmount: number;
+  if (totalAmount === 1178.82) {
+    baseAmount = 999.00; // Hobby Plan
+  } else if (totalAmount === 11798.82) {
+    baseAmount = 9999.00; // Professional Plan
+  } else {
+    baseAmount = Number((totalAmount / 1.18).toFixed(2)); // Fallback calculation
+  }
+  
   const cgst = Number((baseAmount * 0.09).toFixed(2)); // 9% CGST
   const sgst = Number((baseAmount * 0.09).toFixed(2)); // 9% SGST
   const calculatedTotal = Number((baseAmount + cgst + sgst).toFixed(2));
