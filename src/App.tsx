@@ -88,7 +88,7 @@ function App() {
                 } 
               />
               <Route 
-                path="/grammar-checker" 
+                path="/hindi-grammar-checker-and-correction" 
                 element={
                   <ProtectedRoute>
                     <Index />
