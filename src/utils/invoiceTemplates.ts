@@ -82,27 +82,27 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   
   // Transaction Row
   const rowY = tableStartY + 15;
-  const baseAmount = Math.round(data.transaction.amount / 1.18); // Remove GST to get base
-  const gstAmount = data.transaction.amount - baseAmount;
-  const cgst = Math.round(gstAmount / 2);
-  const sgst = gstAmount - cgst; // Ensure total GST matches exactly
+  const baseAmount = Number((data.transaction.amount / 1.18).toFixed(2)); // Remove GST to get base
+  const gstAmount = Number((data.transaction.amount - baseAmount).toFixed(2));
+  const cgst = Number((gstAmount / 2).toFixed(2));
+  const sgst = Number((gstAmount - cgst).toFixed(2)); // Ensure total GST matches exactly
   
   doc.text('Vyakarni Word Credits Purchase', 25, rowY);
   doc.text(new Date(data.transaction.created_at).toLocaleDateString('en-IN'), 90, rowY);
-  doc.text(baseAmount.toString(), 140, rowY);
+  doc.text(baseAmount.toFixed(2), 140, rowY);
   
   // Tax Breakdown
   const taxStartY = rowY + 20;
   doc.text('Tax Breakdown:', 25, taxStartY);
-  doc.text(`Base Amount: ₹${baseAmount}`, 25, taxStartY + 10);
-  doc.text(`CGST (9%): ₹${cgst}`, 25, taxStartY + 20);
-  doc.text(`SGST (9%): ₹${sgst}`, 25, taxStartY + 30);
+  doc.text(`Base Amount: ₹${baseAmount.toFixed(2)}`, 25, taxStartY + 10);
+  doc.text(`CGST (9%): ₹${cgst.toFixed(2)}`, 25, taxStartY + 20);
+  doc.text(`SGST (9%): ₹${sgst.toFixed(2)}`, 25, taxStartY + 30);
   
   // Total Section
   doc.setFontSize(12);
   doc.setFillColor(240, 240, 240);
   doc.rect(100, taxStartY + 40, pageWidth - 120, 15, 'F');
-  doc.text(`Total Amount: ₹${data.transaction.amount}`, 105, taxStartY + 50);
+  doc.text(`Total Amount: ₹${Number(data.transaction.amount).toFixed(2)}`, 105, taxStartY + 50);
   
   // Payment Details
   const paymentY = taxStartY + 70;
