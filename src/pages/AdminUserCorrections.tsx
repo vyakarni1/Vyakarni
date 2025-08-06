@@ -36,7 +36,7 @@ interface CorrectionFilter {
 const AdminUserCorrections = () => {
   const { loading, corrections, totalCount, getTextCorrections, getCorrectionStats } = useAdminTextHistory();
   const [stats, setStats] = useState<any>(null);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [loadedCount, setLoadedCount] = useState(0);
   const [filters, setFilters] = useState<CorrectionFilter>({
     search: '',
     processingType: 'all',
@@ -45,11 +45,29 @@ const AdminUserCorrections = () => {
     userEmail: ''
   });
 
-  // Load corrections and stats
+  // Load initial corrections and stats
   useEffect(() => {
-    loadCorrections();
+    loadInitialCorrections();
     loadStats();
-  }, [filters, currentPage]);
+  }, []);
+
+  // Reload when filters change
+  useEffect(() => {
+    if (filters.search || filters.processingType !== 'all' || filters.dateRange.from || filters.userEmail) {
+      loadCorrections();
+    }
+  }, [filters]);
+
+  const loadInitialCorrections = async () => {
+    const params = {
+      sortBy: 'newest',
+      page: 0,
+      limit: 10
+    };
+    
+    const data = await getTextCorrections(params);
+    setLoadedCount(data.length);
+  };
 
   const loadCorrections = async () => {
     const params = {
@@ -59,11 +77,30 @@ const AdminUserCorrections = () => {
       endDate: filters.dateRange.to?.toISOString(),
       sortBy: filters.sortBy,
       userEmail: filters.userEmail,
-      page: currentPage,
+      page: 0,
       limit: 20
     };
     
-    await getTextCorrections(params);
+    const data = await getTextCorrections(params);
+    setLoadedCount(data.length);
+  };
+
+  const loadMoreCorrections = async () => {
+    const nextPage = Math.floor(loadedCount / 10);
+    const params = {
+      search: filters.search,
+      processingType: filters.processingType !== 'all' ? filters.processingType : undefined,
+      startDate: filters.dateRange.from?.toISOString(),
+      endDate: filters.dateRange.to?.toISOString(),
+      sortBy: filters.sortBy,
+      userEmail: filters.userEmail,
+      page: nextPage,
+      limit: 10,
+      append: true // This will be used to append data instead of replacing
+    };
+    
+    const data = await getTextCorrections(params);
+    setLoadedCount(prev => prev + data.length);
   };
 
   const loadStats = async () => {
@@ -86,7 +123,7 @@ const AdminUserCorrections = () => {
 
   const handleFilterChange = (newFilters: Partial<CorrectionFilter>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
-    setCurrentPage(0);
+    setLoadedCount(0);
   };
 
   const resetFilters = () => {
@@ -97,7 +134,8 @@ const AdminUserCorrections = () => {
       sortBy: 'newest',
       userEmail: ''
     });
-    setCurrentPage(0);
+    setLoadedCount(0);
+    loadInitialCorrections();
   };
 
   return (
@@ -240,30 +278,28 @@ const AdminUserCorrections = () => {
                   />
                 ))}
 
-                {/* Pagination */}
-                <div className="flex items-center justify-between pt-4">
-                  <div className="text-sm text-muted-foreground">
-                    {currentPage * 20 + 1} - {Math.min((currentPage + 1) * 20, totalCount)} of {totalCount} रिकॉर्ड
-                  </div>
-                  <div className="flex items-center gap-2">
+                {/* Load More Button */}
+                {loadedCount < totalCount && (
+                  <div className="flex justify-center pt-4">
                     <Button
                       variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-                      disabled={currentPage === 0}
+                      onClick={loadMoreCorrections}
+                      disabled={loading}
+                      className="w-full sm:w-auto"
                     >
-                      पिछला
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(prev => prev + 1)}
-                      disabled={(currentPage + 1) * 20 >= totalCount}
-                    >
-                      अगला
+                      {loading ? (
+                        <>
+                          <Clock className="w-4 h-4 mr-2 animate-spin" />
+                          लोड हो रहा है...
+                        </>
+                      ) : (
+                        <>
+                          और देखें ({totalCount - loadedCount} और रिकॉर्ड)
+                        </>
+                      )}
                     </Button>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="text-center py-12">

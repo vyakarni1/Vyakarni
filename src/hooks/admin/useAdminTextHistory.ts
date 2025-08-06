@@ -40,6 +40,7 @@ export const useAdminTextHistory = () => {
       userEmail?: string;
       page?: number;
       limit?: number;
+      append?: boolean;
     } = {}
   ): Promise<AdminTextCorrection[]> => {
     try {
@@ -126,7 +127,12 @@ export const useAdminTextHistory = () => {
       })) as AdminTextCorrection[];
       
       console.log('Processed corrections data:', typedData);
-      setCorrections(typedData);
+      
+      if (params.append) {
+        setCorrections(prev => [...prev, ...typedData]);
+      } else {
+        setCorrections(typedData);
+      }
       return typedData;
     } catch (error) {
       console.error('Error in getTextCorrections:', error);
