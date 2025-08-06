@@ -66,11 +66,17 @@ const UserCorrectionHistoryDialog: React.FC<UserCorrectionHistoryDialogProps> = 
   }, [open, userId, currentPage]); // Removed filters dependency to prevent infinite loop
 
   const loadData = async () => {
-    await getTextCorrections(userId, filters, pageSize, currentPage * pageSize);
+    await getTextCorrections({ 
+      userId, 
+      page: currentPage, 
+      limit: pageSize,
+      search: filters.search,
+      processingType: filters.processing_type !== 'all' ? filters.processing_type : undefined
+    });
   };
 
   const loadStats = async () => {
-    const userStats = await getCorrectionStats(userId);
+    const userStats = await getCorrectionStats({ userId });
     setStats(userStats);
   };
 
@@ -79,7 +85,13 @@ const UserCorrectionHistoryDialog: React.FC<UserCorrectionHistoryDialogProps> = 
     setCurrentPage(0);
     // Manually trigger data reload when filters change
     if (userId) {
-      getTextCorrections(userId, newFilters, pageSize, 0);
+      getTextCorrections({ 
+        userId, 
+        page: 0, 
+        limit: pageSize,
+        search: newFilters.search,
+        processingType: newFilters.processing_type !== 'all' ? newFilters.processing_type : undefined
+      });
     }
   };
 

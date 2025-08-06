@@ -30,63 +30,83 @@ export const useAdminTextHistory = () => {
   const [totalCount, setTotalCount] = useState(0);
 
   const getTextCorrections = useCallback(async (
-    userId: string,
-    filters: CorrectionFilters = {
-      search: '',
-      processing_type: 'all',
-      date_range: 'all',
-      min_words: 0,
-      max_words: 1000000
-    },
-    limit: number = 20,
-    offset: number = 0
+    params: {
+      userId?: string;
+      search?: string;
+      processingType?: string;
+      startDate?: string;
+      endDate?: string;
+      sortBy?: string;
+      userEmail?: string;
+      page?: number;
+      limit?: number;
+    } = {}
   ): Promise<AdminTextCorrection[]> => {
     try {
-      console.log('Fetching corrections for user:', userId, 'with filters:', filters);
+      console.log('Fetching corrections with params:', params);
       setLoading(true);
       
       let query = supabase
         .from('text_corrections')
-        .select('*', { count: 'exact' })
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .select(`
+          *,
+          profiles(name, email)
+        `, { count: 'exact' });
 
       // Apply filters
-      if (filters.processing_type !== 'all') {
-        query = query.eq('processing_type', filters.processing_type);
+      if (params.userId) {
+        query = query.eq('user_id', params.userId);
       }
 
-      if (filters.search) {
-        query = query.or(`original_text.ilike.%${filters.search}%,corrected_text.ilike.%${filters.search}%`);
+      if (params.processingType && params.processingType !== 'all') {
+        query = query.eq('processing_type', params.processingType);
       }
 
-      if (filters.date_range !== 'all') {
-        const now = new Date();
-        let startDate = new Date();
+      if (params.search) {
+        query = query.or(`original_text.ilike.%${params.search}%,corrected_text.ilike.%${params.search}%`);
+      }
+
+      if (params.userEmail) {
+        // First get user IDs matching the email
+        const { data: users } = await supabase
+          .from('profiles')
+          .select('id')
+          .ilike('email', `%${params.userEmail}%`);
         
-        switch (filters.date_range) {
-          case 'today':
-            startDate.setHours(0, 0, 0, 0);
-            break;
-          case 'week':
-            startDate.setDate(now.getDate() - 7);
-            break;
-          case 'month':
-            startDate.setMonth(now.getMonth() - 1);
-            break;
+        if (users && users.length > 0) {
+          const userIds = users.map(u => u.id);
+          query = query.in('user_id', userIds);
+        } else {
+          // No users found, return empty
+          setCorrections([]);
+          setTotalCount(0);
+          return [];
         }
-        
-        query = query.gte('created_at', startDate.toISOString());
       }
 
-      if (filters.min_words > 0) {
-        query = query.gte('words_used', filters.min_words);
+      if (params.startDate) {
+        query = query.gte('created_at', params.startDate);
       }
 
-      if (filters.max_words < 1000000) {
-        query = query.lte('words_used', filters.max_words);
+      if (params.endDate) {
+        query = query.lte('created_at', params.endDate);
       }
 
+      // Apply sorting
+      const sortOrder = params.sortBy === 'oldest' ? { ascending: true } : { ascending: false };
+      if (params.sortBy === 'most_words') {
+        query = query.order('words_used', { ascending: false });
+      } else if (params.sortBy === 'most_corrections') {
+        query = query.order('corrections_data->0', { ascending: false });
+      } else {
+        query = query.order('created_at', sortOrder);
+      }
+
+      // Apply pagination
+      const page = params.page || 0;
+      const limit = params.limit || 20;
+      const offset = page * limit;
+      
       const { data, error, count } = await query
         .range(offset, offset + limit - 1);
 
@@ -98,18 +118,11 @@ export const useAdminTextHistory = () => {
       console.log('Found corrections:', data?.length, 'total count:', count);
       setTotalCount(count || 0);
       
-      // Get user profile separately
-      const userProfile = await supabase
-        .from('profiles')
-        .select('name, email')
-        .eq('id', userId)
-        .single();
-      
       const typedData = (data || []).map(item => ({
         ...item,
         corrections_data: (item.corrections_data as any) || [],
-        user_name: userProfile.data?.name,
-        user_email: userProfile.data?.email,
+        user_name: (item as any).profiles?.name,
+        user_email: (item as any).profiles?.email,
       })) as AdminTextCorrection[];
       
       console.log('Processed corrections data:', typedData);
@@ -123,12 +136,34 @@ export const useAdminTextHistory = () => {
     }
   }, []);
 
-  const getCorrectionStats = useCallback(async (userId: string) => {
+  const getCorrectionStats = useCallback(async (params: {
+    userId?: string;
+    startDate?: string;
+    endDate?: string;
+    processingType?: string;
+  } = {}) => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('text_corrections')
-        .select('processing_type, words_used, created_at')
-        .eq('user_id', userId);
+        .select('processing_type, words_used, created_at');
+
+      if (params.userId) {
+        query = query.eq('user_id', params.userId);
+      }
+
+      if (params.processingType && params.processingType !== 'all') {
+        query = query.eq('processing_type', params.processingType);
+      }
+
+      if (params.startDate) {
+        query = query.gte('created_at', params.startDate);
+      }
+
+      if (params.endDate) {
+        query = query.lte('created_at', params.endDate);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching correction stats:', error);

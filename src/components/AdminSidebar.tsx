@@ -10,7 +10,8 @@ import {
   BookOpen,
   PenTool,
   MessageSquare,
-  Receipt
+  Receipt,
+  History
 } from "lucide-react";
 import {
   Sidebar,
@@ -35,6 +36,11 @@ const adminNavItems = [
     name: "उपयोगकर्ता", 
     href: "/admin/users", 
     icon: Users 
+  },
+  { 
+    name: "उपयोगकर्ता सुधार", 
+    href: "/admin/corrections", 
+    icon: History 
   },
   { 
     name: "एनालिटिक्स", 

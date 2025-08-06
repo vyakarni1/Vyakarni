@@ -38,6 +38,7 @@ import AdminContacts from "./pages/AdminContacts";
 import AdminInvoices from "./pages/AdminInvoices";
 import AdminSettings from "./pages/AdminSettings";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminUserCorrections from "./pages/AdminUserCorrections";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 
@@ -182,6 +183,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminAnalytics />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/corrections" 
+                element={
+                  <AdminRoute>
+                    <AdminUserCorrections />
                   </AdminRoute>
                 } 
               />
