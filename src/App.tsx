@@ -72,6 +72,32 @@ function App() {
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               
+              {/* Grammar Checker Routes - both protected and alternative routes */}
+              <Route 
+                path="/hindi-grammar-checker-and-correction" 
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/grammar-checker" 
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/vyakarni" 
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } 
+              />
+              
               <Route 
                 path="/dashboard" 
                 element={
@@ -88,16 +114,9 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route 
-                path="/hindi-grammar-checker-and-correction" 
-                element={
-                  <ProtectedRoute>
-                    <Index />
-                  </ProtectedRoute>
-                } 
-              />
               <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
               
+              {/* Admin Routes */}
               <Route 
                 path="/admin" 
                 element={
