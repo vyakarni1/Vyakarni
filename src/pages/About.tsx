@@ -556,7 +556,7 @@ const About = () => {
                   <CardTitle className="text-lg">{language === "english" ? "Accuracy" : "सटीकता"}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">{language === "english" ? "99% accurate grammar correction and reliable results" : "99% सटीक व्याकरण सुधार और विश्वसनीय परिणाम"}</p>
+                  <p className="text-sm text-gray-600">{language === "english" ? "98% accurate grammar correction and reliable results" : "98% सटीक व्याकरण सुधार और विश्वसनीय परिणाम"}</p>
                 </CardContent>
               </Card>
 

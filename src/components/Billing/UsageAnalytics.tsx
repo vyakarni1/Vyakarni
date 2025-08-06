@@ -19,7 +19,7 @@ const UsageAnalytics = () => {
   // Get current tier based on purchased words
   const getCurrentTier = () => {
     if (balance.purchased_words >= 25000) {
-      return { name: 'प्रोफेशनल', maxWordsPerCorrection: 2000 };
+      return { name: 'प्रोफेशनल', maxWordsPerCorrection: 1000 };
     } else if (balance.purchased_words >= 5000) {
       return { name: 'हॉबी', maxWordsPerCorrection: 500 };
     } else {
