@@ -149,7 +149,7 @@ const SecurityDashboard = ({ metrics, threats, onRefresh }: SecurityDashboardPro
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span>फायरवॉल सुरक्षा</span>
-                <span className="text-green-600">98%</span>
+                <span className="text-green-600">99%</span>
               </div>
               <Progress value={98} className="h-2" />
             </div>

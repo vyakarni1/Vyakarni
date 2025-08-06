@@ -19,7 +19,7 @@ const Header = () => {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 lg:gap-6 mt-4 sm:mt-6 lg:mt-8">
         <div className="flex items-center gap-2 text-slate-500">
           <Target className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-          <span className="text-xs sm:text-sm font-medium">98% सटीकता</span>
+          <span className="text-xs sm:text-sm font-medium">99% सटीकता</span>
         </div>
         <div className="flex items-center gap-2 text-slate-500">
           <Zap className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />

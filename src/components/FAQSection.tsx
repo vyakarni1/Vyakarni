@@ -38,7 +38,7 @@ const FAQSection = ({ content, language }: FAQSectionProps) => {
     },
     {
       question: "How accurate is Vyakarni?",
-      answer: "Vyakarni boasts 98% accuracy in Hindi grammar checking, powered by advanced AI models specifically trained for Hindi language processing."
+      answer: "Vyakarni boasts 99% accuracy in Hindi grammar checking, powered by advanced AI models specifically trained for Hindi language processing."
     }
   ] : [
     {
@@ -63,7 +63,7 @@ const FAQSection = ({ content, language }: FAQSectionProps) => {
     },
     {
       question: "व्याकरणी कितना सटीक है?",
-      answer: "व्याकरणी हिंदी व्याकरण जाँच में 98% सटीकता का दावा करता है, जो विशेष रूप से हिंदी भाषा प्रसंस्करण के लिये प्रशिक्षित उन्नत AI मॉडल द्वारा संचालित है।"
+      answer: "व्याकरणी हिंदी व्याकरण जाँच में 99% सटीकता का दावा करता है, जो विशेष रूप से हिंदी भाषा प्रसंस्करण के लिये प्रशिक्षित उन्नत AI मॉडल द्वारा संचालित है।"
     }
   ];
 

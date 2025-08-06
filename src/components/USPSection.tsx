@@ -26,8 +26,8 @@ const USPSection = ({ content, language }: USPSectionProps) => {
     },
     {
       icon: Award,
-      title: '98% accuracy',
-      description: '98% accurate text and grammar correction with AI power.',
+      title: '99% accuracy',
+      description: '99% accurate text and grammar correction with AI power.',
       gradient: 'from-cyan-400 to-blue-500'
     },
     {
@@ -63,8 +63,8 @@ const USPSection = ({ content, language }: USPSectionProps) => {
     },
     {
       icon: Award,
-      title: '98% सटीकता',
-      description: 'AI की शक्ति से 98% सटीक लेख एवं व्याकरण सुधार।',
+      title: '99% सटीकता',
+      description: 'AI की शक्ति से 99% सटीक लेख एवं व्याकरण सुधार।',
       gradient: 'from-cyan-400 to-blue-500'
     },
     {
