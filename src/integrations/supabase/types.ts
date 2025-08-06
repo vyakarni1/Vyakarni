@@ -1103,7 +1103,15 @@ export type Database = {
           user_id?: string
           words_used?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_text_corrections_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_login_activity: {
         Row: {

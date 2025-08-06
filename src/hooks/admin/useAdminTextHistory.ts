@@ -45,17 +45,7 @@ export const useAdminTextHistory = () => {
   ): Promise<AdminTextCorrection[]> => {
     try {
       console.log('useAdminTextHistory: Fetching corrections with params:', params);
-      console.log('useAdminTextHistory: Current user:', await supabase.auth.getUser());
       setLoading(true);
-      
-      // Check if user is admin
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log('useAdminTextHistory: Current user ID:', user?.id);
-      
-      // Check admin status
-      const { data: adminCheck } = await supabase
-        .rpc('is_admin', { _user_id: user?.id });
-      console.log('useAdminTextHistory: Is admin?', adminCheck);
       
       let query = supabase
         .from('text_corrections')
@@ -123,23 +113,11 @@ export const useAdminTextHistory = () => {
       const limit = params.limit || 20;
       const offset = page * limit;
       
-      console.log('useAdminTextHistory: Executing query...');
       const { data, error, count } = await query
         .range(offset, offset + limit - 1);
 
-      console.log('useAdminTextHistory: Query executed. Error:', error);
-      console.log('useAdminTextHistory: Data received:', data);
-      console.log('useAdminTextHistory: Count:', count);
-
       if (error) {
         console.error('useAdminTextHistory: Error fetching text corrections:', error);
-        // Try a simple query without joins to test RLS
-        console.log('useAdminTextHistory: Trying simple query without joins...');
-        const { data: simpleData, error: simpleError } = await supabase
-          .from('text_corrections')
-          .select('*')
-          .limit(5);
-        console.log('useAdminTextHistory: Simple query result:', simpleData, simpleError);
         return [];
       }
 

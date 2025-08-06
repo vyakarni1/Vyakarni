@@ -284,19 +284,6 @@ const AdminUserCorrections = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-4 mb-4">
-              <p className="text-sm text-muted-foreground">
-                कुल {totalCount} सुधार रिकॉर्ड में से {corrections.length} दिखाए जा रहे हैं
-              </p>
-              {/* Debug info */}
-              <div className="mt-2 p-2 bg-muted rounded text-xs">
-                <p>Debug: corrections.length = {corrections.length}</p>
-                <p>totalCount = {totalCount}</p>
-                <p>loading = {loading.toString()}</p>
-                <p>loadedCount = {loadedCount}</p>
-              </div>
-            </div>
-            
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -345,16 +332,6 @@ const AdminUserCorrections = () => {
                     : "अभी तक कोई सुधार रिकॉर्ड नहीं है।"
                   }
                 </p>
-                <div className="mt-4 p-4 bg-muted rounded text-sm">
-                  <p>Debug Information:</p>
-                  <p>• totalCount: {totalCount}</p>
-                  <p>• corrections.length: {corrections.length}</p>
-                  <p>• loadedCount: {loadedCount}</p>
-                  <p>• loading: {loading.toString()}</p>
-                  <p>• filters.processingType: {filters.processingType}</p>
-                  <p>• Has search: {!!filters.search}</p>
-                  <p>• Has userEmail: {!!filters.userEmail}</p>
-                </div>
               </div>
             )}
           </CardContent>
