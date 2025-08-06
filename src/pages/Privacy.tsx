@@ -304,6 +304,57 @@ const Privacy = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* JSON-LD Schema for Privacy Policy */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Privacy Policy - Vyakarni Hindi Grammar Checker",
+            "description": "Learn how Vyakarni Hindi Grammar Checker protects your privacy. Comprehensive privacy policy covering data collection, usage, and protection for our AI-powered language enhancement services.",
+            "url": "https://vyakarni.com/privacy",
+            "mainEntity": {
+              "@type": "LegalDocument",
+              "name": "Privacy Policy for Vyakarni Hindi Grammar Checker",
+              "description": "Detailed privacy policy explaining how Vyakarni Hindi Grammar Checker collects, uses, and protects user information in compliance with Indian data protection laws.",
+              "dateModified": "2025-05-28",
+              "publisher": {
+                "@type": "Organization",
+                "name": "SNS Innovation Labs Pvt. Ltd.",
+                "alternateName": "Vyakarni Hindi Grammar Checker",
+                "url": "https://vyakarni.com",
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "email": "support@vyakarni.com",
+                  "contactType": "customer service"
+                }
+              },
+              "about": {
+                "@type": "SoftwareApplication",
+                "name": "Vyakarni Hindi Grammar Checker",
+                "description": "AI-powered Hindi Grammar Checker and language enhancement platform",
+                "applicationCategory": "EducationApplication"
+              }
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://vyakarni.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Privacy Policy",
+                  "item": "https://vyakarni.com/privacy"
+                }
+              ]
+            }
+          })
+        }} />
+        
         <div className="container mx-auto px-6 py-12">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">

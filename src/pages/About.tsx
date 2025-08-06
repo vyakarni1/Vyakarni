@@ -92,6 +92,91 @@ const About = () => {
   ];
   return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* JSON-LD Schema for About Page */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "name": "About Vyakarni - Hindi Grammar Checker Team",
+            "description": "Learn about Vyakarni, the leading AI-powered Hindi Grammar Checker team. Our mission is to advance Hindi language in the digital age with cutting-edge technology.",
+            "url": "https://vyakarni.com/about",
+            "mainEntity": {
+              "@type": "Organization",
+              "name": "SNS Innovation Labs Pvt. Ltd.",
+              "alternateName": "Vyakarni Hindi Grammar Checker",
+              "description": "Leading developer of AI-powered Hindi Grammar Checker and language enhancement tools. We are committed to advancing Hindi language technology.",
+              "url": "https://vyakarni.com",
+              "logo": "https://vyakarni.com/lovable-uploads/954d81b5-0bf6-4f63-8a18-eb3a2cdf4e7a.png",
+              "foundingDate": "2024-01-01",
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "IN",
+                "addressLocality": "Noida",
+                "addressRegion": "Uttar Pradesh"
+              },
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+91-XXX-XXX-XXXX",
+                "contactType": "customer service",
+                "email": "support@vyakarni.com",
+                "availableLanguage": ["Hindi", "English"],
+                "areaServed": "IN"
+              },
+              "employee": [
+                {
+                  "@type": "Person",
+                  "name": "Satyen Srivastava",
+                  "jobTitle": "Founder & Chief Executive Officer",
+                  "description": "Pioneer in Hindi AI and Hindi Grammar Checker technology. Expert in AI innovation and Hindi language enhancement."
+                },
+                {
+                  "@type": "Person", 
+                  "name": "Dr. Shubha Jain",
+                  "jobTitle": "Technical Director",
+                  "description": "Expert in system design and AI technology for Hindi Grammar Checker development."
+                },
+                {
+                  "@type": "Person",
+                  "name": "Amitabh Srivastav", 
+                  "jobTitle": "Senior AI Developer",
+                  "description": "Senior AI developer specializing in Hindi Grammar Checker and machine learning technologies."
+                }
+              ],
+              "makesOffer": {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "SoftwareApplication",
+                  "name": "Vyakarni Hindi Grammar Checker",
+                  "description": "AI-powered Hindi Grammar Checker for accurate grammar correction and language enhancement",
+                  "applicationCategory": "EducationApplication"
+                }
+              },
+              "sameAs": [
+                "https://twitter.com/vyakarni",
+                "https://facebook.com/vyakarni",
+                "https://linkedin.com/company/vyakarni"
+              ]
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://vyakarni.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "About",
+                  "item": "https://vyakarni.com/about"
+                }
+              ]
+            }
+          })
+        }} />
+        
         {/* Language Toggle */}
         
 

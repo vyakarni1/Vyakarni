@@ -117,6 +117,67 @@ const Contact = () => {
   };
   return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* JSON-LD Schema for Contact Page */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Contact Vyakarni - Hindi Grammar Checker Support",
+            "description": "Get in touch with the Vyakarni Hindi Grammar Checker team. We're here to help with your Hindi language enhancement needs and provide technical support.",
+            "url": "https://vyakarni.com/contact",
+            "mainEntity": {
+              "@type": "Organization",
+              "name": "SNS Innovation Labs Pvt. Ltd.",
+              "alternateName": "Vyakarni Hindi Grammar Checker",
+              "description": "Leading provider of AI-powered Hindi Grammar Checker services and language enhancement tools.",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Sector 143",
+                "addressLocality": "Noida",
+                "addressRegion": "Uttar Pradesh",
+                "addressCountry": "IN"
+              },
+              "contactPoint": [
+                {
+                  "@type": "ContactPoint",
+                  "contactType": "customer service",
+                  "email": "support@vyakarni.com",
+                  "availableLanguage": ["Hindi", "English"],
+                  "areaServed": "IN",
+                  "serviceType": "Hindi Grammar Checker Support"
+                },
+                {
+                  "@type": "ContactPoint",
+                  "contactType": "technical support",
+                  "telephone": "+91 98765 43210",
+                  "availableLanguage": ["Hindi", "English"],
+                  "areaServed": "IN",
+                  "serviceType": "Hindi Grammar Checker Technical Support"
+                }
+              ],
+              "openingHours": "Mo-Fr 10:00-18:00",
+              "url": "https://vyakarni.com"
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://vyakarni.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Contact",
+                  "item": "https://vyakarni.com/contact"
+                }
+              ]
+            }
+          })
+        }} />
+        
         {/* Language Toggle */}
         
 

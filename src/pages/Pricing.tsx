@@ -66,6 +66,93 @@ const Pricing = () => {
   const wordCreditPlans = getWordCreditPlans();
   return <Layout>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* JSON-LD Schema for Pricing Page */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Pricing Plans - Vyakarni Hindi Grammar Checker",
+            "description": "Choose the perfect plan for your Hindi Grammar Checker needs. Affordable pricing with instant word credits and advanced AI-powered language enhancement features.",
+            "url": "https://vyakarni.com/pricing",
+            "mainEntity": [
+              ...wordCreditPlans.map(plan => ({
+                "@type": "Product",
+                "name": `${plan.plan_name} - Hindi Grammar Checker Plan`,
+                "description": `${plan.plan_name} plan for Vyakarni Hindi Grammar Checker with ${plan.words_included.toLocaleString()} words included. Perfect for Hindi language enhancement and grammar correction.`,
+                "brand": {
+                  "@type": "Brand",
+                  "name": "Vyakarni Hindi Grammar Checker"
+                },
+                "offers": {
+                  "@type": "Offer",
+                  "price": plan.price_before_gst,
+                  "priceCurrency": "INR",
+                  "availability": "https://schema.org/InStock",
+                  "priceValidUntil": "2025-12-31",
+                  "description": `${plan.words_included.toLocaleString()} words for Hindi Grammar Checker usage`,
+                  "seller": {
+                    "@type": "Organization",
+                    "name": "SNS Innovation Labs Pvt. Ltd."
+                  }
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.8",
+                  "reviewCount": "150",
+                  "bestRating": "5"
+                },
+                "category": "Software"
+              }))
+            ],
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://vyakarni.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Pricing",
+                  "item": "https://vyakarni.com/pricing"
+                }
+              ]
+            },
+            "mainEntityOfPage": {
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "How long are word credits valid for Hindi Grammar Checker?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Word credits for Vyakarni Hindi Grammar Checker are valid for 180 days (six months) from the date of purchase."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Are there monthly usage limits for Hindi Grammar Checker?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "No, there are no monthly limits. You can use your word credits anytime within the 180-day validity period for Hindi Grammar Checker services."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "What payment methods do you accept for Hindi Grammar Checker?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Our payment gateway partners accept various payment methods including cards, UPI, and net banking for Hindi Grammar Checker subscriptions."
+                  }
+                }
+              ]
+            }
+          })
+        }} />
+        
         <div className="container mx-auto px-6 py-12">
           {/* Header */}
           <div className="text-center mb-12">

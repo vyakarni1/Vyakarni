@@ -14,6 +14,68 @@ const Terms = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 animate-fade-in">
+      {/* JSON-LD Schema for Terms & Conditions */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Terms & Conditions - Vyakarni Hindi Grammar Checker",
+          "description": "Read the terms and conditions for using Vyakarni Hindi Grammar Checker. Comprehensive legal agreement covering usage, responsibilities, and policies for our AI-powered language services.",
+          "url": "https://vyakarni.com/terms",
+          "mainEntity": {
+            "@type": "LegalDocument",
+            "name": "Terms & Conditions for Vyakarni Hindi Grammar Checker",
+            "description": "Legal terms governing the use of Vyakarni Hindi Grammar Checker services, including user responsibilities, intellectual property rights, and service limitations.",
+            "dateModified": "2025-05-28",
+            "publisher": {
+              "@type": "Organization",
+              "name": "SNS Innovation Labs Pvt. Ltd.",
+              "alternateName": "Vyakarni Hindi Grammar Checker",
+              "url": "https://vyakarni.com",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "email": "support@vyakarni.com",
+                "contactType": "customer service"
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Noida",
+                "addressRegion": "Uttar Pradesh",
+                "addressCountry": "IN"
+              }
+            },
+            "about": {
+              "@type": "SoftwareApplication",
+              "name": "Vyakarni Hindi Grammar Checker",
+              "description": "AI-powered Hindi Grammar Checker offering grammar correction, syntax enhancement, and language improvement services",
+              "applicationCategory": "EducationApplication"
+            },
+            "governs": {
+              "@type": "Service",
+              "name": "Hindi Grammar Checker Services",
+              "description": "Comprehensive Hindi language enhancement and grammar correction services powered by advanced AI technology"
+            }
+          },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://vyakarni.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Terms & Conditions",
+                "item": "https://vyakarni.com/terms"
+              }
+            ]
+          }
+        })
+      }} />
+      
       <div className="container mx-auto px-6 py-12">
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <Link to="/">
