@@ -85,7 +85,7 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   const baseAmount = Math.round(data.transaction.amount / 1.18); // Remove GST to get base
   const gstAmount = data.transaction.amount - baseAmount;
   const cgst = Math.round(gstAmount / 2);
-  const sgst = Math.round(gstAmount / 2);
+  const sgst = gstAmount - cgst; // Ensure total GST matches exactly
   
   doc.text('Vyakarni Word Credits Purchase', 25, rowY);
   doc.text(new Date(data.transaction.created_at).toLocaleDateString('en-IN'), 90, rowY);
