@@ -123,11 +123,12 @@ export const createProfessionalInvoice = (data: InvoiceData): jsPDF => {
   
   // Terms and Conditions
   const termsY = paymentY + 50;
-  doc.setFontSize(8);
-  doc.text('Terms & Conditions:', 20, termsY);
-  doc.text('1. This is a computer-generated invoice and does not require a signature.', 20, termsY + 8);
-  doc.text('2. All disputes subject to Lucknow jurisdiction Only.', 20, termsY + 16);
-  doc.text('3. Payment terms: Immediate for online transactions.', 20, termsY + 24);
+doc.setFontSize(8);
+doc.text('Terms & Conditions:', 20, termsY);
+doc.text('1. This is a computer-generated invoice and does not require a signature.', 20, termsY + 8);
+doc.text('2. All disputes subject to Lucknow jurisdiction only.', 20, termsY + 16);
+doc.text('3. Amount is in INR, rounded off to the nearest rupee.', 20, termsY + 24);
+doc.text('4. Payment terms: Immediate for online transactions.', 20, termsY + 32);
   
   // Footer
   doc.setFontSize(8);
