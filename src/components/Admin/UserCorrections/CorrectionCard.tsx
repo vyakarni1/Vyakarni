@@ -113,8 +113,18 @@ const CorrectionCard: React.FC<CorrectionCardProps> = ({ correction, index }) =>
             <div className="bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium">
               {index + 1}
             </div>
-            <div>
+            <div className="flex flex-col space-y-1">
               {getProcessingTypeBadge()}
+              {/* User Information */}
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                <span className="font-medium">उपयोगकर्ता:</span>
+                <span className="bg-muted px-2 py-1 rounded text-xs">
+                  {correction.user_email || 'अज्ञात उपयोगकर्ता'}
+                </span>
+                {correction.user_name && (
+                  <span className="text-xs">({correction.user_name})</span>
+                )}
+              </div>
             </div>
           </div>
           <div className="text-right text-sm text-muted-foreground">
