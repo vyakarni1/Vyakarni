@@ -88,7 +88,7 @@ const Login = () => {
               <div className="flex items-center justify-center space-x-2 mb-4">
                 <img 
                   src="/lovable-uploads/1bf69a70-2442-4bb2-8681-6877bdaeec2d.png" 
-                  alt="व्याकरणी Logo" 
+                  alt="व्याकरणी Logo - Online Hindi grammar checker and correction AI tool" 
                   className="h-10 w-10"
                 />
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">

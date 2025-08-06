@@ -17,7 +17,7 @@ const NavigationLogo = ({ variant }: NavigationLogoProps) => {
       <Link to="/" className={logoClasses}>
         <img 
           src="/lovable-uploads/529d215e-e930-4cd5-a0f2-17148e7066b1.png" 
-          alt="व्याकरणी Logo" 
+          alt="व्याकरणी Logo - Online Hindi grammar checker and correction AI tool" 
           className={logoImageClasses}
           onError={(e) => {
             console.log('Navigation logo failed to load');

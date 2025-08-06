@@ -29,7 +29,7 @@ const HeroSection = ({ content }: HeroSectionProps) => {
         <div className="mb-8 flex justify-center">
           <div className="w-24 h-24 bg-transparent">
             <img 
-              alt="व्याकरणी Logo" 
+              alt="व्याकरणी Logo - Online Hindi grammar checker and correction AI tool" 
               onError={e => {
                 console.log('Hero logo failed to load');
                 e.currentTarget.style.display = 'none';

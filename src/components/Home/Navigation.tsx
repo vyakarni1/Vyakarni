@@ -11,7 +11,7 @@ const Navigation = () => {
             <Link to="/" className="flex items-center space-x-2">
               <img 
                 src="/lovable-uploads/1bf69a70-2442-4bb2-8681-6877bdaeec2d.png" 
-                alt="व्याकरणी Logo" 
+                alt="व्याकरणी Logo - Online Hindi grammar checker and correction AI tool" 
                 className="h-10 w-10 transition-transform duration-200 hover:scale-105"
               />
               <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in">

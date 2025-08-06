@@ -76,7 +76,7 @@ const Header = ({ variant = "default" }: HeaderProps) => {
           >
             <img 
               src="/lovable-uploads/1bf69a70-2442-4bb2-8681-6877bdaeec2d.png" 
-              alt={`${currentContent.brand} Logo`}
+              alt={`${currentContent.brand} Logo - Online Hindi grammar checker and correction AI tool`}
               className="h-8 w-8"
             />
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">

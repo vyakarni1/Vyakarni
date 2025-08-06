@@ -14,7 +14,7 @@ const FloatingLogo = () => {
         <div className="w-32 h-32 rounded-full bg-gradient-blue-ocean p-3 shadow-2xl animate-pulse">
           <img 
             src="/lovable-uploads/9bf89b26-f748-402b-9503-f5284c8be5c3.png" 
-            alt="व्याकरणी Logo" 
+            alt="व्याकरणी Logo - Online Hindi grammar checker and correction AI tool" 
             className="w-full h-full object-contain"
           />
         </div>
