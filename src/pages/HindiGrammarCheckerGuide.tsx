@@ -124,7 +124,7 @@ const HindiGrammarCheckerGuide: React.FC = () => {
               <ul>
                 <li>Matra mismatches (e.g., "सिक्षा" → "शिक्षा")</li>
                 <li>Incorrect gender agreement (e.g., "वह गयी" vs "वह गया")</li>
-                <li>Missing postpositions (e.g., “मैं स्कूल” → “मैं स्कूल गया”)</li>
+                <li>Missing postpositions (e.g., “मैं विद्यालय” → “मैं विद्यालय गया”)</li>
                 <li>Wrong tense forms</li>
               </ul>
             </section>
@@ -144,13 +144,13 @@ const HindiGrammarCheckerGuide: React.FC = () => {
             </section>
 
             <section>
-              <h2>SEO Keywords You’ll Find This Page For</h2>
+              <h2>Keywords that will help you will Find this page</h2>
               <ul>
-                <li>Hindi Grammar Checker (2.9K)</li>
-                <li>Online Hindi Grammar Checker (260)</li>
-                <li>Best Hindi Grammar Checker (70)</li>
-                <li>Hindi Grammar Checker AI (40)</li>
-                <li>Hindi Grammar Mistake Checker (40)</li>
+                <li>Hindi Grammar Checker</li>
+                <li>Online Hindi Grammar Checker</li>
+                <li>Best Hindi Grammar Checker</li>
+                <li>Hindi Grammar Checker AI</li>
+                <li>Hindi Grammar Mistake Checker</li>
               </ul>
             </section>
 
