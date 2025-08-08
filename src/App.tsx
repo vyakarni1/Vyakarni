@@ -42,6 +42,7 @@ import AdminUserCorrections from "./pages/AdminUserCorrections";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import HindiGrammarCheckerGuide from "./pages/HindiGrammarCheckerGuide";
+import HindiGrammarCheckerGuideHi from "./pages/HindiGrammarCheckerGuideHi";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ function App() {
                <Route path="/blog" element={<Blog />} />
                <Route path="/blog/:slug" element={<BlogPost />} />
                <Route path="/hindi-grammar-checker-complete-guide" element={<HindiGrammarCheckerGuide />} />
+               <Route path="/hi/hindi-grammar-checker-complete-guide" element={<HindiGrammarCheckerGuideHi />} />
                
               {/* Grammar Checker Routes - both protected and alternative routes */}
               <Route 
