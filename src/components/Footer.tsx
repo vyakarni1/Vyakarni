@@ -31,6 +31,7 @@ const Footer = () => {
       aboutUs: "About Us",
       contactUs: "Contact Us",
       grammarChecker: "Grammar Checker",
+      guide: "Hindi Grammar Checker – Complete Guide",
       businessPolicies: "Business Policies",
       privacyPolicy: "Privacy Policy",
       termsOfService: "Terms of Service",
@@ -52,6 +53,7 @@ const Footer = () => {
       aboutUs: "हमारे विषय में",
       contactUs: "संपर्क करें",
       grammarChecker: "व्याकरण जाँच",
+      guide: "हिंदी व्याकरण चेकर – संपूर्ण मार्गदर्शिका",
       businessPolicies: "व्यवसायिक नीतियाँ",
       privacyPolicy: "गोपनीयता नीति",
       termsOfService: "सेवा की शर्तें",
@@ -133,8 +135,12 @@ const Footer = () => {
                 {currentContent.contactUs}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              <Link to="/grammar-checker" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
+               <Link to="/grammar-checker" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
                 {currentContent.grammarChecker}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+              <Link to="/hindi-grammar-checker-complete-guide" className="block text-gray-400 hover:text-white transition-colors duration-200 relative group">
+                {currentContent.guide}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </div>
