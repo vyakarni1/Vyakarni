@@ -26,7 +26,7 @@ const Footer = () => {
   const content = {
     english: {
       brand: "Vyakarni",
-      description: "An advanced grammar checking tool for Hindi language improvement",
+      description: "Best Hindi Grammar Checker, and Online Hindi writing Tool",
       quickLinks: "Quick Links",
       aboutUs: "About Us",
       contactUs: "Contact Us",
