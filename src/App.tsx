@@ -39,6 +39,7 @@ import AdminInvoices from "./pages/AdminInvoices";
 import AdminSettings from "./pages/AdminSettings";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminUserCorrections from "./pages/AdminUserCorrections";
+import AdminDocumentation from "./pages/AdminDocumentation";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import HindiGrammarCheckerGuide from "./pages/HindiGrammarCheckerGuide";
@@ -214,6 +215,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <AdminUserCorrections />
+                  </AdminRoute>
+                } 
+              />
+              <Route 
+                path="/admin/documentation" 
+                element={
+                  <AdminRoute>
+                    <AdminDocumentation />
                   </AdminRoute>
                 } 
               />

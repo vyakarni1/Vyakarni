@@ -11,7 +11,8 @@ import {
   PenTool,
   MessageSquare,
   Receipt,
-  History
+  History,
+  FileText
 } from "lucide-react";
 import {
   Sidebar,
@@ -72,6 +73,11 @@ const adminNavItems = [
     name: "शब्दकोश प्रबंधन", 
     href: "/admin/dictionary", 
     icon: BookOpen 
+  },
+  { 
+    name: "दस्तावेज एक्सपोर्ट", 
+    href: "/admin/documentation", 
+    icon: FileText 
   },
   { 
     name: "सेटिंग्स", 
