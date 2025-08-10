@@ -64,7 +64,21 @@ const Login = () => {
       window.location.href = "/dashboard";
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error.message || "लॉग इन में त्रुटि");
+      
+      // Check if the error is related to email verification
+      if (error.message && (
+        error.message.includes('Email not confirmed') ||
+        error.message.includes('email not confirmed') ||
+        error.message.includes('verify') ||
+        error.message.includes('verification') ||
+        error.message.includes('confirm')
+      )) {
+        toast.error("कृपया पहले अपना ईमेल वेरिफाई करें। अपना स्पैम फोल्डर भी चेक करें।", {
+          duration: 6000
+        });
+      } else {
+        toast.error(error.message || "लॉग इन में त्रुटि");
+      }
     } finally {
       setIsLoading(false);
     }
