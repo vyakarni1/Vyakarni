@@ -18,6 +18,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showEmailVerificationError, setShowEmailVerificationError] = useState(false);
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -73,9 +74,7 @@ const Login = () => {
         error.message.includes('verification') ||
         error.message.includes('confirm')
       )) {
-        toast.error("कृपया पहले अपना ईमेल वेरिफाई करें। अपना स्पैम फोल्डर भी चेक करें।", {
-          duration: 6000
-        });
+        setShowEmailVerificationError(true);
       } else {
         toast.error(error.message || "लॉग इन में त्रुटि");
       }
@@ -119,6 +118,14 @@ const Login = () => {
           </CardHeader>
 
           <CardContent className="space-y-6">
+            {showEmailVerificationError && (
+              <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+                <p className="text-red-700 text-sm font-medium">
+                  कृपया पहले अपना ईमेल वेरिफाई करें। अपना स्पैम फोल्डर भी चेक करें।
+                </p>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">ईमेल</Label>
