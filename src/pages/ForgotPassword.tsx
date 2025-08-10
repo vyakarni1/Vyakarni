@@ -76,13 +76,13 @@ const ForgotPassword = () => {
                   onClick={() => setIsSuccess(false)}
                   className="w-full"
                 >
-                  दूसरा ईमेल पता आज़माएं
+                  दूसरे ईमेल पता प्रयोग करें
                 </Button>
                 
                 <Link to="/login">
                   <Button variant="ghost" className="w-full">
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    लॉगिन पर वापस जाएं
+                    लॉगिन पर वापस जायें
                   </Button>
                 </Link>
               </div>
@@ -100,7 +100,7 @@ const ForgotPassword = () => {
           <Link to="/login">
             <Button variant="ghost" size="sm" className="mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              लॉगिन पर वापस जाएं
+              लॉगिन पर वापस जायें
             </Button>
           </Link>
         </div>
