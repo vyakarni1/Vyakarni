@@ -52,7 +52,7 @@ export const usePasswordChange = () => {
       }
 
       console.log('Password changed successfully');
-      toast.success("पासवर्ड सफलतापूर्वक बदल दिया गया!");
+      toast.success("पासवर्ड सफलतापूर्वक परिवर्तित कर दिया गया!");
       setPasswords({ current: '', new: '', confirm: '' });
       return true;
     } catch (error: any) {
@@ -64,7 +64,7 @@ export const usePasswordChange = () => {
       } else if (error.message?.includes('invalid_credentials')) {
         toast.error("अमान्य पासवर्ड");
       } else {
-        toast.error(error.message || "पासवर्ड बदलने में त्रुटि");
+        toast.error(error.message || "पासवर्ड परिवर्तित करने में त्रुटि");
       }
       return false;
     } finally {

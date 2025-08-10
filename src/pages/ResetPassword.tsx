@@ -28,9 +28,9 @@ const ResetPassword = () => {
       console.error('Auth error:', { error, errorCode, errorDescription });
       
       if (errorCode === 'otp_expired') {
-        toast.error("रीसेट लिंक समाप्त हो गया है। कृपया नया लिंक मांगें।");
+        toast.error("रीसेट लिंक समाप्त हो गया है। कृपया नया लिंक माँगे।");
       } else {
-        toast.error("रीसेट लिंक अमान्य है। कृपया नया लिंक मांगें।");
+        toast.error("रीसेट लिंक अमान्य है। कृपया नया लिंक माँगे।");
       }
       
       // Redirect to forgot password page after showing error
@@ -51,7 +51,7 @@ const ResetPassword = () => {
 
       if (!session) {
         // No session found, this means the token might be expired or invalid
-        toast.error("रीसेट सत्र नहीं मिला। कृपया नया रीसेट लिंक मांगें।");
+        toast.error("रीसेट सत्र नहीं मिला। कृपया नया रीसेट लिंक माँगे।");
         navigate('/forgot-password');
         return;
       }
@@ -72,7 +72,7 @@ const ResetPassword = () => {
     }
 
     if (password.length < 6) {
-      toast.error("पासवर्ड कम से कम 6 अक्षर का होना चाहिए");
+      toast.error("पासवर्ड कम से कम 6 अक्षर का होना चाहिये");
       setIsLoading(false);
       return;
     }
@@ -85,7 +85,7 @@ const ResetPassword = () => {
       if (error) throw error;
 
       setIsSuccess(true);
-      toast.success("पासवर्ड सफलतापूर्वक बदल दिया गया!");
+      toast.success("पासवर्ड सफलतापूर्वक परिवर्तित कर दिया गया!");
       
       // Auto redirect to login after 3 seconds
       setTimeout(() => {
@@ -121,17 +121,17 @@ const ResetPassword = () => {
                 </div>
               </div>
               <CardTitle className="text-2xl font-bold text-gray-800">
-                पासवर्ड सफलतापूर्वक बदल दिया गया!
+                पासवर्ड सफलतापूर्वक परिवर्तित किया गया!
               </CardTitle>
               <p className="text-gray-600 mt-2">
-                आपका पासवर्ड अपडेट हो गया है। अब आप नए पासवर्ड से लॉगिन कर सकते हैं।
+                आपका पासवर्ड अपडेट हो गया है। अब आप नये पासवर्ड से लॉगिन कर सकते हैं।
               </p>
             </CardHeader>
 
             <CardContent className="space-y-4">
               <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                 <p className="text-sm text-green-800 text-center">
-                  आपको 3 सेकंड में लॉगिन पेज पर भेज दिया जाएगा...
+                  आपको 3 सेकंड में लॉगिन पेज पर भेज दिया जायेगा...
                 </p>
               </div>
               
@@ -154,7 +154,7 @@ const ResetPassword = () => {
           <Link to="/login">
             <Button variant="ghost" size="sm" className="mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              लॉगिन पर वापस जाएं
+              लॉगिन पर वापस जायें
             </Button>
           </Link>
         </div>
@@ -233,7 +233,7 @@ const ResetPassword = () => {
 
               <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                 <p className="text-xs text-blue-800">
-                  पासवर्ड कम से कम 6 अक्षर का होना चाहिए
+                  पासवर्ड कम से कम 6 अक्षर का होना चाहिये
                 </p>
               </div>
 

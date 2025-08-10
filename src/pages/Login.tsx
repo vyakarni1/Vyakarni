@@ -58,7 +58,7 @@ const Login = () => {
 
       if (error) throw error;
 
-      toast.success("सफलतापूर्वक लॉग इन हो गए!");
+      toast.success("सफलतापूर्वक लॉग इन हो गये!");
       
       // Force page reload to ensure clean state
       window.location.href = "/dashboard";
@@ -91,7 +91,7 @@ const Login = () => {
           <Link to="/">
             <Button variant="ghost" size="sm" className="mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              होम पर वापस जाएं
+              होम पर वापस जायें
             </Button>
           </Link>
         </div>
@@ -160,7 +160,7 @@ const Login = () => {
                   to="/forgot-password" 
                   className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
                 >
-                  पासवर्ड भूल गए?
+                  पासवर्ड भूल गये?
                 </Link>
               </div>
 

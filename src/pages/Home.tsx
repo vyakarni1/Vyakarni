@@ -192,19 +192,19 @@ const Home = () => {
         errorDescription
       });
       if (errorCode === 'otp_expired') {
-        toast.error(language === "english" ? "Password reset link has expired" : "पासवर्ड रीसेट लिंक की समय सीमा समाप्त हो गई है", {
-          description: language === "english" ? "Please request a new password reset link" : "कृपया नया पासवर्ड रीसेट लिंक मांगें",
+        toast.error(language === "english" ? "Password reset link has expired" : "पासवर्ड रीसेट लिंक की समय सीमा समाप्त हो गयी है", {
+          description: language === "english" ? "Please request a new password reset link" : "कृपया नया पासवर्ड रीसेट लिंक माँगें",
           action: {
-            label: language === "english" ? "Request New Link" : "नया लिंक मांगें",
+            label: language === "english" ? "Request New Link" : "नया लिंक माँगे",
             onClick: () => navigate('/forgot-password')
           },
           duration: 8000
         });
       } else if (error === 'access_denied') {
         toast.error(language === "english" ? "Password reset link is invalid" : "पासवर्ड रीसेट लिंक अमान्य है", {
-          description: language === "english" ? "This link is incorrect or has expired" : "यह लिंक गलत है या इसकी समय सीमा समाप्त हो गई है",
+          description: language === "english" ? "This link is incorrect or has expired" : "यह लिंक गलत है या इसकी समय सीमा समाप्त हो गयी है",
           action: {
-            label: language === "english" ? "Request New Link" : "नया लिंक मांगें",
+            label: language === "english" ? "Request New Link" : "नया लिंक माँगे",
             onClick: () => navigate('/forgot-password')
           },
           duration: 8000
