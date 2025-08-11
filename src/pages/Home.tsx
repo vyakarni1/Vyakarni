@@ -231,7 +231,7 @@ const Home = () => {
       {/* Language Toggle */}
       
 
-      <div className="pt-24">
+      <div className="pt-16">
         <HeroSection content={currentContent.hero} />
         <FeaturesSection content={currentContent.features} />
         <USPSection content={currentContent.usp} language={language} />

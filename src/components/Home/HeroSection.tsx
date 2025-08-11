@@ -18,13 +18,13 @@ interface HeroSectionProps {
 
 const HeroSection = ({ content }: HeroSectionProps) => {
   return (
-    <section className="container mx-auto px-6 py-16 text-center relative">
+    <section className="container mx-auto px-6 pt-20 pb-16 text-center relative">
       {/* Background decorative elements */}
       <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute top-32 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-30 animate-pulse delay-75"></div>
       <div className="absolute bottom-20 left-20 w-12 h-12 bg-cyan-200 rounded-full opacity-25 animate-pulse delay-150"></div>
       
-      <div className="relative z-10 w-full mt-16">
+      <div className="relative z-10 w-full mt-12">
         {/* Transparent Logo Container */}
         <div className="mb-8 flex justify-center">
           <div className="w-24 h-24 bg-transparent">
