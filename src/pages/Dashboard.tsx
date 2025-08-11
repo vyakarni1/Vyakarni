@@ -1,6 +1,7 @@
 import { useAuth } from "@/components/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import WordUsageStatsCards from "@/components/WordUsageStatsCards";
 import WordBalanceCard from "@/components/WordBalanceCard";
 import WordUsageCard from "@/components/WordUsageCard";
@@ -42,6 +43,17 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <Helmet>
+        <script>
+          {`
+            gtag('event', 'conversion', {
+                'send_to': 'AW-17463420129/uBkHCN2pn4QbEOHJmodB',
+                'value': 1.0,
+                'currency': 'INR'
+            });
+          `}
+        </script>
+      </Helmet>
       <UnifiedNavigation variant="default" />
       <div className="container mx-auto px-6 py-8 pt-32">
         <DashboardWelcome 
