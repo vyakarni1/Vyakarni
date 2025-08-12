@@ -7,12 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Save, Eye } from "lucide-react";
+import { ArrowLeft, Save, Eye, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AdminLayoutWithNavigation from "@/components/AdminLayoutWithNavigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useAdminDraftAutoSave } from "@/hooks/useAdminDraftAutoSave";
 
 interface BlogCategory {
   id: string;
@@ -49,6 +50,20 @@ const AdminBlogEdit = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin, loading: roleLoading } = useUserRole();
+  
+  // Use persistent draft auto-save
+  const { 
+    draftData, 
+    updateDraft, 
+    clearDraft, 
+    isLoading: draftLoading,
+    isSaving: autoSaving,
+    lastSaved 
+  } = useAdminDraftAutoSave({
+    draftKey: id ? `blog_edit_${id}` : 'blog_edit_temp',
+    draftType: 'blog_edit'
+  });
+
   const [post, setPost] = useState<BlogPost | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -62,7 +77,6 @@ const AdminBlogEdit = () => {
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [autoSaving, setAutoSaving] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -71,32 +85,45 @@ const AdminBlogEdit = () => {
     }
   }, [id]);
 
-  // Auto-save content to localStorage to prevent loss during editing
+  // Load draft data when available (after loading original post)
   useEffect(() => {
-    if (post && id) {
-      const draftKey = `blog-draft-edit-${id}`;
-      const draft = {
+    if (!draftLoading && draftData && post) {
+      // Only apply draft if it has meaningful content or changes from original
+      const hasDraftContent = draftData.title || draftData.content || draftData.excerpt;
+      const hasChanges = draftData.title !== post.title || 
+                        draftData.content !== post.content || 
+                        draftData.excerpt !== (post.excerpt || '');
+      
+      if (hasDraftContent && hasChanges) {
+        setTitle(draftData.title || post.title);
+        setContent(draftData.content || post.content);
+        setExcerpt(draftData.excerpt || post.excerpt || '');
+        setStatus(draftData.status || post.status);
+        setCategoryId(draftData.categoryId || post.category_id || '');
+        setTags(draftData.tags || (post.blog_post_tags?.map((pt: any) => pt.blog_tags.name).join(', ') || ''));
+        setMetaTitle(draftData.metaTitle || (post as any).meta_title || '');
+        setMetaDescription(draftData.metaDescription || (post as any).meta_description || '');
+        setMetaKeywords(draftData.metaKeywords || (post as any).meta_keywords || '');
+      }
+    }
+  }, [draftLoading, draftData, post]);
+
+  // Auto-save to database whenever form data changes (after post is loaded)
+  useEffect(() => {
+    if (!draftLoading && post) {
+      updateDraft({
         title,
         content,
         excerpt,
+        status,
+        categoryId,
         tags,
         metaTitle,
         metaDescription,
-        metaKeywords,
-        timestamp: Date.now()
-      };
-      
-      // Only save if content has changed from original
-      const hasChanges = title !== post.title || 
-                        content !== post.content || 
-                        excerpt !== (post.excerpt || '') ||
-                        tags !== (post.blog_post_tags?.map((pt: any) => pt.blog_tags.name).join(', ') || '');
-      
-      if (hasChanges) {
-        localStorage.setItem(draftKey, JSON.stringify(draft));
-      }
+        metaKeywords
+      });
     }
-  }, [title, content, excerpt, tags, metaTitle, metaDescription, metaKeywords, post, id]);
+  }, [title, content, excerpt, status, categoryId, tags, metaTitle, metaDescription, metaKeywords, updateDraft, draftLoading, post]);
 
   const fetchPost = async () => {
     try {
@@ -287,8 +314,8 @@ const AdminBlogEdit = () => {
       }
 
       toast.success(`पोस्ट ${publishStatus === 'published' ? 'प्रकाशित' : 'अपडेट'} की गई`);
-      // Clear draft from localStorage on successful save
-      localStorage.removeItem(`blog-draft-edit-${id}`);
+      // Clear draft from database on successful save
+      await clearDraft();
       navigate('/admin/blog');
     } catch (error) {
       console.error('Error updating post:', error);
@@ -304,7 +331,7 @@ const AdminBlogEdit = () => {
     }
   };
 
-  if (loading || roleLoading) {
+  if (loading || roleLoading || draftLoading) {
     return (
       <AdminLayoutWithNavigation>
         <div className="flex items-center justify-center min-h-96">
@@ -343,10 +370,17 @@ const AdminBlogEdit = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             वापस
           </Button>
-          <div>
+          <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-900">ब्लॉग पोस्ट संपादित करें</h1>
             <p className="text-gray-600 mt-1">अपनी ब्लॉग पोस्ट को संपादित करें</p>
           </div>
+          {lastSaved && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="h-4 w-4" />
+              <span>अंतिम सेव: {lastSaved.toLocaleTimeString('hi-IN')}</span>
+              {autoSaving && <span className="text-primary">(सेव हो रहा है...)</span>}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

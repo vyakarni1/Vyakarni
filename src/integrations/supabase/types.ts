@@ -53,6 +53,36 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_drafts: {
+        Row: {
+          admin_id: string
+          created_at: string | null
+          draft_key: string
+          draft_type: string
+          form_data: Json
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string | null
+          draft_key: string
+          draft_type: string
+          form_data?: Json
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string | null
+          draft_key?: string
+          draft_type?: string
+          form_data?: Json
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       admin_logs: {
         Row: {
           action: string
