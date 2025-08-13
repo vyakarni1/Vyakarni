@@ -25,7 +25,11 @@ export const useAdminDraftAutoSave = (options: UseAdminDraftAutoSaveOptions) => 
   // Load draft data on component mount
   useEffect(() => {
     const loadDraft = async () => {
-      if (!user?.id) return;
+      if (!user?.id) {
+        console.log('Cannot load draft: User not authenticated');
+        setIsLoading(false);
+        return;
+      }
 
       try {
         const { data, error } = await supabase
@@ -37,6 +41,7 @@ export const useAdminDraftAutoSave = (options: UseAdminDraftAutoSaveOptions) => 
 
         if (error && error.code !== 'PGRST116') {
           console.error('Error loading draft:', error);
+          setIsLoading(false);
           return;
         }
 
@@ -56,7 +61,10 @@ export const useAdminDraftAutoSave = (options: UseAdminDraftAutoSaveOptions) => 
 
   // Auto-save function
   const saveDraft = useCallback(async (data: DraftData, silent = false) => {
-    if (!user?.id) return false;
+    if (!user?.id) {
+      console.log('Cannot save draft: User not authenticated');
+      return false;
+    }
 
     try {
       setIsSaving(true);
