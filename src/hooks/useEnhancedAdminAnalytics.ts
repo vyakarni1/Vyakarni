@@ -49,7 +49,7 @@ export const useEnhancedAdminAnalytics = () => {
   const queryClient = useQueryClient();
   const { isAdmin } = useUserRole();
 
-  // Fetch enhanced analytics using the properly secured view
+  // Fetch enhanced analytics using the secure function
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ['enhanced-admin-analytics'],
     queryFn: async () => {
@@ -57,10 +57,9 @@ export const useEnhancedAdminAnalytics = () => {
         throw new Error('Access denied: Admin privileges required');
       }
 
-      // Use the recreated view with proper security settings
+      // Use the secure function instead of the view
       const { data, error } = await supabase
-        .from('admin_analytics_summary')
-        .select('*')
+        .rpc('get_admin_analytics_summary')
         .single();
 
       if (error) throw error;

@@ -39,61 +39,36 @@ export const useAdminAnalytics = () => {
 
   const fetchAnalytics = async () => {
     try {
-      // Fetch main analytics using direct SQL call
-      const { data: analyticsData, error: analyticsError } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
+      // Fetch main analytics using the secure function
+      const { data: secureAnalytics, error: secureError } = await supabase
+        .rpc('get_admin_analytics_summary')
+        .single();
 
-      if (analyticsError) throw analyticsError;
+      if (secureError) throw secureError;
 
-      // Get analytics data using multiple queries
+      // Get additional data for features not in the main function
       const [
-        totalUsersResult,
-        usersTodayResult,
-        usersWeekResult,
-        usersMonthResult,
-        subscriptionsResult,
-        activeSubscriptionsResult,
-        revenueResult,
-        revenueMonthResult,
         freeUsersResult,
-        premiumUsersResult,
-        correctionsTodayResult,
-        correctionsWeekResult,
-        correctionsMonthResult
+        premiumUsersResult
       ] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', new Date().toISOString().split('T')[0]),
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
-        supabase.from('user_subscriptions').select('*', { count: 'exact', head: true }),
-        supabase.from('user_subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-        supabase.from('payment_transactions').select('amount').eq('status', 'completed'),
-        supabase.from('payment_transactions').select('amount').eq('status', 'completed').gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
-        supabase.from('user_subscriptions').select('*, subscription_plans!inner(plan_type)').eq('status', 'active').eq('subscription_plans.plan_type', 'free'),
-        supabase.from('user_subscriptions').select('*, subscription_plans!inner(plan_type)').eq('status', 'active').neq('subscription_plans.plan_type', 'free'),
-        supabase.from('user_usage').select('*', { count: 'exact', head: true }).gte('created_at', new Date().toISOString().split('T')[0]),
-        supabase.from('user_usage').select('*', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
-        supabase.from('user_usage').select('*', { count: 'exact', head: true }).gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString())
+        supabase.from('user_subscriptions').select('*, subscription_plans!inner(plan_type)', { count: 'exact', head: true }).eq('status', 'active').eq('subscription_plans.plan_type', 'free'),
+        supabase.from('user_subscriptions').select('*, subscription_plans!inner(plan_type)', { count: 'exact', head: true }).eq('status', 'active').neq('subscription_plans.plan_type', 'free')
       ]);
 
-      const totalRevenue = revenueResult.data?.reduce((sum, t) => sum + (Number(t.amount) || 0), 0) || 0;
-      const monthlyRevenue = revenueMonthResult.data?.reduce((sum, t) => sum + (Number(t.amount) || 0), 0) || 0;
-
       const analyticsObj: AdminAnalytics = {
-        total_users: totalUsersResult.count || 0,
-        users_today: usersTodayResult.count || 0,
-        users_this_week: usersWeekResult.count || 0,
-        users_this_month: usersMonthResult.count || 0,
-        total_subscriptions: subscriptionsResult.count || 0,
-        active_subscriptions: activeSubscriptionsResult.count || 0,
-        total_revenue: totalRevenue,
-        revenue_this_month: monthlyRevenue,
+        total_users: Number(secureAnalytics?.total_users) || 0,
+        users_today: Number(secureAnalytics?.users_today) || 0,
+        users_this_week: Number(secureAnalytics?.users_this_week) || 0,
+        users_this_month: Number(secureAnalytics?.users_this_month) || 0,
+        total_subscriptions: Number(secureAnalytics?.active_subscriptions) || 0,
+        active_subscriptions: Number(secureAnalytics?.active_subscriptions) || 0,
+        total_revenue: Number(secureAnalytics?.total_revenue) || 0,
+        revenue_this_month: Number(secureAnalytics?.revenue_this_month) || 0,
         free_users: freeUsersResult.count || 0,
         premium_users: premiumUsersResult.count || 0,
-        corrections_today: correctionsTodayResult.count || 0,
-        corrections_this_week: correctionsWeekResult.count || 0,
-        corrections_this_month: correctionsMonthResult.count || 0,
+        corrections_today: Number(secureAnalytics?.corrections_today) || 0,
+        corrections_this_week: Number(secureAnalytics?.corrections_this_week) || 0,
+        corrections_this_month: Number(secureAnalytics?.corrections_this_month) || 0,
       };
 
       setAnalytics(analyticsObj);

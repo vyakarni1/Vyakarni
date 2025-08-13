@@ -1582,21 +1582,7 @@ export type Database = {
       }
     }
     Views: {
-      admin_analytics_summary: {
-        Row: {
-          active_subscriptions: number | null
-          corrections_this_month: number | null
-          corrections_this_week: number | null
-          corrections_today: number | null
-          revenue_this_month: number | null
-          total_revenue: number | null
-          total_users: number | null
-          users_this_month: number | null
-          users_this_week: number | null
-          users_today: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       add_user_word_credits: {
@@ -1638,6 +1624,21 @@ export type Database = {
           text_content?: string
         }
         Returns: boolean
+      }
+      get_admin_analytics_summary: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          users_today: number
+          total_users: number
+          corrections_this_month: number
+          corrections_this_week: number
+          corrections_today: number
+          revenue_this_month: number
+          total_revenue: number
+          active_subscriptions: number
+          users_this_month: number
+          users_this_week: number
+        }[]
       }
       get_cached_analytics: {
         Args: { cache_duration_minutes?: number }
