@@ -828,6 +828,39 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_logs: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          record_id: string | null
+          table_name: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          record_id?: string | null
+          table_name: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          record_id?: string | null
+          table_name?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       subscription_charges: {
         Row: {
           amount: number
@@ -1742,6 +1775,17 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: string
+      }
+      log_sensitive_access: {
+        Args: {
+          p_user_id: string
+          p_action: string
+          p_table_name: string
+          p_record_id?: string
+          p_ip_address?: unknown
+          p_user_agent?: string
+        }
+        Returns: undefined
       }
       send_bulk_welcome_emails_safe: {
         Args: Record<PropertyKey, never>
