@@ -63,7 +63,11 @@ const HeroSection = ({ content }: HeroSectionProps) => {
           </div>
         </div>
         
-        <Link to="/register">
+        <Link to="/register" onClick={() => {
+          if (typeof gtag_report_conversion !== 'undefined') {
+            gtag_report_conversion();
+          }
+        }}>
           <Button size="lg" className="text-lg px-8 py-4 bg-gradient-blue-ocean hover:bg-gradient-blue-deep transform hover:scale-105 transition-all duration-300 shadow-xl group">
             {content.startButtonText}
             <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />

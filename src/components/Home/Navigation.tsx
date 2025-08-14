@@ -25,7 +25,11 @@ const Navigation = () => {
               <Button variant="outline" className="hover:bg-blue-50 hover:border-blue-300 transition-all duration-300">
                 लॉगिन              </Button>
             </Link>
-            <Link to="/register">
+            <Link to="/register" onClick={() => {
+              if (typeof gtag_report_conversion !== 'undefined') {
+                gtag_report_conversion();
+              }
+            }}>
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
                 रजिस्टर करें
               </Button>
