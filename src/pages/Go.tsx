@@ -190,8 +190,8 @@ const Go = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      {/* Large Sign Up Button at top */}
-      <div className="w-full bg-primary py-4 px-4">
+      {/* Large Sign Up Button at top - Fixed position */}
+      <div className="w-full bg-primary py-4 px-4 fixed top-0 left-0 z-50">
         <div className="container mx-auto">
           <div className="flex justify-center">
             <Button 
@@ -206,6 +206,9 @@ const Go = () => {
           </div>
         </div>
       </div>
+
+      {/* Spacer to account for fixed header */}
+      <div className="h-20"></div>
 
       {/* All homepage content without header/footer */}
       <div>
