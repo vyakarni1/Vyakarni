@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1620,10 +1620,10 @@ export type Database = {
     Functions: {
       add_user_word_credits: {
         Args: {
-          p_user_id: string
-          p_words_to_add: number
           p_credit_type?: string
           p_expiry_date?: string
+          p_user_id: string
+          p_words_to_add: number
         }
         Returns: boolean
       }
@@ -1637,40 +1637,40 @@ export type Database = {
       }
       create_recurring_subscription: {
         Args: {
-          user_uuid: string
-          plan_uuid: string
-          razorpay_subscription_id: string
-          razorpay_plan_id: string
           mandate_details?: Json
+          plan_uuid: string
+          razorpay_plan_id: string
+          razorpay_subscription_id: string
+          user_uuid: string
         }
         Returns: Json
       }
       create_subscription_for_user: {
-        Args: { user_uuid: string; plan_uuid: string }
+        Args: { plan_uuid: string; user_uuid: string }
         Returns: Json
       }
       deduct_words: {
         Args: {
-          user_uuid: string
-          words_to_deduct: number
           action_type: string
           text_content?: string
+          user_uuid: string
+          words_to_deduct: number
         }
         Returns: boolean
       }
       get_admin_analytics_summary: {
         Args: Record<PropertyKey, never>
         Returns: {
-          users_today: number
-          total_users: number
+          active_subscriptions: number
           corrections_this_month: number
           corrections_this_week: number
           corrections_today: number
           revenue_this_month: number
           total_revenue: number
-          active_subscriptions: number
+          total_users: number
           users_this_month: number
           users_this_week: number
+          users_today: number
         }[]
       }
       get_cached_analytics: {
@@ -1681,81 +1681,81 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: {
           corrections_used: number
-          words_processed: number
           max_corrections: number
           max_words_per_correction: number
+          words_processed: number
         }[]
       }
       get_settings_by_category: {
         Args: { category_filter?: string }
         Returns: {
-          setting_key: string
-          setting_value: Json
-          setting_type: string
-          description: string
           category: string
+          description: string
           is_public: boolean
+          setting_key: string
+          setting_type: string
+          setting_value: Json
         }[]
       }
       get_user_active_mandate: {
         Args: { user_uuid: string }
         Returns: {
           mandate_id: string
-          razorpay_subscription_id: string
-          status: string
-          next_charge_at: string
-          remaining_count: number
           max_amount: number
+          next_charge_at: string
+          razorpay_subscription_id: string
+          remaining_count: number
+          status: string
         }[]
       }
       get_user_stats: {
         Args: { user_uuid: string }
         Returns: {
-          total_corrections: number
-          corrections_today: number
-          corrections_this_week: number
           corrections_this_month: number
+          corrections_this_week: number
+          corrections_today: number
+          total_corrections: number
         }[]
       }
       get_user_subscription: {
         Args: { user_uuid: string }
         Returns: {
-          subscription_id: string
-          plan_name: string
-          plan_type: string
-          max_words_per_correction: number
+          expires_at: string
+          features: Json
           max_corrections_per_month: number
           max_team_members: number
-          features: Json
+          max_words_per_correction: number
+          plan_name: string
+          plan_type: string
           status: string
-          expires_at: string
+          subscription_id: string
         }[]
       }
       get_user_word_balance: {
         Args: { user_uuid: string }
         Returns: {
-          total_words_available: number
           free_words: number
-          purchased_words: number
-          topup_words: number
-          subscription_words: number
-          next_expiry_date: string
           has_active_subscription: boolean
+          next_expiry_date: string
+          purchased_words: number
+          subscription_words: number
+          topup_words: number
+          total_words_available: number
         }[]
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
       increment_blog_post_views: {
         Args: {
-          post_uuid: string
-          user_uuid?: string
           ip_addr?: unknown
+          post_uuid: string
           user_agent_str?: string
+          user_uuid?: string
         }
         Returns: boolean
       }
@@ -1765,25 +1765,25 @@ export type Database = {
       }
       log_admin_action: {
         Args: {
-          p_admin_id: string
           p_action_type: string
-          p_resource_type: string
-          p_resource_id?: string
-          p_old_values?: Json
-          p_new_values?: Json
+          p_admin_id: string
           p_ip_address?: unknown
+          p_new_values?: Json
+          p_old_values?: Json
+          p_resource_id?: string
+          p_resource_type: string
           p_user_agent?: string
         }
         Returns: string
       }
       log_sensitive_access: {
         Args: {
-          p_user_id: string
           p_action: string
-          p_table_name: string
-          p_record_id?: string
           p_ip_address?: unknown
+          p_record_id?: string
+          p_table_name: string
           p_user_agent?: string
+          p_user_id: string
         }
         Returns: undefined
       }
@@ -1792,7 +1792,7 @@ export type Database = {
         Returns: Json
       }
       send_welcome_email_safe: {
-        Args: { user_uuid: string; user_email: string; user_name?: string }
+        Args: { user_email: string; user_name?: string; user_uuid: string }
         Returns: boolean
       }
       toggle_blog_post_like: {
