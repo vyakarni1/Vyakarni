@@ -3,12 +3,27 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from './types.ts'
 import { handleWebhook } from './webhook-handler.ts'
 
+// Security headers
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+};
+
 console.log("Razorpay payment function started")
 
 serve(async (req) => {
+  // Enhanced CORS headers with security
+  const enhancedCorsHeaders = {
+    ...corsHeaders,
+    ...SECURITY_HEADERS
+  };
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: enhancedCorsHeaders })
   }
 
   try {

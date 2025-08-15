@@ -137,6 +137,39 @@ export type Database = {
         }
         Relationships: []
       }
+      api_rate_limits: {
+        Row: {
+          created_at: string | null
+          endpoint: string
+          id: string
+          ip_address: unknown
+          request_count: number | null
+          updated_at: string | null
+          user_id: string | null
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          ip_address: unknown
+          request_count?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          ip_address?: unknown
+          request_count?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           created_at: string
