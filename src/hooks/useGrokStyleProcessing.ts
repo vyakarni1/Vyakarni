@@ -29,7 +29,7 @@ export const useGrokStyleProcessing = ({ onProgressUpdate }: UseGrokStyleProcess
       onProgressUpdate?.(50, 'शब्दकोश लागू किया जा रहा है...');
 
       // Stage 3: Dictionary Application (50-80%)
-      const dictionary = await dictionaryService.getDictionary('style');
+      const dictionary = await dictionaryService.getDictionary();
       const textWithDictionary = await callGrokDictionaryApplyAPI(enhancedText, dictionary);
       onProgressUpdate?.(80, 'तुलना और हाइलाइटिंग तैयार की जा रही है...');
 
