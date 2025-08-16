@@ -149,7 +149,7 @@ const Contact = () => {
                 {
                   "@type": "ContactPoint",
                   "contactType": "technical support",
-                  "telephone": "+91 98765 43210",
+                  "telephone": "+91 91403 84459",
                   "availableLanguage": ["Hindi", "English"],
                   "areaServed": "IN",
                   "serviceType": "Hindi Grammar Checker Technical Support"
@@ -269,7 +269,7 @@ const Contact = () => {
                       <h3 className="font-semibold text-gray-900">
                         {language === "english" ? "Phone" : "फोन"}
                       </h3>
-                      <p className="text-gray-600">+91 98765 43210</p>
+                      <p className="text-gray-600">+91 91403 84459</p>
                     </div>
                   </div>
 
