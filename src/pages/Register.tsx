@@ -70,7 +70,7 @@ const Register = () => {
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            व्याकरणी में शामिल हों
+            व्याकरणी में आपका स्वागत है!
           </CardTitle>
           <CardDescription className="text-gray-600">नया खाता बनायें और व्याकरण एवं लेखन सुधार का आरंभ करें</CardDescription>
         </CardHeader>
