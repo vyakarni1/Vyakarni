@@ -261,17 +261,6 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-green-100 p-3 rounded-full">
-                      <Phone className="h-6 w-6 text-green-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {language === "english" ? "Phone" : "फोन"}
-                      </h3>
-                      <p className="text-gray-600">+91 91403 84459</p>
-                    </div>
-                  </div>
 
                   <div className="flex items-center space-x-4">
                     <div className="bg-purple-100 p-3 rounded-full">
