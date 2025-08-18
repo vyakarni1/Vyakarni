@@ -53,7 +53,7 @@ const Contact = () => {
     mondayFriday: "सोमवार - शुक्रवार",
     weekend: "शनिवार एवं रविवार",
     holiday: "अवकाश",
-    holidayNote: "राजपत्रित अवकाशों पर सेवा उपलब्ध नहीं होंगी।",
+    holidayNote: "राजपत्रित अवकाशों पर सेवा उपलब्ध नहीं होगी।",
     successMessage: "आपका संदेश सफलतापूर्वक भेज दिया गया है! हम शीघ्र ही आपसे संपर्क करेंगे।",
     errorMessage: "संदेश भेजने में त्रुटि हुई। कृपया पुनः प्रयास करें।",
     genericError: "कुछ त्त्रुटि हो गयी है। कृपया पुनः प्रयास करें।"
@@ -261,6 +261,17 @@ const Contact = () => {
                     </div>
                   </div>
 
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <Phone className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">
+                        {language === "english" ? "Phone" : "फोन"}
+                      </h3>
+                      <p className="text-gray-600">+91 91403 84459</p>
+                    </div>
+                  </div>
 
                   <div className="flex items-center space-x-4">
                     <div className="bg-purple-100 p-3 rounded-full">
