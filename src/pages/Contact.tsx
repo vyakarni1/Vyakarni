@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, MapPin, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
@@ -146,14 +146,6 @@ const Contact = () => {
                   "areaServed": "IN",
                   "serviceType": "Hindi Grammar Checker Support"
                 },
-                {
-                  "@type": "ContactPoint",
-                  "contactType": "technical support",
-                  "telephone": "+91 91403 84459",
-                  "availableLanguage": ["Hindi", "English"],
-                  "areaServed": "IN",
-                  "serviceType": "Hindi Grammar Checker Technical Support"
-                }
               ],
               "openingHours": "Mo-Fr 10:00-18:00",
               "url": "https://vyakarni.com"
@@ -261,17 +253,6 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-green-100 p-3 rounded-full">
-                      <Phone className="h-6 w-6 text-green-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {language === "english" ? "Phone" : "फोन"}
-                      </h3>
-                      <p className="text-gray-600">+91 91403 84459</p>
-                    </div>
-                  </div>
 
                   <div className="flex items-center space-x-4">
                     <div className="bg-purple-100 p-3 rounded-full">
