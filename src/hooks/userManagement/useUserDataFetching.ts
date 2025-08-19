@@ -110,9 +110,12 @@ export const useUserDataFetching = (filters: UserFilters) => {
       // Process and transform the data
       const processedUsers: UserWithDetails[] = profilesData.map(user => {
         const userRoles = rolesData?.filter(r => r.user_id === user.id) || [];
-        const userRole = userRoles[0]?.role || 'user';
+        // Prioritize highest role - admin > moderator > user
+        const userRole = userRoles.find(r => r.role === 'admin')?.role || 
+                        userRoles.find(r => r.role === 'moderator')?.role || 
+                        userRoles[0]?.role || 'user';
         
-        console.log(`👤 Processing user ${user.email}: role = ${userRole} (from ${userRoles.length} role records)`);
+        console.log(`👤 Processing user ${user.email}: role = ${userRole} (from ${userRoles.length} role records, all roles: ${userRoles.map(r => r.role).join(', ')})`);
         
         const userCredits = creditsData?.filter(c => c.user_id === user.id) || [];
         const totalWords = userCredits.reduce((sum, credit) => sum + credit.words_available, 0);
