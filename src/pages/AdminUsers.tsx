@@ -17,6 +17,7 @@ import EnhancedUserFilters from "@/components/Admin/UserManagement/EnhancedUserF
 import EnhancedBulkActions from "@/components/Admin/UserManagement/EnhancedBulkActions";
 import EnhancedUserTable from "@/components/Admin/UserManagement/EnhancedUserTable";
 import { UserCorrectionHistoryDialog } from "@/components/Admin/UserCorrections";
+import CreateUserDialog from "@/components/Admin/UserManagement/CreateUserDialog";
 
 const AdminUsers = () => {
   const {
@@ -35,6 +36,9 @@ const AdminUsers = () => {
   // State for corrections dialog
   const [correctionsDialogOpen, setCorrectionsDialogOpen] = useState(false);
   const [selectedUserForCorrections, setSelectedUserForCorrections] = useState<any>(null);
+  
+  // State for create user dialog
+  const [createUserDialogOpen, setCreateUserDialogOpen] = useState(false);
 
   const handleSelectAll = (checked: boolean, userType: 'admin' | 'regular') => {
     const targetUsers = userType === 'admin' ? adminUsers : regularUsers;
@@ -86,7 +90,10 @@ const AdminUsers = () => {
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">उपयोगकर्ता प्रबंधन</h1>
             <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">सभी उपयोगकर्ताओं को देखें और प्रबंधित करें</p>
           </div>
-          <Button className="flex items-center space-x-2 flex-shrink-0 min-h-[44px]">
+          <Button 
+            className="flex items-center space-x-2 flex-shrink-0 min-h-[44px]"
+            onClick={() => setCreateUserDialogOpen(true)}
+          >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">नया उपयोगकर्ता</span>
             <span className="sm:hidden">नया</span>
@@ -238,6 +245,13 @@ const AdminUsers = () => {
             userEmail={selectedUserForCorrections.email}
           />
         )}
+
+        {/* Create User Dialog */}
+        <CreateUserDialog
+          open={createUserDialogOpen}
+          onOpenChange={setCreateUserDialogOpen}
+          onUserCreated={refreshData}
+        />
       </div>
     </AdminLayoutWithNavigation>
   );
