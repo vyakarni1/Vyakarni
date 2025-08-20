@@ -1796,6 +1796,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      is_admin_secure: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       log_admin_action: {
         Args: {
           p_action_type: string
@@ -1834,6 +1838,10 @@ export type Database = {
       }
       update_system_setting: {
         Args: { key_name: string; new_value: Json; updated_by?: string }
+        Returns: boolean
+      }
+      verify_admin_with_audit: {
+        Args: { _user_id: string }
         Returns: boolean
       }
     }
