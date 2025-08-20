@@ -1648,7 +1648,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      blog_post_like_counts: {
+        Row: {
+          like_count: number | null
+          post_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       add_user_word_credits: {
@@ -1657,6 +1671,15 @@ export type Database = {
           p_expiry_date?: string
           p_user_id: string
           p_words_to_add: number
+        }
+        Returns: boolean
+      }
+      check_rate_limit: {
+        Args: {
+          endpoint_name: string
+          max_requests?: number
+          user_uuid: string
+          window_minutes?: number
         }
         Returns: boolean
       }
@@ -1823,6 +1846,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: undefined
+      }
+      sanitize_user_input: {
+        Args: { input_text: string }
+        Returns: string
       }
       send_bulk_welcome_emails_safe: {
         Args: Record<PropertyKey, never>
