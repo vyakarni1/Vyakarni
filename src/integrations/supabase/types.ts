@@ -1742,6 +1742,10 @@ export type Database = {
           words_processed: number
         }[]
       }
+      get_post_like_count: {
+        Args: { post_uuid: string }
+        Returns: number
+      }
       get_settings_by_category: {
         Args: { category_filter?: string }
         Returns: {
