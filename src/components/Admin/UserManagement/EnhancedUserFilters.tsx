@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -37,6 +37,24 @@ const EnhancedUserFilters = ({
   isLoading,
   totalUsers
 }: EnhancedUserFiltersProps) => {
+  const [searchValue, setSearchValue] = useState(filters.search);
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchValue !== filters.search) {
+        onFiltersChange({ ...filters, search: searchValue });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchValue]);
+
+  // Update local search value when filters change externally
+  useEffect(() => {
+    setSearchValue(filters.search);
+  }, [filters.search]);
+
   return (
     <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
       <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
@@ -93,8 +111,8 @@ const EnhancedUserFilters = ({
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
               <Input
                 placeholder="नाम या ID खोजें..."
-                value={filters.search}
-                onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
                 className="pl-8 sm:pl-10 text-sm min-h-[44px]"
               />
             </div>
