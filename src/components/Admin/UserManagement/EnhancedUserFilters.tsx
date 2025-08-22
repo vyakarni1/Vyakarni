@@ -71,6 +71,7 @@ const EnhancedUserFilters = ({
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-2 lg:gap-3">
             <Button 
+              type="button"
               variant="outline" 
               size="sm" 
               onClick={() => onExport('csv')}
@@ -80,6 +81,7 @@ const EnhancedUserFilters = ({
               <span className="text-xs sm:text-sm">CSV</span>
             </Button>
             <Button 
+              type="button"
               variant="outline" 
               size="sm" 
               onClick={() => onExport('json')}
@@ -89,6 +91,7 @@ const EnhancedUserFilters = ({
               <span className="text-xs sm:text-sm">JSON</span>
             </Button>
             <Button 
+              type="button"
               variant="outline" 
               size="sm" 
               onClick={onRefresh}

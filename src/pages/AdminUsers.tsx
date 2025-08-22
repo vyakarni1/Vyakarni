@@ -91,6 +91,7 @@ const AdminUsers = () => {
             <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">सभी उपयोगकर्ताओं को देखें और प्रबंधित करें</p>
           </div>
           <Button 
+            type="button"
             className="flex items-center space-x-2 flex-shrink-0 min-h-[44px]"
             onClick={() => setCreateUserDialogOpen(true)}
           >

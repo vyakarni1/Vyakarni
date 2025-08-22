@@ -256,6 +256,7 @@ const AdminBlog = () => {
                       </div>
                       <div className="flex items-center gap-2 ml-4">
                         <Button
+                          type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => togglePostStatus(post.id, post.status)}
@@ -273,6 +274,7 @@ const AdminBlog = () => {
                           </Link>
                         </Button>
                         <Button
+                          type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => handleDeletePost(post.id)}

@@ -129,15 +129,15 @@ export function DictionaryDataTable() {
           </div>
           
           <div className="flex gap-2">
-            <Button onClick={loadData} variant="outline" size="sm" disabled={isLoading}>
+            <Button type="button" onClick={loadData} variant="outline" size="sm" disabled={isLoading}>
               <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-            <Button onClick={() => handleExport('csv')} variant="outline" size="sm" disabled={isExporting}>
+            <Button type="button" onClick={() => handleExport('csv')} variant="outline" size="sm" disabled={isExporting}>
               <Download className="h-4 w-4 mr-2" />
               CSV
             </Button>
-            <Button onClick={() => handleExport('json')} variant="outline" size="sm" disabled={isExporting}>
+            <Button type="button" onClick={() => handleExport('json')} variant="outline" size="sm" disabled={isExporting}>
               <Download className="h-4 w-4 mr-2" />
               JSON
             </Button>

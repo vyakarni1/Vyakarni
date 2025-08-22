@@ -108,7 +108,7 @@ export function DictionaryManagement() {
               Sync {type} dictionary from Google Sheets to database
             </p>
           </div>
-          <Button onClick={() => handleSync(type)} disabled={isLoading}>
+          <Button type="button" onClick={() => handleSync(type)} disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             {isLoading ? 'Syncing...' : 'Sync Now'}
           </Button>

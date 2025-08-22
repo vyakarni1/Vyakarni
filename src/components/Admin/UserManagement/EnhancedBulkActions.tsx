@@ -190,6 +190,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
 
             {/* Other Actions */}
             <Button
+              type="button"
               variant="outline"
               size="sm"
               onClick={() => onBulkAction('activate')}
@@ -201,6 +202,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
             </Button>
             
             <Button
+              type="button"
               variant="outline"
               size="sm"
               onClick={() => onBulkAction('suspend')}
@@ -212,6 +214,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
             </Button>
             
             <Button
+              type="button"
               variant="outline"
               size="sm"
               onClick={() => onBulkAction('email')}
@@ -223,6 +226,7 @@ const EnhancedBulkActions = ({ selectedCount, onBulkAction, isUpdating }: Enhanc
             </Button>
             
             <Button
+              type="button"
               variant="destructive"
               size="sm"
               onClick={() => onBulkAction('delete')}
