@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RefreshCw, CheckCircle, XCircle, Clock } from "lucide-react";
 import { dictionaryService } from "@/services/dictionaryService";
 import { useToast } from "@/hooks/use-toast";
+import { DictionaryDataTable } from "@/components/Admin/DictionaryDataTable";
 
 export function DictionaryManagement() {
   const [isGrammarLoading, setIsGrammarLoading] = useState(false);
@@ -183,6 +184,9 @@ export function DictionaryManagement() {
           </Tabs>
         </CardContent>
       </Card>
+      
+      {/* Dictionary Data Table */}
+      <DictionaryDataTable />
     </div>
   );
 }
