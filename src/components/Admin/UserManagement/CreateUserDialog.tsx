@@ -26,6 +26,7 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated }: CreateUserDialo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsLoading(true);
 
     try {
@@ -127,7 +128,11 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated }: CreateUserDialo
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" onKeyDown={(e) => {
+          if (e.key === 'Enter' && (e.target as HTMLInputElement)?.type !== 'submit') {
+            e.preventDefault();
+          }
+        }}>
           <div className="space-y-2">
             <Label htmlFor="email">ईमेल पता *</Label>
             <Input

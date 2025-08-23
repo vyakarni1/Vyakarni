@@ -57,23 +57,23 @@ const AdminBlogCreate = () => {
 
   // Load draft data when available
   useEffect(() => {
-    if (!draftLoading && draftData) {
+    if (!draftLoading && draftData && Object.keys(draftData).length > 0) {
       console.log('Loading draft data:', draftData);
-      setTitle(draftData.title || '');
-      setContent(draftData.content || '');
-      setExcerpt(draftData.excerpt || '');
-      setStatus(draftData.status || 'draft');
-      setCategoryId(draftData.categoryId || '');
-      setTags(draftData.tags || '');
-      setMetaTitle(draftData.metaTitle || '');
-      setMetaDescription(draftData.metaDescription || '');
-      setMetaKeywords(draftData.metaKeywords || '');
+      if (draftData.title !== undefined) setTitle(draftData.title);
+      if (draftData.content !== undefined) setContent(draftData.content);
+      if (draftData.excerpt !== undefined) setExcerpt(draftData.excerpt);
+      if (draftData.status !== undefined) setStatus(draftData.status);
+      if (draftData.categoryId !== undefined) setCategoryId(draftData.categoryId);
+      if (draftData.tags !== undefined) setTags(draftData.tags);
+      if (draftData.metaTitle !== undefined) setMetaTitle(draftData.metaTitle);
+      if (draftData.metaDescription !== undefined) setMetaDescription(draftData.metaDescription);
+      if (draftData.metaKeywords !== undefined) setMetaKeywords(draftData.metaKeywords);
     }
   }, [draftLoading, draftData]);
 
   // Auto-save to database whenever form data changes
   useEffect(() => {
-    if (!draftLoading) {
+    if (!draftLoading && (title || content || excerpt || metaTitle || metaDescription || metaKeywords || tags)) {
       console.log('Auto-saving draft with data:', { title, content, excerpt });
       updateDraft({
         title,
