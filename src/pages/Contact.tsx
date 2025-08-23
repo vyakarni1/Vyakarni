@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -196,7 +197,7 @@ const Contact = () => {
                 {!user ? <div className="text-center py-8">
                     <p className="text-gray-600 mb-4">{currentContent.loginRequired}</p>
                     <Button asChild>
-                      <a href="/login">{currentContent.loginButton}</a>
+                      <Link to="/login">{currentContent.loginButton}</Link>
                     </Button>
                   </div> : <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div>
