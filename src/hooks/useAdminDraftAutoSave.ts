@@ -106,19 +106,22 @@ export const useAdminDraftAutoSave = (options: UseAdminDraftAutoSaveOptions) => 
 
   // Update draft data and trigger auto-save
   const updateDraft = useCallback((updates: Partial<DraftData>) => {
-    const newData = { ...draftData, ...updates };
-    setDraftData(newData);
+    setDraftData(prevData => {
+      const newData = { ...prevData, ...updates };
+      
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
 
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+      // Set new timeout for auto-save
+      saveTimeoutRef.current = setTimeout(() => {
+        saveDraft(newData, true); // Silent save for auto-save
+      }, autoSaveDelay);
 
-    // Set new timeout for auto-save
-    saveTimeoutRef.current = setTimeout(() => {
-      saveDraft(newData, true); // Silent save for auto-save
-    }, autoSaveDelay);
-  }, [draftData, saveDraft, autoSaveDelay]);
+      return newData;
+    });
+  }, [saveDraft, autoSaveDelay]);
 
   // Manual save function
   const manualSave = useCallback(() => {

@@ -58,6 +58,7 @@ const AdminBlogCreate = () => {
   // Load draft data when available
   useEffect(() => {
     if (!draftLoading && draftData) {
+      console.log('Loading draft data:', draftData);
       setTitle(draftData.title || '');
       setContent(draftData.content || '');
       setExcerpt(draftData.excerpt || '');
@@ -73,6 +74,7 @@ const AdminBlogCreate = () => {
   // Auto-save to database whenever form data changes
   useEffect(() => {
     if (!draftLoading) {
+      console.log('Auto-saving draft with data:', { title, content, excerpt });
       updateDraft({
         title,
         content,
@@ -85,7 +87,7 @@ const AdminBlogCreate = () => {
         metaKeywords
       });
     }
-  }, [title, content, excerpt, status, categoryId, tags, metaTitle, metaDescription, metaKeywords, updateDraft, draftLoading]);
+  }, [title, content, excerpt, status, categoryId, tags, metaTitle, metaDescription, metaKeywords, draftLoading]);
 
   const fetchCategories = async () => {
     try {
