@@ -3,19 +3,45 @@ import { UserWithDetails, UserFilters } from '@/types/userManagement';
 
 export const useUserFiltering = () => {
   const applyFilters = (users: UserWithDetails[], filters: UserFilters): UserWithDetails[] => {
+    console.log('🔍 Starting filter process with:', {
+      totalUsers: users.length,
+      searchTerm: filters.search,
+      role: filters.role,
+      sampleUsers: users.slice(0, 2).map(u => ({ name: u.name, email: u.email, role: u.role }))
+    });
+    
     let filteredUsers = [...users];
 
     // Apply search filter first
     if (filters.search && filters.search.trim()) {
-      console.log(`🎯 Filtering by search: ${filters.search.trim()}`);
+      console.log(`🎯 Filtering by search: "${filters.search.trim()}"`);
       const beforeCount = filteredUsers.length;
       const searchTerm = filters.search.trim().toLowerCase();
-      filteredUsers = filteredUsers.filter(user => 
-        user.name?.toLowerCase().includes(searchTerm) ||
-        user.email?.toLowerCase().includes(searchTerm) ||
-        user.id?.toLowerCase().includes(searchTerm)
-      );
+      
+      filteredUsers = filteredUsers.filter(user => {
+        const userName = (user.name || '').toLowerCase();
+        const userEmail = (user.email || '').toLowerCase();
+        const userId = (user.id || '').toLowerCase();
+        
+        const nameMatch = userName.includes(searchTerm);
+        const emailMatch = userEmail.includes(searchTerm);
+        const idMatch = userId.includes(searchTerm);
+        
+        const isMatch = nameMatch || emailMatch || idMatch;
+        
+        if (isMatch) {
+          console.log(`✅ Search match found: ${user.name || 'No name'} (${user.email}) - Matched: ${nameMatch ? 'name' : emailMatch ? 'email' : 'id'}`);
+        }
+        
+        return isMatch;
+      });
+      
       console.log(`✅ Users after search filter: ${filteredUsers.length} (filtered out ${beforeCount - filteredUsers.length})`);
+      
+      if (filteredUsers.length === 0 && beforeCount > 0) {
+        console.log(`⚠️ No matches found for search term: "${searchTerm}"`);
+        console.log('📋 Sample of available users:', users.slice(0, 3).map(u => ({ name: u.name, email: u.email })));
+      }
     }
 
     // Apply role filter

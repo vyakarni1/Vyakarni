@@ -185,12 +185,20 @@ export const useUserDataFetching = (filters: UserFilters) => {
       });
 
       console.log('🔄 Processed users before filtering:', processedUsers.length);
+      console.log('🔍 Current search filter:', filters.search);
       
       // Apply filters and sorting
       const filteredUsers = applyFilters(processedUsers, filters);
+      console.log('🎯 Users after all filters applied:', filteredUsers.length);
+      
       const sortedUsers = applySorting(filteredUsers, filters);
-
-      console.log('🎯 Final filtered users:', sortedUsers.length);
+      console.log('✅ Final sorted users:', sortedUsers.length);
+      
+      // Log sample of filtered users for debugging
+      if (filters.search && filteredUsers.length > 0) {
+        console.log('📋 Sample filtered users:', filteredUsers.slice(0, 3).map(u => ({ name: u.name, email: u.email })));
+      }
+      
       return sortedUsers;
     },
   });

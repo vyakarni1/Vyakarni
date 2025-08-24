@@ -101,6 +101,27 @@ const EnhancedUserFilters = ({
               <RefreshCw className={`h-3 w-3 sm:h-4 sm:w-4 ${isLoading ? 'animate-spin' : ''}`} />
               <span className="text-xs sm:text-sm">रिफ्रेश</span>
             </Button>
+            <Button 
+              type="button"
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                setSearchValue('');
+                onFiltersChange({
+                  search: '',
+                  role: 'all',
+                  activity_status: 'all',
+                  word_balance_range: 'all',
+                  profile_completion: 'all',
+                  date_range: 'all',
+                  sort_by: 'created_at',
+                  sort_order: 'desc',
+                });
+              }}
+              className="flex items-center space-x-1 min-h-[36px] sm:min-h-[40px]"
+            >
+              <span className="text-xs sm:text-sm">साफ करें</span>
+            </Button>
           </div>
         </div>
       </CardHeader>
