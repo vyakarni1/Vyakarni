@@ -12,25 +12,42 @@ export const useUserFiltering = () => {
     
     let filteredUsers = [...users];
 
-    // Apply search filter first
+    // Apply search filter first - improved search logic
     if (filters.search && filters.search.trim()) {
       console.log(`🎯 Filtering by search: "${filters.search.trim()}"`);
       const beforeCount = filteredUsers.length;
       const searchTerm = filters.search.trim().toLowerCase();
       
       filteredUsers = filteredUsers.filter(user => {
+        // More comprehensive search including partial name matches
         const userName = (user.name || '').toLowerCase();
         const userEmail = (user.email || '').toLowerCase();
         const userId = (user.id || '').toLowerCase();
         
-        const nameMatch = userName.includes(searchTerm);
-        const emailMatch = userEmail.includes(searchTerm);
+        // Check for exact matches
+        const exactNameMatch = userName === searchTerm;
+        const exactEmailMatch = userEmail === searchTerm;
+        
+        // Check for partial matches (includes)
+        const partialNameMatch = userName.includes(searchTerm);
+        const partialEmailMatch = userEmail.includes(searchTerm);
         const idMatch = userId.includes(searchTerm);
         
-        const isMatch = nameMatch || emailMatch || idMatch;
+        // Split search term and check each word
+        const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
+        const wordsMatch = searchWords.every(word => 
+          userName.includes(word) || userEmail.includes(word)
+        );
+        
+        const isMatch = exactNameMatch || exactEmailMatch || partialNameMatch || partialEmailMatch || idMatch || wordsMatch;
         
         if (isMatch) {
-          console.log(`✅ Search match found: ${user.name || 'No name'} (${user.email}) - Matched: ${nameMatch ? 'name' : emailMatch ? 'email' : 'id'}`);
+          const matchType = exactNameMatch ? 'exact name' : 
+                           exactEmailMatch ? 'exact email' : 
+                           partialNameMatch ? 'partial name' : 
+                           partialEmailMatch ? 'partial email' : 
+                           idMatch ? 'user ID' : 'word match';
+          console.log(`✅ Search match found: "${user.name || 'No name'}" (${user.email}) - Matched: ${matchType}`);
         }
         
         return isMatch;
@@ -40,7 +57,12 @@ export const useUserFiltering = () => {
       
       if (filteredUsers.length === 0 && beforeCount > 0) {
         console.log(`⚠️ No matches found for search term: "${searchTerm}"`);
-        console.log('📋 Sample of available users:', users.slice(0, 3).map(u => ({ name: u.name, email: u.email })));
+        console.log('📋 Sample of available users:', users.slice(0, 5).map(u => ({ 
+          name: u.name, 
+          email: u.email,
+          nameSearch: u.name?.toLowerCase(),
+          emailSearch: u.email?.toLowerCase()
+        })));
       }
     }
 

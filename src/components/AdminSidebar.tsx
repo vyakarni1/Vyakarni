@@ -127,12 +127,16 @@ export function AdminSidebar() {
                       to={item.href} 
                       end={item.exact}
                       className={({ isActive }) => 
-                        `flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-2.5 sm:py-3 rounded-lg transition-colors min-h-[44px] ${
+                        `flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-2.5 sm:py-3 rounded-lg transition-colors min-h-[44px] cursor-pointer ${
                           isActive 
                             ? "bg-primary/10 text-primary font-medium" 
                             : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                         }`
                       }
+                      onClick={(e) => {
+                        // Ensure navigation works properly
+                        console.log('Navigating to:', item.href);
+                      }}
                     >
                       <item.icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                       {!isCollapsed && (

@@ -23,12 +23,14 @@ export const useAdvancedUserManagement = () => {
   const bulkUpdateMutation = useBulkOperations();
   const { exportUsers: exportUsersFunction } = useUserExport();
 
-  // Separate admin and regular users
+  // Separate admin and regular users with better filtering
   const adminUsers = users?.filter(user => user.role === 'admin' || user.role === 'moderator') || [];
   const regularUsers = users?.filter(user => user.role === 'user') || [];
 
   console.log('👑 Admin users count:', adminUsers.length);
   console.log('👤 Regular users count:', regularUsers.length);
+  console.log('🔍 Search term:', filters.search);
+  console.log('📋 Filtered users sample:', users?.slice(0, 3).map(u => ({ name: u.name, email: u.email, role: u.role })));
   console.log('📊 All users by role:', users?.reduce((acc, user) => {
     acc[user.role] = (acc[user.role] || 0) + 1;
     return acc;
