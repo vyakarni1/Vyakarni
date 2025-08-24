@@ -39,16 +39,12 @@ const EnhancedUserFilters = ({
 }: EnhancedUserFiltersProps) => {
   const [searchValue, setSearchValue] = useState(filters.search);
 
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchValue !== filters.search) {
-        onFiltersChange({ ...filters, search: searchValue });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchValue]);
+  // Handle search input change - NO DEBOUNCING, immediate update
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    // Update filters immediately for client-side filtering
+    onFiltersChange({ ...filters, search: value });
+  };
 
   // Update local search value when filters change externally
   useEffect(() => {
@@ -105,8 +101,9 @@ const EnhancedUserFilters = ({
               type="button"
               variant="outline" 
               size="sm" 
-              onClick={() => {
+               onClick={() => {
                 setSearchValue('');
+                handleSearchChange('');
                 onFiltersChange({
                   search: '',
                   role: 'all',
@@ -133,10 +130,10 @@ const EnhancedUserFilters = ({
             <label className="text-xs sm:text-sm font-medium text-gray-700">खोजें</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-              <Input
+               <Input
                 placeholder="नाम या ID खोजें..."
                 value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-8 sm:pl-10 text-sm min-h-[44px]"
               />
             </div>
