@@ -7,8 +7,19 @@ import { useUserFiltering } from './useUserFiltering';
 export const useUserDataFetching = (filters: UserFilters) => {
   const { applyFilters, applySorting } = useUserFiltering();
 
+  // Create query key without search to prevent refetch on every keystroke
+  const queryKey = ['advanced-users', {
+    role: filters.role,
+    activity_status: filters.activity_status,
+    word_balance_range: filters.word_balance_range,
+    profile_completion: filters.profile_completion,
+    date_range: filters.date_range,
+    sort_by: filters.sort_by,
+    sort_order: filters.sort_order,
+  }];
+
   return useQuery({
-    queryKey: ['advanced-users', filters],
+    queryKey,
     queryFn: async () => {
       console.log('🔍 Starting user fetch with filters:', filters);
       
@@ -43,11 +54,7 @@ export const useUserDataFetching = (filters: UserFilters) => {
         console.log('📅 Applied date filter:', filters.date_range, 'threshold:', dateThreshold.toISOString());
       }
 
-      // Apply search filter if there's actual search text
-      if (filters.search && filters.search.trim()) {
-        profileQuery = profileQuery.or(`name.ilike.%${filters.search.trim()}%,email.ilike.%${filters.search.trim()}%`);
-        console.log('🔍 Applied search filter:', filters.search.trim());
-      }
+      // Search will be applied client-side, not server-side to avoid query refetch
 
       const { data: profilesData, error: profilesError } = await profileQuery
         .order(filters.sort_by === 'name' ? 'name' : 'created_at', { ascending: filters.sort_order === 'asc' });

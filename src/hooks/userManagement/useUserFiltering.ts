@@ -5,6 +5,19 @@ export const useUserFiltering = () => {
   const applyFilters = (users: UserWithDetails[], filters: UserFilters): UserWithDetails[] => {
     let filteredUsers = [...users];
 
+    // Apply search filter first
+    if (filters.search && filters.search.trim()) {
+      console.log(`🎯 Filtering by search: ${filters.search.trim()}`);
+      const beforeCount = filteredUsers.length;
+      const searchTerm = filters.search.trim().toLowerCase();
+      filteredUsers = filteredUsers.filter(user => 
+        user.name?.toLowerCase().includes(searchTerm) ||
+        user.email?.toLowerCase().includes(searchTerm) ||
+        user.id?.toLowerCase().includes(searchTerm)
+      );
+      console.log(`✅ Users after search filter: ${filteredUsers.length} (filtered out ${beforeCount - filteredUsers.length})`);
+    }
+
     // Apply role filter
     if (filters.role !== 'all') {
       console.log(`🎯 Filtering by role: ${filters.role}`);
