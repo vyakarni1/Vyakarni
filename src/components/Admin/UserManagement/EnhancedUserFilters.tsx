@@ -39,11 +39,21 @@ const EnhancedUserFilters = ({
 }: EnhancedUserFiltersProps) => {
   const [searchValue, setSearchValue] = useState(filters.search);
 
-  // Handle search input change - NO DEBOUNCING, immediate update
-  const handleSearchChange = (value: string) => {
+  // Handle search button click
+  const handleSearchClick = () => {
+    onFiltersChange({ ...filters, search: searchValue });
+  };
+
+  // Handle search input change - just update local state, don't search yet
+  const handleSearchInputChange = (value: string) => {
     setSearchValue(value);
-    // Update filters immediately for client-side filtering
-    onFiltersChange({ ...filters, search: value });
+  };
+
+  // Handle Enter key press for search
+  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchClick();
+    }
   };
 
   // Update local search value when filters change externally
@@ -103,7 +113,6 @@ const EnhancedUserFilters = ({
               size="sm" 
                onClick={() => {
                 setSearchValue('');
-                handleSearchChange('');
                 onFiltersChange({
                   search: '',
                   role: 'all',
@@ -128,14 +137,25 @@ const EnhancedUserFilters = ({
           {/* Search */}
           <div className="space-y-2 sm:col-span-2 lg:col-span-3 xl:col-span-2">
             <label className="text-xs sm:text-sm font-medium text-gray-700">खोजें</label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-               <Input
-                placeholder="नाम या ID खोजें..."
-                value={searchValue}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-8 sm:pl-10 text-sm min-h-[44px]"
-              />
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
+                <Input
+                  placeholder="नाम या ID खोजें..."
+                  value={searchValue}
+                  onChange={(e) => handleSearchInputChange(e.target.value)}
+                  onKeyPress={handleSearchKeyPress}
+                  className="pl-8 sm:pl-10 text-sm min-h-[44px]"
+                />
+              </div>
+              <Button 
+                type="button"
+                onClick={handleSearchClick}
+                className="min-h-[44px] px-4"
+                disabled={isLoading}
+              >
+                <Search className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 
